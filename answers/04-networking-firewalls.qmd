@@ -1,0 +1,92 @@
+# Answer key — Chapter 04: Networking and firewall controls {.unnumbered}
+
+<!-- Source-only: this directory is excluded from the render in _quarto.yml
+     ("!answers/"). Never link these files from a chapter. Numbering must
+     match the chapter's Self-check section 1:1. -->
+
+**Q1** *(tests @sec-04-addresses-ports-attack-surface · basic)* — **Correct: b.**
+The chapter states that the pair *(address, port)* "names one service on one
+machine"; an IP address alone identifies only the machine (a), and virtual
+networks (c) and rules (d) are different concepts from the same chapter.
+
+**Q2** *(tests @sec-04-cloud-networks-software · basic)* — **Correct: a.**
+The chapter says security groups are stateful and attach to resources,
+whereas NACLs work lower in the stack, are typically stateless and apply to
+subnets (CSA, 2024, p. 156); the other options invert or merge the two.
+
+**Q3** *(tests @sec-04-cloud-networks-software · basic)* — **Accepted answers:**
+"AWS starts from deny-all, so even resources in the same security group
+cannot talk until a rule permits it; Azure's NSG default rules allow traffic
+freely within the virtual network while denying inbound from the Internet",
+"Azure is open east–west inside the VNet by default, AWS denies everything
+by default" (any phrasing capturing both defaults plus the point that
+assuming the wrong default leaves a service reachable from an unintended
+place).
+
+**Q4** *(tests @sec-04-the-firewall · basic)* — **Correct: c.**
+Default-deny means the final catch-all rule blocks everything not explicitly
+permitted (@def-firewall); (a) is default-allow, (b) is no policy at all,
+and (d) is wrong because the laboratory firewalls are stateful, so replies
+return without a separate rule.
+
+**Q5** *(tests @sec-04-firewall-types-ngfw-waf · basic)* — **Accepted answers:**
+any two of: "deep packet inspection / looking inside the payload",
+"identifying the application in a flow", "rules by user identity rather
+than only by address", "integrated intrusion prevention (IPS)",
+"consulting threat-intelligence feeds of known-bad addresses and domains".
+
+**Q6** *(tests @sec-04-defence-in-depth-zero-trust · basic)* — **Correct: b.**
+This is @def-zerotrust almost verbatim; (a) is the traditional
+castle-and-moat perimeter the Guidance rejects, (c) is not a described
+strategy, and (d) contradicts "nobody is trusted for having logged in once".
+
+**Q7 — applied scenario** *(tests @sec-04-the-firewall · applied)* —
+**Model answer:** the answer must identify (i) the forgotten database
+port 5432 — the chapter's second common mistake ("opening a database port
+for testing and forgetting it"); (ii) SSH open to the whole Internet instead
+of only the administrator's address — the first mistake and the risk of
+@exm-ssh-trc; and (iii) the Azure default — the third mistake ("assuming
+closed when the default is open"): the NSG's built-in rules allow east–west
+traffic within the virtual network, so other VNet resources may reach the VM
+even without added allow rules. The command sequence:
+`sudo ufw default deny incoming`, `sudo ufw default allow outgoing`,
+`sudo ufw allow from YOUR_IP to any port 22 proto tcp`,
+`sudo ufw allow 80/tcp`, `sudo ufw enable`, then `sudo ufw status` to read
+the loaded policy back. Grading notes: full credit needs all three
+exposures, the restricted SSH rule (not the blanket `allow 22/tcp`), no
+rule for 5432, and ideally the read-back with `ufw status`; partial credit
+for two exposures or a sequence missing the defaults/read-back.
+
+## Sketch answers to the chapter exercises
+
+**(1)** *(→ @exr-04-attack-surface, "Attack surface")*
+The attack surface is every point an attacker can interact with: open
+ports, reachable services, exposed endpoints; `ss -tulpn` enumerates the
+listening ports, so it measures that surface and allows each door to be
+justified.
+
+**(2)** *(→ @exr-04-default-deny-reasoning, "Default-deny reasoning")*
+Default-deny blocks everything except explicitly permitted
+traffic; like the MVN, it works by listing the few legitimate flows and
+forbidding the rest, which needs no knowledge of the attacker.
+
+**(3)** *(→ @exr-04-cloud-firewall-default, "A cloud firewall default")*
+Azure's network security groups allow east–west traffic within the virtual
+network by default (while denying inbound from the Internet), so intra-VNet
+paths may be open even when no rule was added; on AWS a security group
+denies all inbound traffic, including between resources in the same group,
+until it is allowed. The mental model is the same, namely know the default
+before trusting it, and assuming the wrong one can leave a resource
+reachable from an unintended location.
+
+**(4)** *(→ @exr-04-ngfw-vs-waf, "NGFW vs WAF")*
+An NGFW secures the network broadly with application awareness
+and deep packet inspection; a WAF secures one web application by inspecting
+HTTP requests, so against an application-layer flood on the login page the
+WAF applies (Session 8).
+
+**(5)** *(→ @exr-04-ssh-brute-force-trc, "SSH brute force as threat–risk–control")*
+Threat: automated brute-forcing of the SSH login.
+Risk: high likelihood (constant scanning), high impact (full control on
+success). Control: restrict SSH to the administrative address with
+`sudo ufw allow from YOUR_IP to any port 22 proto tcp`.

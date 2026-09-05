@@ -1,0 +1,92 @@
+# Answer key — Chapter 12: Incident response, BCM, risk and compliance {.unnumbered}
+
+<!-- Source-only: this directory is excluded from the render in _quarto.yml
+     ("!answers/"). Never link these files from a chapter. Numbering must
+     match the chapter's Self-check section 1:1. -->
+
+**Q1** *(tests @sec-12-events-incidents-breaches · basic)* — **Correct: b.**
+@def-incident states it verbatim: all incidents are events; not all events
+are incidents; and only some incidents become breaches. Option d describes
+an event, not a breach.
+
+**Q2** *(tests @sec-12-ir-lifecycle · basic)* — **Correct: c.**
+@def-irlifecycle gives the order Preparation; Detection & Analysis;
+Containment, Eradication & Recovery; Post-Incident Analysis. Option d mixes
+in NIST CSF-style function names that are not the SP 800-61 phases.
+
+**Q3** *(tests @sec-12-ir-lifecycle · basic)* — **Accepted answers:**
+"a blocked user may still hold a valid session token", "federated identity
+separates authentication from authorisation, so the relying party must act
+too" (any phrasing that says federated identity separates authentication
+from authorisation, so a blocked user may still hold a valid session token
+and containment may require actions on both the identity provider and the
+relying party).
+
+**Q4** *(tests @sec-12-business-continuity · basic)* — **Correct: b.**
+The RPO states how much recent data the organisation can afford to lose;
+the RTO (option a) states how quickly the service must be back. Risk
+appetite and blast radius are concepts from other parts of the course.
+
+**Q5** *(tests @sec-12-risk-audit-compliance · basic)* — **Accepted answers:**
+"the customer inherits the provider's control set for the infrastructure
+layer, but the compliance of what the customer builds on top remains the
+customer's own task", "inheriting the provider's compliance for its layers
+while remaining responsible for your own software" (any phrasing with both
+halves: inheritance for the provider-operated layer, continued own
+responsibility for what is built on top).
+
+**Q6** *(tests @sec-12-risk-audit-compliance · basic)* — **Correct: b.**
+Comer (2021, p. 242): side channels and back doors are structural risks
+stopped by neither a firewall nor a password, so they are exactly the risks
+a register exists to record and to accept knowingly.
+
+**Q7 — applied scenario** *(tests @sec-12-ir-lifecycle · applied)* —
+**Model answer:** Containment: disable the account *and* revoke its
+sessions (federated identity means a valid token may outlive the block),
+and isolate the affected workload; IAM and the management plane are the top
+priorities (Session 7). Eradication: rotate *all* credentials, not just one
+password, enforce MFA and additional policy conditions (Session 7); delete
+the tampered image and any old images, function code and IaC the attacker
+may have altered, because a careless redeployment could let the attacker
+back in (Session 5's immutable pattern makes replacement simpler than
+expulsion). Recovery: redeploy hardened versions from IaC after analysing
+images, resources and templates for remaining backdoors, and restore data
+from the clean, tested backup (Session 11); capture incident data under
+chain of custody (Session 10). What the plan misses: patching the running
+container leaves any backdoor in the image and its redeployments;
+re-enabling the account with only a new password ignores other stolen
+credentials, live session tokens and missing MFA; and closing without
+Post-Incident Analysis loses the lessons that must feed back into
+preparation. Grading notes: full credit requires the three phases in order,
+at least the token/rotation point and the delete-and-rebuild point, and an
+earlier-session control named per step; partial credit for a correct
+critique without the phase structure.
+
+## Sketch answers to the chapter exercises
+
+(1) *(@exr-12-event-incident-breach)* An event is any observable occurrence;
+an incident is an event that violates policy or threatens CIA and demands a
+response; a breach is a successful compromise leading to unauthorised data
+access or extraction. A breach may trigger legal or regulatory notification.
+
+(2) *(@exr-12-four-phases)* Preparation (baseline, monitoring, tested
+backups); Detection & Analysis (trustworthy off-host logs for the timeline);
+Containment/Eradication/Recovery (MFA and IAM from Session 7, immutable
+images from Session 5, backups from Session 11); Post-Incident Analysis
+(feeds lessons back into preparation).
+
+(3) *(@exr-12-rebuild-vs-patch)* Because the attacker may hold stolen
+credentials and may have left back doors in images, serverless code or IaC;
+rotating credentials revokes their access, and rebuilding from clean
+definitions removes hidden footholds a patch would leave in place.
+
+(4) *(@exr-12-rto-rpo)* RTO is how quickly a service must be restored; RPO
+is how much recent data may be lost. RPO sets backup frequency (lose at most
+that much); RTO sets the required restore speed and the recovery design.
+
+(5) *(@exr-12-register-inheritance)* A risk register lists identified risks,
+their severity and mitigation actions, aligning effort with risk appetite.
+Compliance inheritance means inheriting the provider's control set for the
+layers it operates while remaining responsible for the compliance of one's
+own software: the shared-responsibility model expressed in the language of
+audit.

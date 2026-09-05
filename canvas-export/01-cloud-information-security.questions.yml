@@ -1,0 +1,117 @@
+# Questions file for chapters/01-cloud-information-security.qmd.
+# Content matches the chapter's Self-check section and
+# answers/01-cloud-information-security.qmd exactly (same numbering).
+quiz_title: "Chapter 01 — Self-check"
+chapter: 01-cloud-information-security
+
+questions:
+  - id: q1
+    type: mcq
+    section: sec-01-definition-cloud-computing
+    difficulty: basic
+    text: >
+      Which of the five essential characteristics of cloud computing produces
+      most of the security questions in this course, because it means sharing
+      hardware with strangers?
+    options:
+      - "On-demand self-service"
+      - "Broad network access"
+      - "Resource pooling"
+      - "Measured service"
+    correct: 3
+
+  - id: q2
+    type: mcq
+    section: sec-01-cia-triad
+    difficulty: basic
+    text: >
+      On the morning the payroll is run, an attacker makes the Nextcloud
+      server unreachable without reading or changing any file on it. Which
+      statement is correct?
+    options:
+      - "No CIA property was harmed, because no data was read or altered"
+      - "Confidentiality was harmed, because the payroll file was exposed"
+      - "Integrity was harmed, because the service no longer behaves as intended"
+      - "Availability was harmed, because the service was not reachable when needed"
+    correct: 4
+
+  - id: q3
+    type: short
+    section: sec-01-threat-risk-control
+    difficulty: basic
+    text: >
+      In one or two sentences: how does this chapter define risk, and how
+      does it relate a risk to a threat?
+    answers:
+      - "likelihood times impact"
+      - "likelihood x impact"
+      - "the weight of a threat, expressed as likelihood times impact"
+      - "risk is the weight of a threat: likelihood multiplied by impact"
+
+  - id: q4
+    type: mcq
+    section: sec-01-service-models
+    difficulty: basic
+    text: >
+      According to the shared-responsibility model, which layer remains the
+      customer's responsibility in every service model, including SaaS?
+    options:
+      - "Virtualisation"
+      - "Data"
+      - "Networking"
+      - "Operating system"
+    correct: 2
+
+  - id: q5
+    type: short
+    section: sec-01-why-cloud-security
+    difficulty: basic
+    text: >
+      Name two of the six factors Comer gives for why security is harder in
+      the cloud than in a traditional infrastructure.
+    answers:
+      - "lack of control and visibility"
+      - "infrastructure shared with outsiders"
+      - "large number of services with dependencies"
+      - "constantly changing set of running instances"
+      - "remote access for all users"
+      - "heavy use of software from the provider and third parties"
+
+  - id: q6
+    type: mcq
+    section: sec-01-why-cloud-security
+    difficulty: basic
+    text: >
+      In the Strava heat-map case, what kind of failure does the chapter say
+      occurred?
+    options:
+      - "A technical failure: a system was breached by attackers"
+      - "A credential failure: user passwords were stolen and abused"
+      - "A governance failure: a publication decision was made without reasoning about what could be inferred"
+      - "A cryptographic failure: the published data was too weakly encrypted"
+    correct: 3
+
+  - id: q7
+    type: applied
+    section: sec-01-service-models
+    difficulty: applied
+    text: >
+      Building on the exercise "When SaaS reduces the risk": a small firm
+      currently runs Nextcloud on an IaaS virtual machine and is offered a
+      hosted SaaS file-sharing product instead. Management claims the move
+      would make security "entirely the provider's problem". Using the
+      shared-responsibility model, name two security tasks that would
+      genuinely move to the provider, one responsibility that stays with the
+      firm in either model, and explain — with reference to the Strava case —
+      why management's claim is wrong.
+    sample_answer: >
+      Tasks that move to the provider (any two): OS patching, web-server/TLS
+      configuration, server hardening, firewall management, hardware and
+      hypervisor security. Responsibility that stays: the data row — deciding
+      who may access which data and what shared or published data reveals.
+      The claim is wrong because the data row never leaves the customer's
+      column in the shared-responsibility table, and the Strava case shows a
+      customer-side governance decision failing although no system was
+      breached; no service model makes security entirely somebody else's
+      problem. Grading: two provider-side tasks + the staying responsibility
+      + explicit Strava/data-row argument for full credit.

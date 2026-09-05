@@ -1,0 +1,114 @@
+quiz_title: "Chapter 12 — Self-check"
+chapter: 12-incident-response-bcm
+
+questions:
+  - id: q1
+    type: mcq
+    section: sec-12-events-incidents-breaches
+    difficulty: basic
+    text: >
+      Which of the following statements about events, incidents and breaches
+      is correct?
+    options:
+      - "All events are incidents, but only some incidents are events"
+      - "All incidents are events, but not all events are incidents, and only some incidents become breaches"
+      - "An event and an incident are the same thing viewed at different times"
+      - "A breach is any observable occurrence, most of them benign"
+    correct: 2
+
+  - id: q2
+    type: mcq
+    section: sec-12-ir-lifecycle
+    difficulty: basic
+    text: >
+      Which option lists the four phases of the NIST SP 800-61 incident
+      response lifecycle in the correct order?
+    options:
+      - "Detection & Analysis; Preparation; Post-Incident Analysis; Containment, Eradication & Recovery"
+      - "Preparation; Containment, Eradication & Recovery; Detection & Analysis; Post-Incident Analysis"
+      - "Preparation; Detection & Analysis; Containment, Eradication & Recovery; Post-Incident Analysis"
+      - "Identification; Protection; Detection; Recovery"
+    correct: 3
+
+  - id: q3
+    type: short
+    section: sec-12-ir-lifecycle
+    difficulty: basic
+    text: >
+      In one or two sentences: during containment, why may blocking a user
+      at the identity provider not be enough, and what else may be required?
+    answers:
+      - "a blocked user may still hold a valid session token"
+      - "federated identity separates authentication from authorisation"
+      - "actions may be needed on both the identity provider and the relying party"
+      - "revoke sessions at the relying party as well"
+
+  - id: q4
+    type: mcq
+    section: sec-12-business-continuity
+    difficulty: basic
+    text: >
+      An organisation states that it can afford to lose at most one hour of
+      recent data for its ordering system. Which target has it set?
+    options:
+      - "The recovery time objective (RTO)"
+      - "The recovery point objective (RPO)"
+      - "The risk appetite"
+      - "The blast radius"
+    correct: 2
+
+  - id: q5
+    type: short
+    section: sec-12-risk-audit-compliance
+    difficulty: basic
+    text: >
+      In one or two sentences: what is compliance inheritance, and which
+      part of the compliance task remains the customer's own?
+    answers:
+      - "the customer inherits the provider's control set for the infrastructure layer"
+      - "compliance of whatever the customer builds on top remains the customer's own task"
+      - "inherit the provider's compliance for its layers; stay responsible for your own software"
+      - "shared-responsibility model in the language of audit"
+
+  - id: q6
+    type: mcq
+    section: sec-12-risk-audit-compliance
+    difficulty: basic
+    text: >
+      According to Comer, why do side channels and back doors belong in the
+      risk register?
+    options:
+      - "They are stopped by a correctly configured firewall, so the register records the firewall rule"
+      - "They are structural risks that no firewall or password stops, so the register exists to record and accept them knowingly"
+      - "They only occur in on-premises data centres, so cloud tenants can ignore them"
+      - "They are examples of compliance inheritance from the provider"
+    correct: 2
+
+  - id: q7
+    type: applied
+    section: sec-12-ir-lifecycle
+    difficulty: applied
+    text: >
+      Building on the chapter exercise "Why rebuild rather than patch": the
+      timeline for the Nextcloud incident in the chapter's example shows
+      that the attacker held an administrator credential for two days and
+      pushed at least one change to a container image. A colleague proposes
+      to patch the running container, re-enable the admin account with a new
+      password, and close the incident. Walk through Containment,
+      Eradication & Recovery as this chapter describes them for the cloud,
+      explain what the colleague's plan misses, and name the control from an
+      earlier session that each of your steps relies on.
+    sample_answer: >
+      Containment: disable the account and revoke its sessions (federated
+      identity means a valid token may outlive the block) and isolate the
+      workload; IAM and the management plane are top priorities (Session 7).
+      Eradication: rotate all credentials, enforce MFA and policy conditions
+      (Session 7); delete the tampered image and old images, function code
+      and IaC, because a careless redeployment could let the attacker back
+      in (Session 5). Recovery: redeploy hardened versions from IaC after
+      analysing images and templates for backdoors, and restore from the
+      clean, tested backup (Session 11); capture incident data under chain
+      of custody (Session 10). The colleague's plan leaves backdoors in the
+      image, ignores other stolen credentials and live tokens, skips MFA,
+      and closes without Post-Incident Analysis feeding lessons back into
+      preparation.

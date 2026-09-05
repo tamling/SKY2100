@@ -1,0 +1,98 @@
+# Answer key — Chapter 07: Hardening and access control {.unnumbered}
+
+<!-- Source-only: this directory is excluded from the render in _quarto.yml
+     ("!answers/"). Never link these files from a chapter. Numbering must
+     match the chapter's Self-check section 1:1. -->
+
+**Q1** *(tests @sec-07-identity-perimeter · basic)* — **Correct: b.**
+The section opens with exactly this consolidation: one web console and one
+API, both Internet-reachable, so a stolen administrator credential can be
+control of everything at once; a is false (firewalls still exist, Session 4),
+c confuses IAM with TLS, and d misstates shared responsibility.
+
+**Q2** *(tests @sec-07-authentication-mfa · basic)* — **Correct: b.**
+@def-mfa requires evidence from more than one independent category;
+a password and a hardware token combine *knows* and *has*, while a, c and d
+each combine two examples of a single category (knows/knows, knows/knows,
+is/is).
+
+**Q3** *(tests @sec-07-identity-perimeter · basic)* — **Accepted answers:**
+"an entitlement maps identities to authorisations, often with conditions
+(identity X may access resource Y when attributes Z hold)"; "the entitlement
+matrix is the table of these mappings, written down and reviewed to show
+whether least privilege holds" (any phrasing that names the identity→
+authorisation mapping and the written table used for review).
+
+**Q4** *(tests @sec-07-authorisation-models · basic)* — **Correct: b.**
+The Guidance names PBAC supporting ABAC as the preferred model and
+recommends ABAC and PBAC over RBAC where the platform supports them
+(CSA, 2024, pp. 115, 122); RBAC's simplicity (a) is real but is not the
+Guidance's preference, and c and d mix in unrelated concepts.
+
+**Q5** *(tests @sec-07-protection-domains · basic)* — **Accepted answers:**
+"a protection domain is a set of (object, rights) pairs: which operations one
+actor may perform on which objects"; "on UNIX/Linux a process's protection
+domain is defined by its user and group identifiers (UID and GID)" (any
+phrasing naming (object, rights) pairs and UID/GID).
+
+**Q6** *(tests @sec-07-sso-pam · basic)* — **Correct: b.**
+The chapter states there is no single master password (which rules out a);
+each staff member holds administrative rights only on their own systems, and
+the PAM system logs accesses and alerts on suspicious privileged use — PAM
+is least privilege applied to administrators, not a replacement for MFA (c)
+or a firewall rule (d).
+
+**Q7** *(tests @sec-07-credentials-management-plane · basic)* — **Accepted
+answers:** "elevated access requested for a session, approved, and revoked
+when the session ends"; "it addresses static credentials — long-lived
+secrets such as API keys — because no permanent key exists to steal" (any
+phrasing with request/approve/revoke per session and the static-credential
+hazard).
+
+**Q8 — applied scenario** *(tests @sec-07-exercises · applied)* —
+**Model answer:** What it fixes: the password is no longer casually shared or
+reused, and reaching it now requires MFA — the password manager raises the
+cost of theft. What it still gets wrong: (1) the Nextcloud account itself
+still accepts a password alone, so a phished or breached password still logs
+in — MFA must be on the administrator account (@def-mfa), not only in front
+of the vault; (2) it is still one shared login, so no action can be traced to
+a person, which undermines the logs of Session 10 and the monitoring of
+Session 9; (3) least privilege (@def-leastpriv) is untouched — everyone with
+vault access holds full administrative power whether their task needs it or
+not. Change: per-person accounts with MFA on each, administrative rights only
+for those who need them (ordinary members get member access), ideally granted
+just in time. **Grading notes:** full credit requires naming both remaining
+failures (no MFA on the account itself / no traceability) plus least
+privilege; partial credit for recognising only one of them; the concrete
+change proposed must include per-person accounts with MFA.
+
+## Sketch answers to the chapter exercises
+
+(1) *(@exr-07-authn-vs-authz — Authentication vs authorisation)*
+Authentication verifies identity; authorisation decides permitted
+actions. A system authenticates a user correctly but then grants them
+administrator rights they do not need: correct identity, excessive
+authorisation.
+
+(2) *(@exr-07-three-factors — The three authentication factors)*
+Something one knows (password/PIN), something one has
+(phone/hardware token), something one is (biometric); MFA requires more than
+one category, so a stolen password satisfies only one factor and fails alone.
+
+(3) *(@exr-07-cloud-needs-mfa — Why the cloud needs MFA)*
+Broad network access: cloud services are reached over the Internet, so a
+lost or stolen credential leads to account takeover without the attacker
+being anywhere near the victim, and passwords alone cannot carry that risk.
+
+(4) *(@exr-07-rbac-vs-abac — RBAC vs ABAC)*
+RBAC grants permissions to roles and assigns identities to roles, simple
+but coarse; ABAC decides from attributes and context, fine-grained and
+context-aware. The Guidance prefers ABAC (and PBAC) where supported; both
+serve least privilege by granting only what the task and context require.
+
+(5) *(@exr-07-shared-admin — Shared admin account as threat–risk–control)*
+Threat: the shared password is phished or reused, giving an attacker full
+control of all files. Risk: high likelihood, maximal impact (all three CIA
+properties). Controls: require MFA on the admin account, apply least privilege
+to members, and replace the shared login with per-person accounts so that
+each action can be traced to a person.

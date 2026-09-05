@@ -1,0 +1,82 @@
+# Answer key — Chapter 01: Cloud computing and information security {.unnumbered}
+
+<!-- Source-only: this directory is excluded from the render in _quarto.yml
+     ("!answers/"). Never link these files from a chapter. Numbering must
+     match the chapter's Self-check section 1:1. -->
+
+**Q1** *(tests @sec-01-definition-cloud-computing · basic)* — **Correct: c.**
+The chapter states that of the five characteristics, resource pooling produces
+most of the security questions in this course, because sharing hardware with
+strangers is exactly what a traditional data centre never did
+(@sec-01-definition-cloud-computing).
+
+**Q2** *(tests @sec-01-cia-triad · basic)* — **Correct: d.**
+Per @def-cia and @exm-nextcloud-cia, an attacker who merely makes the service
+unreachable when it is needed attacks availability without reading or altering
+anything; the distractors confuse the three properties or assume all attacks
+must touch data.
+
+**Q3** *(tests @sec-01-threat-risk-control · basic)* — **Accepted answers:**
+"Risk is the weight of a threat, expressed as likelihood times impact",
+"likelihood × impact", "risk = likelihood times impact of a threat"
+(any phrasing that names likelihood and impact and ties risk to a threat,
+per @def-trc).
+
+**Q4** *(tests @sec-01-service-models · basic)* — **Correct: b.**
+The data row never leaves the customer's column in @tbl-sharedresp: even in
+SaaS the customer decides who may access which data and what published data
+reveals. Virtualisation, networking and (in PaaS/SaaS) the operating system
+move to the provider.
+
+**Q5** *(tests @sec-01-why-cloud-security · basic)* — **Accepted answers:**
+any two of: "lack of control and visibility", "infrastructure shared with
+outsiders", "large number of services with dependencies (larger attack
+surface)", "constantly changing set of running instances", "remote access for
+all users", "heavy use of software from the provider and third parties"
+(Comer's six factors, @sec-01-why-cloud-security).
+
+**Q6** *(tests @sec-01-why-cloud-security · basic)* — **Correct: c.**
+The chapter stresses that no system was breached and no password stolen: the
+failure was a governance decision — somebody chose what to publish without
+reasoning about what could be inferred from it (@exm-strava).
+
+**Q7 — applied scenario** *(tests @sec-01-service-models · applied)* —
+**Model answer:** Tasks that move to the provider (any two): operating-system
+patching, web-server/TLS configuration, server hardening, firewall management,
+hardware and hypervisor security. Responsibility that stays: the data row —
+deciding who may access which data and what shared/published data reveals
+(identities and configuration also acceptable). Why the claim is wrong: per
+@tbl-sharedresp the data row never leaves the customer's column, and the
+Strava case (@exm-strava) shows exactly this kind of customer-side governance
+decision failing even though no system was breached; the chapter concludes
+that no service model exists in which security is entirely somebody else's
+problem. **Grading notes:** full credit needs (a) two provider-side tasks,
+(b) the data/governance responsibility that stays, and (c) an explicit link
+to Strava or the "data row stays with the customer" rule. Partial credit for
+correctly split responsibilities without the Strava argument.
+
+## Sketch answers to the chapter exercises
+
+(1) *(@exr-01-five-characteristics — Five essential characteristics)*
+Self-service, broad network access, resource pooling, rapid elasticity,
+measured service: portal instead of ticket; created from anywhere; capacity
+was standing by, shared; one machine can become ten; billed by the hour.
+
+(2) *(@exr-01-strava-cia — Strava case, in CIA terms)*
+Confidentiality of the bases, not of the individuals; aggregation
+re-identified what anonymisation hid, so the governance decision to publish was
+the failure.
+
+(3) *(@exr-01-trc-vulnerability — Threat, risk, control for a vulnerability)*
+The customer's: in IaaS the customer manages from the operating
+system upward (@def-servicemodels, @tbl-sharedresp).
+
+(4) *(@exr-01-open-ssh-port — Open SSH port as threat–risk–control)*
+Threat: an attacker brute-forces SSH credentials. Risk: high likelihood
+(constant automated scanning) times high impact (full control). Control:
+key-only login restricted to the administrative address.
+
+(5) *(@exr-01-saas-reduces-risk — When SaaS reduces the risk)*
+SaaS removes OS patching, TLS configuration and server hardening; it does not
+remove deciding who may access which data, because the data row stays with the
+customer.

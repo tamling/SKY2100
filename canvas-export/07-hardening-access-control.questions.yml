@@ -1,0 +1,110 @@
+quiz_title: "Chapter 07 — Self-check"
+chapter: 07-hardening-access-control
+
+questions:
+  - id: q1
+    type: mcq
+    section: sec-07-identity-perimeter
+    difficulty: basic
+    text: "Why does the CSA Security Guidance call identity and access management the new perimeter of the cloud?"
+    options:
+      - "Because network firewalls cannot be deployed in cloud environments, identity checks are the only control left"
+      - "Because the provider consolidates all administration into one web console and one API reachable from the Internet, so the account that controls them is the way in"
+      - "Because IAM encrypts all traffic between the customer and the provider, replacing the older TLS perimeter"
+      - "Because the provider takes over all identity management under the shared-responsibility model, leaving the customer only the network to defend"
+    correct: 2
+
+  - id: q2
+    type: mcq
+    section: sec-07-authentication-mfa
+    difficulty: basic
+    text: "Which of the following combinations satisfies the definition of multi-factor authentication?"
+    options:
+      - "A password and a PIN"
+      - "A password and a hardware token"
+      - "Two different passwords for two different services"
+      - "A fingerprint and an iris scan"
+    correct: 2
+
+  - id: q3
+    type: short
+    section: sec-07-identity-perimeter
+    difficulty: basic
+    text: "In one or two sentences: what is an entitlement, and what is an entitlement matrix used for?"
+    answers:
+      - "mapping of identities to authorisations"
+      - "identity may access resource when attributes hold"
+      - "table of entitlements written down and reviewed"
+      - "shows whether least privilege holds"
+      - "maps who may access what, with conditions"
+
+  - id: q4
+    type: mcq
+    section: sec-07-authorisation-models
+    difficulty: basic
+    text: "Which authorisation model does the CSA Guidance name as preferred where the platform supports it?"
+    options:
+      - "RBAC, because it is simple, familiar and easy to audit"
+      - "PBAC supporting ABAC, because policies and attributes enable fine-grained, context-aware decisions"
+      - "RBAC combined with set-UID programs, because it mirrors the UNIX protection domain"
+      - "None of them: the Guidance recommends replacing authorisation models with least privilege"
+    correct: 2
+
+  - id: q5
+    type: short
+    section: sec-07-protection-domains
+    difficulty: basic
+    text: "In one or two sentences: what is a protection domain, and what defines the protection domain of a process on a UNIX or Linux system?"
+    answers:
+      - "a set of (object, rights) pairs"
+      - "which operations are permitted on which objects for one actor"
+      - "user and group identifiers"
+      - "UID and GID"
+
+  - id: q6
+    type: mcq
+    section: sec-07-sso-pam
+    difficulty: basic
+    text: "Which statement best describes privileged access management (PAM)?"
+    options:
+      - "A single, well-guarded master password that opens every system an organisation runs"
+      - "Identity management for the administrators themselves: each holds rights only on the systems they are responsible for, and all privileged accesses are logged and monitored"
+      - "A replacement for MFA on administrator accounts, since PAM makes a second factor unnecessary"
+      - "The firewall's default-deny rule applied to the management network"
+    correct: 2
+
+  - id: q7
+    type: short
+    section: sec-07-credentials-management-plane
+    difficulty: basic
+    text: "In one or two sentences: what is just-in-time (JIT) access, and which hazard does it address?"
+    answers:
+      - "elevated access requested for a session, approved, and revoked when the session ends"
+      - "no permanent key exists to steal"
+      - "addresses static credentials"
+      - "long-lived secrets such as API keys embedded in code"
+
+  - id: q8
+    type: applied
+    section: sec-07-exercises
+    difficulty: applied
+    text: >
+      Building on the "Shared admin account as threat–risk–control" exercise:
+      the team decides to keep the single shared Nextcloud administrator
+      account, but to store its password in a company password manager that
+      itself requires MFA. A colleague argues this now satisfies the chapter's
+      controls. Explain what this arrangement fixes and what it still gets
+      wrong, using least privilege, MFA on the account itself, and the
+      traceability of actions to a person; then state what you would change.
+    sample_answer: >
+      Fixes: the password is no longer casually shared or reused, and reaching
+      it requires MFA, raising the cost of theft. Still wrong: the Nextcloud
+      account itself still accepts a password alone, so a phished or breached
+      password still logs in (MFA must be on the account, not only the vault);
+      it is still one shared login, so no action can be traced to a person,
+      undermining monitoring and logs; and least privilege is untouched, since
+      everyone with vault access holds full administrative power. Change:
+      per-person accounts with MFA on each, administrative rights only for
+      those who need them, ideally granted just in time. Grading: full credit
+      needs both remaining failures (account-level MFA, traceability) plus
+      least privilege; partial credit for one.
