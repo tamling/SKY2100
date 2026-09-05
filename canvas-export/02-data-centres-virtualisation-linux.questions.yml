@@ -1,0 +1,107 @@
+# Questions file for chapters/02-data-centres-virtualisation-linux.qmd.
+# Content matches the chapter's Self-check section and
+# answers/02-data-centres-virtualisation-linux.qmd exactly (same numbering).
+quiz_title: "Chapter 02 — Self-check"
+chapter: 02-data-centres-virtualisation-linux
+
+questions:
+  - id: q1
+    type: mcq
+    section: sec-02-traffic-geography
+    difficulty: basic
+    text: >
+      Why does a leaf–spine network design replace a tree-shaped network in
+      cloud data centres?
+    options:
+      - "It encrypts north–south traffic before it leaves the building"
+      - "It removes the root-link bottleneck by giving any two servers an equal-cost path, which suits the dominant east–west traffic"
+      - "It reduces cooling costs by separating intake and exhaust air"
+      - "It physically separates each tenant's servers into their own rack"
+    correct: 2
+
+  - id: q2
+    type: mcq
+    section: sec-02-popek-goldberg
+    difficulty: basic
+    text: "According to the Popek–Goldberg criterion, a machine is cleanly virtualisable only if:"
+    options:
+      - "every sensitive instruction is a subset of the privileged instructions, so that it traps when a demoted guest attempts it"
+      - "every instruction is interpreted in software by the hypervisor"
+      - "the guest operating system is modified to call the hypervisor through hypercalls"
+      - "the processor has more than two privilege levels available"
+    correct: 1
+
+  - id: q3
+    type: mcq
+    section: sec-02-virtualisation
+    difficulty: basic
+    text: >
+      Which virtualisation approach is the cloud default, running the guest
+      unmodified with almost all instructions executing directly on the real
+      processor and only privileged operations trapping into the hypervisor?
+    options:
+      - "Software emulation"
+      - "Para-virtualisation"
+      - "Full virtualisation"
+      - "Containerisation"
+    correct: 3
+
+  - id: q4
+    type: short
+    section: sec-02-linux-four-pillars
+    difficulty: basic
+    text: >
+      Name the four pillars of the baseline that the observation commands
+      measure, and the fifth source that complements them.
+    answers:
+      - "cpu, memory, disk, network, plus logs"
+      - "cpu, memory, disk and network; logs"
+      - "cpu memory disk network logs"
+      - "the four pillars are cpu, memory, disk and network, complemented by logs (journalctl)"
+
+  - id: q5
+    type: short
+    section: sec-02-popek-goldberg
+    difficulty: basic
+    text: >
+      In one or two sentences: what is a VM escape, and why is it the
+      worst-case failure of isolation?
+    answers:
+      - "code breaks out of its guest into the hypervisor, and every guest above it is exposed"
+      - "an attacker escapes the virtual machine into the hypervisor and can reach the other guests"
+      - "breaking out of a guest vm into the hypervisor, exposing all other tenants' guests"
+
+  - id: q6
+    type: mcq
+    section: sec-02-distributed-system
+    difficulty: basic
+    text: "In the chapter's vocabulary, what does multi-tenancy mean?"
+    options:
+      - "One customer runs many virtual machines in many regions"
+      - "Many customers use the same physical hardware, the resource pooling of the cloud definition under another name"
+      - "A provider operates data centres in more than one country"
+      - "An organisation deliberately uses more than one cloud provider"
+    correct: 2
+
+  - id: q7
+    type: applied
+    section: sec-02-linux-four-pillars
+    difficulty: applied
+    text: >
+      Building on the exercise "Which command for which question": during a
+      morning check of the laboratory VM you notice that the disk is filling
+      unusually fast and that the machine is listening on a port that was not
+      in your recorded baseline. For each of the two observations, name the
+      command that revealed it, state why the recorded baseline is what makes
+      the observation meaningful, and formulate — in the vocabulary of the
+      threat–risk–control chain — the question you would ask next for each.
+    sample_answer: >
+      Disk filling fast: df -h (du -sh for a directory); possible log
+      flooding or data staged for exfiltration. Unexpected listening port:
+      ss -tulpn; a service nobody started. The baseline matters because
+      before something abnormal can be recognised, normal must be known —
+      only comparison against recorded healthy values shows these as
+      deviations. TRC question per observation: what threat could explain the
+      deviation, how likely is it and what impact would it have, and which
+      control would reduce that risk. Grading: two correct commands + role of
+      the baseline + a threat–risk–control formulation for each observation.

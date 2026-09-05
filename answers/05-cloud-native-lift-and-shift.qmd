@@ -1,0 +1,97 @@
+# Answer key — Chapter 05: Cloud-native versus lift-and-shift {.unnumbered}
+
+<!-- Source-only: this directory is excluded from the render in _quarto.yml
+     ("!answers/"). Never link these files from a chapter. Numbering must
+     match the chapter's Self-check section 1:1. -->
+
+**Q1** *(tests @sec-05-two-ways-into-the-cloud · basic)* — **Correct: b.**
+The chapter says "Refactoring adjusts the application to use some cloud
+services"; (a) is rehosting/lift-and-shift, (c) is re-architecting or
+rebuilding, and (d) is not one of the Guidance's three strategies.
+
+**Q2** *(tests @sec-05-containers · basic)* — **Correct: b.**
+A container "virtualises the operating system", using namespaces to give
+each container its own view of processes, files and network while sharing
+one kernel; (a) is what a virtual machine does, (c) and (d) are not
+described in the chapter.
+
+**Q3** *(tests @sec-05-the-kernel · basic)* — **Accepted answers:**
+"the image holds libraries and binaries but no kernel, so a Linux container
+needs a Linux kernel, and NT/XNU have no built-in idea of Linux containers;
+Docker Desktop runs a small Linux VM in the background (WSL 2 on Windows,
+the virtualisation framework on macOS) and the containers run on that
+kernel", any phrasing naming both halves: no kernel in the image /
+isolation enforced by the Linux kernel, and the hidden Linux VM.
+
+**Q4** *(tests @sec-05-the-kernel · basic)* — **Correct: c.**
+"A container is therefore an ordinary Linux process wrapped in a set of
+namespaces and a cgroup"; namespaces isolate the view of resources and
+cgroups cap consumption. (a) belongs to VMs, (b) to virtual networks
+(Session 4), and (d) are general kernel features, not the container
+mechanisms.
+
+**Q5** *(tests @sec-05-ephemeral-immutable · basic)* — **Accepted answers:**
+"a running instance is never modified in place; to change or fix it a new
+image is built and the instance replaced rather than patched",
+"replace, don't repair: rebuild the image and roll out fresh instances,
+retiring the compromised one" (any phrasing with both the never-modified-
+in-place definition and replace-rather-than-patch/repair as the response).
+
+**Q6** *(tests @sec-05-why-containers-orchestration · basic)* — **Correct: b.**
+"The need to scale on demand is therefore the reason why containers rather
+than VMs became the unit of cloud-native deployment; the thinner wall is
+the price." (a) inverts the chapter (VMs are the stronger boundary), (c) is
+false, and (d) contradicts the need for orchestration the same section
+introduces.
+
+**Q7 — applied scenario** *(tests @sec-05-ephemeral-immutable · applied)* —
+**Model answer:** the deployment is cloud-native/immutable
+(container built from an image), so the running instance is not patched at
+all; the correct control, as in @exm-patch-two-worlds, is to update the
+image, rebuild, and replace every running container, retiring the
+vulnerable ones. Patching in place is the lift-and-shift move from
+Session 2 and would make the running container diverge from its image.
+Justification by the three reasons (CSA, 2024, p. 180): (i) limited
+exposure — short-lived, replaced instances give an attacker little time;
+(ii) consistency — every instance comes from the same tested image, so
+hand-patching would reintroduce drift between instances; (iii) easier
+verification — one rebuilt image is tested once, whereas a hand-patched
+container must be assessed on its own again and again. Grading notes: full
+credit requires naming the world, the rebuild-and-replace control, and all
+three reasons applied to the scenario (not merely listed); partial credit
+for the correct control with one or two reasons, or for reasons listed
+without connecting them to the teammate's proposal.
+
+## Sketch answers to the chapter exercises
+
+**(1)** *(→ @exr-05-lift-vs-cloud-native, "Lift-and-shift vs cloud-native")*
+Lift-and-shift (rehosting) moves the application unchanged onto a rented
+VM; cloud-native rebuilds it around interchangeable instances, containers and
+managed services; refactoring sits between, with the application adjusted to
+use some cloud services without a full rebuild.
+
+**(2)** *(→ @exr-05-container-vm-isolation, "Container vs VM isolation")*
+A VM virtualises the hardware (its own guest OS on emulated devices); a
+container virtualises the operating system (its own process, file and
+network view, sharing the host kernel). The VM's wall is stronger; the
+container's thinner wall means a kernel or runtime flaw could let code
+escape between containers, so minimal, least-privilege containers matter.
+
+**(3)** *(→ @exr-05-immutable-safer, "Why immutable workloads are safer")*
+Limited exposure (short-lived instances give an attacker little time),
+consistency (every instance comes from the same tested image, preventing
+configuration drift), and easier verification (one image is tested rather
+than many hand-maintained machines audited).
+
+**(4)** *(→ @exr-05-vulnerable-dependency, "A vulnerable dependency")*
+Lift-and-shift: patch the running VM in place, as in Chapter 1.
+Cloud-native: rebuild the image with the fix and replace the running
+instances, retiring the vulnerable ones. They differ because the two worlds
+treat a running instance differently, one maintained and one immutable and
+disposable.
+
+**(5)** *(→ @exr-05-network-scanning-fails, "Why network scanning fails")*
+Default-deny security groups block the scanner and there is no
+stable host or address to scan; instead, the container or VM image is
+assessed at build time, before deployment, so that only known-good images
+run.

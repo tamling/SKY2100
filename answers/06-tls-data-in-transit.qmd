@@ -1,0 +1,102 @@
+# Answer key — Chapter 06: TLS and data in transit {.unnumbered}
+
+<!-- Source-only: this directory is excluded from the render in _quarto.yml
+     ("!answers/"). Never link these files from a chapter. Numbering must
+     match the chapter's Self-check section 1:1. -->
+
+**Q1** *(tests @sec-06-three-data-states · basic)* — **Correct: c.**
+The chapter says data in use is "the hardest state to protect" because the
+program working on the data must be able to read it; (a), (b) and (d)
+describe real exposures of the other states but not the chapter's reason
+for the hardest one.
+
+**Q2** *(tests @sec-06-two-crypto-families · basic)* — **Correct: c.**
+"TLS therefore uses asymmetric encryption once, at the start, to agree on a
+fresh symmetric key, and then uses that key for the data: slow handshake,
+fast conversation." (a) and (b) each invert one family's strength, and (d)
+has no basis in the chapter.
+
+**Q3** *(tests @sec-06-two-crypto-families · basic)* — **Accepted answers:**
+"a certificate binds a public key to an identity (a domain name), and a
+certificate authority both parties trust vouches for it by its signature",
+"public key ↔ domain name, signed by a trusted CA within the PKI" (any
+phrasing naming the public key, the identity/domain, and the CA's
+signature).
+
+**Q4** *(tests @sec-06-tls · basic)* — **Correct: a.**
+The chapter lists confidentiality (eavesdroppers see only ciphertext),
+integrity (tampering is detected) and server authentication (the client is
+talking to the certified server); availability and non-repudiation are not
+among TLS's properties here, and it is the server, not the client, that is
+authenticated.
+
+**Q5** *(tests @sec-06-tls · basic)* — **Accepted answers:**
+"decrypting traffic at a gateway, examining it and re-encrypting it onward;
+it restores inspection but breaks end-to-end confidentiality at one trusted
+point, with a concentration risk", "TLS termination / break-and-inspect at
+a gateway; the trade-off is end-to-end confidentiality" (any phrasing with
+decrypt–inspect–re-encrypt and the loss of end-to-end confidentiality at a
+trusted point).
+
+**Q6** *(tests @sec-06-vpns-data-on-move · basic)* — **Correct: b.**
+"A VPN thus protects the whole connection where TLS protects one
+application's": the tunnel carries all of a device's packets to the
+organisation's cloud data centre. (a) confuses the VPN with whole-disk
+encryption, (c) inverts TLS's server authentication, and (d) is not stated
+anywhere in the chapter.
+
+**Q7 — applied scenario** *(tests @sec-06-tls · applied)* —
+**Model answer:** what HTTPS protects: the confidentiality and integrity of
+the file and credentials *in motion*, plus server authentication — the
+interceptor on the network path now sees only ciphertext (@exm-tls-trc).
+What it does not cover (any three, each with its control/session): (i) the
+same file at rest on the server's disk — storage encryption and backups,
+Session 11; (ii) the file in use / who may open it at all — access control,
+Session 7; (iii) an application flaw such as SQL injection that makes the
+server hand over decrypted data — application security, Session 8, and the
+limitations section: encryption is bypassed, not broken; (iv) old protocol
+versions left enabled — enforce TLS 1.2 minimum and disable 1.0/1.1,
+because a downgrade undoes the protection; (v) an expired certificate
+breaking the service; (vi) private keys stored in a file beside the
+application instead of a managed key store (Azure Key Vault, AWS KMS).
+Grading notes: full credit needs the in-motion scope stated correctly plus
+three distinct gaps each paired with the matching control or session;
+partial credit for correct scope with fewer gaps, or gaps without the
+pairing. "The claim is simply wrong" without the scope earns little.
+
+## Sketch answers to the chapter exercises
+
+**(1)** *(→ @exr-06-three-data-states, "The three data states")*
+At rest: `salary_list.pdf` on the server's disk, protected by
+storage encryption and backups (Session 11); in motion: the same file
+downloaded over the network, protected by TLS (this session); in use: the
+file open in the application's memory, protected by access controls
+(Session 7).
+
+**(2)** *(→ @exr-06-why-both-cipher-types, "Why TLS uses both cipher types")*
+Asymmetric encryption lets the parties agree a key over an untrusted
+network (the public key may travel in the open) but is slow; symmetric
+encryption is fast enough for bulk data but needs a shared key first. TLS
+uses asymmetric encryption once to establish a symmetric session key, then
+symmetric encryption for the data, each where it is strong.
+
+**(3)** *(→ @exr-06-trusting-public-key, "Trusting a server public key")*
+The public key arrives inside a certificate signed by a certificate
+authority the browser already trusts, so the browser can verify that the
+key belongs to that domain; the system is the public-key infrastructure
+(PKI). Without it, an attacker in the middle could supply their own key.
+
+**(4)** *(→ @exr-06-http-to-https-trc, "http to https as threat–risk–control")*
+Threat: someone on the network path reads files and passwords sent in clear
+HTTP. Risk: on an untrusted network, likelihood real, impact high
+(confidentiality of data and credentials). Control: serve over HTTPS so
+that TLS encrypts the transport and the certificate authenticates the
+server. It does not protect the same data at rest on the server or decide
+who may access it.
+
+**(5)** *(→ @exr-06-encrypted-at-rest-stolen, "Encrypted at rest, still stolen")*
+The application decrypts the data to answer requests, so a flaw that makes
+it answer the attacker returns plaintext: at-rest encryption is bypassed,
+not broken. Controls must be chosen against the actual threat; encryption
+is one layer and does not substitute for secure application code or access
+control.
