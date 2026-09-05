@@ -136,14 +136,6 @@ and finding it now is the purpose of the exercise.
 
 ## Self-check {#sec-13-self-check}
 
-::: {.callout-note}
-## Check your understanding in Canvas
-
-These questions are also available as a self-marking quiz in Canvas:
-**[Chapter 13 self-check quiz](CANVAS-QUIZ-URL-PLACEHOLDER)** *(link added
-once the quiz is imported — see `canvas-export/README.md`)*.
-:::
-
 **Q1** *(tests @sec-13-csf-mapping · basic)*
 Which option names the six Functions of the NIST Cybersecurity
 Framework 2.0?

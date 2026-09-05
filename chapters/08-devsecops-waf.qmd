@@ -234,14 +234,6 @@ runtime control could block exploitation even if it is?
 
 ## Self-check {#sec-08-self-check}
 
-::: {.callout-note}
-## Check your understanding in Canvas
-
-These questions are also available as a self-marking quiz in Canvas:
-**[Chapter 08 self-check quiz](CANVAS-QUIZ-URL-PLACEHOLDER)** *(link added
-once the quiz is imported — see `canvas-export/README.md`)*.
-:::
-
 **Q1** *(tests @sec-08-application-security · basic)*
 During an incident involving a newly disclosed library vulnerability, what
 is the one question the software bill of materials (SBOM) answers?

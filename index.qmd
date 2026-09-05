@@ -1,21 +1,35 @@
-# Welcome {.unnumbered}
+# A guidance to SKY2100 {.unnumbered}
 
-This is the course script for SKY2100: thirteen chapters, one per session,
-plus a consolidated reading list in the appendix.
+This script accompanies the course **SKY2100 Cloud Security**. Each chapter
+belongs to one session: Chapter 1 to Session 1, Chapter 2 to Session 2, and so
+on. The lecture slides follow the same structure.
 
-Every chapter ends with a **Self-check** section: 5–8 questions (multiple
-choice, short answer, and one applied/scenario question tied to the chapter's
-practice box), each marked with the section it tests and a difficulty tag.
-Answers are **not** shown in the script — they live in the source-only
-`answers/` directory and are exported as a Canvas quiz, linked at the top of
-each Self-check section.
+The script is meant to be read **before** the session. It states in connected
+text what the slides sketch, works through the examples, and names at the end
+of every chapter what to read next in the course books. The books remain the
+curriculum: the *CSA Security Guidance v5* (CSA, 2024), Jøsang's
+*Cybersecurity: Technology and Governance* (Jøsang, 2024) and Comer's *The
+Cloud Computing Book* (Comer, 2021). Tanenbaum and Bos's *Modern Operating
+Systems* (Tanenbaum & Bos, 2015) supplies the operating-systems foundations of
+Sessions 2 and 7. The consolidated plan is in the [reading
+list](appendix/reading-list.qmd).
 
-::: {.content-visible when-meta="annotations"}
+Three conventions apply. Every concept receives one definition, numbered,
+before it is used. Every session names a threat, judges its risk and derives a
+control in the vocabulary of Chapter 1. Citations give page numbers, so that
+every claim drawn from the course books can be checked at the source.
+
+The SQ3R method fits the chapters: survey the headings and figures, formulate
+the questions the chapter should answer, read with those questions in mind,
+recite the answers in your own words, and review after a few days. The
+exercises and the **Self-check** questions at the end of every chapter support
+the last two steps; their answers are deliberately not printed in the script.
+
 ::: {.callout-tip}
-## Annotations are enabled
+## Annotate this script
 
 You can highlight and annotate any passage of this script with Hypothesis —
-see [How to annotate](appendix/how-to-annotate.qmd) for what counts as a
-substantive contribution and how contributions are credited.
-:::
+select text and comment directly in the margin. See [How to
+annotate](appendix/how-to-annotate.qmd) for what counts as a substantive
+contribution and how merged contributions are credited.
 :::

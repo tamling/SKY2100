@@ -10,16 +10,12 @@ project:
     - "!answers/"
 
 # ── Annotations (Hypothesis) ─────────────────────────────────────────────
-# Off by default until the Canvas LTI setup is confirmed. This flag is
-# flipped — and the Hypothesis embed script injected into every HTML page
-# via include-in-header — by the "annotations" render profile:
-#
-#     quarto render --profile annotations
-#
-# See _quarto-annotations.yml (the profile) and includes/hypothesis.html
-# (the embed snippet). Pages can also read the flag as {{< meta annotations >}}
-# to show/hide annotation instructions.
-annotations: false
+# ON by default: every HTML page loads the Hypothesis client (see
+# includes/hypothesis.html) so students can annotate directly. Set to
+# false (and drop include-in-header below) to switch the layer off again;
+# pages read the flag as {{< meta annotations >}} to show/hide
+# annotation instructions.
+annotations: true
 
 book:
   title: "SKY2100 — Course Script"
@@ -49,3 +45,4 @@ format:
     theme: cosmo
     toc: true
     number-sections: true
+    include-in-header: includes/hypothesis.html

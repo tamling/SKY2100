@@ -243,14 +243,6 @@ not help, and what does this imply for choosing controls?
 
 ## Self-check {#sec-06-self-check}
 
-::: {.callout-note}
-## Check your understanding in Canvas
-
-These questions are also available as a self-marking quiz in Canvas:
-**[Chapter 06 self-check quiz](CANVAS-QUIZ-URL-PLACEHOLDER)** *(link added
-once the quiz is imported — see `canvas-export/README.md`)*.
-:::
-
 **Q1** *(tests @sec-06-three-data-states · basic)*
 According to the chapter, which state of data is the hardest to protect,
 and why?

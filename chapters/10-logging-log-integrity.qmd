@@ -242,14 +242,6 @@ matter for the incident response of Session 12?
 
 ## Self-check {#sec-10-self-check}
 
-::: {.callout-note}
-## Check your understanding in Canvas
-
-These questions are also available as a self-marking quiz in Canvas:
-**[Chapter 10 self-check quiz](CANVAS-QUIZ-URL-PLACEHOLDER)** *(link added
-once the quiz is imported — see `canvas-export/README.md`)*.
-:::
-
 **Q1** *(tests @sec-10-logs-events · basic)*
 According to the Guidance's separation of logs and events, which statement
 is correct?

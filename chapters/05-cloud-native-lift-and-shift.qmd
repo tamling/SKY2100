@@ -300,14 +300,6 @@ cloud-native workloads, and what does the Guidance recommend instead?
 
 ## Self-check {#sec-05-self-check}
 
-::: {.callout-note}
-## Check your understanding in Canvas
-
-These questions are also available as a self-marking quiz in Canvas:
-**[Chapter 05 self-check quiz](CANVAS-QUIZ-URL-PLACEHOLDER)** *(link added
-once the quiz is imported — see `canvas-export/README.md`)*.
-:::
-
 **Q1** *(tests @sec-05-two-ways-into-the-cloud · basic)*
 The CSA Guidance names three migration strategies. Which of the following
 describes *refactoring*?

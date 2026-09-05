@@ -352,14 +352,6 @@ control for an SSH port left open to the whole Internet, and give the
 
 ## Self-check {#sec-04-self-check}
 
-::: {.callout-note}
-## Check your understanding in Canvas
-
-These questions are also available as a self-marking quiz in Canvas:
-**[Chapter 04 self-check quiz](CANVAS-QUIZ-URL-PLACEHOLDER)** *(link added
-once the quiz is imported — see `canvas-export/README.md`)*.
-:::
-
 **Q1** *(tests @sec-04-addresses-ports-attack-surface · basic)*
 Which of the following does the pair *(IP address, port)* identify?
 

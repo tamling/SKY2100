@@ -22,9 +22,8 @@ jobs:
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
           version: 1.6.42
-      # Default profile: annotations stay off; answers/ is excluded by
-      # _quarto.yml. Switch to `quarto render --profile annotations` once
-      # the Canvas LTI setup is confirmed.
+      # Annotations (Hypothesis) are on by default via _quarto.yml;
+      # answers/ is excluded from the render there.
       - run: quarto render
       - uses: actions/upload-pages-artifact@v3
         with:

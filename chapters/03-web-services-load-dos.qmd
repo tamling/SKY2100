@@ -325,14 +325,6 @@ it, and why would a CDN alone not suffice?
 
 ## Self-check {#sec-03-self-check}
 
-::: {.callout-note}
-## Check your understanding in Canvas
-
-These questions are also available as a self-marking quiz in Canvas:
-**[Chapter 03 self-check quiz](CANVAS-QUIZ-URL-PLACEHOLDER)** *(link added
-once the quiz is imported — see `canvas-export/README.md`)*.
-:::
-
 **Q1** *(tests @sec-03-web-services-capacity · basic)*
 How does this chapter say a web server's capacity should be established?
 

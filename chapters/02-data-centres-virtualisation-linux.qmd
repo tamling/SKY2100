@@ -392,14 +392,6 @@ first?
 
 ## Self-check {#sec-02-self-check}
 
-::: {.callout-note}
-## Check your understanding in Canvas
-
-These questions are also available as a self-marking quiz in Canvas:
-**[Chapter 02 self-check quiz](CANVAS-QUIZ-URL-PLACEHOLDER)** *(link added
-once the quiz is imported — see `canvas-export/README.md`)*.
-:::
-
 **Q1** *(tests @sec-02-traffic-geography · basic)*
 Why does a leaf–spine network design replace a tree-shaped network in cloud
 data centres?

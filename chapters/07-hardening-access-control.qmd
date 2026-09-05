@@ -306,14 +306,6 @@ a password.
 
 ## Self-check {#sec-07-self-check}
 
-::: {.callout-note}
-## Check your understanding in Canvas
-
-These questions are also available as a self-marking quiz in Canvas:
-**[Chapter 07 self-check quiz](CANVAS-QUIZ-URL-PLACEHOLDER)** *(link added
-once the quiz is imported — see `canvas-export/README.md`)*.
-:::
-
 **Q1** *(tests @sec-07-identity-perimeter · basic)*
 Why does the CSA Security Guidance call identity and access management the
 new perimeter of the cloud?
