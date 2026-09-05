@@ -1,0 +1,21 @@
+# Welcome {.unnumbered}
+
+This is the course script. Chapters are added to `_quarto.yml` under
+`book.chapters` as they are converted.
+
+Every chapter ends with a **Self-check** section: 5–8 questions (multiple
+choice, short answer, and one applied/scenario question tied to the chapter's
+practice box), each marked with the section it tests and a difficulty tag.
+Answers are **not** shown in the script — they live in the source-only
+`answers/` directory and are exported as a Canvas quiz, linked at the top of
+each Self-check section.
+
+::: {.content-visible when-meta="annotations"}
+::: {.callout-tip}
+## Annotations are enabled
+
+You can highlight and annotate any passage of this script with Hypothesis —
+see [How to annotate](appendix/how-to-annotate.qmd) for what counts as a
+substantive contribution and how contributions are credited.
+:::
+:::

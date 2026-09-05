@@ -1,0 +1,13 @@
+# Render profile that switches the Hypothesis annotation layer ON:
+#
+#     quarto render --profile annotations
+#
+# It flips the `annotations` metadata flag and injects the Hypothesis
+# embed script into the <head> of every HTML page. The default render
+# (plain `quarto render`) includes neither — annotations stay off until
+# the Canvas LTI setup is confirmed.
+annotations: true
+
+format:
+  html:
+    include-in-header: includes/hypothesis.html

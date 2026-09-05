@@ -1,0 +1,40 @@
+project:
+  type: book
+  output-dir: _site
+  render:
+    - "*.qmd"
+    - "appendix/*.qmd"
+    # Answer keys are source-only: answers/ is excluded from every render,
+    # so no answer ever appears on the published site. Keys are exported to
+    # Canvas via canvas-export/make_canvas_quiz.py instead.
+    - "!answers/"
+
+# ── Annotations (Hypothesis) ─────────────────────────────────────────────
+# Off by default until the Canvas LTI setup is confirmed. This flag is
+# flipped — and the Hypothesis embed script injected into every HTML page
+# via include-in-header — by the "annotations" render profile:
+#
+#     quarto render --profile annotations
+#
+# See _quarto-annotations.yml (the profile) and includes/hypothesis.html
+# (the embed snippet). Pages can also read the flag as {{< meta annotations >}}
+# to show/hide annotation instructions.
+annotations: false
+
+book:
+  title: "SKY2100 — Course Script"
+  # Add converted chapters here as they land, e.g.:
+  #   - chapters/01-introduction.qmd
+  #   - chapters/02-....qmd
+  # Each chapter ends with a "Self-check" section — see
+  # _templates/chapter-self-check.qmd for the required format.
+  chapters:
+    - index.qmd
+  appendices:
+    - appendix/how-to-annotate.qmd
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    number-sections: true
