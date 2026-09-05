@@ -43,7 +43,7 @@ book:
 format:
   html:
     theme:
-      light: cosmo
+      light: [cosmo, theme-light.scss]
       dark: [darkly, theme-dark.scss]
     toc: true
     number-sections: true
