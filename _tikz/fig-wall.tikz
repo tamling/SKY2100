@@ -1,0 +1,11 @@
+\begin{tikzpicture}
+  \draw[flow] (0,0) -- (6.4,0) node[right, font=\footnotesize] {load};
+  \draw[flow] (0,0) -- (0,3.6) node[above, font=\footnotesize] {response time};
+  \draw[kristiania, line width=1.1pt]
+    (0,0.4) .. controls (2.4,0.5) and (3.4,0.6) .. (4.1,0.95)
+    .. controls (4.7,1.5) and (5.0,2.6) .. (5.15,3.3);
+  \draw[kgrey, dashed] (4.1,0) -- (4.1,0.95);
+  \node[font=\footnotesize, text=kgrey, anchor=north] at (4.1,-0.05) {capacity};
+  \node[font=\footnotesize\itshape, text=kristiania] at (1.9,0.95) {graceful};
+  \node[font=\footnotesize\itshape, text=kristiania, anchor=west] at (4.7,2.5) {the wall};
+\end{tikzpicture}

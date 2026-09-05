@@ -9,6 +9,7 @@ includes/hypothesis.html  the Hypothesis embed snippet (header include)
 index.qmd                 book landing page
 chapters/                 converted chapters land here (NN-name.qmd)
 _templates/               Self-check section template for chapters
+_tikz/                    TikZ sources for the figures + build.sh → chapters/figures/*.svg
 answers/                  per-chapter answer keys — source-only, never rendered
 canvas-export/            per-chapter questions.yml → Canvas QTI zip + CSV
 appendix/how-to-annotate.qmd  annotation rules, quota, credit flow

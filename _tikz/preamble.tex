@@ -1,0 +1,15 @@
+\documentclass[tikz,border=5pt]{standalone}
+\usepackage[T1]{fontenc}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\definecolor{kristiania}{RGB}{216,30,46}
+\definecolor{kgrey}{RGB}{112,112,112}
+\definecolor{klight}{RGB}{243,243,243}
+\definecolor{kmid}{RGB}{158,158,158}
+\tikzset{
+  box/.style={draw=kgrey, fill=klight, rounded corners=1.5pt, align=center, inner sep=4pt},
+  redbox/.style={draw=kristiania, fill=kristiania!6, rounded corners=1.5pt, align=center, inner sep=4pt},
+  flow/.style={-{Stealth[length=2.2mm]}, kgrey, line width=0.7pt},
+  redflow/.style={-{Stealth[length=2.2mm]}, kristiania, line width=0.8pt},
+  lbl/.style={font=\scriptsize\itshape, text=kgrey},
+}
+\begin{document}

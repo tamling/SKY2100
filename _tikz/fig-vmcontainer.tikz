@@ -1,0 +1,17 @@
+\begin{tikzpicture}[font=\footnotesize]
+  \tikzset{blk/.style={draw=kgrey, fill=klight, rounded corners=1.5pt}}
+  % ---- VM stack (left) ----
+  \node[font=\small\bfseries, text=kgrey] at (1.6,3.4) {Virtual machines};
+  \filldraw[blk] (0,0)   rectangle (3.2,0.7);  \node at (1.6,0.35) {Hardware};
+  \filldraw[blk] (0,0.8) rectangle (3.2,1.5);  \node at (1.6,1.15) {Hypervisor};
+  \filldraw[blk] (0,1.6) rectangle (1.5,3.0);  \node[align=center] at (0.75,2.3) {Guest OS\\+ App};
+  \filldraw[blk] (1.7,1.6) rectangle (3.2,3.0); \node[align=center] at (2.45,2.3) {Guest OS\\+ App};
+  % ---- Container stack (right) ----
+  \node[font=\small\bfseries, text=kgrey] at (6.7,3.4) {Containers};
+  \filldraw[blk] (5.1,0)   rectangle (8.3,0.7);  \node at (6.7,0.35) {Hardware};
+  \filldraw[blk] (5.1,0.8) rectangle (8.3,1.5);  \node at (6.7,1.15) {Host OS (shared kernel)};
+  \filldraw[blk] (5.1,1.6) rectangle (8.3,2.3);  \node at (6.7,1.95) {Container engine};
+  \filldraw[blk] (5.1,2.4) rectangle (6.1,3.0);  \node at (5.6,2.7) {App};
+  \filldraw[blk] (6.2,2.4) rectangle (7.2,3.0);  \node at (6.7,2.7) {App};
+  \filldraw[blk] (7.3,2.4) rectangle (8.3,3.0);  \node at (7.8,2.7) {App};
+\end{tikzpicture}

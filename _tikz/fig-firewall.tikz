@@ -1,0 +1,9 @@
+\begin{tikzpicture}[font=\footnotesize, node distance=7mm]
+  \node[font=\small\itshape, text=kgrey, align=center] (in) at (0,0) {incoming\\traffic};
+  \node[redbox, right=10mm of in] (fw) {firewall\\(rule list)};
+  \node[box, right=13mm of fw] (svc) {service};
+  \draw[flow] (in) -- (fw);
+  \draw[flow] (fw) -- (svc) node[midway, above, font=\scriptsize]{allowed :80, :443};
+  \draw[-{Stealth[length=2mm]}, kristiania, line width=0.7pt] (fw.south) -- ++(0,-0.9)
+    node[below, font=\scriptsize, text=kristiania]{everything else: dropped};
+\end{tikzpicture}

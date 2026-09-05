@@ -1,0 +1,28 @@
+\begin{tikzpicture}[font=\footnotesize]
+  \tikzset{on/.style={fill=kristiania!16, draw=kristiania, line width=0.5pt},
+           off/.style={fill=klight, draw=kmid, line width=0.4pt}}
+  % column headers (layers) -- widely spaced, smaller font, no overlap
+  \node[font=\footnotesize\bfseries, text=kgrey, align=center] at (1.9,2.35) {L3\\Network (IP)};
+  \node[font=\footnotesize\bfseries, text=kgrey, align=center] at (5.2,2.35) {L4\\Transport (ports)};
+  \node[font=\footnotesize\bfseries, text=kgrey, align=center] at (8.5,2.35) {L7\\Application (HTTP)};
+  % row: packet filter
+  \node[font=\footnotesize, text=kgrey, anchor=east] at (0.55,1.60) {packet filter};
+  \filldraw[on]  (0.9,1.35) rectangle (2.9,1.85);
+  \filldraw[on]  (4.2,1.35) rectangle (6.2,1.85);
+  \filldraw[off] (7.5,1.35) rectangle (9.5,1.85);
+  % row: stateful
+  \node[font=\footnotesize, text=kgrey, anchor=east] at (0.55,0.95) {stateful};
+  \filldraw[on]  (0.9,0.70) rectangle (2.9,1.20);
+  \filldraw[on]  (4.2,0.70) rectangle (6.2,1.20);
+  \filldraw[off] (7.5,0.70) rectangle (9.5,1.20);
+  % row: NGFW
+  \node[font=\footnotesize, text=kgrey, anchor=east] at (0.55,0.30) {NGFW};
+  \filldraw[on]  (0.9,0.05) rectangle (2.9,0.55);
+  \filldraw[on]  (4.2,0.05) rectangle (6.2,0.55);
+  \filldraw[on]  (7.5,0.05) rectangle (9.5,0.55);
+  % row: WAF
+  \node[font=\footnotesize, text=kgrey, anchor=east] at (0.55,-0.35) {WAF};
+  \filldraw[off] (0.9,-0.60) rectangle (2.9,-0.10);
+  \filldraw[off] (4.2,-0.60) rectangle (6.2,-0.10);
+  \filldraw[on]  (7.5,-0.60) rectangle (9.5,-0.10);
+\end{tikzpicture}

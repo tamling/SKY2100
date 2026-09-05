@@ -1,0 +1,13 @@
+\begin{tikzpicture}[font=\footnotesize, node distance=5mm]
+  \node[box] (dev)  {Dev};
+  \node[box, below=3mm of dev] (test) {Test};
+  \node[box, below=3mm of test] (prod) {Prod};
+  \node[box, right=16mm of test] (central) {central log\\repository};
+  \node[box, right=14mm of central] (audit) {security /\\audit store};
+  \node[redbox, right=14mm of audit] (siem) {SIEM};
+  \draw[flow] (dev.east)  -- (central.west);
+  \draw[flow] (test.east) -- (central.west);
+  \draw[flow] (prod.east) -- (central.west);
+  \draw[flow] (central) -- (audit) node[midway, above, font=\scriptsize\itshape]{filter};
+  \draw[flow] (audit) -- (siem);
+\end{tikzpicture}

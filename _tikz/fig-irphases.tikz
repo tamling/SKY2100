@@ -1,0 +1,16 @@
+\begin{tikzpicture}[font=\footnotesize, node distance=3mm]
+  \tikzset{ph/.style={draw=kristiania, fill=kristiania!8, rounded corners=2pt,
+      text width=2.9cm, minimum height=1.0cm, align=center, font=\small\bfseries, text=kgrey},
+    act/.style={text width=3.0cm, align=left, font=\scriptsize, text=kgrey}}
+  \node[ph] (p1) {Preparation};
+  \node[ph, right=6mm of p1] (p2) {Detection \& Analysis};
+  \node[ph, right=6mm of p2] (p3) {Containment, Eradication \& Recovery};
+  \node[ph, right=6mm of p3] (p4) {Post-Incident Analysis};
+  \draw[redflow] (p1) -- (p2);
+  \draw[redflow] (p2) -- (p3);
+  \draw[redflow] (p3) -- (p4);
+  \node[act, below=2mm of p1.south] {baseline, monitoring, tested backups, named team};
+  \node[act, below=2mm of p2.south] {validate alert, scope, build the attack timeline from logs};
+  \node[act, below=2mm of p3.south] {isolate IAM \& workloads, rotate creds, delete stale images, restore clean};
+  \node[act, below=2mm of p4.south] {what to detect sooner; feed lessons back to preparation};
+\end{tikzpicture}

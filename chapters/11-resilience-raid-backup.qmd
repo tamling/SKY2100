@@ -47,47 +47,7 @@ failure. **RAID 5** and **RAID 6** distribute data with
 space more efficiently than mirroring.
 :::
 
-::: {#fig-raid}
-<!-- TODO: redraw for web. Original TikZ:
-\begin{tikzpicture}[font=\footnotesize]
-  \tikzset{
-    d/.style={draw=kgrey, fill=klight, minimum width=0.9cm, minimum height=0.55cm, inner sep=0pt},
-    p/.style={draw=kristiania, fill=kristiania!12, minimum width=0.9cm, minimum height=0.55cm, inner sep=0pt},
-    dl/.style={font=\scriptsize\itshape, text=kgrey},
-  }
-  % ---------- RAID 0 : striping ----------
-  \node[font=\small\bfseries, text=kgrey] at (0.95,2.55) {RAID 0};
-  \node[dl] at (0.95,2.15) {striping};
-  \node[d] (r0a) at (0.45,1.2) {A};   \node[d] at (0.45,0.6) {C};
-  \node[d] (r0b) at (1.45,1.2) {B};   \node[d] at (1.45,0.6) {D};
-  \node[dl] at (0.45,0.05) {disk 1};  \node[dl] at (1.45,0.05) {disk 2};
-  \node[dl, text width=2.4cm, align=center] at (0.95,-0.55) {blocks split; fast, \emph{no} copy};
-
-  % ---------- RAID 1 : mirroring ----------
-  \node[font=\small\bfseries, text=kgrey] at (4.15,2.55) {RAID 1};
-  \node[dl] at (4.15,2.15) {mirroring};
-  \node[d] at (3.65,1.2) {A};   \node[d] at (3.65,0.6) {B};
-  \node[d] at (4.65,1.2) {A};   \node[d] at (4.65,0.6) {B};
-  \node[dl] at (3.65,0.05) {disk 1};  \node[dl] at (4.65,0.05) {disk 2};
-  \node[dl, text width=2.6cm, align=center] at (4.15,-0.55) {same data twice; a copy survives};
-
-  % ---------- RAID 5 : parity ----------
-  \node[font=\small\bfseries, text=kgrey] at (8.35,2.55) {RAID 5};
-  \node[dl] at (8.35,2.15) {striping + parity};
-  \node[d] at (7.35,1.2) {A1};  \node[d] at (7.35,0.6) {B1};
-  \node[d] at (8.35,1.2) {A2};  \node[p] at (8.35,0.6) {P};
-  \node[p] at (9.35,1.2) {P};   \node[d] at (9.35,0.6) {B2};
-  \node[dl] at (7.35,0.05) {disk 1};  \node[dl] at (8.35,0.05) {disk 2};  \node[dl] at (9.35,0.05) {disk 3};
-  \node[dl, text width=3.0cm, align=center] at (8.35,-0.55) {data + rotating parity (\textcolor{kristiania}{P}); one disk may fail};
-\end{tikzpicture}
--->
-*[Diagram — three side-by-side panels showing disk blocks under RAID 0 (blocks A–D split across two disks, "blocks split; fast, no copy"), RAID 1 (blocks A and B duplicated on both disks, "same data twice; a copy survives") and RAID 5 (data blocks plus rotating parity blocks P across three disks, "data + rotating parity (P); one disk may fail").]*
-
-Three RAID levels. Striping (RAID 0) spreads blocks for speed with
-no redundancy; mirroring (RAID 1) keeps a full second copy; parity (RAID 5)
-distributes data and parity so that any one disk can be rebuilt. None of them
-is a backup.
-:::
+![Three RAID levels. Striping (RAID 0) spreads blocks for speed with no redundancy; mirroring (RAID 1) keeps a full second copy; parity (RAID 5) distributes data and parity so that any one disk can be rebuilt. None of them is a backup.](figures/fig-raid.svg){#fig-raid fig-alt="Diagram — three side-by-side panels showing disk blocks under RAID 0 (blocks A–D split across two disks, 'blocks split; fast, no copy'), RAID 1 (blocks A and B duplicated on both disks, 'same data twice; a copy survives') and RAID 5 (data blocks plus rotating parity blocks P across three disks, 'data + rotating parity (P); one disk may fail')."}
 
 RAID 0 is the trap in this list. Its name and its place among the redundant
 arrays suggest safety, but it offers striping for speed with no redundancy

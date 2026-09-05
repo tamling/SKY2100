@@ -83,50 +83,9 @@ could have been noticed earlier, which data was missing when it was needed,
 and whether the process itself has to change (CSA, 2024, pp. 255,
 269–270), and the answers go back into preparation.
 
-::: {#fig-irloop}
-<!-- TODO: redraw for web. Original TikZ:
-\begin{tikzpicture}[font=\footnotesize]
-  \node[redbox, text width=2.7cm] (prep) at (0,2.5)     {\textbf{Preparation}};
-  \node[redbox, text width=2.7cm] (det)  at (4.6,1.25)   {\textbf{Detection \& Analysis}};
-  \node[redbox, text width=2.7cm] (con)  at (0,0)        {\textbf{Containment, Eradication \& Recovery}};
-  \node[redbox, text width=2.7cm] (post) at (-4.6,1.25)  {\textbf{Post-Incident Analysis}};
-  \draw[redflow] (prep) -- (det);
-  \draw[redflow] (det) -- (con);
-  \draw[redflow] (con) -- (post);
-  \draw[redflow] (post) -- (prep);
-\end{tikzpicture}
--->
-*[Diagram — four boxes arranged in a circle (Preparation, Detection & Analysis, Containment/Eradication & Recovery, Post-Incident Analysis) with arrows leading from each to the next and from Post-Incident Analysis back to Preparation, forming a loop.]*
+![The NIST incident response lifecycle. A cycle rather than a line: each incident's lessons feed back into preparation for the next.](figures/fig-irloop.svg){#fig-irloop fig-alt="Diagram — four boxes arranged in a circle (Preparation, Detection & Analysis, Containment/Eradication & Recovery, Post-Incident Analysis) with arrows leading from each to the next and from Post-Incident Analysis back to Preparation, forming a loop."}
 
-The NIST incident response lifecycle. A cycle rather than a line:
-each incident's lessons feed back into preparation for the next.
-:::
-
-::: {#fig-irphases}
-<!-- TODO: redraw for web. Original TikZ:
-\begin{tikzpicture}[font=\footnotesize, node distance=3mm]
-  \tikzset{ph/.style={draw=kristiania, fill=kristiania!8, rounded corners=2pt,
-      text width=2.9cm, minimum height=1.0cm, align=center, font=\small\bfseries, text=kgrey},
-    act/.style={text width=3.0cm, align=left, font=\scriptsize, text=kgrey}}
-  \node[ph] (p1) {Preparation};
-  \node[ph, right=6mm of p1] (p2) {Detection \& Analysis};
-  \node[ph, right=6mm of p2] (p3) {Containment, Eradication \& Recovery};
-  \node[ph, right=6mm of p3] (p4) {Post-Incident Analysis};
-  \draw[redflow] (p1) -- (p2);
-  \draw[redflow] (p2) -- (p3);
-  \draw[redflow] (p3) -- (p4);
-  \node[act, below=2mm of p1.south] {baseline, monitoring, tested backups, named team};
-  \node[act, below=2mm of p2.south] {validate alert, scope, build the attack timeline from logs};
-  \node[act, below=2mm of p3.south] {isolate IAM \& workloads, rotate creds, delete stale images, restore clean};
-  \node[act, below=2mm of p4.south] {what to detect sooner; feed lessons back to preparation};
-\end{tikzpicture}
--->
-*[Diagram — the four lifecycle phases in a left-to-right row, each with its cloud-specific actions listed beneath: Preparation (baseline, monitoring, tested backups, named team); Detection & Analysis (validate alert, scope, build the attack timeline from logs); Containment, Eradication & Recovery (isolate IAM & workloads, rotate creds, delete stale images, restore clean); Post-Incident Analysis (what to detect sooner; feed lessons back to preparation).]*
-
-The four phases with their cloud-specific work. Almost every action
-draws on a control built in an earlier session: preparation on Sessions 2, 9
-and 11; the timeline on Session 10; containment on Sessions 5 and 7.
-:::
+![The four phases with their cloud-specific work. Almost every action draws on a control built in an earlier session: preparation on Sessions 2, 9 and 11; the timeline on Session 10; containment on Sessions 5 and 7.](figures/fig-irphases.svg){#fig-irphases fig-alt="Diagram — the four lifecycle phases in a left-to-right row, each with its cloud-specific actions listed beneath: Preparation (baseline, monitoring, tested backups, named team); Detection & Analysis (validate alert, scope, build the attack timeline from logs); Containment, Eradication & Recovery (isolate IAM & workloads, rotate creds, delete stale images, restore clean); Post-Incident Analysis (what to detect sooner; feed lessons back to preparation)."}
 
 ::: {#exm-ir-trc}
 ## An incident on the red thread

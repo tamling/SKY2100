@@ -105,48 +105,7 @@ automated to minimise human error and measured for continuous improvement
 (CSA, 2024, p. 244). In contrast to a security team that reviews at the end,
 DevSecOps places the check where the change is made.
 
-::: {#fig-devsecops}
-<!-- TODO: redraw for web. Original TikZ:
-\begin{tikzpicture}[font=\footnotesize]
-  \def\R{2.55}
-  \tikzset{stage/.style={draw=kgrey, fill=klight, rounded corners=2pt,
-      inner sep=3pt, minimum width=1.35cm, align=center},
-    arr/.style={-{Stealth[length=2mm]}, kristiania, line width=0.7pt}}
-  % eight stages, clockwise from the top
-  \node[stage] (plan)    at (90:\R)   {Plan};
-  \node[stage] (code)    at (45:\R)   {Code};
-  \node[stage] (build)   at (0:\R)    {Build};
-  \node[stage] (test)    at (-45:\R)  {Test};
-  \node[stage] (release) at (-90:\R)  {Release};
-  \node[stage] (deploy)  at (-135:\R) {Deploy};
-  \node[stage] (operate) at (180:\R)  {Operate};
-  \node[stage] (monitor) at (135:\R)  {Monitor};
-  % clockwise flow
-  \draw[arr] (plan)    to[bend left=12] (code);
-  \draw[arr] (code)    to[bend left=12] (build);
-  \draw[arr] (build)   to[bend left=12] (test);
-  \draw[arr] (test)    to[bend left=12] (release);
-  \draw[arr] (release) to[bend left=12] (deploy);
-  \draw[arr] (deploy)  to[bend left=12] (operate);
-  \draw[arr] (operate) to[bend left=12] (monitor);
-  \draw[arr] (monitor) to[bend left=12] (plan);
-  % security at the centre
-  \node[draw=kristiania, fill=kristiania!8, circle, align=center,
-        font=\footnotesize\itshape, text=kristiania, minimum size=1.9cm]
-        at (0,0) {Security\\at every\\stage};
-  % where the two automated tests sit
-  \node[font=\scriptsize, text=kgrey, anchor=west] at (0:\R) [xshift=7mm] {SAST};
-  \node[font=\scriptsize, text=kgrey, anchor=west] at (-45:\R) [xshift=6mm] {DAST};
-\end{tikzpicture}
--->
-*[Diagram — eight stages (Plan, Code, Build, Test, Release, Deploy, Operate, Monitor) arranged in a circle with clockwise arrows forming a continuous loop; a circle labelled "Security at every stage" sits at the centre, with "SAST" marked beside the Build stage and "DAST" beside the Test stage.]*
-
-The DevSecOps loop. Development (plan, code, build, test) flows
-continuously into operations (release, deploy, operate, monitor) and back;
-DevSecOps embeds automated security at every stage rather than as a gate at
-the end, with SAST as the code is built and DAST against the deployed
-application.
-:::
+![The DevSecOps loop. Development (plan, code, build, test) flows continuously into operations (release, deploy, operate, monitor) and back; DevSecOps embeds automated security at every stage rather than as a gate at the end, with SAST as the code is built and DAST against the deployed application.](figures/fig-devsecops.svg){#fig-devsecops fig-alt="Diagram — eight stages (Plan, Code, Build, Test, Release, Deploy, Operate, Monitor) arranged in a circle with clockwise arrows forming a continuous loop; a circle labelled 'Security at every stage' sits at the centre, with 'SAST' marked beside the Build stage and 'DAST' beside the Test stage."}
 
 What lets a pipeline build the same tested definition every time is that
 the infrastructure itself is written down as text. *Infrastructure as

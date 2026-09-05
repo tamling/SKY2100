@@ -67,32 +67,7 @@ Cloud-native systems use containers because packaged processes are cheap to
 start, stop and replicate, and VMs remain the stronger isolation boundary
 beneath them.
 
-::: {#fig-vmcontainer}
-<!-- TODO: redraw for web. Original TikZ:
-\begin{tikzpicture}[font=\footnotesize]
-  \tikzset{blk/.style={draw=kgrey, fill=klight, rounded corners=1.5pt}}
-  % ---- VM stack (left) ----
-  \node[font=\small\bfseries, text=kgrey] at (1.6,3.4) {Virtual machines};
-  \filldraw[blk] (0,0)   rectangle (3.2,0.7);  \node at (1.6,0.35) {Hardware};
-  \filldraw[blk] (0,0.8) rectangle (3.2,1.5);  \node at (1.6,1.15) {Hypervisor};
-  \filldraw[blk] (0,1.6) rectangle (1.5,3.0);  \node[align=center] at (0.75,2.3) {Guest OS\\+ App};
-  \filldraw[blk] (1.7,1.6) rectangle (3.2,3.0); \node[align=center] at (2.45,2.3) {Guest OS\\+ App};
-  % ---- Container stack (right) ----
-  \node[font=\small\bfseries, text=kgrey] at (6.7,3.4) {Containers};
-  \filldraw[blk] (5.1,0)   rectangle (8.3,0.7);  \node at (6.7,0.35) {Hardware};
-  \filldraw[blk] (5.1,0.8) rectangle (8.3,1.5);  \node at (6.7,1.15) {Host OS (shared kernel)};
-  \filldraw[blk] (5.1,1.6) rectangle (8.3,2.3);  \node at (6.7,1.95) {Container engine};
-  \filldraw[blk] (5.1,2.4) rectangle (6.1,3.0);  \node at (5.6,2.7) {App};
-  \filldraw[blk] (6.2,2.4) rectangle (7.2,3.0);  \node at (6.7,2.7) {App};
-  \filldraw[blk] (7.3,2.4) rectangle (8.3,3.0);  \node at (7.8,2.7) {App};
-\end{tikzpicture}
--->
-*[Diagram — two stacks side by side: the VM stack layers Hardware, Hypervisor, and two boxes each holding a Guest OS plus App; the container stack layers Hardware, Host OS (shared kernel), Container engine, and three App boxes on top.]*
-
-A VM carries a whole guest operating system on virtualised hardware; a
-container is a packaged process sharing the host kernel: lighter, but with a
-thinner isolation wall.
-:::
+![A VM carries a whole guest operating system on virtualised hardware; a container is a packaged process sharing the host kernel: lighter, but with a thinner isolation wall.](figures/fig-vmcontainer.svg){#fig-vmcontainer fig-alt="Diagram — two stacks side by side: the VM stack layers Hardware, Hypervisor, and two boxes each holding a Guest OS plus App; the container stack layers Hardware, Host OS (shared kernel), Container engine, and three App boxes on top."}
 
 ## The kernel {#sec-05-the-kernel}
 
@@ -124,46 +99,7 @@ driver framework on top. It presents a UNIX/POSIX interface, which is why
 its shell resembles Linux's, but its kernel has no built-in idea of Linux
 containers.
 
-::: {#fig-kernels}
-<!-- TODO: redraw for web. Original TikZ:
-\begin{tikzpicture}[font=\footnotesize]
-  \tikzset{
-    us/.style={draw=kgrey, fill=klight, minimum width=3cm, minimum height=0.7cm, align=center},
-    hw/.style={draw=kgrey, fill=kmid!35, minimum width=3cm, minimum height=0.55cm, align=center},
-    kn/.style={draw=kristiania, fill=kristiania!7, minimum width=3cm, align=center},
-    sub/.style={draw=kristiania!70, fill=kristiania!4, minimum width=2.7cm, minimum height=0.6cm, align=center, font=\scriptsize},
-  }
-  \foreach \cx/\name in {1.5/Linux, 5.3/Windows, 9.1/macOS}{
-     \node[font=\small\bfseries, text=kgrey] at (\cx,4.5) {\name};
-     \node[us] at (\cx,3.75) {user space\\{\scriptsize (apps, containers)}};
-     \node[hw] at (\cx,0.55)  {hardware};
-     \draw[dashed, kgrey, line width=0.4pt] ($(\cx,3.2)-(1.5,0)$) -- ($(\cx,3.2)+(1.5,0)$);
-     \node[font=\scriptsize\itshape, text=kgrey, fill=white, inner sep=1pt] at (\cx,3.2) {system-call boundary};
-  }
-  % Linux: one monolithic block (undivided)
-  \node[kn, minimum height=1.9cm] at (1.5,2.05)
-     {{\color{kristiania}\itshape monolithic kernel}\\ \scriptsize scheduler, memory,\\ filesystems, network,\\ drivers --- one space};
-  % Windows NT: hybrid, layered
-  \node[kn, minimum height=1.9cm, inner sep=3pt] at (5.3,2.05) {};
-  \node[font=\scriptsize\itshape, text=kristiania] at (5.3,2.75) {NT --- hybrid};
-  \node[sub] at (5.3,2.15) {Executive + subsystems};
-  \node[sub] at (5.3,1.45) {microkernel core};
-  % macOS XNU: hybrid, layered
-  \node[kn, minimum height=1.9cm, inner sep=3pt] at (9.1,2.05) {};
-  \node[font=\scriptsize\itshape, text=kristiania] at (9.1,2.75) {XNU --- hybrid};
-  \node[sub] at (9.1,2.15) {BSD (Unix) layer};
-  \node[sub] at (9.1,1.45) {Mach microkernel};
-\end{tikzpicture}
--->
-*[Diagram — three columns for Linux, Windows and macOS, each stacked as user space (apps, containers), a dashed system-call boundary, the kernel, and hardware; the Linux kernel is one undivided monolithic block (scheduler, memory, filesystems, network, drivers — one space), while Windows NT and macOS XNU are hybrid, each layering an outer part (Executive + subsystems; BSD (Unix) layer) over a small core (microkernel core; Mach microkernel).]*
-
-Three kernels, one shape. All three enforce the same user/kernel
-split, reached only through system calls, but differ inside: Linux is
-*monolithic* (one privileged program), whereas Windows (NT) and macOS
-(XNU) are *hybrid*, layering an outer service layer over a small core. A
-Linux container's isolation is enforced by the Linux kernel, which is why it
-requires one.
-:::
+![Three kernels, one shape. All three enforce the same user/kernel split, reached only through system calls, but differ inside: Linux is *monolithic* (one privileged program), whereas Windows (NT) and macOS (XNU) are *hybrid*, layering an outer service layer over a small core. A Linux container's isolation is enforced by the Linux kernel, which is why it requires one.](figures/fig-kernels.svg){#fig-kernels fig-alt="Diagram — three columns for Linux, Windows and macOS, each stacked as user space (apps, containers), a dashed system-call boundary, the kernel, and hardware; the Linux kernel is one undivided monolithic block (scheduler, memory, filesystems, network, drivers — one space), while Windows NT and macOS XNU are hybrid, each layering an outer part (Executive + subsystems; BSD (Unix) layer) over a small core (microkernel core; Mach microkernel)."}
 
 A Linux container therefore needs a Linux kernel, because the image holds
 libraries and binaries but no kernel. `docker run` on a Windows or

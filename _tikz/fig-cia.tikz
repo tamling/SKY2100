@@ -1,0 +1,10 @@
+\begin{tikzpicture}
+  \coordinate (C) at (90:2.6);
+  \coordinate (I) at (210:2.6);
+  \coordinate (A) at (330:2.6);
+  \draw[kristiania, line width=1pt] (C) -- (I) -- (A) -- cycle;
+  \node[font=\small\itshape, text=kgrey] at (0,0) {information};
+  \node[redbox] at (C) {\textbf{Confidentiality}\\{\footnotesize disclosed only to}\\{\footnotesize the authorised}};
+  \node[redbox] at (I) {\textbf{Integrity}\\{\footnotesize not altered}\\{\footnotesize undetectably}};
+  \node[redbox] at (A) {\textbf{Availability}\\{\footnotesize reachable}\\{\footnotesize when needed}};
+\end{tikzpicture}

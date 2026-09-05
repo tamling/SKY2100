@@ -104,29 +104,7 @@ matters for security on to a separate, well-protected audit environment,
 where it is kept for the long term, and from there the logs feed a SIEM that
 analyses across all environments.
 
-::: {#fig-cascade}
-<!-- TODO: redraw for web. Original TikZ:
-\begin{tikzpicture}[font=\footnotesize, node distance=5mm]
-  \node[box] (dev)  {Dev};
-  \node[box, below=3mm of dev] (test) {Test};
-  \node[box, below=3mm of test] (prod) {Prod};
-  \node[box, right=16mm of test] (central) {central log\\repository};
-  \node[box, right=14mm of central] (audit) {security /\\audit store};
-  \node[redbox, right=14mm of audit] (siem) {SIEM};
-  \draw[flow] (dev.east)  -- (central.west);
-  \draw[flow] (test.east) -- (central.west);
-  \draw[flow] (prod.east) -- (central.west);
-  \draw[flow] (central) -- (audit) node[midway, above, font=\scriptsize\itshape]{filter};
-  \draw[flow] (audit) -- (siem);
-\end{tikzpicture}
--->
-*[Diagram — three boxes (Dev, Test, Prod) each send arrows into a "central log repository"; an arrow labelled "filter" leads from it to a "security / audit store", which in turn feeds a SIEM box.]*
-
-Cascading log architecture. Each environment forwards to a central
-repository; the security-relevant subset is filtered into a retained audit
-store and fed to the SIEM, the same cascade-and-filter as in Session 9, now
-applied to storage and cost.
-:::
+![Cascading log architecture. Each environment forwards to a central repository; the security-relevant subset is filtered into a retained audit store and fed to the SIEM, the same cascade-and-filter as in Session 9, now applied to storage and cost.](figures/fig-cascade.svg){#fig-cascade fig-alt="Diagram — three boxes (Dev, Test, Prod) each send arrows into a 'central log repository'; an arrow labelled 'filter' leads from it to a 'security / audit store', which in turn feeds a SIEM box."}
 
 Two design points from Session 9 carry over. Cascade-and-filter applies
 here as cost control (CSA, 2024, pp. 133–135): pertinent alerts and

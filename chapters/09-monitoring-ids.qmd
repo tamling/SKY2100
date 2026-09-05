@@ -88,33 +88,7 @@ critical path. Prevention stops more but risks more, so the two are used
 together: an IPS blocks the clearly malicious, and an IDS surfaces the merely
 suspicious for a human to judge.
 
-::: {#fig-idsips}
-<!-- TODO: redraw for web. Original TikZ:
-\begin{tikzpicture}[font=\footnotesize]
-  % IDS: out-of-band
-  \node[font=\small\bfseries, text=kgrey] at (2,2.5) {IDS --- detection};
-  \node[box] (a1) at (0,1.6) {traffic};
-  \node[box] (a2) at (4,1.6) {service};
-  \draw[flow] (a1) -- (a2);
-  \node[redbox] (ids) at (2,0.4) {IDS};
-  \draw[flow, dashed] (2,1.35) -- (ids);
-  \node[lbl, anchor=west, font=\scriptsize\itshape] at (2.55,0.4) {alert only};
-  % IPS: inline
-  \node[font=\small\bfseries, text=kgrey] at (9,2.5) {IPS --- prevention};
-  \node[box] (b1) at (6.7,1.6) {traffic};
-  \node[redbox] (ips) at (9,1.6) {IPS};
-  \node[box] (b2) at (11.3,1.6) {service};
-  \draw[redflow] (b1) -- (ips);
-  \draw[redflow] (ips) -- (b2);
-  \node[lbl, anchor=north, font=\scriptsize\itshape] at (9,1.15) {blocks in line};
-\end{tikzpicture}
--->
-*[Diagram — two side-by-side panels. Left ("IDS — detection"): traffic flows directly to the service while a dashed line taps a copy down to an IDS box labelled "alert only". Right ("IPS — prevention"): traffic passes through an IPS box sitting inline before reaching the service, labelled "blocks in line".]*
-
-IDS versus IPS. An IDS observes a copy of the traffic and alerts; an
-IPS sits in the path and can block. Detection is safe but passive; prevention
-acts but can break legitimate traffic.
-:::
+![IDS versus IPS. An IDS observes a copy of the traffic and alerts; an IPS sits in the path and can block. Detection is safe but passive; prevention acts but can break legitimate traffic.](figures/fig-idsips.svg){#fig-idsips fig-alt="Diagram — two side-by-side panels. Left ('IDS — detection'): traffic flows directly to the service while a dashed line taps a copy down to an IDS box labelled 'alert only'. Right ('IPS — prevention'): traffic passes through an IPS box sitting inline before reaching the service, labelled 'blocks in line'."}
 
 The pattern the Guidance recommends is *cascade-and-filter*: a sequence
 of detection mechanisms applied to the incoming streams, each narrowing the

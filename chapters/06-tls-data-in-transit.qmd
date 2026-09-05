@@ -103,28 +103,7 @@ motion: confidentiality, since eavesdroppers see only ciphertext; integrity,
 since tampering in transit is detected; and server authentication, since the
 client is talking to the certified server.
 
-::: {#fig-tls}
-<!-- TODO: redraw for web. Original TikZ:
-\begin{tikzpicture}[font=\footnotesize]
-  \node[box, minimum width=2cm] (c) at (0,0) {browser};
-  \node[box, minimum width=2cm] (s) at (7,0) {server};
-  \draw[kgrey, line width=0.4pt] (c.south) -- ++(0,-2.6);
-  \draw[kgrey, line width=0.4pt] (s.south) -- ++(0,-2.6);
-  \tikzset{msg/.style={-{Stealth[length=1.8mm]}, kristiania, line width=0.6pt}}
-  \draw[msg] (0,-0.55) -- (7,-0.55) node[midway, above, font=\scriptsize, text=kgrey]{hello};
-  \draw[msg] (7,-1.15) -- (0,-1.15) node[midway, above, font=\scriptsize, text=kgrey]{certificate (public key)};
-  \draw[msg] (0,-1.75) -- (7,-1.75) node[midway, above, font=\scriptsize, text=kgrey]{agree session key (asymmetric)};
-  \draw[{Stealth[length=1.8mm]}-{Stealth[length=1.8mm]}, kgrey, line width=0.7pt] (0,-2.4) -- (7,-2.4)
-    node[midway, above, font=\scriptsize, text=kgrey]{encrypted data (symmetric)};
-\end{tikzpicture}
--->
-*[Diagram — a sequence diagram between a browser and a server: the browser sends "hello", the server returns "certificate (public key)", the parties "agree session key (asymmetric)", and a final double-headed arrow shows "encrypted data (symmetric)" flowing both ways.]*
-
-The TLS handshake. The certificate authenticates the server and
-carries its public key; asymmetric cryptography then agrees a fresh symmetric
-session key, which encrypts the rest of the connection: slow handshake, fast
-conversation.
-:::
+![The TLS handshake. The certificate authenticates the server and carries its public key; asymmetric cryptography then agrees a fresh symmetric session key, which encrypts the rest of the connection: slow handshake, fast conversation.](figures/fig-tls.svg){#fig-tls fig-alt="Diagram — a sequence diagram between a browser and a server: the browser sends 'hello', the server returns 'certificate (public key)', the parties 'agree session key (asymmetric)', and a final double-headed arrow shows 'encrypted data (symmetric)' flowing both ways."}
 
 Four practical points carry into the laboratory. First,
 versions matter: TLS 1.2 is the minimum and TLS 1.3 the current version,

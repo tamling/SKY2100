@@ -96,24 +96,7 @@ unintended place.
 
 ## The firewall {#sec-04-the-firewall}
 
-::: {#fig-firewall}
-<!-- TODO: redraw for web. Original TikZ:
-\begin{tikzpicture}[font=\footnotesize, node distance=7mm]
-  \node[font=\small\itshape, text=kgrey, align=center] (in) at (0,0) {incoming\\traffic};
-  \node[redbox, right=10mm of in] (fw) {firewall\\(rule list)};
-  \node[box, right=13mm of fw] (svc) {service};
-  \draw[flow] (in) -- (fw);
-  \draw[flow] (fw) -- (svc) node[midway, above, font=\scriptsize]{allowed :80, :443};
-  \draw[-{Stealth[length=2mm]}, kristiania, line width=0.7pt] (fw.south) -- ++(0,-0.9)
-    node[below, font=\scriptsize, text=kristiania]{everything else: dropped};
-\end{tikzpicture}
--->
-*[Diagram — incoming traffic flows into a firewall box holding a rule list; an arrow labelled "allowed :80, :443" continues to the service, while a downward arrow labelled "everything else: dropped" shows non-matching traffic being discarded.]*
-
-A firewall under default-deny. Only traffic an explicit rule permits
-(here, the web ports) reaches the service; the final catch-all rule drops the
-rest, so anything unforeseen fails closed.
-:::
+![A firewall under default-deny. Only traffic an explicit rule permits (here, the web ports) reaches the service; the final catch-all rule drops the rest, so anything unforeseen fails closed.](figures/fig-firewall.svg){#fig-firewall fig-alt="Diagram — incoming traffic flows into a firewall box holding a rule list; an arrow labelled 'allowed :80, :443' continues to the service, while a downward arrow labelled 'everything else: dropped' shows non-matching traffic being discarded."}
 
 ::: {#def-firewall}
 ## Firewall, default-deny
@@ -221,44 +204,7 @@ firewall does not operate. {#tbl-firewalls}
 @fig-fwlayers shows the same comparison as a grid of layers; a
 filled cell means the tool operates there.
 
-::: {#fig-fwlayers}
-<!-- TODO: redraw for web. Original TikZ:
-\begin{tikzpicture}[font=\footnotesize]
-  \tikzset{on/.style={fill=kristiania!16, draw=kristiania, line width=0.5pt},
-           off/.style={fill=klight, draw=kmid, line width=0.4pt}}
-  % column headers (layers) -- widely spaced, smaller font, no overlap
-  \node[font=\footnotesize\bfseries, text=kgrey, align=center] at (1.9,2.35) {L3\\Network (IP)};
-  \node[font=\footnotesize\bfseries, text=kgrey, align=center] at (5.2,2.35) {L4\\Transport (ports)};
-  \node[font=\footnotesize\bfseries, text=kgrey, align=center] at (8.5,2.35) {L7\\Application (HTTP)};
-  % row: packet filter
-  \node[font=\footnotesize, text=kgrey, anchor=east] at (0.55,1.60) {packet filter};
-  \filldraw[on]  (0.9,1.35) rectangle (2.9,1.85);
-  \filldraw[on]  (4.2,1.35) rectangle (6.2,1.85);
-  \filldraw[off] (7.5,1.35) rectangle (9.5,1.85);
-  % row: stateful
-  \node[font=\footnotesize, text=kgrey, anchor=east] at (0.55,0.95) {stateful};
-  \filldraw[on]  (0.9,0.70) rectangle (2.9,1.20);
-  \filldraw[on]  (4.2,0.70) rectangle (6.2,1.20);
-  \filldraw[off] (7.5,0.70) rectangle (9.5,1.20);
-  % row: NGFW
-  \node[font=\footnotesize, text=kgrey, anchor=east] at (0.55,0.30) {NGFW};
-  \filldraw[on]  (0.9,0.05) rectangle (2.9,0.55);
-  \filldraw[on]  (4.2,0.05) rectangle (6.2,0.55);
-  \filldraw[on]  (7.5,0.05) rectangle (9.5,0.55);
-  % row: WAF
-  \node[font=\footnotesize, text=kgrey, anchor=east] at (0.55,-0.35) {WAF};
-  \filldraw[off] (0.9,-0.60) rectangle (2.9,-0.10);
-  \filldraw[off] (4.2,-0.60) rectangle (6.2,-0.10);
-  \filldraw[on]  (7.5,-0.60) rectangle (9.5,-0.10);
-\end{tikzpicture}
--->
-*[Diagram — a grid with columns L3 Network (IP), L4 Transport (ports) and L7 Application (HTTP), and rows packet filter, stateful, NGFW and WAF; cells are filled where the tool operates: packet filter and stateful at L3–L4 only, NGFW at all three, WAF at L7 only.]*
-
-Which layers each tool operates at (filled = yes). Packet-filter
-and stateful firewalls act at Layers 3–4 (addresses, ports); an NGFW reaches
-up through Layer 7 with deep packet inspection; a WAF operates only at
-Layer 7, on the content of one web application.
-:::
+![Which layers each tool operates at (filled = yes). Packet-filter and stateful firewalls act at Layers 3–4 (addresses, ports); an NGFW reaches up through Layer 7 with deep packet inspection; a WAF operates only at Layer 7, on the content of one web application.](figures/fig-fwlayers.svg){#fig-fwlayers fig-alt="Diagram — a grid with columns L3 Network (IP), L4 Transport (ports) and L7 Application (HTTP), and rows packet filter, stateful, NGFW and WAF; cells are filled where the tool operates: packet filter and stateful at L3–L4 only, NGFW at all three, WAF at L7 only."}
 
 One idea links the WAF to the intrusion prevention of Session 9. A WAF runs
 either in *detection* mode, where it logs matching requests and lets
@@ -294,26 +240,7 @@ centre. The tiered minimum viable network of Session 3 is one instance. A
 the only entry point for administration, is another, and segmenting the
 network into tiers that may speak only to their neighbours is a third.
 
-::: {#fig-depth}
-<!-- TODO: redraw for web. Original TikZ:
-\begin{tikzpicture}
-  \draw[kgrey] (0,0) circle (2.65);
-  \draw[kgrey] (0,0) circle (2.05);
-  \draw[kgrey] (0,0) circle (1.5);
-  \draw[kgrey] (0,0) circle (0.95);
-  \node[redbox, inner sep=3pt] at (0,0) {data};
-  \node[font=\footnotesize, text=kgrey] at (0,1.22) {identity};
-  \node[font=\footnotesize, text=kgrey] at (0,1.77) {application / WAF};
-  \node[font=\footnotesize, text=kgrey] at (0,2.32) {host firewall};
-  \node[font=\footnotesize, text=kgrey] at (0,2.95) {network segmentation};
-\end{tikzpicture}
--->
-*[Diagram — four concentric rings around a central box labelled "data"; from the inside out the rings are labelled identity, application / WAF, host firewall and network segmentation.]*
-
-Defence in depth. Independent layers around the asset, so that the
-failure of any one does not expose everything behind it. Each later session
-adds a ring.
-:::
+![Defence in depth. Independent layers around the asset, so that the failure of any one does not expose everything behind it. Each later session adds a ring.](figures/fig-depth.svg){#fig-depth fig-alt="Diagram — four concentric rings around a central box labelled 'data'; from the inside out the rings are labelled identity, application / WAF, host firewall and network segmentation."}
 
 ::: {#def-zerotrust}
 ## Zero Trust

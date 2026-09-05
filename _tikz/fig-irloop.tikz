@@ -1,0 +1,10 @@
+\begin{tikzpicture}[font=\footnotesize]
+  \node[redbox, text width=2.7cm] (prep) at (0,2.5)     {\textbf{Preparation}};
+  \node[redbox, text width=2.7cm] (det)  at (4.6,1.25)   {\textbf{Detection \& Analysis}};
+  \node[redbox, text width=2.7cm] (con)  at (0,0)        {\textbf{Containment, Eradication \& Recovery}};
+  \node[redbox, text width=2.7cm] (post) at (-4.6,1.25)  {\textbf{Post-Incident Analysis}};
+  \draw[redflow] (prep) -- (det);
+  \draw[redflow] (det) -- (con);
+  \draw[redflow] (con) -- (post);
+  \draw[redflow] (post) -- (prep);
+\end{tikzpicture}

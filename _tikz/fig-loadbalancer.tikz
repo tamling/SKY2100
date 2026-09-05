@@ -1,0 +1,11 @@
+\begin{tikzpicture}[font=\footnotesize, node distance=6mm]
+  \node[font=\small\itshape, text=kgrey] (cl) at (0,0) {clients};
+  \node[redbox, right=10mm of cl] (lb) {load\\balancer};
+  \node[box, right=14mm of lb] (s2) {server};
+  \node[box, above=4mm of s2] (s1) {server};
+  \node[box, below=4mm of s2] (s3) {server};
+  \draw[flow] (cl) -- (lb);
+  \draw[flow] (lb.east) -- (s1.west);
+  \draw[flow] (lb.east) -- (s2.west);
+  \draw[flow] (lb.east) -- (s3.west);
+\end{tikzpicture}

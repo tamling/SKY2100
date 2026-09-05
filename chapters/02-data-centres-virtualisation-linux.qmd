@@ -65,26 +65,7 @@ internal, that movement is invisible from outside. This *lateral
 movement*, an attacker moving from one internal system to the next, and the
 segmentation that limits it are the subject of Session 4.
 
-::: {#fig-nsew}
-<!-- TODO: redraw for web. Original TikZ:
-\begin{tikzpicture}[font=\footnotesize]
-  \node[font=\small\itshape, text=kgrey] (net) at (2.25,3.3) {Internet (clients)};
-  \draw[kgrey, rounded corners=3pt] (0,0) rectangle (4.5,2.4);
-  \node[font=\footnotesize\itshape, text=kgrey, anchor=west] at (0.15,2.15) {data centre};
-  \node[box] (s1) at (1.15,0.85) {server};
-  \node[box] (s2) at (3.35,0.85) {server};
-  \draw[redflow] (net) -- (2.25,2.4);
-  \node[font=\footnotesize, text=kristiania, anchor=west] at (2.4,2.85) {north--south};
-  \draw[redflow] (s1) -- (s2);
-  \node[font=\footnotesize, text=kristiania] at (2.25,1.35) {east--west};
-\end{tikzpicture}
--->
-*[Diagram — a data-centre box containing two servers: a "north–south" arrow connects the Internet (clients) to the data centre, and an "east–west" arrow connects the two servers inside it.]*
-
-Two directions of traffic. North–south crosses the data-centre
-boundary; east–west stays inside it and is where lateral movement takes place
-(Session 4).
-:::
+![Two directions of traffic. North–south crosses the data-centre boundary; east–west stays inside it and is where lateral movement takes place (Session 4).](figures/fig-nsew.svg){#fig-nsew fig-alt="Diagram — a data-centre box containing two servers: a 'north–south' arrow connects the Internet (clients) to the data centre, and an 'east–west' arrow connects the two servers inside it."}
 
 Providers also replicate capacity across the globe, so that a single failure
 or disaster does not take a customer down.

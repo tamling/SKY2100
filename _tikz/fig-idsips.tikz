@@ -1,0 +1,18 @@
+\begin{tikzpicture}[font=\footnotesize]
+  % IDS: out-of-band
+  \node[font=\small\bfseries, text=kgrey] at (2,2.5) {IDS --- detection};
+  \node[box] (a1) at (0,1.6) {traffic};
+  \node[box] (a2) at (4,1.6) {service};
+  \draw[flow] (a1) -- (a2);
+  \node[redbox] (ids) at (2,0.4) {IDS};
+  \draw[flow, dashed] (2,1.35) -- (ids);
+  \node[lbl, anchor=west, font=\scriptsize\itshape] at (2.55,0.4) {alert only};
+  % IPS: inline
+  \node[font=\small\bfseries, text=kgrey] at (9,2.5) {IPS --- prevention};
+  \node[box] (b1) at (6.7,1.6) {traffic};
+  \node[redbox] (ips) at (9,1.6) {IPS};
+  \node[box] (b2) at (11.3,1.6) {service};
+  \draw[redflow] (b1) -- (ips);
+  \draw[redflow] (ips) -- (b2);
+  \node[lbl, anchor=north, font=\scriptsize\itshape] at (9,1.15) {blocks in line};
+\end{tikzpicture}

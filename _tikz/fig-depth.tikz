@@ -1,0 +1,11 @@
+\begin{tikzpicture}
+  \draw[kgrey] (0,0) circle (2.65);
+  \draw[kgrey] (0,0) circle (2.05);
+  \draw[kgrey] (0,0) circle (1.5);
+  \draw[kgrey] (0,0) circle (0.95);
+  \node[redbox, inner sep=3pt] at (0,0) {data};
+  \node[font=\footnotesize, text=kgrey] at (0,1.22) {identity};
+  \node[font=\footnotesize, text=kgrey] at (0,1.77) {application / WAF};
+  \node[font=\footnotesize, text=kgrey] at (0,2.32) {host firewall};
+  \node[font=\footnotesize, text=kgrey] at (0,2.95) {network segmentation};
+\end{tikzpicture}

@@ -31,30 +31,7 @@ monitoring catches what all of them let through, and backups recover what
 nothing prevented. Defence in depth (Session 4) is therefore not a slogan
 here but the structure of what was built.
 
-::: {#fig-stack}
-<!-- TODO: redraw for web. Original TikZ:
-\begin{tikzpicture}[font=\footnotesize]
-  \tikzset{layer/.style={draw=kgrey, fill=klight, rounded corners=1.5pt,
-    text width=7.4cm, align=left, inner sep=4pt, minimum height=6.2mm}}
-  \node[layer] (l1) {Baseline --- know what normal looks like \hfill \textbf{S2}};
-  \node[layer, above=1mm of l1] (l2) {Firewall --- default-deny at the perimeter \hfill \textbf{S4}};
-  \node[layer, above=1mm of l2] (l3) {Container --- immutable, replaceable workload \hfill \textbf{S5}};
-  \node[layer, above=1mm of l3] (l4) {TLS --- confidentiality of data in transit \hfill \textbf{S6}};
-  \node[layer, above=1mm of l4] (l5) {Identity --- MFA and least privilege \hfill \textbf{S7}};
-  \node[layer, above=1mm of l5] (l6) {WAF \& DevSecOps --- application defence \hfill \textbf{S8}};
-  \node[layer, above=1mm of l6] (l7) {Monitoring / IDS --- detect what got through \hfill \textbf{S9}};
-  \node[layer, above=1mm of l7] (l8) {Logging --- trustworthy, tamper-evident record \hfill \textbf{S10}};
-  \node[layer, above=1mm of l8] (l9) {Backup \& resilience --- survive and recover \hfill \textbf{S11}};
-  \node[layer, above=1mm of l9] (l10) {Incident response --- handle the breach \hfill \textbf{S12}};
-  \node[redbox, text width=7.4cm, above=1mm of l10] (l11) {Governance, risk \& compliance --- answer for it \hfill \textbf{S12}};
-  \node[font=\footnotesize\itshape, text=kgrey, above=1.5mm of l11] {one Nextcloud, hardened control by control};
-\end{tikzpicture}
--->
-*[Diagram — a vertical stack of eleven labelled layers, bottom to top: Baseline — know what normal looks like (S2); Firewall — default-deny at the perimeter (S4); Container — immutable, replaceable workload (S5); TLS — confidentiality of data in transit (S6); Identity — MFA and least privilege (S7); WAF & DevSecOps — application defence (S8); Monitoring / IDS — detect what got through (S9); Logging — trustworthy, tamper-evident record (S10); Backup & resilience — survive and recover (S11); Incident response — handle the breach (S12); Governance, risk & compliance — answer for it (S12); captioned "one Nextcloud, hardened control by control".]*
-
-The hardened service. Each session added one independent layer to
-the same Nextcloud; together they form one defensible system.
-:::
+![The hardened service. Each session added one independent layer to the same Nextcloud; together they form one defensible system.](figures/fig-stack.svg){#fig-stack fig-alt="Diagram — a vertical stack of eleven labelled layers, bottom to top: Baseline — know what normal looks like (S2); Firewall — default-deny at the perimeter (S4); Container — immutable, replaceable workload (S5); TLS — confidentiality of data in transit (S6); Identity — MFA and least privilege (S7); WAF & DevSecOps — application defence (S8); Monitoring / IDS — detect what got through (S9); Logging — trustworthy, tamper-evident record (S10); Backup & resilience — survive and recover (S11); Incident response — handle the breach (S12); Governance, risk & compliance — answer for it (S12); captioned 'one Nextcloud, hardened control by control'."}
 
 ## Mapping to the NIST Cybersecurity Framework {#sec-13-csf-mapping}
 

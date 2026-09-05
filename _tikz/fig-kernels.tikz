@@ -1,0 +1,28 @@
+\begin{tikzpicture}[font=\footnotesize]
+  \tikzset{
+    us/.style={draw=kgrey, fill=klight, minimum width=3cm, minimum height=0.7cm, align=center},
+    hw/.style={draw=kgrey, fill=kmid!35, minimum width=3cm, minimum height=0.55cm, align=center},
+    kn/.style={draw=kristiania, fill=kristiania!7, minimum width=3cm, align=center},
+    sub/.style={draw=kristiania!70, fill=kristiania!4, minimum width=2.7cm, minimum height=0.6cm, align=center, font=\scriptsize},
+  }
+  \foreach \cx/\name in {1.5/Linux, 5.3/Windows, 9.1/macOS}{
+     \node[font=\small\bfseries, text=kgrey] at (\cx,4.5) {\name};
+     \node[us] at (\cx,3.75) {user space\\{\scriptsize (apps, containers)}};
+     \node[hw] at (\cx,0.55)  {hardware};
+     \draw[dashed, kgrey, line width=0.4pt] ($(\cx,3.2)-(1.5,0)$) -- ($(\cx,3.2)+(1.5,0)$);
+     \node[font=\scriptsize\itshape, text=kgrey, fill=white, inner sep=1pt] at (\cx,3.2) {system-call boundary};
+  }
+  % Linux: one monolithic block (undivided)
+  \node[kn, minimum height=1.9cm] at (1.5,2.05)
+     {{\color{kristiania}\itshape monolithic kernel}\\ \scriptsize scheduler, memory,\\ filesystems, network,\\ drivers --- one space};
+  % Windows NT: hybrid, layered
+  \node[kn, minimum height=1.9cm, inner sep=3pt] at (5.3,2.05) {};
+  \node[font=\scriptsize\itshape, text=kristiania] at (5.3,2.75) {NT --- hybrid};
+  \node[sub] at (5.3,2.15) {Executive + subsystems};
+  \node[sub] at (5.3,1.45) {microkernel core};
+  % macOS XNU: hybrid, layered
+  \node[kn, minimum height=1.9cm, inner sep=3pt] at (9.1,2.05) {};
+  \node[font=\scriptsize\itshape, text=kristiania] at (9.1,2.75) {XNU --- hybrid};
+  \node[sub] at (9.1,2.15) {BSD (Unix) layer};
+  \node[sub] at (9.1,1.45) {Mach microkernel};
+\end{tikzpicture}

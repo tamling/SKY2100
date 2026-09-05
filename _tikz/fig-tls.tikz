@@ -1,0 +1,12 @@
+\begin{tikzpicture}[font=\footnotesize]
+  \node[box, minimum width=2cm] (c) at (0,0) {browser};
+  \node[box, minimum width=2cm] (s) at (7,0) {server};
+  \draw[kgrey, line width=0.4pt] (c.south) -- ++(0,-2.6);
+  \draw[kgrey, line width=0.4pt] (s.south) -- ++(0,-2.6);
+  \tikzset{msg/.style={-{Stealth[length=1.8mm]}, kristiania, line width=0.6pt}}
+  \draw[msg] (0,-0.55) -- (7,-0.55) node[midway, above, font=\scriptsize, text=kgrey]{hello};
+  \draw[msg] (7,-1.15) -- (0,-1.15) node[midway, above, font=\scriptsize, text=kgrey]{certificate (public key)};
+  \draw[msg] (0,-1.75) -- (7,-1.75) node[midway, above, font=\scriptsize, text=kgrey]{agree session key (asymmetric)};
+  \draw[{Stealth[length=1.8mm]}-{Stealth[length=1.8mm]}, kgrey, line width=0.7pt] (0,-2.4) -- (7,-2.4)
+    node[midway, above, font=\scriptsize, text=kgrey]{encrypted data (symmetric)};
+\end{tikzpicture}
