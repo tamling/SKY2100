@@ -1,0 +1,8 @@
+# Quarto build output
+_site/
+.quarto/
+/.quarto/
+
+# Generated Canvas exports (regenerate with canvas-export/make_canvas_quiz.py)
+canvas-export/*.qti.zip
+canvas-export/*.csv

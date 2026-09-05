@@ -1,0 +1,47 @@
+# Template — questions file for chapters/NN-name.qmd.
+# Copy to NN-name.questions.yml. Content must match the chapter's
+# Self-check section and answers/NN-name.qmd exactly (same numbering).
+quiz_title: "Chapter NN — Self-check"
+chapter: NN-name
+
+questions:
+  - id: q1
+    type: mcq                       # exactly 4 options, one correct
+    section: sec-NN-some-section    # the @sec- reference it tests
+    difficulty: basic               # basic | applied
+    text: "Which of the following statements about … is correct?"
+    options:
+      - "First option"
+      - "Second option"
+      - "Third option"
+      - "Fourth option"
+    correct: 2                      # 1-based index of the correct option
+
+  - id: q2
+    type: short                     # short answer, self-marking
+    section: sec-NN-some-section
+    difficulty: basic
+    text: "In one or two sentences: what is …?"
+    answers:                        # accepted answers (Canvas matches text)
+      - "…"
+      - "…"
+
+  - id: q4
+    type: mcq
+    section: sec-NN-other-section
+    difficulty: basic
+    text: "…"
+    options: ["…", "…", "…", "…"]
+    correct: 1
+    flag: "Needs knowledge not in the script: assumes familiarity with …"
+
+  - id: q5
+    type: applied                   # scenario tied to the practice box;
+    section: sec-NN-practice-box    # exported as an essay question
+    difficulty: applied
+    text: >
+      Building on the practice box in the chapter: suppose … . Describe how
+      you would …, and justify each step with a concept from this chapter.
+    sample_answer: >
+      Model answer / grading notes (kept out of the quiz itself; Canvas
+      essay questions are marked manually).

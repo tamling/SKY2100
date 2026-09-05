@@ -1,0 +1,57 @@
+<!-- ══════════════════════════════════════════════════════════════════════
+TEMPLATE — Self-check section for a converted chapter (NN = chapter number).
+Copy this section to the END of chapters/NN-name.qmd and fill it in.
+Directories starting with "_" are never rendered by Quarto.
+
+Rules (fixed by the course design):
+  • 5–8 questions per chapter: a mix of multiple choice (exactly 4 options,
+    one correct), short answer, and exactly ONE applied/scenario question
+    tied to the chapter's practice box.
+  • Every question is marked with the section it tests (a real @sec- cross
+    reference from THIS chapter) and a difficulty tag: basic | applied.
+  • NO answers in the chapter. The answer key goes to answers/NN-name.qmd
+    (source-only, excluded from the render), and the same questions go to
+    canvas-export/NN-name.questions.yml for the Canvas quiz export.
+  • Every question must be answerable from the chapter text alone. If a
+    draft question needs outside knowledge, keep it but flag it visibly
+    (see Q4 below and the `flag:` field in the YAML) so it can be either
+    rewritten or the chapter text extended before publication.
+═══════════════════════════════════════════════════════════════════════ -->
+
+## Self-check {#sec-NN-self-check}
+
+::: {.callout-note}
+## Check your understanding in Canvas
+
+These questions are also available as a self-marking quiz in Canvas:
+**[Chapter NN self-check quiz](CANVAS-QUIZ-URL-PLACEHOLDER)** *(link added
+once the quiz is imported — see `canvas-export/README.md`)*.
+:::
+
+**Q1** *(tests @sec-NN-some-section · basic)*
+Which of the following statements about … is correct?
+
+a. First option
+b. Second option
+c. Third option
+d. Fourth option
+
+**Q2** *(tests @sec-NN-some-section · basic)*
+In one or two sentences: what is …?
+
+**Q3** *(tests @sec-NN-other-section · applied)*
+A colleague claims that … . Which option best explains why this is (in)correct?
+
+a. …
+b. …
+c. …
+d. …
+
+**Q4** *(tests @sec-NN-other-section · basic)*
+⚠️ **FLAGGED — needs knowledge not in the script:** this question currently
+assumes familiarity with …, which the chapter does not cover. Rewrite the
+question or extend @sec-NN-other-section before publishing.
+
+**Q5 — applied scenario** *(tests @sec-NN-practice-box · applied)*
+Building on the practice box in @sec-NN-practice-box: suppose … . Describe
+how you would …, and justify each step with a concept from this chapter.
