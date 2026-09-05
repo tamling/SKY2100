@@ -1,0 +1,290 @@
+% =====================================================================
+%  Chapter 8  ·  Session 8 --- DevSecOps, WAF and secure applications
+% =====================================================================
+\chapter{DevSecOps, WAF and secure applications}
+
+The machine, the network, the transport and the identities are secured, and
+the application can still be the hole. Session~6 showed why: an
+SQL-injection flaw hands an attacker the data through the front door, and no
+encryption or firewall helps, because the application itself does the
+leaking. This chapter therefore covers the application layer from two sides:
+security built into the development process (DevSecOps), and a shield in
+front of the running application (the web application firewall).
+
+\section{Application security in the cloud}
+
+Application security protects applications from threats across their whole
+life, from design to production, and the cloud changes it in three ways
+(CSA, 2024, p.~230). First, applications are built as groups of
+microservices and external services communicating over APIs, so the attack
+surface is spread across many small components and their interfaces rather
+than one monolith. Secondly, they are developed with rapid DevOps practices,
+which is a risk, since fast change can outrun review, and an opportunity,
+since automation can enforce security on every change. Thirdly, they are
+assembled from libraries written by others, much of it open source, which
+brings in \emph{supply-chain} risk, because a vulnerability in a dependency
+one did not write is still a vulnerability in one's application. The
+countermeasure to the third is the \emph{software bill of materials} (SBOM),
+an inventory of every component and dependency, produced by software
+composition analysis in the image pipeline (CSA, 2024, pp.~181--182). When a
+library is found vulnerable, the SBOM answers the one question that matters
+during an incident: whether and where the library is in use.
+
+\begin{realworld}{Log4Shell, 2021}
+In December 2021 a critical flaw was disclosed in Log4j, a logging library so
+common that it sat, often invisibly, inside a large share of the world's Java
+applications. A single crafted string written to a log could make a vulnerable
+system fetch and run attacker code: trivial to exploit and broad in reach. The
+main difficulty was not the patch but finding out where Log4j was used at
+all: most organisations did not know which of their applications and
+third-party products embedded it. A software bill of materials answers that
+question in advance. Knowing one's dependencies before the need arises is a
+control in its own right.
+\end{realworld}
+
+\section{The secure development lifecycle}
+
+A flaw caught in design costs a fraction of the same flaw caught in
+production, so security work is moved earlier (CSA, 2024, pp.~231--232).
+
+\begin{definition}[Secure development lifecycle]\label{def:ssdlc}
+The \textbf{secure software development lifecycle} (SSDLC) describes the
+integration of security into every stage of building software: secure
+\emph{design and architecture}, secure \emph{build, integration and testing},
+secure \emph{deployment}, and \emph{runtime defence and monitoring} of the
+application in production. Moving security work earlier is called
+\emph{shifting left}.
+\end{definition}
+
+Two practices give the lifecycle substance. The first is \emph{threat
+modelling} at design time, a structured process to identify, assess and
+remediate threats before the system is built (CSA, 2024, p.~232). The
+Guidance recommends \emph{STRIDE}, which sorts threats into six categories,
+Spoofing, Tampering, Repudiation, Information disclosure, Denial of service
+and Elevation of privilege (CSA, 2024, pp.~232--233), and thereby turns the
+open-ended threat question of Session~1 into a checklist that is hard to
+leave gaps in. The second practice is automated security testing in two
+forms. \emph{Static} application security testing (SAST) examines the source
+code before deployment for security flaws and logic errors and scans for
+hard-coded credentials, keys and tokens before they enter the repository
+(CSA, 2024, p.~234); it produces false positives and therefore needs
+tuning. \emph{Dynamic} testing (DAST) probes the running application from
+outside afterwards, emulating real attacks (CSA, 2024, p.~235). Static
+testing sees the code but not its behaviour, and dynamic testing sees the
+behaviour but not the code, so the two are used together, as symmetric and
+asymmetric encryption were in Session~6.
+
+\section{DevSecOps}
+
+The lifecycle becomes practical when it is automated into the pipeline that
+already builds and ships the software.
+
+\begin{definition}[CI/CD and DevSecOps]\label{def:devsecops}
+A \textbf{continuous integration / continuous delivery} (CI/CD) pipeline
+describes the set of automated steps that build, test and deploy software as
+developers merge changes. \textbf{DevSecOps} (development, security and
+operations) describes embedding security into that pipeline, so that automated
+security checks run on every change rather than as a separate, occasional
+gate.
+\end{definition}
+
+Comer (2021) describes the CI/CD machinery and two deployment strategies
+that make frequent releases safe (Comer, 2021, pp.~211--213). \emph{Canary
+deployment} sends the new version to a small fraction of users first and
+observes before rolling on, and \emph{blue/green deployment} keeps two
+environments so that a release can be switched over, and back, instantly.
+DevSecOps adds security to each phase: SAST runs during continuous
+integration, so that vulnerable code does not merge, and DAST runs during
+continuous delivery against the staged application (CSA, 2024,
+pp.~243--245). This closes a loop with Session~5, because the immutable
+infrastructure of the cloud-native world is what makes the pipeline
+trustworthy: every environment is built fresh from the same tested
+definition, so there is no drift between what was tested and what runs. The
+CSA framing, six pillars, is cultural as much as technical: security is a
+shared responsibility across development, operations and security,
+automated to minimise human error and measured for continuous improvement
+(CSA, 2024, p.~244). In contrast to a security team that reviews at the end,
+DevSecOps places the check where the change is made.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize]
+  \def\R{2.55}
+  \tikzset{stage/.style={draw=kgrey, fill=klight, rounded corners=2pt,
+      inner sep=3pt, minimum width=1.35cm, align=center},
+    arr/.style={-{Stealth[length=2mm]}, kristiania, line width=0.7pt}}
+  % eight stages, clockwise from the top
+  \node[stage] (plan)    at (90:\R)   {Plan};
+  \node[stage] (code)    at (45:\R)   {Code};
+  \node[stage] (build)   at (0:\R)    {Build};
+  \node[stage] (test)    at (-45:\R)  {Test};
+  \node[stage] (release) at (-90:\R)  {Release};
+  \node[stage] (deploy)  at (-135:\R) {Deploy};
+  \node[stage] (operate) at (180:\R)  {Operate};
+  \node[stage] (monitor) at (135:\R)  {Monitor};
+  % clockwise flow
+  \draw[arr] (plan)    to[bend left=12] (code);
+  \draw[arr] (code)    to[bend left=12] (build);
+  \draw[arr] (build)   to[bend left=12] (test);
+  \draw[arr] (test)    to[bend left=12] (release);
+  \draw[arr] (release) to[bend left=12] (deploy);
+  \draw[arr] (deploy)  to[bend left=12] (operate);
+  \draw[arr] (operate) to[bend left=12] (monitor);
+  \draw[arr] (monitor) to[bend left=12] (plan);
+  % security at the centre
+  \node[draw=kristiania, fill=kristiania!8, circle, align=center,
+        font=\footnotesize\itshape, text=kristiania, minimum size=1.9cm]
+        at (0,0) {Security\\at every\\stage};
+  % where the two automated tests sit
+  \node[font=\scriptsize, text=kgrey, anchor=west] at (0:\R) [xshift=7mm] {SAST};
+  \node[font=\scriptsize, text=kgrey, anchor=west] at (-45:\R) [xshift=6mm] {DAST};
+\end{tikzpicture}
+\caption{The DevSecOps loop. Development (plan, code, build, test) flows
+continuously into operations (release, deploy, operate, monitor) and back;
+DevSecOps embeds automated security at every stage rather than as a gate at
+the end, with SAST as the code is built and DAST against the deployed
+application.}
+\label{fig:devsecops}
+\end{figure}
+
+What lets a pipeline build the same tested definition every time is that
+the infrastructure itself is written down as text. \emph{Infrastructure as
+code} (IaC) replaces hand-configuration, which no two engineers perform
+identically, with a machine-readable specification that provisions the
+environment automatically (Comer, 2021, pp.~121--122). Comer connects it to
+\emph{zero touch provisioning}, bringing systems up with no manual steps,
+and separates an \emph{imperative} specification, which lists the steps to
+perform, from a \emph{declarative} one, which states the desired end state
+and lets the tooling reach it, the same work-towards-a-goal style as the
+Kubernetes control plane of Session~5. Three security benefits follow.
+Consistency removes the configuration drift that breeds vulnerabilities. The
+specification is reviewable and version-controlled, so a change is visible,
+auditable and revertible, which Session~12 uses for compliance. And because
+the environment is rebuilt from the text rather than patched by hand, it is
+immutable in the sense of Session~5. IaC and pipelines are, however,
+themselves part of the attack surface and need the same access control as
+the application (CSA, 2024, p.~238).
+
+\section{The web application firewall}
+
+Secure development reduces the flaws that reach production, but it does not
+remove all of them, and it does nothing for flaws in third-party code one
+does not control. The running application therefore needs a guard of its
+own.
+
+\begin{definition}[Web application firewall]\label{def:waf}
+A \textbf{web application firewall} (WAF) describes a component placed in
+front of a web application that inspects incoming HTTP requests at the
+application layer and blocks those that match patterns of attack, such as SQL
+injection, cross-site scripting and the application-layer floods of
+Session~3, before they reach the application.
+\end{definition}
+
+Here the distinction of Session~4 applies: an NGFW secures the network
+broadly, a WAF secures one web application specifically, and they operate at
+different layers. The WAF is the control that answers the SQL-injection
+example of Session~6, because it inspects a request for the shape of an
+injection attempt and blocks it before the application can execute it. In
+the SSDLC it belongs to the runtime-defence phase, the external shield
+around a production application that complements secure code within. The
+Guidance accordingly treats it as a control that prevents attacks from
+arriving, not as a way to repair a flawed application or to excuse careless
+development (CSA, 2024, p.~247). On the students' service it runs in front
+of Nginx; in Azure it is the Application Gateway's WAF at Layer~7.
+
+\begin{example}[A WAF for Nextcloud]\label{ex:waf-trc}
+The SQL-injection scenario of Session~6 now meets a control that fits it. \emph{Threat}: a crafted request exploits an injection flaw, possibly in a
+third-party Nextcloud plugin, to read files from the database, bypassing TLS
+and the firewall because it arrives as an ordinary-looking HTTPS request.
+\emph{Risk}: the likelihood is non-trivial, because plugins and dependencies
+carry such flaws, and the impact is high, because the confidentiality of every
+stored file is at stake. \emph{Controls}, in depth: secure coding and dependency scanning in the
+pipeline reduce the chance that the flaw exists (shift left); an SBOM shows
+at once whether a newly disclosed library vulnerability affects the service;
+and a WAF in front of Nextcloud inspects and blocks the malicious request at
+runtime even if the flaw is present. The layers are independent by design: the WAF catches what the
+pipeline missed, and the pipeline shrinks what the WAF must catch.
+\end{example}
+
+\paragraph{Reading for this chapter.} CSA Security Guidance, Domain~10, in
+particular \S10.1 (Secure Development Lifecycle, threat modelling and
+STRIDE, pre- and post-deployment testing, pp.~231--236), \S10.4 (DevSecOps:
+CI/CD \& Application Testing, pp.~243--248) and \S10.5 (Serverless \&
+Containerized Application Considerations, pp.~248--250); the domain runs
+pp.~230--252. Domain~8, \S\S8.1.4--8.1.5 (Software Composition Analysis and
+the Software Bill of Materials, pp.~181--182). Comer, Chapter~15 (DevOps:
+CI/CD, canary and blue/green deployment, pp.~207--214) and \S\S9.10--9.11
+(infrastructure as code; declarative, imperative and intent-based
+specifications, pp.~121--122). Optional deepening: J\o sang, Chapter~11
+(Secure by Design, pp.~243--270). The Microsoft Learn module for Session~8 (Azure
+Application Gateway and its WAF) is linked on Canvas.
+
+\section{Summary}
+
+The application is a layer no network control reaches, and the SQL
+injection of Session~6 shows why it needs its own defences. In the cloud
+those defences must cope with microservices and APIs, rapid change and
+third-party dependencies, the last tracked with a software bill of
+materials. Security is built in through the secure development lifecycle
+(Definition~\ref{def:ssdlc}), which models threats with STRIDE and tests
+with SAST before deployment and DAST after, and it is made routine by
+embedding those checks in the CI/CD pipeline as DevSecOps
+(Definition~\ref{def:devsecops}), which the immutable, code-defined
+infrastructure of Session~5 keeps trustworthy. Because flaws still reach
+production and third-party code cannot be fixed at will, a web application
+firewall (Definition~\ref{def:waf}) shields the running application and
+blocks the injection attack at runtime (Example~\ref{ex:waf-trc}). Every
+control so far can still fail, and Session~9 therefore turns to detection.
+
+\section*{Self-check}
+\addcontentsline{toc}{section}{Self-check}
+
+Sketch answers follow the exercises.
+
+\begin{exercise}[Shifting left]
+What does shifting left mean, and why is a vulnerability cheaper to fix in
+design than in production?
+\end{exercise}
+
+\begin{exercise}[SAST vs DAST]
+Distinguish SAST from DAST. Why are they used together, and which earlier
+pair of complementary techniques does this resemble?
+\end{exercise}
+
+\begin{exercise}[What DevSecOps adds]
+Explain what DevSecOps adds to a CI/CD pipeline, and how the immutable
+infrastructure of Session~5 makes the pipeline's testing trustworthy.
+\end{exercise}
+
+\begin{exercise}[NGFW vs WAF, revisited]
+An NGFW and a WAF both inspect traffic. State the difference in one sentence,
+and name the one that blocks an SQL-injection attempt against a Nextcloud
+login.
+\end{exercise}
+
+\begin{exercise}[A disclosed library flaw]
+A newly disclosed vulnerability affects a popular open-source library. Which
+document shows immediately whether the application is affected, and which
+runtime control could block exploitation even if it is?
+\end{exercise}
+
+\paragraph{Sketch answers.}
+{\small
+(1)~Shifting left moves security work earlier in the lifecycle (design and
+build rather than production); a flaw caught in design is fixed by changing a
+plan, while the same flaw in production may mean an incident, an emergency
+patch and lost data. (2)~SAST examines source code before deployment to find
+flaws; DAST probes the running application from outside afterwards. Each has a
+blind spot, SAST seeing code but not behaviour and DAST behaviour but not
+code, so they are combined, as symmetric and asymmetric encryption are in
+Session~6. (3)~DevSecOps embeds automated security checks (SAST in CI, DAST in
+CD) into every change rather than an occasional gate; because immutable
+infrastructure builds every environment fresh from one tested definition,
+there is no drift between what was tested and what runs. (4)~An NGFW secures
+the network broadly with application awareness; a WAF secures one web
+application by inspecting HTTP requests; the WAF blocks the SQL-injection
+attempt. (5)~A software bill of materials (SBOM) shows whether and where the
+library is used; a web application firewall could block exploitation of the
+flaw at runtime even if the vulnerable library is present.}
+
+

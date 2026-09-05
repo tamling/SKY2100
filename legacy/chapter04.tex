@@ -1,0 +1,443 @@
+% =====================================================================
+%  Chapter 4  ·  Session 4 --- Networking and firewall controls
+% =====================================================================
+\chapter{Networking and firewall controls}
+
+Session~3 measured how much traffic the service survives; this chapter
+decides which traffic may reach it at all. It covers addressing and ports,
+the software-defined networks of the cloud, the firewall and its variants,
+and defence in depth and Zero Trust. In the laboratory the VM of Session~2,
+now serving Nginx, receives a default-deny policy: SSH only from the
+administrator, the web port for everyone, nothing else.
+
+\section{Addresses, ports and the attack surface}
+
+Every firewall rule is written in the vocabulary of addressing. Two
+machines on a network find each other by \emph{IP address}, and on one
+machine a service is reached at a \emph{port}, a sixteen-bit number that
+identifies which program the traffic is for. A web server listens on
+port~80 (HTTP) or 443 (HTTPS), SSH on 22, a database on 5432 or 3306. The
+pair \emph{(address, port)} therefore names one service on one machine, and
+the combination \emph{(protocol, address, port)} on both ends, carried over
+TCP (connection-oriented, ordered) or UDP (connectionless), is what a
+firewall rule matches. \texttt{ss -tulpn} lists one's own side of this:
+every port the machine listens on.
+
+\begin{definition}[Attack surface]\label{def:attacksurface}
+The \textbf{attack surface} of a system describes the sum of the points at
+which an attacker can try to interact with it: every open port, every
+reachable service, every exposed endpoint. Reducing the attack surface means
+removing such points, since a service that is not listening, or a port that is
+not reachable, cannot be attacked through that route.
+\end{definition}
+
+Comer (2021) uses the term \emph{security attack surface} in the same sense
+for microservices and remote access (Comer, 2021, pp.~167--168, 234). Every
+listening port is a door, some doors must be open for the service to work,
+and the security question is which. For this reason the first useful action
+on any machine is to run \texttt{ss -tulpn} and to justify each line.
+
+\section{Networks in the cloud are software}
+
+In a data centre the network a VM sits on is defined in software (Comer,
+2021, Chapter~7). Because many tenants share one physical fabric, each
+tenant gets a \emph{virtual network} built as an \emph{overlay} on the
+shared physical \emph{underlay} (Comer, 2021, pp.~88--89). VLANs, and their
+data-centre-scale successor VXLAN, tag traffic so that one tenant's packets
+never mix with another's (Comer, 2021, pp.~89--90). A \emph{virtual switch}
+inside each physical server connects the VMs running on it (Comer, 2021,
+p.~91). \emph{Network address translation} (NAT) lets privately addressed
+machines reach the outside world (Comer, 2021, pp.~91--92).
+
+Boundaries between networks are therefore logical and enforced by
+configuration, with two consequences: they can be misconfigured, and they
+can be audited by reading the configuration.
+
+\begin{definition}[Software-defined networking]\label{def:sdn}
+\textbf{Software-defined networking} (SDN) describes the separation of a
+network's \emph{control} (the decisions about where traffic goes) from its
+\emph{forwarding} (the act of moving packets), so that a program, the
+\emph{controller}, configures and monitors the switches. In the cloud this is
+why an entire network can be created, changed or destroyed through an API in
+seconds, as a VM can.
+\end{definition}
+
+Comer (2021) describes OpenFlow, the first SDN protocol, and a second
+generation in which switches run small programs of their own (Comer, 2021,
+pp.~94--96). Because the network is software, security is enforced in the
+fabric itself, per resource, rather than by a physical appliance the traffic
+happens to pass (CSA, 2024, p.~154). The tool for that is the security
+group.
+
+\begin{definition}[Security group]\label{def:secgroup}
+A \textbf{security group} describes a virtual firewall enforced by the cloud
+network fabric at the level of an instance, network interface or subnet. Its
+rules allow or deny traffic by IP address, port and protocol. It is
+\emph{stateful}: if a rule permits an outgoing request, the corresponding reply
+is allowed back automatically.
+\end{definition}
+
+Two details matter in practice. First, security groups are stateful
+and attach to resources, whereas \emph{network access control lists} (NACLs)
+work lower in the stack, are typically stateless and apply to subnets (CSA,
+2024, p.~156); the distinction decides which tool fits which job. Secondly,
+providers differ in their defaults. AWS starts from a deny-all position, so
+the customer must add allow rules, and two resources in the same security
+group cannot talk to each other until a rule permits it (CSA, 2024, p.~158).
+Azure, in contrast, starts from a more permissive position: the built-in
+default rules of a network security group allow traffic freely within the
+virtual network (and from the Azure load balancer), while a final default
+rule denies inbound traffic from the Internet. The Internet is thus closed
+by default, but east--west traffic between the customer's own resources is
+open unless restricted, and that is exactly the lateral movement of
+Session~2. A provider's defaults must therefore be known before they are
+trusted, because assuming the wrong one leaves a service reachable from an
+unintended place.
+
+\section{The firewall}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize, node distance=7mm]
+  \node[font=\small\itshape, text=kgrey, align=center] (in) at (0,0) {incoming\\traffic};
+  \node[redbox, right=10mm of in] (fw) {firewall\\(rule list)};
+  \node[box, right=13mm of fw] (svc) {service};
+  \draw[flow] (in) -- (fw);
+  \draw[flow] (fw) -- (svc) node[midway, above, font=\scriptsize]{allowed :80, :443};
+  \draw[-{Stealth[length=2mm]}, kristiania, line width=0.7pt] (fw.south) -- ++(0,-0.9)
+    node[below, font=\scriptsize, text=kristiania]{everything else: dropped};
+\end{tikzpicture}
+\caption{A firewall under default-deny. Only traffic an explicit rule permits
+(here, the web ports) reaches the service; the final catch-all rule drops the
+rest, so anything unforeseen fails closed.}
+\label{fig:firewall}
+\end{figure}
+
+\begin{definition}[Firewall, default-deny]\label{def:firewall}
+A \textbf{firewall} describes a component that inspects network traffic and
+permits or blocks it against a set of rules. Under a \textbf{default-deny}
+(allow-list) policy the final, catch-all rule blocks everything, so only
+traffic that an earlier rule explicitly permits gets through. The opposite,
+default-allow (block-list), permits everything not explicitly forbidden and
+fails \emph{open}: anything not foreseen is allowed.
+\end{definition}
+
+Default-deny is the stance of the minimum viable network of Session~3: list
+the legitimate flows and forbid the rest. A further distinction is
+\emph{stateless} versus \emph{stateful}. A stateless firewall judges each
+packet alone, whereas a stateful one remembers active connections, so that
+having allowed a connection outward, it lets the replies return without a
+separate rule. Security groups and the host firewall of the laboratory are
+stateful.
+
+The host firewall on Ubuntu is \texttt{ufw} (uncomplicated firewall), a front
+end to the kernel's packet filter, and its opening sequence encodes
+default-deny directly:
+\begin{center}
+\ttfamily
+sudo ufw default deny incoming\\
+sudo ufw default allow outgoing\\
+sudo ufw allow 22/tcp\\
+sudo ufw allow 80/tcp\\
+sudo ufw enable
+\end{center}
+\noindent The sequence refuses all incoming traffic by default, permits
+outgoing traffic, adds two exceptions (SSH and HTTP) and switches the policy
+on. Afterwards \texttt{sudo ufw status} prints the loaded policy, and it is
+always read back, because the gap between the rules one believes one wrote
+and the rules that are loaded is where incidents hide. Three mistakes are
+common. The first is leaving SSH open to the whole Internet rather than to
+the administrative address, the risk of Example~\ref{ex:ssh-trc}. The second
+is opening a database port for testing and forgetting it. The third is
+assuming closed when the default is open, as on Azure.
+
+\begin{example}[Example~\ref{ex:ssh-trc}, implemented]\label{ex:ufw-trc}
+Session~1 named a threat, judged its risk and prescribed a control for the
+open SSH port; here the control is built. \emph{Threat}: automated scanners
+brute-force the SSH login within minutes of the port appearing. \emph{Risk}:
+likelihood high (constant scanning), impact high (a login is full control).
+\emph{Control}: allow SSH only from the administrator's own address, with
+\texttt{sudo ufw allow from \emph{YOUR\_IP} to any port 22 proto tcp} instead
+of the blanket \texttt{allow 22/tcp} above, and keep the web port open to all.
+One \texttt{ufw status} now shows which CIA property each rule protects and
+whose responsibility the rule was.
+\end{example}
+
+\section{Firewall types, NGFW and WAF}
+
+A plain firewall (\texttt{ufw}, a security group, an Azure NSG) judges
+traffic by address, port and protocol, and it cannot see inside an allowed
+connection: once port~443 is permitted, everything on port~443 passes,
+malicious payloads included. The firewall family is therefore ordered by
+how deeply each member looks. The \emph{packet-filter} firewall judges each
+packet in isolation by address, port and protocol: stateless, fast, and
+blind to context. The \emph{stateful} firewall adds memory of active
+connections, and \texttt{ufw} and every cloud security group are of this
+kind. Both stop at Layer~4, so they know where traffic goes but not what it
+carries. The \emph{next-generation firewall} (NGFW) looks inside: it
+performs \emph{deep packet inspection} (Comer, 2021, p.~235) to identify the
+application in a flow, applies rules by user identity rather than only by
+address, integrates \emph{intrusion prevention} (Session~9), and consults
+threat-intelligence feeds of known-bad addresses and domains. Palo Alto,
+FortiGate and Cisco Firepower are on-premises examples; Azure Firewall
+Premium and AWS Network Firewall are cloud examples.
+
+In the cloud the choice is one of deployment (CSA, 2024, p.~159). A
+\emph{CSP firewall} such as Azure Firewall or AWS Network Firewall is built
+into the platform, so there is nothing to maintain, but it is limited in
+customisation and advanced features. A \emph{virtual appliance}, a vendor
+NGFW or IDS/IPS run as a VM, offers more control at the cost of patching and
+scaling it oneself. The limit of the managed firewall is concrete: Azure
+Firewall's application rules filter by domain name only, without TLS
+termination or deep packet inspection, and the vendor documentation itself
+calls them very limited compared with a next-generation firewall such as a
+Palo Alto appliance.
+
+The \emph{web application firewall} (WAF) is not a network firewall and must
+not be confused with one. It sits in front of a single web application and
+inspects HTTP requests at Layer~7 for application-layer attacks (SQL
+injection, cross-site scripting, the application-layer floods of
+Session~3), matched against rule sets such as the OWASP core rules (CSA,
+2024, p.~159). An NGFW thus secures the network broadly, whereas a WAF
+secures one web application specifically. Table~\ref{tab:firewalls}
+compares them.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}l l p{4.3cm} p{3.3cm}@{}}
+\toprule
+\textbf{Tool} & \textbf{Layer} & \textbf{Inspects} & \textbf{Example} \\
+\midrule
+Packet-filter firewall & L3--L4 & address, port, protocol; each packet alone (stateless) & early \texttt{iptables} rule \\
+Stateful firewall & L3--L4 & the above plus connection state (replies allowed back) & \texttt{ufw}, cloud security group, Azure NSG \\
+Next-gen firewall (NGFW) & L3--L7 & application identity, payload (DPI), user, threat intelligence; IPS built in & Palo Alto, Azure Firewall Premium \\
+Web app firewall (WAF) & L7 (HTTP) & HTTP request content of one web application (SQLi, XSS, floods) & Azure App Gateway WAF, ModSecurity \\
+\bottomrule
+\end{tabular}
+\caption{Firewalls and the WAF, ordered by inspection depth. A WAF is not a
+better firewall: it guards one application at Layer~7, where a network
+firewall does not operate.}
+\label{tab:firewalls}
+\end{table}
+
+Figure~\ref{fig:fwlayers} shows the same comparison as a grid of layers; a
+filled cell means the tool operates there.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize]
+  \tikzset{on/.style={fill=kristiania!16, draw=kristiania, line width=0.5pt},
+           off/.style={fill=klight, draw=kmid, line width=0.4pt}}
+  % column headers (layers) -- widely spaced, smaller font, no overlap
+  \node[font=\footnotesize\bfseries, text=kgrey, align=center] at (1.9,2.35) {L3\\Network (IP)};
+  \node[font=\footnotesize\bfseries, text=kgrey, align=center] at (5.2,2.35) {L4\\Transport (ports)};
+  \node[font=\footnotesize\bfseries, text=kgrey, align=center] at (8.5,2.35) {L7\\Application (HTTP)};
+  % row: packet filter
+  \node[font=\footnotesize, text=kgrey, anchor=east] at (0.55,1.60) {packet filter};
+  \filldraw[on]  (0.9,1.35) rectangle (2.9,1.85);
+  \filldraw[on]  (4.2,1.35) rectangle (6.2,1.85);
+  \filldraw[off] (7.5,1.35) rectangle (9.5,1.85);
+  % row: stateful
+  \node[font=\footnotesize, text=kgrey, anchor=east] at (0.55,0.95) {stateful};
+  \filldraw[on]  (0.9,0.70) rectangle (2.9,1.20);
+  \filldraw[on]  (4.2,0.70) rectangle (6.2,1.20);
+  \filldraw[off] (7.5,0.70) rectangle (9.5,1.20);
+  % row: NGFW
+  \node[font=\footnotesize, text=kgrey, anchor=east] at (0.55,0.30) {NGFW};
+  \filldraw[on]  (0.9,0.05) rectangle (2.9,0.55);
+  \filldraw[on]  (4.2,0.05) rectangle (6.2,0.55);
+  \filldraw[on]  (7.5,0.05) rectangle (9.5,0.55);
+  % row: WAF
+  \node[font=\footnotesize, text=kgrey, anchor=east] at (0.55,-0.35) {WAF};
+  \filldraw[off] (0.9,-0.60) rectangle (2.9,-0.10);
+  \filldraw[off] (4.2,-0.60) rectangle (6.2,-0.10);
+  \filldraw[on]  (7.5,-0.60) rectangle (9.5,-0.10);
+\end{tikzpicture}
+\caption{Which layers each tool operates at (filled~=~yes). Packet-filter
+and stateful firewalls act at Layers~3--4 (addresses, ports); an NGFW reaches
+up through Layer~7 with deep packet inspection; a WAF operates only at
+Layer~7, on the content of one web application.}
+\label{fig:fwlayers}
+\end{figure}
+
+One idea links the WAF to the intrusion prevention of Session~9. A WAF runs
+either in \emph{detection} mode, where it logs matching requests and lets
+them through, or in \emph{prevention} mode, where it blocks them, and that
+is the same choice that separates an IDS from an IPS. A WAF prevents attacks
+from reaching an application, but it cannot repair a flaw that is already
+there, and it is no substitute for writing the application properly (CSA,
+2024, p.~247). Session~8 covers the WAF in full; on the students' service it
+runs in front of Nginx.
+
+\begin{realworld}{Capital One, 2019}
+A chain of misconfigurations exposed about 106~million credit-card
+applications. The entry point was a misconfigured web application firewall
+running on a cloud instance whose attached identity held far more permission
+than it needed. A server-side request forgery flaw made the WAF query the
+cloud platform's internal metadata service, which returned the temporary
+credentials of that identity. The credentials could list and copy the
+contents of more than 700 storage buckets. Three facts matter for this course. A security control can itself become
+the attack vector. The damage was set not by the WAF but by the excessive
+privilege of the identity behind it, a least-privilege failure (Session~7).
+And standard monitoring did not flag the theft, because it looked like
+ordinary authorised API calls (Session~9).
+\end{realworld}
+
+\section{Defence in depth and Zero Trust}
+
+No single control is sufficient, so controls are layered. \emph{Defence in
+depth} means independent layers, so that the failure of one does not expose
+everything behind it: network segmentation on the outside, host firewalls
+next, then application controls, identities, and encrypted data at the
+centre. The tiered minimum viable network of Session~3 is one instance. A
+\emph{bastion host}, a single hardened and closely watched machine that is
+the only entry point for administration, is another, and segmenting the
+network into tiers that may speak only to their neighbours is a third.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+  \draw[kgrey] (0,0) circle (2.65);
+  \draw[kgrey] (0,0) circle (2.05);
+  \draw[kgrey] (0,0) circle (1.5);
+  \draw[kgrey] (0,0) circle (0.95);
+  \node[redbox, inner sep=3pt] at (0,0) {data};
+  \node[font=\footnotesize, text=kgrey] at (0,1.22) {identity};
+  \node[font=\footnotesize, text=kgrey] at (0,1.77) {application / WAF};
+  \node[font=\footnotesize, text=kgrey] at (0,2.32) {host firewall};
+  \node[font=\footnotesize, text=kgrey] at (0,2.95) {network segmentation};
+\end{tikzpicture}
+\caption{Defence in depth. Independent layers around the asset, so that the
+failure of any one does not expose everything behind it. Each later session
+adds a ring.}
+\label{fig:depth}
+\end{figure}
+
+\begin{definition}[Zero Trust]\label{def:zerotrust}
+\textbf{Zero Trust} describes a security strategy in which nobody and nothing
+is trusted merely because of where it sits on the network. It assumes that a
+breach has happened or will happen, and it therefore checks every user, device,
+application and transaction again and again, no matter whether a request
+comes from inside the network or from outside (CSA, 2024, p.~168).
+\end{definition}
+
+The Guidance contrasts Zero Trust with the traditional castle-and-moat
+perimeter and regards the latter as no longer effective now that services
+live in the cloud and staff work remotely (CSA, 2024, p.~50). In the old
+model a hard perimeter guarded a trusting interior, so an attacker who
+breached the wall could move freely. Comer (2021) gives the cloud reason for
+abandoning it (Comer, 2021, pp.~235--237). Traditional security rested on a
+firm split between insiders and outsiders, enforced at the perimeter by
+firewalls, deep packet inspection and a \emph{demilitarised zone} that
+exposed only a few chosen servers. In the cloud, however, the provider's
+placement algorithms run many tenants' virtual machines on the same physical
+hardware, and even with separate virtual networks their traffic crosses the
+same physical links. A tenant therefore has no physical perimeter and cannot
+sort the world into inside and outside. Privileges must instead be assigned
+per service and every request validated separately, using the identity of
+the user and the device, and nobody is trusted for having logged in once.
+
+In the NIST reference model (SP~800-207) a \emph{policy decision point}
+decides and a \emph{policy enforcement point} enforces, both placed in the
+path of every access (CSA, 2024, p.~171). Supporting technologies include
+the software-defined perimeter, which hides resources from the network until
+a client has been authenticated (CSA, 2024, p.~172), and, at the network
+edge, SASE (CSA, 2024, p.~174). Students are not asked to deploy this stack,
+only to recognise its principles: least privilege, verify explicitly, assume
+breach.
+
+\begin{example}[The red thread, one week early]\label{ex:mvn-preview}
+The VM this week runs one exposed service (Nginx) and one administrative door
+(SSH), and the firewall closes everything else. In Session~5 Nextcloud arrives
+as a set of tiers (web server, application, database), and the default-deny
+stance scales up to the minimum viable network of Session~3. Each tier then
+accepts traffic only from the tier above it, and the database is reachable
+from nowhere but the application. No new principles are needed for that, only more
+rules. Defence in depth is therefore not a product to buy, but default-deny
+applied at every layer one owns.
+\end{example}
+
+\paragraph{Reading for this chapter.} Comer, Chapter~7 (Virtual Networks:
+overlays, VLANs, VXLAN, NAT, SDN and OpenFlow, pp.~87--96) and Chapter~17,
+\S\S17.3--17.5 (traditional perimeter security, why it fails in the cloud, and
+the Zero Trust model, pp.~235--237); CSA Security Guidance, Domain~7,
+Section~7.2 (Cloud Network Fundamentals, including security groups and NACLs,
+pp.~153--162) and Section~7.4 (Zero Trust \& Secure Access Service Edge,
+pp.~168--176). Optional deepening: J\o sang, Chapter~6 (Network Security, incl.\ firewalls in \S6.4, pp.~117--142). The
+Microsoft Learn module is \emph{Describe Azure networking services}; students
+map the session's ideas onto Virtual Networks, Network Security Groups and
+Azure Firewall.
+
+\section{Summary}
+
+Machines address one another by IP and reach services by port. The pair,
+with the protocol, is what a firewall rule matches, and every listening port
+is part of the attack surface (Definition~\ref{def:attacksurface}). In the
+cloud the network is software: overlays on a shared underlay, programmable
+through SDN (Definition~\ref{def:sdn}) and secured in the fabric by stateful
+security groups (Definition~\ref{def:secgroup}), whose defaults differ by
+provider and are never assumed. The firewall (Definition~\ref{def:firewall})
+runs default-deny, and in the laboratory a handful of \texttt{ufw} rules
+close the SSH door of Chapter~1 (Example~\ref{ex:ufw-trc}). Plain filters
+cannot see inside allowed traffic, so an NGFW adds application awareness and
+deep packet inspection, and a WAF guards one web application. Defence in
+depth layers these controls, and Zero Trust (Definition~\ref{def:zerotrust})
+removes the trusted interior. Session~5 installs Nextcloud on the machine.
+
+\section*{Self-check}
+\addcontentsline{toc}{section}{Self-check}
+
+Sketch answers follow the exercises.
+
+\begin{exercise}[Attack surface]
+Explain the term attack surface in one's own words, and state why
+\texttt{ss -tulpn} is a security command and not merely an administrator's
+one.
+\end{exercise}
+
+\begin{exercise}[Default-deny reasoning]
+State the default-deny principle, and explain why it is the same reasoning as
+the minimum viable network of Session~3.
+\end{exercise}
+
+\begin{exercise}[A cloud firewall default]
+A team member says: ``I added an allow rule on Azure, so now only the web port
+is open.'' Why might the service still be exposed, and what does the answer
+have to do with AWS behaving differently?
+\end{exercise}
+
+\begin{exercise}[NGFW vs WAF]
+Distinguish an NGFW from a WAF in one sentence each, and state which one
+applies against an application-layer flood on a Nextcloud login page.
+\end{exercise}
+
+\begin{exercise}[SSH brute force as threat--risk--control]
+Write, in the vocabulary of Definition~\ref{def:trc}, the threat, risk and
+control for an SSH port left open to the whole Internet, and give the
+\texttt{ufw} rule that implements the control.
+\end{exercise}
+
+\paragraph{Sketch answers.}
+{\small
+(1)~The attack surface is every point an attacker can interact with: open
+ports, reachable services, exposed endpoints; \texttt{ss -tulpn} enumerates the
+listening ports, so it measures that surface and allows each door to be
+justified. (2)~Default-deny blocks everything except explicitly permitted
+traffic; like the MVN, it works by listing the few legitimate flows and
+forbidding the rest, which needs no knowledge of the attacker. (3)~Azure's
+network security groups allow east--west traffic within the virtual network by
+default (while denying inbound from the Internet), so intra-VNet paths may be
+open even when no rule was added; on AWS a security group denies all inbound
+traffic, including between resources in the same group, until it is allowed.
+The mental model is the same, namely know the default before trusting it, and
+assuming the wrong one can leave a resource reachable from an unintended
+location. (4)~An NGFW secures the network broadly with application awareness
+and deep packet inspection; a WAF secures one web application by inspecting
+HTTP requests, so against an application-layer flood on the login page the WAF
+applies (Session~8). (5)~Threat: automated brute-forcing of the SSH login.
+Risk: high likelihood (constant scanning), high impact (full control on
+success). Control: restrict SSH to the administrative address with
+\texttt{sudo ufw allow from \emph{YOUR\_IP} to any port 22 proto tcp}.}
+
+

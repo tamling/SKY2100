@@ -1,0 +1,387 @@
+% =====================================================================
+%  Chapter 1  ·  Session 1 --- Cloud computing and information security
+% =====================================================================
+\chapter{Cloud computing and information security}
+
+This chapter defines cloud computing, the three protection goals of
+information security, and the relation between threat, risk and control.
+Every later control (firewalls, TLS, access control, incident response) is
+described in this vocabulary.
+
+\section{Why cloud security}
+
+Phones, watches, cars and most business applications are online around the
+clock, and most of the services behind them run in the cloud. Industry
+forecasts put the data created worldwide in 2025 at roughly 180 zettabytes.
+More data and more services mean more exposure, and because most of these
+services run in somebody's cloud, most of that exposure sits there too.
+
+Security failures are usually read as technical failures: a bug, a breach, a
+stolen password. The opening case has none of these and is still a security
+failure.
+
+\begin{example}[The Strava heat map]\label{ex:strava}
+In November 2017 the fitness platform Strava published an anonymised global
+heat map of its users' running and cycling routes: billions of aggregated
+activities without names. In most regions the map showed the expected pattern
+of parks and river banks. In January 2018 an analyst observed that in certain
+remote regions the only people wearing fitness trackers were soldiers, and their
+daily runs traced the perimeters and internal paths of military bases whose
+locations were classified.
+
+No system was breached and no password was stolen. Every data point was
+anonymous, and the publication was a deliberate decision. Three lessons follow, and each returns throughout the course. Aggregated
+anonymous data can still reveal sensitive facts. The failure was a
+governance decision rather than a technical one, because somebody chose what
+to publish without reasoning about what could be inferred from it. And
+confidentiality is contextual, since the same route is harmless in a city
+park and sensitive at a military installation.
+\end{example}
+
+The case shows that cloud security is first a way of reasoning about who can
+see or change what, why, and what could go wrong. The reasoning connects a
+threat to a control that fits the risk and justifies the connection.
+
+Comer (2021) names six factors that make security harder in the cloud than in
+a traditional infrastructure (Comer, 2021, pp.~233--234). The first is lack
+of control and visibility: the tenant cannot examine or configure the
+underlying systems and must trust the provider's configuration. The second is
+an infrastructure shared with outsiders. The third is the large number of
+services with dependencies among them, which enlarges the attack surface. The
+fourth is a constantly changing set of running instances, whose sudden growth
+is hard to tell apart from a denial-of-service attack. The fifth is remote
+access for all users, and the sixth is heavy use of software from the
+provider and from third parties. Each factor returns in a later session:
+shared responsibility in this chapter, the dissolving perimeter in
+Session~4, the moving target in Session~5, remote identity in Session~7 and
+supply-chain risk in Session~8.
+
+\section{Definition of cloud computing}
+
+The cloud consists of physical machines in physical buildings, operated by
+an organisation that is usually not the user. What sets them apart from
+ordinary hosting is how their capacity is delivered: as a service, over a
+network, on demand. The definition below follows NIST Special Publication
+800-145, which the CSA Security Guidance also adopts (CSA, 2024,
+pp.~12--14).
+
+\begin{definition}[Cloud computing, after NIST SP 800-145]\label{def:cloud}
+Cloud computing describes a model in which computing resources (networks,
+servers, storage, applications and services) are drawn from a shared pool,
+reached over a network, and set up and released on demand, quickly and with
+little effort on the part of the customer or the provider.
+\end{definition}
+
+NIST names five essential characteristics, and a service that lacks one of
+them is hosting or outsourcing rather than cloud computing. The first is
+on-demand self-service: the customer provisions resources through a portal
+or an API, with no human on the provider's side. The second is broad network
+access: resources are reachable over standard networks from standard
+clients. The third is resource pooling: the provider's hardware serves many
+customers at once, so a virtual machine shares physical hardware with
+strangers. The fourth is rapid elasticity: capacity grows and shrinks quickly
+with demand. The fifth is measured service: usage is metered and paid for as
+consumed. Of the five, resource pooling produces most of the security
+questions in this course, because sharing hardware with strangers is exactly
+what a traditional data centre never did.
+
+\begin{example}\label{ex:vm}
+Two ways of obtaining a server illustrate the five characteristics. In the
+classical way an organisation specifies hardware, obtains budget approval,
+orders, waits for delivery, racks, cables and installs; the process takes weeks
+to months. In the cloud way an administrator logs in to the provider's portal,
+chooses a size and a region and creates the machine. It answers to
+\texttt{ssh} within minutes and is metered by the hour. All five characteristics
+appear in the second scene: self-service (nobody approved anything), broad
+network access (the portal was reached from any location), resource pooling
+(the capacity was already standing by, shared), elasticity (one machine can
+become ten the same afternoon) and measured service (the bill covers exactly
+those hours). Session~2 repeats this scene in the laboratory. The security
+question of the whole course is contained in the same scene: the computer on
+which the server appeared belongs to somebody else.
+\end{example}
+
+The cloud is therefore somebody else's computer. This is not an argument
+against the cloud; it is the reason why cloud security is a shared problem.
+The provider owns the building, the power, the hardware and the
+virtualisation layer, and the customer owns what runs on top.
+Section~\ref{sec:servicemodels} divides the layers between the two.
+
+NIST also names four deployment models (CSA, 2024, pp.~15--16). A public
+cloud is offered to everyone, and this course uses one. A private cloud is
+operated for one organisation, a community cloud is shared by organisations
+with common requirements, and a hybrid cloud combines these. The security
+reasoning is the same in all four; only the allocation of responsibility
+changes with who operates the pool.
+
+\section{Security defined: the CIA triad}
+
+The cloud does not change what is protected; it changes who controls each
+layer on which protection is implemented. What is protected has three parts.
+
+\begin{definition}[The CIA triad]\label{def:cia}
+Information security describes the protection of three properties of
+information and of the services that carry it. \textbf{Confidentiality}
+means that information is disclosed only to authorised parties, typically
+enforced by encryption and access control. \textbf{Integrity} means that
+information is not altered without authorisation, or at least not without
+detection, typically enforced by hashing, signing and logging.
+\textbf{Availability} means that information and services are reachable
+when needed, typically enforced by redundancy, resilience and protection
+against denial of service.
+\end{definition}
+
+The triad structures the semester. Confidentiality is treated in Sessions~6
+and~7 (encryption in transit, access control), integrity in Sessions~9
+and~10 (monitoring, logging, the trustworthiness of the log record), and
+availability in Session~3 (load and denial of service) and Session~11
+(resilience, RAID and backup). For this reason the first question in any
+scenario is which of the three properties is at stake.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+  \coordinate (C) at (90:2.6);
+  \coordinate (I) at (210:2.6);
+  \coordinate (A) at (330:2.6);
+  \draw[kristiania, line width=1pt] (C) -- (I) -- (A) -- cycle;
+  \node[font=\small\itshape, text=kgrey] at (0,0) {information};
+  \node[redbox] at (C) {\textbf{Confidentiality}\\{\footnotesize disclosed only to}\\{\footnotesize the authorised}};
+  \node[redbox] at (I) {\textbf{Integrity}\\{\footnotesize not altered}\\{\footnotesize undetectably}};
+  \node[redbox] at (A) {\textbf{Availability}\\{\footnotesize reachable}\\{\footnotesize when needed}};
+\end{tikzpicture}
+\caption{The CIA triad. Every control in this course protects at least one of
+the three properties; the recurring analytical question is which.}
+\label{fig:cia}
+\end{figure}
+
+\begin{example}[One file, three properties]\label{ex:nextcloud-cia}
+Throughout the course one concrete service is secured step by step: a
+\emph{Nextcloud} file-sharing platform that the laboratory builds up over the
+semester, beginning with the Ubuntu machine beneath it, adding the service
+itself in Session~5 and defending it until Session~13. Consider a single file
+in it, \texttt{salary\_list.pdf}. Confidentiality: only the finance staff may
+open it, and an employee who reads it without permission has violated
+confidentiality without touching anything else. Integrity: nobody may change
+a figure inside it unnoticed, and if a change occurs the log must show who
+made it and when. Availability: on the morning the payroll is run, the
+server must answer, so an attacker who merely makes Nextcloud unreachable
+has attacked the file without reading it.
+Three attacks, three defences, one file.
+\end{example}
+
+\section{Threat, risk and control}
+
+In everyday language threat and risk are near-synonyms. In this course they
+are distinct terms, because the difference between them decides which
+control is appropriate.
+
+\begin{definition}[Threat, risk, control]\label{def:trc}
+A \textbf{threat} describes a potential cause of an incident: something that
+could happen to the detriment of confidentiality, integrity or availability.
+\textbf{Risk} describes the weight of a threat, expressed as likelihood
+$\times$ impact. A \textbf{control} describes a measure that reduces a risk by
+making the threat less likely, its impact smaller, or both.
+\end{definition}
+
+The three terms form a chain: name the threat, judge its likelihood and
+impact, and only then choose a control in proportion to that judgement. Many
+failures in practice break this order, either because controls are bought
+before anyone has named the threat, or because threats are named without any
+judgement of likelihood.
+
+\begin{example}[Continuation of Example~\ref{ex:vm}]\label{ex:ssh-trc}
+The virtual machine of Example~\ref{ex:vm} answers on its SSH port to the whole
+Internet. \emph{Threat}: an attacker guesses or brute-forces the password of an
+account and logs in. \emph{Risk}: the likelihood is high, because automated
+scanners find a fresh public SSH port within minutes, and the impact is high,
+because a login means full control of the machine. \emph{Control}: key-based
+login only, and connections accepted only from the administrator's own address.
+Session~4 implements this control with firewall rules, and Session~7
+generalises it into the principle of least privilege. The analysis of any
+incident follows the same structure: which CIA property was at stake, whose
+responsibility it was, and which single control would have prevented the
+incident.
+\end{example}
+
+\section{Service models and shared responsibility}
+\label{sec:servicemodels}
+
+Every application sits on a stack: networking, storage, servers,
+virtualisation, operating system, middleware, runtime, and on top the
+customer's data and application. How much of the stack is rented decides
+which parts are the provider's problem and which remain the customer's.
+Three service models cover the common cases (CSA, 2024, pp.~16--20).
+
+\begin{definition}[Service models]\label{def:servicemodels}
+\textbf{On-premises} describes the arrangement in which everything runs on the
+organisation's own hardware, so that the organisation controls and secures the
+whole stack. \textbf{IaaS} (Infrastructure as a Service) describes the
+provision of fundamental compute, network and storage by the provider, with
+the customer managing everything from the operating system upward.
+\textbf{PaaS} (Platform as a Service) describes the additional provision of
+development and application platforms such as databases and runtimes, with the
+customer focusing on application and data. \textbf{SaaS} (Software as a
+Service) describes the provision of a complete hosted application, with the
+customer managing only configuration, identities and their own data.
+\end{definition}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Layer} & \textbf{On-prem} & \textbf{IaaS} & \textbf{PaaS} & \textbf{SaaS} \\
+\midrule
+Application            & C & C & C & P \\
+Data                   & C & C & C & C \\
+Runtime \& middleware  & C & C & P & P \\
+Operating system       & C & C & P & P \\
+Virtualisation         & C & P & P & P \\
+Servers \& storage     & C & P & P & P \\
+Networking             & C & P & P & P \\
+\bottomrule
+\end{tabular}
+\caption{Responsibility by layer: C = customer, P = provider. From left to
+right the customer manages fewer layers; the data row never leaves the
+customer's column.}
+\label{tab:sharedresp}
+\end{table}
+
+Table~\ref{tab:sharedresp} is the \emph{shared-responsibility model} (CSA,
+2024, pp.~21--23), and two rules follow from it. First, responsibility
+follows control: whoever operates a layer secures it. In IaaS the provider
+therefore guards the building, the hardware and the hypervisor, whereas an
+unpatched operating system on the customer's virtual machine is the
+customer's incident. Secondly, the data row stays with the customer in every
+model. Even in SaaS, the customer decides who may access which data and what
+published data reveals, which is exactly the decision that failed in
+Example~\ref{ex:strava}.
+
+One further model appears in the learning outcomes. \textbf{SecaaS} (Security
+as a Service) describes security capabilities themselves, for example
+monitoring or identity services, consumed as a cloud service (CSA, 2024,
+p.~19). In the cloud, in other words, even the defences can be rented.
+
+\begin{example}[Continuation of Example~\ref{ex:nextcloud-cia}]
+The running example makes the table concrete. If Nextcloud runs on an IaaS
+virtual machine, as it does in the laboratory, the operating system, the web
+server, TLS, the firewall and every update are the customer's responsibility;
+the provider owes working hardware and isolation from the other tenants. If the
+organisation subscribes to a hosted SaaS file-sharing product instead, almost
+all of that moves to the provider. However, the decisions that would have
+prevented the Strava case, namely who may see what and what is shared with
+whom, remain with the customer. No service model therefore exists in which
+security is entirely somebody else's problem.
+\end{example}
+
+Resource pooling has one more consequence. Because a virtual machine shares
+physical hardware with strangers, the isolation between virtual machines is
+itself a security property: the provider delivers it and the customer must
+be able to trust it. Session~5 treats this isolation under workload
+security.
+
+\section{Course design, literature and reading}
+
+One service, the Nextcloud platform of Example~\ref{ex:nextcloud-cia}, is the
+red thread of the semester. Sessions~1 and~2 prepare the machine beneath it,
+Session~3 installs Nginx, Session~5 installs the service with Docker, and
+each later week adds one layer: firewall, TLS, identity, WAF, monitoring,
+logging, backup. Session~13 then assembles the layers into one integrated
+case. Every session follows the same sequence
+of concept, threat, control, local laboratory, cloud transfer and
+reflection, and a typical week pairs a two-hour lecture with a two-hour
+laboratory in the students' own Ubuntu virtual machine. The laboratory of
+this first week is light: check that the computer supports hardware
+virtualisation, install VMware or VirtualBox, create an Ubuntu virtual
+machine, and complete the Microsoft Learn module \emph{Describe cloud
+concepts}. Session~2 then covers Linux itself.
+
+Nextcloud is a worked example, not a requirement: the method transfers to
+any self-hosted web service, not the product.
+
+Three books carry the course, each with its own role. The \emph{CSA Security
+Guidance v5} (CSA, 2024) provides the structure, since its twelve domains
+organise the sessions. J\o sang (2024) provides the security backbone: CIA,
+risk, cryptography, identity and access management, incident response and
+governance. Comer (2021) provides the cloud fundamentals: virtual machines,
+containers, Kubernetes and serverless computing. Tanenbaum and Bos (2015)
+supply the operating-systems foundations of Sessions~2 and~7. A short
+Microsoft Learn module accompanies each session, so Azure is the companion
+environment rather than a textbook.
+
+Each session builds on terms the reading introduced, so the reading is best
+done before the session. The SQ3R method fits the chapters:
+survey the headings and figures, formulate the questions the chapter should
+answer, read with those questions in mind, recite the answers in one's own
+words, and review after a few days.
+
+\paragraph{Reading for this chapter.} CSA Security Guidance, Domain~1
+(Cloud Computing Concepts \& Architectures, pp.~10--27); Comer, Chapters~1--3
+(pp.~5--32) and \S17.2 (Cloud-Specific Security Problems, pp.~233--234);
+J\o sang, Chapter~1 (Basic Concepts of Cybersecurity, pp.~1--24). The Microsoft Learn module for Session~1
+is linked on Canvas.
+
+\section{Summary}
+
+Cloud computing is a delivery model: on-demand network access to a pooled,
+elastic, metered set of computing resources (Definition~\ref{def:cloud}),
+rented as IaaS, PaaS or SaaS (Definition~\ref{def:servicemodels}). Security
+protects confidentiality, integrity and availability
+(Definition~\ref{def:cia}) by one chain of reasoning: name the threat, weigh
+the risk, then choose a control that fits the risk
+(Definition~\ref{def:trc}). What the cloud changes is the division of
+labour: responsibility follows control of each layer, no layer is unowned,
+and the data, together with the judgement about what it reveals, stays with
+the customer (Example~\ref{ex:strava}). Session~2 turns to the infrastructure
+beneath the model: the Linux server, its baseline and the virtualised data
+centre.
+
+\section*{Self-check}
+\addcontentsline{toc}{section}{Self-check}
+
+Sketch answers follow the exercises.
+
+\begin{exercise}[Five essential characteristics]
+Name the five essential characteristics of cloud computing and, for each, one
+sentence on where it appears in Example~\ref{ex:vm}.
+\end{exercise}
+
+\begin{exercise}[Strava case, in CIA terms]
+In the Strava case (Example~\ref{ex:strava}): which CIA property was harmed,
+and why is the claim that the data was anonymised not a sufficient defence?
+\end{exercise}
+
+\begin{exercise}[Threat, risk, control for a vulnerability]
+A team runs Nextcloud on an IaaS virtual machine. A critical vulnerability is
+published for the Linux distribution on that machine. Whose task is the patch,
+and which definition of this chapter answers the question?
+\end{exercise}
+
+\begin{exercise}[Open SSH port as threat--risk--control]
+Formulate the open SSH port of Example~\ref{ex:ssh-trc} strictly in the
+vocabulary of Definition~\ref{def:trc}: one sentence each for threat, risk and
+control.
+\end{exercise}
+
+\begin{exercise}[When SaaS reduces the risk]
+Give one realistic scenario in which moving from IaaS to SaaS reduces the
+security workload, and one responsibility that the move does not remove.
+\end{exercise}
+
+\paragraph{Sketch answers.}
+{\small
+(1)~Self-service, broad network access, resource pooling, rapid elasticity,
+measured service: portal instead of ticket; created from anywhere; capacity
+was standing by, shared; one machine can become ten; billed by the hour.
+(2)~Confidentiality of the bases, not of the individuals; aggregation
+re-identified what anonymisation hid, so the governance decision to publish was
+the failure. (3)~The customer's: in IaaS the customer manages from the operating
+system upward (Definition~\ref{def:servicemodels}, Table~\ref{tab:sharedresp}).
+(4)~Threat: an attacker brute-forces SSH credentials. Risk: high likelihood
+(constant automated scanning) times high impact (full control). Control:
+key-only login restricted to the administrative address. (5)~SaaS removes OS
+patching, TLS configuration and server hardening; it does not remove deciding
+who may access which data, because the data row stays with the customer.}
+
+

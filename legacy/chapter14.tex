@@ -1,0 +1,114 @@
+% =====================================================================
+%  Reading list  ·  consolidated per-session reading (appendix)
+% =====================================================================
+\chapter*{Reading list}
+\addcontentsline{toc}{chapter}{Reading list}
+\markboth{Reading list}{Reading list}
+
+This table gathers the reading named at the end of each chapter so that the
+whole plan can be seen at a glance. Each row lists the \emph{core} reading for
+that session, followed by \emph{further} or optional deepening; the
+per-chapter blocks give the same references with more context. Page numbers
+refer to the editions below; for the CSA Security Guidance they are the
+printed page numbers in the document's footer. The weekly Microsoft Learn
+module is a graded companion, not a substitute for the reading.
+
+\paragraph{Core texts.}
+\emph{CSA} --- Cloud Security Alliance (2024), \emph{Security Guidance for
+Critical Areas of Focus in Cloud Computing v5}.
+\emph{Comer} --- D.~E.~Comer (2021), \emph{The Cloud Computing Book: The Future
+of Computing Explained}, Chapman \& Hall/CRC.
+\emph{J\o sang} --- A.~J\o sang (2024), \emph{Cybersecurity: Technology and
+Governance}, Springer, ISBN 978-3-031-68483-8.
+\emph{Tanenbaum and Bos} --- A.~S.~Tanenbaum and H.~Bos (2015), \emph{Modern
+Operating Systems}, 4th edition, Pearson; drawn on for operating-systems
+foundations in Sessions~2 and~7.
+
+\bigskip
+{\small
+\nolinenumbers
+\renewcommand{\arraystretch}{1.35}
+\begin{longtable}{@{}c p{2.4cm} p{7.9cm} p{2.5cm}@{}}
+\toprule
+\textbf{S} & \textbf{Topic} & \textbf{Reading (core, then further)} & \textbf{MS Learn} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{S} & \textbf{Topic} & \textbf{Reading (core, then further)} & \textbf{MS Learn} \\
+\midrule
+\endhead
+\bottomrule
+\multicolumn{4}{r}{\footnotesize\itshape continued on next page}\\
+\endfoot
+\bottomrule
+\endlastfoot
+
+1 & Concepts, CIA, threat--risk--control, service models &
+CSA Domain~1 (pp.~10--27); Comer Ch.~1--3 (pp.~5--32) and \S17.2
+(pp.~233--234); J\o sang Ch.~1 (pp.~1--24). &
+Describe cloud concepts \\
+
+2 & Data centres, virtualisation and Linux &
+Comer Ch.~4 (pp.~37--51), Ch.~5 (pp.~55--68) and Ch.~3 (pp.~25--32); CSA D7
+\S7.1 (pp.~147--153); Tanenbaum and Bos \S7.2--7.3 (pp.~474--477), Ch.~10--11;
+J\o sang Ch.~3 (pp.~43--62). &
+Describe Azure architecture \& services \\
+
+3 & Web services, load and denial of service &
+Comer \S1.5 (pp.~8--9), Ch.~2 (pp.~15--22), \S14.2--14.7 (pp.~195--200); CSA D7
+\S7.2 (pp.~153--162); J\o sang Ch.~2 (pp.~25--42). &
+Describe Azure compute \& networking \\
+
+4 & Networking and firewall controls &
+Comer Ch.~7 (pp.~87--96) and \S17.3--17.5 (pp.~235--237); CSA D7 \S7.2
+(pp.~153--162), \S7.4 (pp.~168--176); J\o sang Ch.~6 (pp.~117--142). &
+Describe Azure networking services \\
+
+5 & Cloud-native versus lift-and-shift &
+Comer Ch.~5 (pp.~55--68), Ch.~6 (pp.~71--83), Ch.~10 (pp.~127--140), \S11.3
+(p.~146); CSA D8 \S8.1 (pp.~177--182), D7 \S7.1.5 (pp.~152--153); J\o sang
+Ch.~11 (pp.~243--270). &
+Describe Azure compute (containers) \\
+
+6 & TLS and data in transit &
+CSA D9 \S9.1.2 (pp.~210--211), \S9.2.3--9.2.5 (pp.~216--221) and p.~229; Comer
+\S17.9 (pp.~240--241); J\o sang Ch.~4--5 (pp.~63--116). &
+Describe Azure security \\
+
+7 & Hardening and access control &
+CSA D5 \S5.1--5.5 (pp.~103--123); Comer \S17.5--17.7 (pp.~237--239);
+Tanenbaum and Bos \S9.3 (pp.~602--604); J\o sang Ch.~8--9 (pp.~165--214). &
+Describe Azure identity \\
+
+8 & DevSecOps, WAF and secure applications &
+CSA D10 \S10.1/\S10.4/\S10.5 (pp.~230--252) and D8 \S8.1.4--8.1.5
+(pp.~181--182); Comer Ch.~15 (pp.~207--214) and \S9.10--9.11 (pp.~121--122);
+J\o sang Ch.~11 (pp.~243--270). &
+Azure Application Gateway \& WAF \\
+
+9 & Security monitoring and IDS &
+CSA D6 \S6.1--6.4 (pp.~124--145); Comer \S13.3--13.4 (pp.~182--183) and \S17.8
+(pp.~239--240); MITRE ATT\&CK; J\o sang Ch.~16 (pp.~337--354). &
+Describe Azure monitoring \\
+
+10 & Logging and log integrity &
+CSA D6 \S6.1.1 (pp.~125--126), \S6.2 (pp.~127--133), \S6.3 (pp.~133--135); CSA
+D11 \S11.1.1 (pp.~254--256), \S11.3.4 (pp.~265--267); J\o sang Ch.~16 (pp.~337--354). &
+Azure Monitor \& Log Analytics \\
+
+11 & Resilience, RAID and backup &
+CSA D11 \S11.6 (pp.~270--273), \S11.1.1 (p.~255); Comer \S8.7 (pp.~103--104)
+and \S11.15 (pp.~156--157). &
+Describe Azure storage \\
+
+12 & Incident response, BCM, risk and compliance &
+CSA D11 \S11.1--11.5 (pp.~254--270); CSA D3 \S3.1--3.3 (pp.~56--81); Comer
+\S17.11--17.12 (pp.~242--243). &
+Describe Azure governance \\
+
+13 & The integrated case &
+No new domains; Comer Ch.~18 (pp.~247--249); NIST Cybersecurity Framework~2.0. &
+--- \\
+
+\end{longtable}
+}

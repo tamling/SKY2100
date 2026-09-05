@@ -1,0 +1,301 @@
+% =====================================================================
+%  Chapter 11  ·  Session 11 --- Resilience, RAID and backup
+% =====================================================================
+\chapter{Resilience, RAID and backup}
+
+Most controls in this course reduce the \emph{likelihood} of a bad event:
+the firewall makes intrusion less likely, MFA makes account takeover less
+likely, the WAF makes exploitation less likely. Resilience is different. It
+accepts that a disk dies, a data centre floods, ransomware encrypts the
+files or an administrator deletes the wrong directory, and it reduces the
+\emph{impact}, so that the service keeps running or recovers quickly. Two
+tools carry it: redundancy, which lets a system survive a component
+failure, and backup, which returns the system to a good state. Because the
+two are constantly confused, keeping them apart is half the chapter.
+
+\section{Availability revisited}
+
+Session~3 showed that chaining components multiplies their availabilities
+down, so redundancy must be added on purpose, and Session~2 introduced the
+geography, availability zones and region pairs, that makes large-scale
+redundancy possible. The CSA Security Guidance describes resilience built on
+that geography as layered (CSA, 2024, pp.~270--271). Single-region
+resilience, with autoscaling, load balancing and backup, is where most
+applications begin. Multi-region resilience, with parallel deployments
+across regions, adds fault tolerance against regional outages at the cost
+of duplicated resources and data synchronisation. The design goal at every
+level is a small \emph{blast radius}, so that one failure takes down as
+little as possible. A deployment spread across availability zones survives
+the loss of one. A service whose data is backed up survives the loss of its
+storage. A system built from immutable images (Session~5) survives the loss
+of an instance by replacing it.
+
+\section{Redundancy and RAID}
+
+The oldest form of redundancy works at the level of storage, and it is the
+subject of this week's laboratory. In a data centre, storage is pulled out
+of individual servers into centralised facilities (Session~2), and RAID is
+part of how that storage survives the failure of the physical disks beneath
+it.
+
+\begin{definition}[RAID]\label{def:raid}
+\textbf{RAID} (redundant array of independent disks) describes the
+combination of several physical disks into one logical volume for
+performance, redundancy, or both. \textbf{RAID~0} \emph{stripes} data across
+disks for speed but adds no redundancy, so one disk failing loses everything.
+\textbf{RAID~1} \emph{mirrors} data across disks, so a copy survives a disk
+failure. \textbf{RAID~5} and \textbf{RAID~6} distribute data with
+\emph{parity}, tolerating one or two failed disks respectively while using
+space more efficiently than mirroring.
+\end{definition}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize]
+  \tikzset{
+    d/.style={draw=kgrey, fill=klight, minimum width=0.9cm, minimum height=0.55cm, inner sep=0pt},
+    p/.style={draw=kristiania, fill=kristiania!12, minimum width=0.9cm, minimum height=0.55cm, inner sep=0pt},
+    dl/.style={font=\scriptsize\itshape, text=kgrey},
+  }
+  % ---------- RAID 0 : striping ----------
+  \node[font=\small\bfseries, text=kgrey] at (0.95,2.55) {RAID 0};
+  \node[dl] at (0.95,2.15) {striping};
+  \node[d] (r0a) at (0.45,1.2) {A};   \node[d] at (0.45,0.6) {C};
+  \node[d] (r0b) at (1.45,1.2) {B};   \node[d] at (1.45,0.6) {D};
+  \node[dl] at (0.45,0.05) {disk 1};  \node[dl] at (1.45,0.05) {disk 2};
+  \node[dl, text width=2.4cm, align=center] at (0.95,-0.55) {blocks split; fast, \emph{no} copy};
+
+  % ---------- RAID 1 : mirroring ----------
+  \node[font=\small\bfseries, text=kgrey] at (4.15,2.55) {RAID 1};
+  \node[dl] at (4.15,2.15) {mirroring};
+  \node[d] at (3.65,1.2) {A};   \node[d] at (3.65,0.6) {B};
+  \node[d] at (4.65,1.2) {A};   \node[d] at (4.65,0.6) {B};
+  \node[dl] at (3.65,0.05) {disk 1};  \node[dl] at (4.65,0.05) {disk 2};
+  \node[dl, text width=2.6cm, align=center] at (4.15,-0.55) {same data twice; a copy survives};
+
+  % ---------- RAID 5 : parity ----------
+  \node[font=\small\bfseries, text=kgrey] at (8.35,2.55) {RAID 5};
+  \node[dl] at (8.35,2.15) {striping + parity};
+  \node[d] at (7.35,1.2) {A1};  \node[d] at (7.35,0.6) {B1};
+  \node[d] at (8.35,1.2) {A2};  \node[p] at (8.35,0.6) {P};
+  \node[p] at (9.35,1.2) {P};   \node[d] at (9.35,0.6) {B2};
+  \node[dl] at (7.35,0.05) {disk 1};  \node[dl] at (8.35,0.05) {disk 2};  \node[dl] at (9.35,0.05) {disk 3};
+  \node[dl, text width=3.0cm, align=center] at (8.35,-0.55) {data + rotating parity (\textcolor{kristiania}{P}); one disk may fail};
+\end{tikzpicture}
+\caption{Three RAID levels. Striping (RAID~0) spreads blocks for speed with
+no redundancy; mirroring (RAID~1) keeps a full second copy; parity (RAID~5)
+distributes data and parity so that any one disk can be rebuilt. None of them
+is a backup.}
+\label{fig:raid}
+\end{figure}
+
+RAID~0 is the trap in this list. Its name and its place among the redundant
+arrays suggest safety, but it offers striping for speed with no redundancy
+at all, so the array is more likely to lose data than a single disk,
+because any one of several disks failing destroys the whole. It suits
+scratch data one can afford to lose and nothing of value. A second rule
+applies to all RAID levels and is the most frequently confused idea in this
+area: \emph{RAID is not a backup}. RAID protects against a disk failing, but
+it does nothing against a file being deleted, corrupted or encrypted by
+ransomware, because a mirror or parity array instantly and exactly copies
+that deletion to every disk. Redundancy therefore keeps a service running
+through hardware failure, and it cannot undo a mistake or an attack; that
+requires a return to an earlier state, which RAID cannot provide.
+
+\section{Backup}
+
+\begin{definition}[Backup]\label{def:backup}
+A \textbf{backup} describes a separate, point-in-time copy of data, kept so
+that the data can be restored after loss, corruption, deletion or attack.
+Unlike redundancy, which maintains a current copy and therefore mirrors any
+change including a harmful one, a backup preserves an \emph{earlier} state to
+which the system can return.
+\end{definition}
+
+Because a backup is a snapshot of the past, it survives exactly the events
+RAID cannot: the accidental deletion, the corruption and above all the
+ransomware that encrypts live data and mirror alike. A widely taught rule is
+the \emph{3--2--1 rule}: three copies of important data, on two different
+kinds of media, with one copy off-site or, in the cloud, in a separate
+account or region. The off-site copy matters for the same reason off-host
+logs mattered in Session~10, because a backup an attacker can reach and
+encrypt is no backup, so ransomware protection relies on copies that are
+off-site and immutable. The Guidance adds the rule that addresses the most
+common failure in practice: its preparation checklist requires backup
+restoration testing at regular intervals and disaster-recovery tests at
+least once per year (CSA, 2024, p.~255), because a backup that has never
+been restored is not known to work.
+
+\begin{realworld}{Maersk and NotPetya, 2017}
+The NotPetya wiper spread through the shipping company Maersk in June 2017,
+destroying tens of thousands of PCs and servers within minutes and halting
+operations at ports worldwide. The damage was reported at roughly
+\$300~million. The company could rebuild its network identity only because a single copy
+of a critical directory server had survived: that machine, in an office in
+Ghana, had been offline during a power cut while the malware spread. Two
+facts follow. Redundancy that is always connected does not stop an attack
+that propagates; an off-line, off-site copy saved the company, the off-site
+element of the 3--2--1 rule. The company rebuilt because a good copy existed
+and could be restored; a backup nobody can recover from is no backup.
+\end{realworld}
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}p{7.2cm} c c@{}}
+\toprule
+& \textbf{RAID} & \textbf{Backup} \\
+\midrule
+Keeps the service running when a disk fails & yes & no \\
+Recovers a file deleted by mistake & no & yes \\
+Recovers data corrupted or encrypted by ransomware & no & yes \\
+Allows a return to an \emph{earlier} point in time & no & yes \\
+Protects against loss of the whole site & no & yes (if off-site) \\
+\bottomrule
+\end{tabular}
+\caption{RAID versus backup. They solve different problems and are used
+together: RAID keeps the service running through a hardware failure, backup
+recovers from everything else.}
+\label{tab:raidbackup}
+\end{table}
+
+Table~\ref{tab:raidbackup} makes the division of labour explicit. Reading
+down the backup column, almost everything that destroys data in practice,
+the accidental deletion, the corrupting bug, the ransomware, the lost data
+centre, is recovered by backup and none of it by RAID, because RAID copies
+the damage. RAID buys \emph{uptime} through hardware failure, whereas backup
+buys \emph{recoverability} from everything else. The two are therefore
+complementary rather than alternatives, and having RAID is never an answer
+to the question whether there are backups.
+
+\section{Redundancy the provider builds in}
+
+Redundancy runs deeper than the array built in the laboratory, because the
+cloud's storage is engineered for it from the bottom. The network-attached
+storage behind a data centre uses RAID so that the system continues to
+operate when a disk fails, and a failed disk is replaced while the array
+runs, known as \emph{hot swapping} (Comer, 2021, pp.~103--104). Redundancy
+also appears above the disks: in Hadoop's distributed file system each data
+block is stored in redundant copies, typically three, spread across several
+nodes, so that the failure of a machine loses no data and computation
+continues on a surviving copy (Comer, 2021, pp.~156--157). The pattern is
+the same at every level, more than one copy on more than one device, so that
+any single failure is survivable, and cloud object storage expresses it as a
+durability figure achieved by keeping several geographically separated
+replicas of every object. Deletion, corruption and ransomware, however,
+reach through all of that provider redundancy, because replicas copy the
+damage as exactly as a RAID array does. Resilience is therefore layered: the
+provider supplies durable storage, and the customer's own backup remains the
+customer's responsibility.
+
+\section{Designing for failure}
+
+Taken together, the pieces make resilience a design stance rather than a
+product. Redundancy, that is, RAID beneath the storage, instances spread
+across availability zones and a service built to replace failed
+components, keeps the system serving through the failures it can absorb.
+Backup, off-site and tested, is the floor beneath everything, the way back
+when redundancy is insufficient or the loss is not a hardware failure at
+all. Disaster recovery planning, exercised yearly, ties the two together and
+answers how, and how quickly, the organisation returns if the worst happens.
+The immutable, use-and-replace pattern of Session~5 is thus a resilience
+tool as much as a security one, and the snapshot of Session~2 was the first
+backup.
+
+\begin{example}[Backing up the red thread]\label{ex:backup-trc}
+\emph{Threat}: the data is lost because a disk fails, a bug corrupts the
+database, ransomware encrypts every file, or an administrator deletes the
+wrong directory. \emph{Risk}: for anything users rely on, the impact of
+permanent loss is severe, and several of these causes are not rare.
+\emph{Controls}, correctly matched: RAID beneath the storage keeps the service
+running through a single disk failure but is useless against the deletion,
+corruption and ransomware, because it mirrors them. The decisive control
+is therefore a regular backup of Nextcloud's data and configuration, kept
+off-site (a separate account or region), held immutably against ransomware,
+and restored on a schedule to prove that it works. The VM snapshot of
+Session~2 serves as a rollback point but must not be mistaken for the backup,
+and neither must the RAID. The threat is to availability and integrity; the
+control that meets it is the tested restore.
+\end{example}
+
+\paragraph{Reading for this chapter.} CSA Security Guidance, Domain~11,
+\S11.6 (Resilience, pp.~270--273) and the incident-response checklist's
+requirement for regular backup-restoration and disaster-recovery testing
+(\S11.1.1, p.~255); Comer, Chapter~8 (Virtual Storage; \S8.7 NAS, RAID and
+hot swapping, pp.~103--104) and \S11.15 (block replication and fault
+tolerance in HDFS, pp.~156--157). The Session~11 laboratory builds a RAID
+array with \texttt{mdadm}; the choice of level is part of the exercise. The
+Microsoft Learn module is \emph{Describe Azure storage} (redundancy options
+and Azure Backup).
+
+\section{Summary}
+
+Resilience is impact reduction: it accepts that failures and disasters will
+occur and ensures that the service survives or recovers, organised around a
+small blast radius. Its two tools must be kept apart. Redundancy, that is,
+RAID beneath storage (Definition~\ref{def:raid}), instances across
+availability zones and replaceable immutable images, keeps a system running
+through component failure, but RAID is not a backup, and RAID~0 is not even
+redundant. Backup (Definition~\ref{def:backup}) is a point-in-time copy that
+allows a return to an earlier state, so it survives the deletion, corruption
+and ransomware that redundancy copies exactly; it follows the 3--2--1 rule,
+off-site and immutable, and it is tested by restoring it, because an
+untested backup is not a control. Together, exercised through
+disaster-recovery testing, they form a design stance for failure. On the
+red thread, Nextcloud's data is backed up off-site and the restore is
+verified (Example~\ref{ex:backup-trc}). Session~12 covers what to do when an
+incident occurs.
+
+\section*{Self-check}
+\addcontentsline{toc}{section}{Self-check}
+
+Sketch answers follow the exercises.
+
+\begin{exercise}[Resilience vs prevention]
+Explain how resilience differs from the preventive controls of earlier
+sessions, in terms of likelihood versus impact.
+\end{exercise}
+
+\begin{exercise}[The RAID~0 trap]
+Why is RAID~0 a trap? Describe what it does and why it is less safe than a
+single disk for data of value.
+\end{exercise}
+
+\begin{exercise}[Why RAID is not a backup]
+State why RAID is not a backup. Give one failure RAID survives and two it does
+not.
+\end{exercise}
+
+\begin{exercise}[The 3--2--1 rule]
+What is the 3--2--1 rule, and why does the off-site copy matter for
+ransomware? Which control from Session~10 follows the same logic?
+\end{exercise}
+
+\begin{exercise}[Data loss as threat--risk--control]
+Write, in the vocabulary of Definition~\ref{def:trc}, the threat, risk and
+controls for the loss of the Nextcloud data, and identify the single control
+that actually guarantees recovery.
+\end{exercise}
+
+\paragraph{Sketch answers.}
+{\small
+(1)~Preventive controls reduce the likelihood of a bad event (firewall, MFA,
+WAF); resilience accepts that failures will occur and reduces their impact,
+so that the service keeps running or recovers quickly. (2)~RAID~0 stripes
+data across disks for speed with no redundancy, so any one disk failing
+destroys the whole array, making it more likely to lose data than a single
+disk despite its place among the redundant arrays. (3)~RAID maintains a
+current copy, so it mirrors any change, including harmful ones. It survives a
+disk failing; it does not survive a file being deleted or corrupted, or
+ransomware encrypting the data, all of which are replicated instantly to every
+disk. (4)~Three copies, on two media types, one off-site (or a separate cloud
+account or region). The off-site copy matters because a backup the attacker
+can reach can be encrypted too; the same logic as shipping logs off-host in
+Session~10: a safeguard under the attacker's control is no safeguard.
+(5)~Threat: data lost through disk failure, corruption, ransomware or
+accidental deletion. Risk: severe impact of permanent loss; several causes not
+rare. Controls: RAID for hardware failure, snapshots for rollback, and, as the
+one that guarantees recovery, a regular, off-site, immutable backup that is
+tested by restoring it.}
+
+

@@ -1,0 +1,335 @@
+% =====================================================================
+%  Chapter 7  ·  Session 7 --- Hardening and access control
+% =====================================================================
+\chapter{Hardening and access control}
+
+The firewall of Session~4 decides where traffic may come from, but it says
+nothing about who is on the other end or what they may do once connected.
+This chapter covers authentication (proving who one is), authorisation
+(deciding what one may do) and least privilege. These questions weigh more
+in the cloud than elsewhere, because the whole infrastructure is managed
+through a web console and an API reachable from the Internet, so the account
+that controls it is the way in.
+
+\section{Identity as the new perimeter}
+
+The CSA Security Guidance calls identity and access management the new
+perimeter of the cloud, and the reason is this consolidation: a provider
+gathers all administration into one web console and one API, and both are
+reachable from the Internet (CSA, 2024, pp.~103--104). Often nothing more
+than a username and a password stands in front of them, and most breaches of
+cloud-native systems accordingly begin with a failure of identity management
+rather than with a network attack (CSA, 2024, p.~104). A stolen
+administrator credential is therefore no longer a foothold inside a building
+that must still be crossed; it can be control of everything at once. The
+perimeter formed by IAM covers authentication as well as authorisation,
+every kind of actor (people, systems and code) and every point an attacker
+can reach, from a phished password to a key left in a published container
+build file (CSA, 2024, p.~116). Five terms supply the vocabulary (CSA, 2024,
+pp.~105--106).
+
+\begin{definition}[Core IAM terms]\label{def:iam}
+An \textbf{entity} describes a unique actor: a person, device, application or
+system. An \textbf{identity} describes the entity's verifiable expression
+within a namespace; one entity may hold several. \textbf{Authentication}
+describes the process of verifying an identity. \textbf{Authorisation}
+describes the decision to permit or deny an authenticated identity access to
+a resource. An \textbf{entitlement} describes the mapping of identities to
+authorisations, often with conditions (identity~X may access resource~Y when
+attributes~Z hold); a table of these is an \emph{entitlement matrix}.
+\end{definition}
+
+Authentication and authorisation must be kept apart, because a system can
+get the first right and the second wrong: it identifies a user correctly and
+then grants far more access than the task needs. Least privilege exists to
+prevent that second failure, and the entitlement matrix, written down and
+reviewed, is the document that shows whether it holds.
+
+\section{Authentication and multi-factor authentication}
+
+Authentication rests on \emph{factors}, that is, categories of evidence for
+a claim of identity. There are three, and combining them is the most
+effective identity control available.
+
+\begin{definition}[Multi-factor authentication]\label{def:mfa}
+\textbf{Multi-factor authentication} (MFA) describes the requirement of
+evidence from more than one independent category: \emph{something one knows}
+(a password or PIN), \emph{something one has} (a phone, hardware token or
+key) and \emph{something one is} (a biometric). A stolen password alone is
+then insufficient, because it satisfies only one factor.
+\end{definition}
+
+The cloud raises the need for MFA for two reasons (CSA, 2024, pp.~112--113).
+The first is \emph{broad network access}, the second essential
+characteristic of Session~1: cloud services are reached over the Internet,
+so a lost or stolen credential can be used from anywhere, and the attacker
+no longer needs to be on the local network. The second is single sign-on
+across federated services, because one compromised set of credentials then
+opens many services at once. The Guidance accordingly ranks MFA among the
+most effective measures against account takeover, and a cloud account
+guarded by a password alone is a high risk (CSA, 2024, p.~113). The factors
+differ in strength: hardware tokens and phishing-resistant methods such as
+FIDO passkeys are stronger than a code read from an app, which in turn is
+stronger than a password alone (CSA, 2024, pp.~113--114). MFA is also the
+basis of \emph{conditional access}, in which the system weighs the
+circumstances of a login, such as an unknown device, an unusual country, or
+the impossible travel of two logins from distant places minutes apart, and
+demands more assurance, or refuses, when they look wrong (CSA, 2024,
+pp.~106, 116).
+
+\begin{realworld}{Colonial Pipeline, 2021}
+The largest fuel pipeline in the United States was shut down for days,
+causing shortages along the East Coast, after a ransomware crew entered
+through a single account. The account belonged to a legacy virtual private
+network, its password had appeared in a batch of leaked credentials
+elsewhere, and it had no multi-factor authentication. One reused password
+without a second factor was sufficient. With MFA the stolen password alone
+would have failed (Definition~\ref{def:mfa}). MFA on every account that
+reaches inside is a baseline, not advice.
+\end{realworld}
+
+\section{Authorisation: RBAC, PBAC and ABAC}
+
+Once an identity is authenticated, authorisation decides what it may do, and
+three models express that decision, in rising order of flexibility (CSA,
+2024, pp.~105, 118--119).
+
+\begin{definition}[Authorisation models]\label{def:authz}
+\textbf{Role-based access control} (RBAC) describes granting permissions to
+\emph{roles} and assigning identities to roles (administrator,
+member). \textbf{Policy-based access control} (PBAC) describes expressing
+permissions as explicit policies evaluated at access time.
+\textbf{Attribute-based access control} (ABAC) describes deciding from
+\emph{attributes} of the identity, resource and context (department, resource
+sensitivity, time, location, MFA status), which enables fine-grained,
+context-aware decisions.
+\end{definition}
+
+RBAC is simple and familiar, and for a small service it is often sufficient.
+Its weakness is coarseness, because everyone in a role receives the same
+access regardless of circumstance. ABAC and PBAC add that circumstance:
+access only from a managed device, only during working hours, only if MFA
+was used. The Guidance therefore names PBAC supporting ABAC as the preferred
+model and recommends ABAC and PBAC over RBAC where the platform supports
+them (CSA, 2024, pp.~115, 122). Table~\ref{tab:authz} compares the three.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{@{}l p{3.5cm} p{3.0cm} p{3.3cm}@{}}
+\toprule
+\textbf{Model} & \textbf{Decides from} & \textbf{Strength} & \textbf{Weakness} \\
+\midrule
+RBAC & the identity's \emph{role} & simple, familiar, easy to audit & coarse: all in a role get the same access \\
+PBAC & explicit \emph{policies} evaluated at access time & central and expressive & policies must be written and maintained \\
+ABAC & \emph{attributes} of identity, resource and context & fine-grained, context-aware & complex to design and reason about \\
+\bottomrule
+\end{tabular}
+\caption{Three authorisation models. All three express who may do what;
+they differ in what the decision is based on and in the granularity bought at
+the cost of complexity. The Guidance prefers ABAC/PBAC where the platform
+supports them.}
+\label{tab:authz}
+\end{table}
+
+Whichever model is used, one principle governs it.
+
+\begin{definition}[Least privilege]\label{def:leastpriv}
+The principle of \textbf{least privilege} describes the rule that every
+identity is granted the minimum access its task requires, and no more. Excess
+privilege is a hidden liability rather than a convenience: it is the
+additional damage available to any mistake and to any attacker who takes the
+identity over.
+\end{definition}
+
+Least privilege has already appeared twice under other names: as
+\texttt{root} versus \texttt{sudo} in Session~2, where administrative power
+is not held while it is not in use, and as the firewall's default-deny in
+Session~4, where no network access is granted that has not been justified.
+Here it becomes the shape of every authorisation decision.
+
+\section{Protection domains and the access control matrix}
+
+RBAC, ABAC and least privilege are the modern form of a model from
+operating-systems theory (Tanenbaum \& Bos, 2015, pp.~602--604). A system
+holds \emph{objects} to be protected (files, devices, processes, memory),
+each with a name and a fixed set of operations. A \emph{protection domain}
+is a set of \emph{(object, rights)} pairs: for one actor, which operations
+are permitted on which objects. With every domain as a row and every object
+as a column, the result is the \emph{access control matrix}, the most
+general statement of who may do what to what. Every authorisation scheme in
+this chapter compresses that matrix so that it can be managed at scale. RBAC
+groups rows that share a pattern into roles. ABAC computes a cell's contents
+from attributes at access time rather than storing it. An entitlement matrix
+(Definition~\ref{def:iam}) is the access control matrix written down for
+review. Least privilege, lastly, is Tanenbaum and Bos's own rule for filling
+the matrix, the \emph{Principle of Least Authority} (POLA), also called need
+to know: each domain holds the minimum objects and rights needed for its
+work.
+
+The Linux machine of Session~2 already works this way. In UNIX and Linux a
+process's protection domain is defined by its \emph{user and group
+identifiers} (UID and GID): at login the shell receives them from the
+password database, every process started from it inherits them, and the
+pair determines which files and devices may be read, written or executed.
+Changing the pair changes the domain, and two mechanisms for doing so carry
+into the cloud. First, each process has a user half and a kernel half, and a
+\emph{system call} switches between them. Because the kernel half can touch
+physical memory and every disk that the user half cannot, a system call is a
+domain switch to a more privileged domain, the same trap that made
+virtualisation work in Session~2. Secondly, running a program marked
+\emph{set-UID} gives it a different effective identity for the duration.
+This is the mechanism behind \texttt{sudo}, and the reason \texttt{sudo} is
+a privilege escalation to be granted sparingly.
+
+\section{Single sign-on and privileged access}
+
+Zero Trust validates every request, and in a service built from many
+microservices a naive implementation would therefore prompt the user for a
+password at every hop. Comer (2021) gives the example of one task, finding a
+colleague's email address, that involves two services and asks the user to
+log in at each step (Comer, 2021, pp.~237--238). The situation is worse when
+every service keeps its own user list and passwords, because each service
+then grants privileges on its own, with no coordination. The answer is a
+central \emph{identity management} (IdM) system offering \emph{single
+sign-on} (SSO) (Comer, 2021, p.~238). The user has one set of credentials,
+held in one place together with their access rights, every service consults
+that system, and the system can return a digital capability that other
+services accept, so the user enters credentials once per task. SSO is
+therefore what makes per-request checking workable, and it is the cloud
+form of the \emph{federation} at the centre of the Guidance's identity
+domain (CSA, 2024, pp.~107--109). In Azure the central system is Microsoft
+Entra ID, which is why accounts, MFA and conditional access are managed
+there rather than in each application.
+
+The same centralisation enables a control for the accounts that matter
+most: \emph{privileged access management} (PAM), identity management for the
+administrators themselves (Comer, 2021, pp.~238--239). There is no single
+master password that opens every system; each member of staff holds
+administrative rights only on the systems that person is responsible for.
+The PAM system logs all accesses and failed login attempts, and some systems
+alert a manager when a privileged identity is used in a suspicious way, for
+example to reach a system for which it holds only secondary responsibility,
+or several such systems within a short time. The Guidance treats the same
+topic under privileged user management and recommends the strongest
+available authentication and monitoring for these accounts (CSA, 2024,
+pp.~117--118). PAM is thus least privilege applied to the administrators
+themselves.
+
+\section{Credentials and the management plane}
+
+Two practical hazards remain. The first is \emph{static credentials}:
+long-lived secrets such as API keys embedded in code or configuration,
+which are a permanent gift to an attacker who reads the repository. The
+Guidance recommends eliminating them as far as possible (CSA, 2024,
+pp.~119--120), and where a human needs elevated access, granting it
+\emph{just in time} (JIT): requested for a session, approved, and revoked
+when the session ends, so that no permanent key exists to steal (CSA, 2024,
+p.~105). The second hazard is the management plane itself. Because it
+controls everything, administrative access to it gets the strongest
+treatment available (CSA, 2024, pp.~116--118): MFA without exception, least
+privilege enforced, and administrative logins restricted by location where
+possible. Session~9 adds that every action on it is logged and watched.
+
+\begin{example}[Hardening the Nextcloud administrator]\label{ex:mfa-trc}
+Nextcloud has one all-powerful administrator account. \emph{Threat}: the administrator's password is phished or reused
+from a breach elsewhere, and an attacker logs in with full control of every
+user's files. \emph{Risk}: the likelihood is real, because password reuse and
+phishing are everywhere, and the impact is maximal, because the account can
+read, alter and delete everything, affecting all three CIA properties at once.
+\emph{Controls}, layered: MFA on the administrator account, so that a
+stolen password alone fails (Definition~\ref{def:mfa}); only the access they
+need for ordinary members, not administrative rights (least privilege); and
+no single shared administrator login, so that each action can be traced to
+a person, which is also what makes the logs of Session~10 meaningful. No
+single control removes the threat, but together they raise its cost.
+\end{example}
+
+\paragraph{Reading for this chapter.} CSA Security Guidance, Domain~5, in
+particular \S5.1 (How IAM is Different in the Cloud, and Fundamental Terms,
+pp.~104--106), \S5.2 (Federation, pp.~107--111), \S5.3 (Strong Authentication
+\& Authorization, pp.~112--118), \S5.4 (IAM Policy Types, pp.~118--119) and
+\S5.5 (Least Privilege \& Automation, pp.~119--121); the domain runs
+pp.~103--123. Comer, Chapter~17, \S\S17.5--17.7 (Zero Trust, Identity
+Management and single sign-on, and Privileged Access Management,
+pp.~237--239); Tanenbaum and Bos, \emph{Modern Operating Systems}, \S9.3
+(Protection Domains and the access control matrix, and their UNIX/Linux
+realisation in UID/GID, pp.~602--604). Optional deepening: J\o sang,
+Chapter~8 (User Authentication, pp.~165--190) and Chapter~9 (IAM---Identity
+and Access Management, pp.~191--214). The Microsoft Learn module is \emph{Describe Azure identity}
+(Microsoft Entra ID, MFA and conditional access); students enable MFA on their
+own account.
+
+\section{Summary}
+
+When a cloud is managed through Internet-facing consoles and APIs, identity
+is the perimeter (Definition~\ref{def:iam}), and its two questions are kept
+apart: authentication proves who the requester is, authorisation decides
+what the requester may do. Because broad network access turns a stolen
+credential into an easy account takeover, multi-factor authentication,
+something one knows, has and is (Definition~\ref{def:mfa}), together with
+conditional access, is the baseline. Authorisation is expressed through
+RBAC, PBAC or ABAC (Definition~\ref{def:authz}), the context-aware models
+being preferred where available, and all of them serve least privilege
+(Definition~\ref{def:leastpriv}), which is grounded in the access control
+matrix of operating-systems theory. In practice this means replacing static
+credentials by just-in-time access and giving the management plane the
+strongest controls. On the red thread, the Nextcloud administrator gains MFA
+and members lose privileges they never needed (Example~\ref{ex:mfa-trc}), so
+every action can be traced to a person, which the monitoring and logs of
+Sessions~9 and~10 depend on. Session~8 turns to the application itself.
+
+\section*{Self-check}
+\addcontentsline{toc}{section}{Self-check}
+
+Sketch answers follow the exercises.
+
+\begin{exercise}[Authentication vs authorisation]
+Distinguish authentication from authorisation, and give an example of a system
+that gets the first right and the second dangerously wrong.
+\end{exercise}
+
+\begin{exercise}[The three authentication factors]
+Name the three authentication factors, give an example of each, and explain
+why MFA defeats a stolen password.
+\end{exercise}
+
+\begin{exercise}[Why the cloud needs MFA]
+Why does the CSA Guidance hold that the cloud increases the need for strong
+MFA? Tie the answer to one of the NIST essential characteristics from
+Session~1.
+\end{exercise}
+
+\begin{exercise}[RBAC vs ABAC]
+Contrast RBAC and ABAC, and state which the Guidance prefers and why. How does
+each relate to least privilege?
+\end{exercise}
+
+\begin{exercise}[Shared admin account as threat--risk--control]
+Write, in the vocabulary of Definition~\ref{def:trc}, the threat, risk and
+controls for a single shared Nextcloud administrator account protected only by
+a password.
+\end{exercise}
+
+\paragraph{Sketch answers.}
+{\small
+(1)~Authentication verifies identity; authorisation decides permitted
+actions. A system authenticates a user correctly but then grants them
+administrator rights they do not need: correct identity, excessive
+authorisation. (2)~Something one knows (password/PIN), something one has
+(phone/hardware token), something one is (biometric); MFA requires more than
+one category, so a stolen password satisfies only one factor and fails alone.
+(3)~Broad network access: cloud services are reached over the Internet, so a
+lost or stolen credential leads to account takeover without the attacker
+being anywhere near the victim, and passwords alone cannot carry that risk.
+(4)~RBAC grants permissions to roles and assigns identities to roles, simple
+but coarse; ABAC decides from attributes and context, fine-grained and
+context-aware. The Guidance prefers ABAC (and PBAC) where supported; both
+serve least privilege by granting only what the task and context require.
+(5)~Threat: the shared password is phished or reused, giving an attacker full
+control of all files. Risk: high likelihood, maximal impact (all three CIA
+properties). Controls: require MFA on the admin account, apply least privilege
+to members, and replace the shared login with per-person accounts so that
+each action can be traced to a person.}
+
+

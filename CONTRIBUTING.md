@@ -1,5 +1,20 @@
 # Contributing to the course script
 
+## Environment mapping (LaTeX → Quarto)
+
+How the original LaTeX environments render in this Quarto book:
+
+| LaTeX (legacy/)          | Quarto (.qmd)                                   | Rendered as                    |
+|--------------------------|-------------------------------------------------|--------------------------------|
+| `\begin{definition}[T]`  | `::: {#def-slug}` + `## T`                      | numbered Definition, `@def-`   |
+| `\begin{example}[T]`     | `::: {#exm-slug}` + `## T`                      | numbered Example, `@exm-`      |
+| `\begin{exercise}[T]`    | `::: {#exr-NN-slug}` + `## T`                   | numbered Exercise, `@exr-`     |
+| `\begin{realworld}`      | `::: {.callout-note title="Real world: …"}`     | callout box                    |
+| `\section*{Self-check}`  | `## Exercises {#sec-NN-exercises}`              | exercise block (quiz section takes the Self-check name) |
+| `\paragraph{Sketch answers.}` | moved to `answers/NN-slug.qmd`             | never rendered                 |
+| `tikzpicture`            | source in `_tikz/fig-*.tikz`, built to SVG      | `![…](figures/fig-*.svg){#fig-…}` |
+| `tabular`/`longtable`    | pipe table + `: Caption {#tbl-…}`               | cross-referenced table         |
+
 Students and colleagues can become contributors — and, with sustained
 substantive contributions, credited co-authors — of this script. Smaller
 in-place suggestions go through annotations (see the *How to annotate*

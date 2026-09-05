@@ -1,6 +1,8 @@
 project:
   type: book
   output-dir: _site
+  resources:
+    - robots.txt
   render:
     - "*.qmd"
     - "appendix/*.qmd"
@@ -47,4 +49,7 @@ format:
       dark: [darkly, theme-dark.scss]
     toc: true
     number-sections: true
-    include-in-header: includes/hypothesis.html
+    include-in-header:
+      - includes/hypothesis.html
+      # noindex while the site is unofficial — remove with robots.txt
+      - includes/noindex.html

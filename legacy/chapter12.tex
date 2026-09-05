@@ -1,0 +1,315 @@
+% =====================================================================
+%  Chapter 12  ·  Session 12 --- Incident response, BCM, risk and compliance
+% =====================================================================
+\chapter{Incident response, BCM, risk and compliance}
+
+Two topics remain. The first is what to do when prevention fails and an
+attack succeeds: incident response, the organised handling of the breach
+that the whole course has been arranged to make less likely and, since
+Session~9, to detect. The second is the frame above every individual
+control, namely risk, audit and compliance, the level at which an
+organisation answers for its security to its management, to regulators and
+to the people whose data it holds.
+
+\section{Events, incidents and breaches}
+
+Response begins with classification, because not everything that happens is
+an emergency. Session~9 separated events from alerts, and the CSA Security
+Guidance extends this into a three-level scale (CSA, 2024, p.~254).
+
+\begin{definition}[Event, incident, breach]\label{def:incident}
+An \textbf{event} describes any observable occurrence, most of them benign.
+An \textbf{incident} describes an event that violates security policy or
+threatens the confidentiality, integrity or availability of a system and
+demands a response. A \textbf{breach} describes a successful penetration or
+circumvention of controls leading to unauthorised access to, or extraction
+of, data. All incidents are events; not all events are incidents; and only
+some incidents become breaches.
+\end{definition}
+
+The scale sets the response: an event is logged, an incident is handled, and
+a breach may trigger legal and regulatory obligations to notify. Getting the
+classification right, neither escalating every anomaly nor dismissing a real
+intrusion as noise, is the first judgement of response, and it depends on
+the monitoring and trustworthy logs of Sessions~9 and~10.
+
+\section{The incident response lifecycle}
+
+For handling incidents the Guidance adopts the lifecycle of NIST
+SP~800-61 (CSA, 2024, p.~254).
+
+\begin{definition}[Incident response lifecycle]\label{def:irlifecycle}
+The \textbf{incident response lifecycle} (NIST SP~800-61) describes four
+phases: \emph{Preparation} (build the team, plans, tools and baselines before
+anything happens); \emph{Detection \& Analysis} (identify the incident and
+understand its scope); \emph{Containment, Eradication \& Recovery} (stop the
+damage, remove the attacker, restore service); and \emph{Post-Incident
+Analysis} (learn, and feed the lessons back into preparation). It is a cycle:
+each incident improves readiness for the next.
+\end{definition}
+
+The Guidance's checklist gives each phase its cloud-specific content, and
+almost every item draws on a control from an earlier session (CSA, 2024,
+pp.~255--256). \emph{Preparation} covers a team with assigned roles, a
+communication plan, and responder access to environments and tools. It also
+covers internal documentation including a network traffic baseline
+(Session~2), proactive scanning and monitoring (Session~9), audit logs,
+snapshots and forensics capabilities (Sessions~2 and~10), and regular backup
+restoration testing with disaster-recovery tests at least once per year
+(Session~11). \emph{Detection \& Analysis} uses alerts from CSPM, SIEM,
+workload protection and network monitoring, validates them to reduce false
+positives, estimates the scope and assigns an incident manager; it then
+builds a timeline of the attack from the logs, which is why log integrity
+mattered. \emph{Containment, Eradication \& Recovery} is where the cloud
+differs most. Containment treats IAM and the management plane as the top
+priorities, isolating identities and workloads, taking systems offline, and
+weighing data loss against availability (CSA, 2024, pp.~267--268). Because
+federated identity separates authentication from authorisation, a blocked
+user may still hold a valid session token, so containment may require
+actions on both the identity provider and the relying party. Eradication
+then removes the attacker from the management plane permanently through
+credential rotation, additional policy conditions and MFA (Session~7) (CSA,
+2024, pp.~268--269). In the cloud, replacing a resource is usually simpler
+than expelling an attacker from it, so ephemeral resources are wiped and
+replaced rather than fixed. Old images, old function code and old
+infrastructure definitions are deleted as well, because a careless
+redeployment of any of them could let the attacker back in. Recovery
+deploys hardened versions from IaC and automation, after analysing all
+images, resources and templates for remaining backdoors (CSA, 2024,
+p.~269). This form of eradication is easier for cloud-native applications
+and harder under lift-and-shift (Session~5). Throughout, incident data is
+captured under chain of custody (Session~10). Lastly, \emph{Post-Incident
+Analysis} asks what should have gone better, that is, whether the attack
+could have been noticed earlier, which data was missing when it was needed,
+and whether the process itself has to change (CSA, 2024, pp.~255,
+269--270), and the answers go back into preparation.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize]
+  \node[redbox, text width=2.7cm] (prep) at (0,2.5)     {\textbf{Preparation}};
+  \node[redbox, text width=2.7cm] (det)  at (4.6,1.25)   {\textbf{Detection \& Analysis}};
+  \node[redbox, text width=2.7cm] (con)  at (0,0)        {\textbf{Containment, Eradication \& Recovery}};
+  \node[redbox, text width=2.7cm] (post) at (-4.6,1.25)  {\textbf{Post-Incident Analysis}};
+  \draw[redflow] (prep) -- (det);
+  \draw[redflow] (det) -- (con);
+  \draw[redflow] (con) -- (post);
+  \draw[redflow] (post) -- (prep);
+\end{tikzpicture}
+\caption{The NIST incident response lifecycle. A cycle rather than a line:
+each incident's lessons feed back into preparation for the next.}
+\label{fig:irloop}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize, node distance=3mm]
+  \tikzset{ph/.style={draw=kristiania, fill=kristiania!8, rounded corners=2pt,
+      text width=2.9cm, minimum height=1.0cm, align=center, font=\small\bfseries, text=kgrey},
+    act/.style={text width=3.0cm, align=left, font=\scriptsize, text=kgrey}}
+  \node[ph] (p1) {Preparation};
+  \node[ph, right=6mm of p1] (p2) {Detection \& Analysis};
+  \node[ph, right=6mm of p2] (p3) {Containment, Eradication \& Recovery};
+  \node[ph, right=6mm of p3] (p4) {Post-Incident Analysis};
+  \draw[redflow] (p1) -- (p2);
+  \draw[redflow] (p2) -- (p3);
+  \draw[redflow] (p3) -- (p4);
+  \node[act, below=2mm of p1.south] {baseline, monitoring, tested backups, named team};
+  \node[act, below=2mm of p2.south] {validate alert, scope, build the attack timeline from logs};
+  \node[act, below=2mm of p3.south] {isolate IAM \& workloads, rotate creds, delete stale images, restore clean};
+  \node[act, below=2mm of p4.south] {what to detect sooner; feed lessons back to preparation};
+\end{tikzpicture}
+\caption{The four phases with their cloud-specific work. Almost every action
+draws on a control built in an earlier session: preparation on Sessions~2, 9
+and~11; the timeline on Session~10; containment on Sessions~5 and~7.}
+\label{fig:irphases}
+\end{figure}
+
+\begin{example}[An incident on the red thread]\label{ex:ir-trc}
+The monitoring of Session~9 raises an alert: a canary file in Nextcloud was
+accessed, and the management plane shows an unfamiliar administrative action.
+\emph{Preparation} has already provided the alert, the off-host logs and a
+tested backup. \emph{Detection \& Analysis}: the alert is validated, the
+off-host logs are pulled, and a timeline is built: a phished administrator
+credential (Session~7), used from an unusual location. \emph{Containment}: the
+account is disabled, its sessions revoked, the affected workload isolated.
+\emph{Eradication \& Recovery}: all credentials are rotated, MFA enforced, any
+images or configuration the attacker may have altered deleted, and Nextcloud
+restored from the clean backup of Session~11, whose restore was tested.
+\emph{Post-Incident Analysis}: MFA was not enforced on every administrative
+path; this goes back into preparation. Every phase uses a control an earlier
+session built.
+\end{example}
+
+\section{Resilience and business continuity}
+
+Incident response overlaps with a broader question the Guidance places
+alongside it: how the organisation keeps operating through disruption at
+all. The Guidance expects responders to work together with the people who
+keep the business running, and it reminds management, the legal department
+and the compliance function that a cloud incident gives each of them a part
+to play (CSA, 2024, pp.~257--258). \emph{Business continuity management}
+(BCM) is this field. Where the resilience of Session~11 protects the
+technical service, continuity protects the business function the service
+supports, and two targets quantify it. The \emph{recovery time objective}
+(RTO) states how quickly a service must be back, and the \emph{recovery
+point objective} (RPO) states how much recent data the organisation can
+afford to lose; together they set how often backups are taken and how fast
+a restore must be. Continuity planning also means training staff so that
+they can fall back to a spare system, or to paper, while the main system is
+down, so that a technical failure does not become an operational collapse.
+Resilience, backup, disaster recovery and continuity thus form one line:
+keep the service up if possible, recover it fast if not, and keep the
+business running either way.
+
+\section{Risk, audit and compliance}
+
+The final step is the governance layer, because a security programme is not
+a set of controls but a managed response to \emph{risk}, judged against
+obligations on which the organisation can be \emph{audited}. The CSA
+Security Guidance treats this in Domain~3.
+
+\begin{definition}[Risk register]\label{def:riskregister}
+A \textbf{risk register} describes a repository of identified risks, their
+severity, and the actions taken to manage each. It makes risk management
+systematic, allowing an organisation to prioritise its effort and to align
+mitigation with its declared \emph{risk appetite} rather than reacting case by case
+(CSA, 2024, pp.~66, 78--79).
+\end{definition}
+
+The register is the core of \emph{governance, risk and compliance} (GRC),
+and the Guidance names further non-technical tools around it (CSA, 2024,
+pp.~78--79). The shared-responsibility model is applied by the customer to
+each service. \emph{Contracts} fix the legal division of responsibility and
+thereby make the Session~1 model binding. A \emph{cloud register} lists the
+providers and deployments the organisation depends on (CSA, 2024,
+pp.~66--67). Monitoring and audit frameworks provide continuous assurance
+that controls work (CSA, 2024, pp.~75--77). One idea is specific to the
+cloud, \emph{compliance inheritance}: a customer using a compliant
+provider's infrastructure inherits that control set for the infrastructure
+layer, but the compliance of whatever the customer builds on top remains
+the customer's own task (CSA, 2024, p.~73), which is the
+shared-responsibility model in the language of audit. Automation serves
+governance too, because cloud infrastructure is defined in code, so its
+configuration is a document that can be reviewed, versioned and proven; the
+practice that shifted security left in Session~8 therefore also supports
+compliance (CSA, 2024, pp.~80--81).
+
+For a Norwegian institution the regulatory frame is European. The CSA text
+is US-centred, though it lists DORA among its examples (CSA, 2024, p.~71),
+so the course situates its GRC content where its students will work. The EU
+\emph{NIS2} directive raises cybersecurity and incident-reporting
+obligations across essential and important sectors; \emph{DORA} imposes
+operational-resilience and third-party-risk requirements on the financial
+sector; and \emph{ISO~22301} is the international standard for business
+continuity management. Students are not expected to master these
+instruments, only to recognise that the technical work of the previous
+eleven sessions exists inside a legal and regulatory frame, in which a risk
+register, an audit trail, an incident-notification plan and a tested
+continuity capability are the form security takes when an organisation must
+answer for it.
+
+Two observations from Comer (2021) mark the edges of what any control set
+can reach. First, some cloud risks are structural (Comer, 2021, p.~242).
+\emph{Side channels} leak information between tenants sharing physical
+hardware through indirect signals rather than any explicit access, and
+\emph{back doors} are hidden means of access left in software or hardware.
+Neither is stopped by a firewall or a password, so these are exactly the
+risks a register exists to record and to accept knowingly. Secondly, the
+provider is not only a source of risk but a partner in managing it (Comer,
+2021, pp.~242--243). Traditional IT kept outsiders out on principle,
+whereas a cloud tenant depends on the provider, sets its own security policy
+and relies on the provider to help carry it out. A tenant with several
+providers has to make sure that the same policy holds on each of them. This
+is compliance inheritance seen from the other side. Governance therefore
+covers not only the controls an organisation operates itself but also the
+choice, assessment and contracting of the provider whose controls it
+inherits, together with a clear view of the residual risks that remain its
+own.
+
+\paragraph{Reading for this chapter.} CSA Security Guidance, Domain~11,
+\S11.1 (Incident Response and the lifecycle checklist, pp.~254--256), \S11.2
+(Preparation, pp.~256--261), \S11.3 (Detection \& Analysis, pp.~261--267),
+\S11.4 (Containment, Eradication \& Recovery, pp.~267--269) and \S11.5
+(Post-Incident Analysis, pp.~269--270); Domain~3, \S3.1 (Cloud Risk
+Management, including the cloud register, pp.~56--68), \S3.2 (Compliance \&
+Audit, including compliance inheritance, pp.~68--78) and \S3.3 (GRC Tools \&
+Technologies, pp.~78--81). Comer, Chapter~17, \S\S17.11--17.12 (back doors,
+side channels and other concerns, and cloud providers as partners,
+pp.~242--243). The Microsoft Learn module is \emph{Describe Azure governance}
+(Azure Policy, Microsoft Purview compliance).
+
+\section{Summary}
+
+When prevention fails, response takes over, beginning with the
+classification of events, incidents and breaches
+(Definition~\ref{def:incident}) that sets the level of reaction. The
+incident response lifecycle (Definition~\ref{def:irlifecycle}), with the
+phases Preparation, Detection \& Analysis, Containment/Eradication/Recovery
+and Post-Incident Analysis, gathers the course into one procedure, because
+the baseline, monitoring, snapshots, off-host logs, MFA and tested backups
+of earlier sessions are exactly what each phase uses. The cloud-specific
+priorities are containing the management plane, rotating credentials,
+deleting stale images and recovering from clean definitions
+(Example~\ref{ex:ir-trc}). Above the incident sits business continuity, with
+RTO and RPO, spare systems and trained staff, which keeps the business
+function alive through disruption. Above the technical layer sits
+governance, risk and compliance: the risk register
+(Definition~\ref{def:riskregister}) and the GRC tools around it, compliance
+inheritance from the provider, the auditability of infrastructure as code,
+and the regulatory frame (NIS2, DORA, ISO~22301) within which a Norwegian
+organisation operates. Session~13 assembles the layers into one argument.
+
+\section*{Self-check}
+\addcontentsline{toc}{section}{Self-check}
+
+Sketch answers follow the exercises.
+
+\begin{exercise}[Event, incident, breach]
+Distinguish an event, an incident and a breach, and state which may trigger
+legal notification obligations.
+\end{exercise}
+
+\begin{exercise}[The four incident-response phases]
+Name the four phases of the incident response lifecycle and, for each, one
+control from an earlier session that it relies on.
+\end{exercise}
+
+\begin{exercise}[Why rebuild rather than patch]
+In cloud containment and eradication, why rotate credentials and delete old
+images and IaC rather than simply patching the running system?
+\end{exercise}
+
+\begin{exercise}[RTO and RPO]
+What do RTO and RPO measure, and how do they determine how often backups are
+taken and how fast a restore must be?
+\end{exercise}
+
+\begin{exercise}[Risk register and compliance inheritance]
+What is a risk register, and what is compliance inheritance? Relate the
+latter to the shared-responsibility model of Session~1.
+\end{exercise}
+
+\paragraph{Sketch answers.}
+{\small
+(1)~An event is any observable occurrence; an incident is an event that
+violates policy or threatens CIA and demands a response; a breach is a
+successful compromise leading to unauthorised data access or extraction. A
+breach may trigger legal or regulatory notification. (2)~Preparation
+(baseline, monitoring, tested backups); Detection \& Analysis (trustworthy
+off-host logs for the timeline); Containment/Eradication/Recovery (MFA and IAM
+from Session~7, immutable images from Session~5, backups from Session~11);
+Post-Incident Analysis (feeds lessons back into preparation). (3)~Because the
+attacker may hold stolen credentials and may have left back doors in images,
+serverless code or IaC; rotating credentials revokes their access, and
+rebuilding from clean definitions removes hidden footholds a patch would leave
+in place. (4)~RTO is how quickly a service must be restored; RPO is how much
+recent data may be lost. RPO sets backup frequency (lose at most that much);
+RTO sets the required restore speed and the recovery design. (5)~A risk
+register lists identified risks, their severity and mitigation actions,
+aligning effort with risk appetite. Compliance inheritance means inheriting
+the provider's control set for the layers it operates while remaining
+responsible for the compliance of one's own software: the
+shared-responsibility model expressed in the language of audit.}
+
+

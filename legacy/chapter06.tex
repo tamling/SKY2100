@@ -1,0 +1,283 @@
+% =====================================================================
+%  Chapter 6  ·  Session 6 --- TLS and data in transit
+% =====================================================================
+\chapter{TLS and data in transit}
+
+Since Session~5, Nextcloud serves every file and every password over plain
+HTTP, readable by anyone on the network path. This chapter closes that gap.
+It covers the three states of data, the two families of cryptography, and
+TLS, which combines them to protect a connection. The laboratory turns
+\texttt{http://} into \texttt{https://}.
+
+\section{Three states of data}
+
+Data is always in one of three states, and each is exposed differently, so
+each needs its own control (CSA, 2024, pp.~210--211).
+
+\begin{definition}[The three data states]\label{def:datastates}
+\textbf{Data at rest} describes data held in storage: on a virtual disk, in
+object storage, in a database. \textbf{Data in motion} (in transit) describes
+data being transmitted between locations, across a network or the Internet.
+\textbf{Data in use} describes data currently being processed in memory by an
+application. Each state requires its own security measures, and protecting one
+does not protect the others.
+\end{definition}
+
+The three states map onto the course. Data at rest is the subject of
+Session~11 (backup and storage), where disk and object encryption guard
+against a stolen drive or an exposed bucket. Data in use is guarded mainly by
+the access controls of Session~7, because the program working on the data
+must be able to read it, which makes this the hardest state to protect. This
+session covers the middle state, data in motion, because it is the one the
+running Nextcloud currently ignores. The Guidance's advice for data in
+motion is encryption protocols and secure channels that protect
+confidentiality and integrity in transit (CSA, 2024, p.~211), and TLS is that
+channel.
+
+\section{Two families of cryptography}
+
+Encryption turns readable \emph{plaintext} into unreadable \emph{ciphertext}
+under the control of a \emph{key}, reversibly for whoever holds the right key
+and not otherwise. Tokenisation is a different mechanism: it replaces a
+sensitive value with an unrelated random token and keeps the mapping in a
+secure store. There are two families of encryption, and TLS needs both
+(J\o sang, 2024, pp.~65--80).
+
+\begin{definition}[Symmetric and asymmetric encryption]\label{def:crypto}
+\textbf{Symmetric} encryption describes the case in which one shared secret
+key both encrypts and decrypts. It is fast and suits bulk data, but both
+parties must already share the key. \textbf{Asymmetric} (public-key)
+encryption describes the case in which each party has a \emph{key pair}, a
+public key that may be shared freely and a private key kept secret, such that
+what one key locks only the other unlocks. It solves the key-sharing problem
+and enables digital signatures, but is far slower than symmetric encryption.
+\end{definition}
+
+The two families have complementary strengths. Symmetric encryption is fast
+but cannot deliver the shared key to the other party over an untrusted
+network without the key being observed. Asymmetric encryption can protect
+that exchange, because the public key may travel in the open, but it is too
+slow for a whole video call or file transfer. TLS therefore uses asymmetric
+encryption once, at the start, to agree on a fresh symmetric key, and then
+uses that key for the data: slow handshake, fast conversation.
+
+One question remains, and it turns cryptography into a system. A browser
+that receives a public key claiming to belong to a Nextcloud server needs a
+reason to believe that the key is the server's and not an impostor's
+(J\o sang, 2024, pp.~105--112).
+
+\begin{definition}[Certificate and PKI]\label{def:pki}
+A \textbf{digital certificate} describes a binding of a public key to an
+identity (a domain name), signed by a \textbf{certificate authority} (CA) that
+both parties trust. The \textbf{public-key infrastructure} (PKI) describes the
+system of authorities, certificates and trust relationships that makes this
+work at Internet scale. A browser trusts a server's public key because a CA it
+already trusts has confirmed, by its signature, that the key belongs to that
+domain.
+\end{definition}
+
+Without this binding, encryption alone would be worth little, because a
+client could hold a perfectly private conversation with an attacker who had
+placed themselves in between and supplied their own public key. The
+certificate lets the browser check that it is talking to the right server
+before it trusts the channel, so authentication here works for
+confidentiality.
+
+\section{TLS}
+
+\begin{definition}[TLS]\label{def:tls}
+\textbf{Transport Layer Security} (TLS) describes the protocol that secures
+data in motion for most Internet traffic. In a short \emph{handshake} the
+parties authenticate the server through its certificate, use asymmetric
+cryptography to agree on a symmetric session key, and then encrypt the rest
+of the connection with it. HTTP carried inside TLS is \textbf{HTTPS}, the
+padlock in the browser.
+\end{definition}
+
+The handshake is the two families of Definition~\ref{def:crypto} working
+together: the certificate (PKI) proves who the server is, asymmetric
+encryption establishes a shared secret, and symmetric encryption then
+protects the bulk traffic. TLS thereby delivers three properties for data in
+motion: confidentiality, since eavesdroppers see only ciphertext; integrity,
+since tampering in transit is detected; and server authentication, since the
+client is talking to the certified server.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize]
+  \node[box, minimum width=2cm] (c) at (0,0) {browser};
+  \node[box, minimum width=2cm] (s) at (7,0) {server};
+  \draw[kgrey, line width=0.4pt] (c.south) -- ++(0,-2.6);
+  \draw[kgrey, line width=0.4pt] (s.south) -- ++(0,-2.6);
+  \tikzset{msg/.style={-{Stealth[length=1.8mm]}, kristiania, line width=0.6pt}}
+  \draw[msg] (0,-0.55) -- (7,-0.55) node[midway, above, font=\scriptsize, text=kgrey]{hello};
+  \draw[msg] (7,-1.15) -- (0,-1.15) node[midway, above, font=\scriptsize, text=kgrey]{certificate (public key)};
+  \draw[msg] (0,-1.75) -- (7,-1.75) node[midway, above, font=\scriptsize, text=kgrey]{agree session key (asymmetric)};
+  \draw[{Stealth[length=1.8mm]}-{Stealth[length=1.8mm]}, kgrey, line width=0.7pt] (0,-2.4) -- (7,-2.4)
+    node[midway, above, font=\scriptsize, text=kgrey]{encrypted data (symmetric)};
+\end{tikzpicture}
+\caption{The TLS handshake. The certificate authenticates the server and
+carries its public key; asymmetric cryptography then agrees a fresh symmetric
+session key, which encrypts the rest of the connection: slow handshake, fast
+conversation.}
+\label{fig:tls}
+\end{figure}
+
+Four practical points carry into the laboratory. First,
+versions matter: TLS~1.2 is the minimum and TLS~1.3 the current version,
+whereas TLS~1.0 and~1.1 survive only for backward compatibility and are
+disabled, because a downgrade to a broken version undoes the protection.
+Secondly, certificates must be obtained and kept valid, because an expired
+certificate breaks the service as surely as a misconfiguration. Thirdly, in
+the cloud the private keys behind certificates belong in a managed key store
+(Azure Key Vault, AWS KMS) rather than in a file beside the application, and
+the Guidance advises a customer of IaaS or PaaS to begin with the key
+management service the provider offers (CSA, 2024, p.~229). Lastly, TLS
+protects data in motion between endpoints and does nothing for the same data
+once it sits decrypted on the server (at rest) or is processed there (in
+use); encrypting the channel is necessary, not sufficient.
+
+Encryption also has a cost for the defenders of Session~4: a firewall or
+NGFW performing deep packet inspection sees only ciphertext inside a TLS
+connection. Enterprises sometimes resolve this with \emph{TLS inspection}
+(TLS termination, break-and-inspect), decrypting traffic at a gateway,
+examining it and re-encrypting it onward. This restores inspection but
+breaks end-to-end confidentiality at one trusted point, with the
+concentration risk that implies. A control that serves one property can thus
+hinder another, and the engineer decides the trade-off rather than ignoring
+it.
+
+\begin{example}[http becomes https]\label{ex:tls-trc}
+The file of Chapter~1, \texttt{salary\_list.pdf}, is now served by the
+Nextcloud deployed in Session~5. \emph{Threat}: an attacker on the network
+path (shared Wi-Fi, a compromised router) reads the file and the login
+password as they cross in plain HTTP. \emph{Risk}: on any untrusted network
+the likelihood is real and the impact high, because it covers the
+confidentiality of the file and of credentials that unlock far more.
+\emph{Control}: serve the site over HTTPS, so that the certificate
+authenticates the server and TLS encrypts the transport; the interceptor now
+sees only ciphertext. This defends the confidentiality property of
+Example~\ref{ex:nextcloud-cia} in transit. The control does not cover the
+same file at rest on the server, nor the question of who is allowed to open
+it at all. Those are Sessions~11 and~7.
+\end{example}
+
+\section{Beyond the browser: VPNs and data on the move}
+
+TLS protects one connection between a browser and a server, but in the
+cloud remote access is the default: employees reach the service over the
+Internet, often from their own devices, at home or in public places. Comer
+(2021) gives three principles for this situation (Comer, 2021,
+pp.~240--241). The first is to keep all communication confidential. On a
+Wi-Fi network an outsider can capture every packet. The answer is a
+\emph{virtual private network} (VPN), which forms an encrypted connection to
+the organisation's cloud data centre and routes all of a device's packets
+through it. Nothing then leaks around the tunnel, and the organisation can
+restrict Internet communication. A VPN thus protects the whole
+connection where TLS protects one application's. The second is to protect
+and isolate business data: a laptop or phone can be lost, so data stored on
+a device is encrypted at rest with whole-disk encryption, which is the
+at-rest control of Session~11 on the endpoint. The third is to enforce
+workflow security, so that the security policy for a piece of data travels
+with the data as it moves between cloud and device. Confidentiality must
+therefore follow the data across every hop: network, server and endpoint.
+
+\section{Limitations of encryption}
+
+Encryption helps only when it answers the threat that was actually
+identified, and only when the keys are kept apart from the data they
+protect, with separate access to each (CSA, 2024, p.~229). Against an
+attacker who obtains the data through the application, for example by SQL
+injection, it achieves nothing, because the application decrypts the data as
+part of answering, exactly as designed. The same limitation generalises:
+encrypting data in transit does not fix a weak password, encrypting data at
+rest does not fix an application that leaks it, and a key stored next to the
+data it protects is barely a key. Encryption is therefore one control among
+many, effective only together with the access control of Session~7 and the
+application security of Session~8, and the rule of Chapter~1 applies: name
+the threat first, then choose the control that meets it.
+
+\paragraph{Reading for this chapter.} CSA Security Guidance, Domain~9,
+\S9.1.2 (Data States, pp.~210--211) and the encryption and key-management
+guidance of Domain~9 (\S\S9.2.3--9.2.5, pp.~216--221, and the
+recommendations, p.~229); Comer, Chapter~17, \S17.9 (Protecting Remote
+Access: VPNs, whole-disk encryption and workflow security, pp.~240--241);
+J\o sang, Chapter~4 (Cryptography, pp.~63--98) and Chapter~5 (Key Management and PKI, pp.~99--116).
+The Microsoft Learn module is \emph{Describe Azure security} (encryption in
+transit and Azure Key Vault); students enforce a minimum of TLS~1.2.
+
+\section{Summary}
+
+Data is at rest, in motion or in use (Definition~\ref{def:datastates}), and
+each state needs its own control; this session covers data in motion, which
+the plain-HTTP Nextcloud left unprotected. Symmetric encryption is fast but
+needs a shared key, whereas asymmetric encryption solves key exchange and
+enables signatures but is slow (Definition~\ref{def:crypto}). TLS combines
+them (Definition~\ref{def:tls}): an asymmetric handshake, authenticated by a
+certificate within a public-key infrastructure (Definition~\ref{def:pki}),
+agrees a symmetric session key that encrypts the traffic, and the result
+gives confidentiality, integrity and server authentication for data in
+transit (Example~\ref{ex:tls-trc}). A current version, keys in a managed
+store and a clear view of the scope are required, because TLS guards the
+channel, not the data at rest or in use behind it, and encryption aligned to
+the wrong threat protects nothing. Session~7 covers who is on the other end
+of the channel and what they may do.
+
+\section*{Self-check}
+\addcontentsline{toc}{section}{Self-check}
+
+Sketch answers follow the exercises.
+
+\begin{exercise}[The three data states]
+Name the three states of data and give, for each, one example from the
+Nextcloud service and the kind of control that fits it.
+\end{exercise}
+
+\begin{exercise}[Why TLS uses both cipher types]
+Why does TLS use both asymmetric and symmetric encryption rather than just
+one? What is each family good and bad at?
+\end{exercise}
+
+\begin{exercise}[Trusting a server public key]
+A browser receives a public key claiming to be the server's. What stops an
+attacker from supplying their own key instead, and what is that mechanism
+called?
+\end{exercise}
+
+\begin{exercise}[http to https as threat--risk--control]
+Formulate, in the vocabulary of Definition~\ref{def:trc}, the threat, risk and
+control for Nextcloud served over plain HTTP on a shared network, and name one
+thing the control does not protect.
+\end{exercise}
+
+\begin{exercise}[Encrypted at rest, still stolen]
+A database is encrypted at rest, yet an attacker steals customer records
+through an SQL-injection flaw in the web application. Why did the encryption
+not help, and what does this imply for choosing controls?
+\end{exercise}
+
+\paragraph{Sketch answers.}
+{\small
+(1)~At rest: \texttt{salary\_list.pdf} on the server's disk, protected by
+storage encryption and backups (Session~11); in motion: the same file
+downloaded over the network, protected by TLS (this session); in use: the file
+open in the application's memory, protected by access controls (Session~7).
+(2)~Asymmetric encryption lets the parties agree a key over an untrusted
+network (the public key may travel in the open) but is slow; symmetric
+encryption is fast enough for bulk data but needs a shared key first. TLS uses
+asymmetric encryption once to establish a symmetric session key, then
+symmetric encryption for the data, each where it is strong. (3)~The public key
+arrives inside a certificate signed by a certificate authority the browser
+already trusts, so the browser can verify that the key belongs to that domain;
+the system is the public-key infrastructure (PKI). Without it, an attacker in the middle could supply their own key. (4)~Threat: someone on the network path
+reads files and passwords sent in clear HTTP. Risk: on an untrusted network,
+likelihood real, impact high (confidentiality of data and credentials).
+Control: serve over HTTPS so that TLS encrypts the transport and the
+certificate authenticates the server. It does not protect the same data at
+rest on the server or decide who may access it. (5)~The application decrypts
+the data to answer requests, so a flaw that makes it answer the attacker
+returns plaintext: at-rest encryption is bypassed, not broken. Controls must
+be chosen against the actual threat; encryption is one layer and does not
+substitute for secure application code or access control.}
+
+

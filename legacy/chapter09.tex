@@ -1,0 +1,273 @@
+% =====================================================================
+%  Chapter 9  ·  Session 9 --- Security monitoring and IDS
+% =====================================================================
+\chapter{Security monitoring and IDS}
+
+Every control of Sessions~4 to~8 can fail: a firewall can be misconfigured,
+an identity phished past its MFA, a WAF bypassed, a dependency flawed.
+Prevention is therefore necessary but never sufficient, and monitoring
+assumes that a breach will happen and arranges to discover it quickly. Its
+foundation is the baseline of Session~2, because before something abnormal
+can be recognised, normal must be known. This chapter covers what is
+collected and how a large volume of it becomes a timely alert.
+
+\section{Monitoring in the cloud}
+
+The CSA Security Guidance names four sources of complexity in cloud
+monitoring (CSA, 2024, pp.~124--125). The first is the \emph{management
+plane}, which controls all administrative actions and must be watched
+closely because it grants access to everything. The second is
+\emph{velocity}: changes occur at high speed, so automated responses are
+needed to keep up. The third is \emph{distribution and segregation}, which
+limits the blast radius of a breach but requires some centralisation of logs
+to see the whole estate. The fourth is \emph{cloud sprawl} across workload
+types and providers. Speed matters most: attacks on cloud systems are often
+scripted, so data can be stolen or exposed within seconds or minutes of the
+first break-in (CSA, 2024, p.~262), and detection of the most serious
+activities therefore works in real time where possible, and in any case
+within minutes. The shared-responsibility model applies here as elsewhere:
+the provider monitors some layers and the customer others, and knowing which
+is the starting point (CSA, 2024, p.~124).
+
+\section{Events, alerts and telemetry}
+
+\begin{definition}[Event and alert]\label{def:event}
+An \textbf{event} describes anything that happens in a system or network and
+can be recorded (a login, an API call, a file access); most events are normal.
+An \textbf{alert} describes a message that demands attention, produced by
+analysing events, raised when events match a rule or pattern that signals a potential
+threat. Alerts are not events: the task of monitoring is to turn a great many
+events into a few meaningful alerts.
+\end{definition}
+
+\begin{realworld}{Target, 2013}
+Around 40~million payment cards were stolen from the US retailer Target over
+the holiday season. The attackers first entered through credentials taken
+from a third-party heating and refrigeration contractor with network access,
+then moved to the point-of-sale systems. Target's malware-detection system generated alerts about the intrusion, but
+nobody acted on them in time. Detection is half the task: an alert nobody
+responds to is no better than no alert. The response process of Session~12
+exists for this reason.
+\end{realworld}
+
+Alerts are fed by \emph{telemetry}, the sources that show what is happening
+in the environment (CSA, 2024, p.~127), and two sources matter most (CSA,
+2024, p.~128). \emph{Management plane logs} record control actions, that is,
+who accessed the infrastructure, what they did and when, so an attacker on
+the console leaves the first trace here. \emph{Service and application logs}
+record the activity of individual services: authentication attempts, API
+access, network traffic, service-specific events. Nextcloud already produces
+both kinds, namely the access log of Session~3 and the system journal of
+Session~2, and monitoring means watching them continuously instead of
+reading them afterwards.
+
+\section{Detection: from telemetry to alert}
+
+Watching everything by hand does not scale, so detection narrows telemetry
+to what deserves attention.
+
+\begin{definition}[Intrusion detection and prevention]\label{def:ids}
+An \textbf{intrusion detection system} (IDS) describes a system that monitors
+telemetry for signs of attack and raises an alert. An \textbf{intrusion
+prevention system} (IPS) describes a system that does the same but sits
+\emph{inline} in the traffic path, so that on a match it can block the traffic
+rather than merely report it. Either may work by \emph{signature} (matching
+known attack patterns) or by \emph{anomaly} (flagging departures from an
+established baseline of normal behaviour). In the cloud these functions are
+increasingly delivered as services, for example SIEM for correlating logs and
+CSPM for detecting insecure configurations, rather than by a single
+appliance.
+\end{definition}
+
+The distinction is the detect-versus-prevent choice of Session~4. An IDS is
+the detection mode of the network: passive and out-of-band, it observes a
+copy of the traffic and cannot stop an attack, so it cannot break legitimate
+traffic, but it is only as fast as the humans who act on its alerts. An IPS
+is the prevention mode: inline, it can drop a malicious packet in real time,
+but a false positive then blocks a real user, and the device sits in the
+critical path. Prevention stops more but risks more, so the two are used
+together: an IPS blocks the clearly malicious, and an IDS surfaces the merely
+suspicious for a human to judge.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[font=\footnotesize]
+  % IDS: out-of-band
+  \node[font=\small\bfseries, text=kgrey] at (2,2.5) {IDS --- detection};
+  \node[box] (a1) at (0,1.6) {traffic};
+  \node[box] (a2) at (4,1.6) {service};
+  \draw[flow] (a1) -- (a2);
+  \node[redbox] (ids) at (2,0.4) {IDS};
+  \draw[flow, dashed] (2,1.35) -- (ids);
+  \node[lbl, anchor=west, font=\scriptsize\itshape] at (2.55,0.4) {alert only};
+  % IPS: inline
+  \node[font=\small\bfseries, text=kgrey] at (9,2.5) {IPS --- prevention};
+  \node[box] (b1) at (6.7,1.6) {traffic};
+  \node[redbox] (ips) at (9,1.6) {IPS};
+  \node[box] (b2) at (11.3,1.6) {service};
+  \draw[redflow] (b1) -- (ips);
+  \draw[redflow] (ips) -- (b2);
+  \node[lbl, anchor=north, font=\scriptsize\itshape] at (9,1.15) {blocks in line};
+\end{tikzpicture}
+\caption{IDS versus IPS. An IDS observes a copy of the traffic and alerts; an
+IPS sits in the path and can block. Detection is safe but passive; prevention
+acts but can break legitimate traffic.}
+\label{fig:idsips}
+\end{figure}
+
+The pattern the Guidance recommends is \emph{cascade-and-filter}: a sequence
+of detection mechanisms applied to the incoming streams, each narrowing the
+data further (CSA, 2024, pp.~139--140). A first filter flags whatever looks broadly
+suspicious, for example odd login attempts or unexpected network traffic;
+later filters narrow toward known attack patterns; and a final
+filter triggers an alert or a response action if a threat is confirmed. The
+same cascade manages cost, because most raw logs stay cheaply where they
+are and only pertinent alerts and selected logs go to the security team
+(Session~10). To decide what to look for, the Guidance points to the MITRE
+ATT\&CK framework, a catalogue of the tactics and techniques attackers use,
+which connects a given indicator with the stage of an attack it belongs to
+(CSA, 2024, p.~127). It names key indicators to watch closely, namely
+unusual IAM or network security activity, especially in unused regions (CSA,
+2024, p.~127), and its list of detectors adds unauthorised API calls,
+management console logins without MFA, any IAM policy change and any use of
+the root account (CSA, 2024, p.~142). These are precisely the
+management-plane and identity activities of Sessions~4 and~7. A further
+technique cuts detection time sharply: a \emph{canary} or \emph{honey token}
+is a decoy credential or resource that no legitimate process should touch,
+so any interaction with it indicates an attempted or actual breach, with
+almost no false positives (CSA, 2024, p.~142).
+
+Comer (2021) adds two points on the mechanics. A monitor at its simplest is
+a process that loops forever, checks each instance, raises an alert if one
+fails to respond, and waits thirty seconds before repeating (Comer, 2021,
+p.~182). That loop does not fit cloud-native systems, however (Comer, 2021,
+p.~183). A traditional distributed application runs a known number of
+instances in known places, so an instance that stops responding means
+trouble. A cloud-native application, in contrast, starts and stops instances
+all the time, and the orchestrator decides where each one runs, so a
+monitoring tool must not raise an alarm every time an instance disappears
+because the scale was reduced. This is the moving-target problem of Session~5 seen from
+the monitoring side, and it is why cloud monitoring relies on
+management-plane and orchestration signals rather than on a static list of
+hosts.
+
+The anomaly half of detection is \emph{security analytics} (Comer, 2021,
+pp.~239--240). Analytics software learns what normal behaviour looks like
+and then watches for exceptions, for example an employee touching data or
+services they never touch, or acting at an unusual hour; this is the
+Session~2 baseline turned into a detector. Good analytics is context-aware,
+because an access can be individually authorised and still suspicious when
+it does not fit its usual pattern: the right person, the right permission,
+the wrong context.
+
+\section{Fast path and slow path}
+
+Whether monitoring is timely depends on one further design choice, and it
+follows from the speed problem above. The Guidance separates two processing
+tracks (CSA, 2024, p.~135). The \emph{slow path} carries logs, which can
+arrive up to fifteen minutes after the fact, and that delay is acceptable
+for investigation and forensics. The \emph{fast path} carries events, which
+are analysed and turned into alerts almost at once, and it is necessary for
+high-risk activity, especially on the management plane, where fifteen
+minutes is too long. Fast-path events therefore detect and alert on
+high-risk activity as it happens, while slow-path logs serve the deeper
+analysis that follows. A system that puts everything on the slow path
+discovers its intrusions after they have finished.
+
+\begin{example}[Watching the red thread]\label{ex:monitor-trc}
+\emph{Threat}: an attacker who has passed the earlier controls, for example
+with a phished credential, begins to act: logging in from an unrecognised
+country, making unusual administrative changes, touching files no ordinary
+user would. \emph{Risk}: without monitoring the likelihood of noticing is low
+and the impact grows with every undetected hour. \emph{Controls}: alerts on authentication failures and impossible-travel
+logins (fast path); the management plane and IAM changes watched as key
+indicators; a canary file whose every access is a definite alarm; and the
+access and system logs kept flowing for the timeline Session~12 requires. None of this
+prevents the intrusion; it turns a silent compromise into a detected
+incident.
+\end{example}
+
+\paragraph{Reading for this chapter.} CSA Security Guidance, Domain~6, in
+particular \S6.1 (Cloud Monitoring, pp.~124--127, including Logs \& Events,
+Alerts \& Monitoring, Timeliness and Key Indicators), \S6.2 (Cloud Telemetry
+Sources, pp.~127--133), \S6.3.3 (Monitoring Strategy, including the fast and
+slow paths, pp.~135--137) and \S6.4 (Detection \& Security Analytics,
+including the cascade-and-filter pattern, detectors, and canaries,
+pp.~137--142); the domain runs pp.~124--145. Comer, Chapter~13,
+\S\S13.3--13.4 (periodic monitoring and the added complexity of monitoring
+cloud-native applications, pp.~182--183) and Chapter~17, \S17.8 (security
+analytics and context-aware anomaly detection, pp.~239--240); and the MITRE
+ATT\&CK\textsuperscript{\textregistered} Cloud Matrix. Optional deepening:
+J\o sang, Chapter~16 (Cyber Operations, pp.~337--354). The Microsoft Learn module is
+\emph{Describe Azure monitoring} (Microsoft Defender for Cloud and Sentinel).
+
+\section{Summary}
+
+Because every preventive control can fail, monitoring assumes a breach and
+detects it quickly, on the basis of the Session~2 baseline. Cloud
+monitoring is shaped by two facts: attacks are fast and automated, and the
+management plane is the highest-value target. Telemetry, that is,
+management plane logs and service logs, is turned from many events into few
+alerts (Definition~\ref{def:event}). Detection (Definition~\ref{def:ids})
+does this through signature and anomaly methods delivered by SIEM and CSPM,
+arranged as a cascade-and-filter, guided by MITRE ATT\&CK toward key
+indicators (unauthorised API calls, IAM policy changes, network
+configuration changes) and sharpened by canaries. Timeliness depends on
+routing high-risk activity to the fast path and forensic logs to the slow
+path. Nextcloud is now watched (Example~\ref{ex:monitor-trc}), and Session~10
+covers whether the record of what it saw can be trusted.
+
+\section*{Self-check}
+\addcontentsline{toc}{section}{Self-check}
+
+Sketch answers follow the exercises.
+
+\begin{exercise}[Event vs alert]
+Explain the difference between an event and an alert, and why ``turning
+events into alerts'' is the central problem of monitoring.
+\end{exercise}
+
+\begin{exercise}[The two key telemetry sources]
+Name the two most important cloud telemetry sources and state what each
+records. Why does the Guidance insist that monitoring cover the management
+plane?
+\end{exercise}
+
+\begin{exercise}[Signature vs anomaly detection]
+Distinguish signature-based from anomaly-based detection. Which one relies on
+the Session~2 baseline, and why?
+\end{exercise}
+
+\begin{exercise}[Fast path vs slow path]
+What are the fast path and the slow path, and which should carry a suspicious
+administrative action on the management plane, and why?
+\end{exercise}
+
+\begin{exercise}[The canary token]
+Explain how a canary (honey token) produces an alert with essentially no
+false positives, and give one that could be placed in a Nextcloud deployment.
+\end{exercise}
+
+\paragraph{Sketch answers.}
+{\small
+(1)~An event is anything that happens and can be recorded, mostly normal; an
+alert is a message that demands attention, raised when events match a rule.
+Because there are vastly more events than incidents, the value of monitoring
+lies in filtering the many events down to the few meaningful alerts.
+(2)~Management plane logs (who accessed the infrastructure, what they did,
+when) and service/application logs (authentication attempts, API access,
+network traffic, service events). The management plane controls everything,
+so losing it is the worst case; it must be watched so that an attacker there
+is seen immediately. (3)~Signature-based detection matches known attack
+patterns; anomaly-based detection flags departures from normal. Anomaly
+detection relies on the baseline, because abnormal is only defined against a
+recorded picture of normal. (4)~The fast path analyses events in near real
+time for high-risk activity; the slow path handles logs with delay for
+forensics. A suspicious management-plane action belongs on the fast path,
+because a delay of minutes is too long for the highest-value target. (5)~A
+canary is a decoy no legitimate process should touch, so any access is almost
+certainly malicious; for example a fake \texttt{admin\_passwords.txt} or an
+unused decoy user account in Nextcloud, whose every access raises a definite
+alarm.}
+
+
