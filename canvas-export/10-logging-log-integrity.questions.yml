@@ -1,0 +1,101 @@
+quiz_title: "Chapter 10 — Self-check"
+chapter: 10-logging-log-integrity
+
+questions:
+  - id: q1
+    type: mcq
+    section: sec-10-logs-events
+    difficulty: basic
+    text: "According to the Guidance's separation of logs and events, which statement is correct?"
+    options:
+      - "A log records only changes and is available within seconds; an event is a complete, persistent record delivered in batches"
+      - "A log is a relatively complete, persistently stored record, often delivered in batches and therefore delayed; an event records a change, is available within seconds, and is not retained unless explicitly saved"
+      - "Logs and events are two names for the same records, differing only in the tool that reads them"
+      - "Events are stored persistently by default, while logs are discarded unless explicitly saved"
+    correct: 2
+
+  - id: q2
+    type: mcq
+    section: sec-10-logs-events
+    difficulty: basic
+    text: "On Azure, why do Resource Logs commonly go missing exactly when they are needed?"
+    options:
+      - "They are retained for only ninety days and then deleted"
+      - "They can only be read with KQL, which few teams know"
+      - "They are not collected by default: a diagnostic setting must first be enabled or an agent installed"
+      - "The Activity Log overwrites them whenever a resource is modified"
+    correct: 3
+
+  - id: q3
+    type: short
+    section: sec-10-log-sources
+    difficulty: basic
+    text: "In one or two sentences: what is the first rule of logging, and why?"
+    answers:
+      - "know what each source captures and make sure the security-relevant sources are actually recorded"
+      - "an event that was never logged cannot be investigated"
+      - "ensure security-relevant sources are recorded"
+
+  - id: q4
+    type: short
+    section: sec-10-logs-events
+    difficulty: basic
+    text: "Name the four essentials that every log line in the chapter's examples carries."
+    answers:
+      - "who, what, when, outcome"
+      - "source address or caller; the request or operation; the timestamp; the outcome"
+      - "who what when and the result"
+
+  - id: q5
+    type: mcq
+    section: sec-10-central-collection
+    difficulty: basic
+    text: "In the cascading log architecture, what path do logs take from an environment to the SIEM?"
+    options:
+      - "Each environment runs its own SIEM, and the SIEMs exchange alerts with each other"
+      - "Each environment sends logs to one central store; the security-relevant subset is filtered into a separate, well-protected audit environment, from which the logs feed the SIEM"
+      - "Logs stay on each host, and the SIEM queries them remotely on demand"
+      - "The SIEM receives all raw logs directly from every host and forwards a copy to the audit store"
+    correct: 2
+
+  - id: q6
+    type: mcq
+    section: sec-10-log-integrity
+    difficulty: basic
+    text: "Which set of measures protects log integrity, as the chapter presents them?"
+    options:
+      - "Ship logs off-host as they are produced; store them append-only or write-once; restrict access to the log store under least privilege"
+      - "Encrypt logs on the host; rotate them daily; compress old logs to save space"
+      - "Keep logs on the host but take a weekly backup; grant all administrators access so tampering is noticed"
+      - "Delete logs after ninety days; batch-transfer them monthly; store them alongside the application data"
+    correct: 1
+
+  - id: q7
+    type: applied
+    section: sec-10-exercises
+    difficulty: applied
+    text: >
+      Building on the "Chain of custody" exercise: months after an intrusion
+      into the Nextcloud VM is discovered, a regulator asks the team to prove
+      what the attacker did and when. The attacker had full control of the VM
+      for weeks. Explain how the team can still present a trustworthy attack
+      timeline: which copies of which logs they rely on, why those copies are
+      beyond doubt even though the host was compromised, and why the copies
+      still on the VM prove nothing. Justify each point with a concept from
+      this chapter.
+    sample_answer: >
+      The team relies on the copies in the central, append-only log store —
+      the Nginx access log, the system journal, Nextcloud's access and audit
+      logs and the firewall's records, forwarded off-host as they were
+      written — plus the management plane logs (on Azure, the Activity Log),
+      which the attacker on the VM never controlled. Those copies are beyond
+      doubt because they left the host in real time, the store is append-only
+      or write-once, and access to it is restricted under least privilege:
+      together, log integrity, and their documented preservation is the
+      chain of custody that lets the timeline stand. The copies still on the
+      VM prove nothing because the attacker controlled the host for weeks
+      and could rewrite the record freely; a timeline built from possibly
+      tampered records proves nothing. Grading: full credit needs the
+      off-host central copies (including a management-plane source), the
+      three integrity measures, chain of custody by name, and the tampering
+      argument; partial credit for three of the four.
