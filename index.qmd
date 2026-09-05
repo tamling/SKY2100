@@ -1,7 +1,7 @@
 # Welcome {.unnumbered}
 
-This is the course script. Chapters are added to `_quarto.yml` under
-`book.chapters` as they are converted.
+This is the course script for SKY2100: thirteen chapters, one per session,
+plus a consolidated reading list in the appendix.
 
 Every chapter ends with a **Self-check** section: 5–8 questions (multiple
 choice, short answer, and one applied/scenario question tied to the chapter's

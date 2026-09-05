@@ -23,14 +23,25 @@ annotations: false
 
 book:
   title: "SKY2100 — Course Script"
-  # Add converted chapters here as they land, e.g.:
-  #   - chapters/01-introduction.qmd
-  #   - chapters/02-....qmd
   # Each chapter ends with a "Self-check" section — see
   # _templates/chapter-self-check.qmd for the required format.
   chapters:
     - index.qmd
+    - chapters/01-cloud-information-security.qmd
+    - chapters/02-data-centres-virtualisation-linux.qmd
+    - chapters/03-web-services-load-dos.qmd
+    - chapters/04-networking-firewalls.qmd
+    - chapters/05-cloud-native-lift-and-shift.qmd
+    - chapters/06-tls-data-in-transit.qmd
+    - chapters/07-hardening-access-control.qmd
+    - chapters/08-devsecops-waf.qmd
+    - chapters/09-monitoring-ids.qmd
+    - chapters/10-logging-log-integrity.qmd
+    - chapters/11-resilience-raid-backup.qmd
+    - chapters/12-incident-response-bcm.qmd
+    - chapters/13-integrated-case.qmd
   appendices:
+    - appendix/reading-list.qmd
     - appendix/how-to-annotate.qmd
 
 format:
