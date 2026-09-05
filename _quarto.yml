@@ -42,7 +42,9 @@ book:
 
 format:
   html:
-    theme: cosmo
+    theme:
+      light: cosmo
+      dark: [darkly, theme-dark.scss]
     toc: true
     number-sections: true
     include-in-header: includes/hypothesis.html
