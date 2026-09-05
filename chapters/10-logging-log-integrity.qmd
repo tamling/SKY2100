@@ -1,0 +1,324 @@
+# Logging and log integrity {#sec-10-logging-log-integrity}
+
+Session 9 observed the signals; this chapter asks whether the record of
+them can be believed. Logs have two roles. Operationally they show how a
+system behaves; in security they are evidence, namely the timeline of an
+attack, the record of who did what, the material an incident responder, an
+auditor or a court relies on. That second role raises a question monitoring
+alone does not answer: what happens to the evidence when the machine
+producing it is compromised, since an attacker who can edit or delete the
+logs on a host erases their own trace. This chapter covers collecting logs
+so that they are useful and protecting them so that they can be trusted,
+which is the integrity property applied to the record itself.
+
+## Log sources {#sec-10-log-sources}
+
+Session 9 named the telemetry that matters, and the same sources are now
+captured deliberately (CSA, 2024, p. 128). *Management plane logs*
+record control-plane actions, that is, who accessed the infrastructure,
+what they changed and when, so an attacker on the console is seen here
+first. *Service and application logs* record the activity of
+individual services: authentication attempts, API calls, network traffic,
+errors. On the red thread these are Nextcloud's own access and audit logs,
+the Nginx access log of Session 3, the system journal (`journalctl`)
+of Session 2 and the firewall's record of what it dropped. Because an event
+that was never logged cannot be investigated, the first rule of logging is
+to know what each source captures and to make sure that the
+security-relevant sources are actually recorded.
+
+## Logs, events and the content of a log line {#sec-10-logs-events}
+
+The Guidance separates logs from events, and the separation decides how
+each is used (CSA, 2024, p. 125). A *log* is a relatively complete
+record of activity (create, read, update, delete), detailed and stored
+persistently, but often delivered in batches and therefore delayed. An
+*event* typically records only a change (create, update, delete), is
+not retained unless explicitly saved, and becomes available within seconds,
+which is why it can trigger a real-time alert from a service such as AWS
+GuardDuty, Microsoft Sentinel or GCP Security Command Center. Events thus
+give timely notice that something happened, and logs give the depth to
+investigate what it was.
+
+Three lines from the running example, slightly shortened, show what a log
+line contains:
+
+```
+# Nginx access log --- a normal request, then a probe
+192.0.2.44 - - [06/Jul/2026:14:22:07] "GET /apps/files" 200 5120
+203.0.113.9 - - [06/Jul/2026:14:22:41] "GET /login?user=admin'--" 403
+
+# System journal --- a failed SSH login
+Jul 06 14:23:19 nc-vm sshd[2011]: Failed password for invalid
+  user admin from 203.0.113.9 port 51234 ssh2
+
+# Azure Activity Log --- a management-plane change
+operation: Microsoft.Network/networkSecurityGroups/write
+caller: attacker@example.com   result: Succeeded
+```
+
+Each line carries the same essentials: who (source address or caller), what
+(the request or operation), when (the timestamp) and the outcome (the
+`200`, `403` or `Succeeded`). The first block shows an
+ordinary file fetch followed by an SQL-injection probe against the login,
+refused with a `403`. The second shows a failed SSH login; one is
+noise, but fifty a minute is a brute-force attempt. The third is a change to
+a network security group on the management plane, one of the key indicators
+of Session 9. Each line on its own is mundane; gathered and correlated, such
+lines become the timeline of an incident.
+
+In the cloud these sources have concrete names. On Azure the management
+plane log is the *Activity Log*, which contains subscription-level
+events such as a resource being modified or a VM started; it is enabled by
+default, retained for ninety days, and is where forensics after a breach
+begins. Per-resource *Resource Logs* (formerly called diagnostic logs)
+record the internal activity of a service but are not collected by default,
+because a diagnostic setting must first be enabled or an agent installed,
+and this gap commonly leaves exactly the logs one wants missing when they
+are needed. Both kinds can be routed to *Log Analytics*, an
+aggregation-and-query service (queried in KQL) that plays the role of the
+SIEM below, or exported to a third-party SIEM through an Event Hub.
+
+## Central collection {#sec-10-central-collection}
+
+Logs scattered across many hosts are hard to search and easy to lose, and
+in the cloud, where instances are ephemeral (Session 5), a log left on a
+host vanishes with the host. For exactly this reason the Guidance advises
+that a workload's logs leave it for a central store as soon as they are
+written (CSA, 2024, p. 181).
+
+::: {#def-logagg}
+## Log aggregation and SIEM
+**Log aggregation** describes the practice of forwarding logs from many
+sources to a central repository for storage, search and analysis. A
+**security information and event management** (SIEM) system describes
+such a repository specialised for security: it collects logs across
+environments, correlates them to identify potential incidents, and supports
+the detection and investigation of Session 9.
+:::
+
+The Guidance calls the resulting architecture a *cascading log
+architecture*, in which logs flow from one layer to the next (CSA, 2024,
+p. 134). Each environment (development, test, production) sends its logs to
+one central store. That store collects everything and passes the subset that
+matters for security on to a separate, well-protected audit environment,
+where it is kept for the long term, and from there the logs feed a SIEM that
+analyses across all environments.
+
+::: {#fig-cascade}
+<!-- TODO: redraw for web. Original TikZ:
+\begin{tikzpicture}[font=\footnotesize, node distance=5mm]
+  \node[box] (dev)  {Dev};
+  \node[box, below=3mm of dev] (test) {Test};
+  \node[box, below=3mm of test] (prod) {Prod};
+  \node[box, right=16mm of test] (central) {central log\\repository};
+  \node[box, right=14mm of central] (audit) {security /\\audit store};
+  \node[redbox, right=14mm of audit] (siem) {SIEM};
+  \draw[flow] (dev.east)  -- (central.west);
+  \draw[flow] (test.east) -- (central.west);
+  \draw[flow] (prod.east) -- (central.west);
+  \draw[flow] (central) -- (audit) node[midway, above, font=\scriptsize\itshape]{filter};
+  \draw[flow] (audit) -- (siem);
+\end{tikzpicture}
+-->
+*[Diagram — three boxes (Dev, Test, Prod) each send arrows into a "central log repository"; an arrow labelled "filter" leads from it to a "security / audit store", which in turn feeds a SIEM box.]*
+
+Cascading log architecture. Each environment forwards to a central
+repository; the security-relevant subset is filtered into a retained audit
+store and fed to the SIEM, the same cascade-and-filter as in Session 9, now
+applied to storage and cost.
+:::
+
+Two design points from Session 9 carry over. Cascade-and-filter applies
+here as cost control (CSA, 2024, pp. 133–135): pertinent alerts and
+selected logs go to the security team, bulk raw logs stay cheaply in place,
+and rarely-used logs move to lower-cost storage for retention rather than
+being discarded. The fast-path/slow-path split applies too, since some logs
+feed near-real-time alerting and most feed slower analysis.
+*Retention*, that is, how long logs are kept, balances operational
+needs, regulatory requirements and cost (CSA, 2024, p. 133): an intrusion
+may be discovered months after it began and compliance obligations
+(Session 12) set minimum periods, whereas prolonged retention raises storage
+cost and has privacy implications. Some log data should also leave the cloud
+altogether, both so that it survives a failure of the platform and because
+regulators may require it (CSA, 2024, p. 133), and, as the next section
+shows, this is an integrity control as well as a resilience measure.
+
+## Log integrity {#sec-10-log-integrity}
+
+Everything above assumes that the logs are an honest record, and an
+attacker's assumption is the opposite.
+
+::: {#def-logintegrity}
+## Log integrity
+**Log integrity** describes the assurance that log records have not been
+altered or deleted since they were written. It is the integrity property of
+the CIA triad applied to the audit record itself: without it, logs can be
+edited to hide an attacker's actions and cannot be trusted as evidence.
+:::
+
+On many intrusions, one of the attacker's first moves after gaining control
+of a host is to edit or wipe its logs, removing the record of how they
+entered and what they did. If the logs exist only on the compromised
+machine, the attacker rewrites the record freely, so the record must be
+placed where the compromised host cannot reach it. Three measures follow.
+Logs are shipped off-host to the central store of
+@def-logagg as they are produced, so that a copy exists
+beyond the attacker's control the moment the event happens. They are stored
+append-only or write-once, so that even with access they can be added to
+but not edited or deleted. And access to the log store is restricted under
+the least-privilege rules of Session 7. The principle is the one that makes
+off-site backups matter in Session 11: a safeguard under the attacker's
+control is no safeguard. Centralised collection is therefore itself an
+integrity control, because logs that left the host at once are logs the
+host's attacker never reached.
+
+## Logs as evidence {#sec-10-logs-as-evidence}
+
+The reason integrity is worth this effort is what logs become during an
+incident. The Detection and Analysis phase of Session 12 builds a timeline of
+the attack from the logs (CSA, 2024, p. 255), and a timeline assembled from
+records that might have been tampered with proves nothing. Incident response
+therefore speaks of *chain of custody*: evidence is documented and
+preserved so that its integrity can be demonstrated later, to management, to
+regulators or in legal proceedings (CSA, 2024, pp. 255, 266). A snapshot
+(Session 2) and an off-host, append-only log have the same forensic value, a
+trustworthy record of a moment the attacker could not revise. On a real
+system the logs are therefore worth exactly as much as the confidence that
+they still state what happened.
+
+::: {#exm-logship-trc}
+## Protecting the record
+An attacker gains a foothold on the Nextcloud VM. *Threat*: to cover
+their tracks, they delete the Nginx access log and edit the system journal,
+erasing the evidence of the intrusion. *Risk*: if the only copy is on the
+host, the likelihood of successful tampering is high and the impact severe,
+because the incident may never be reconstructed and cannot be proven if it
+is. *Control*: forward all security-relevant logs off-host to a central
+store as they are written, held append-only, with tightly restricted access.
+The attacker now controls the host but not the record: the copy that left in
+real time survives, the timeline can be rebuilt, and the chain of custody
+holds. The control protects the integrity of the evidence rather than its
+secrecy, and it is what makes the response of Session 12 possible.
+:::
+
+**Reading for this chapter.** CSA Security Guidance, Domain 6,
+§6.1.1 (Logs & Events, pp. 125–126), §6.2 (Cloud Telemetry Sources,
+pp. 127–133), §6.3.1 (Log Storage & Retention, p. 133) and §6.3.2
+(Cascading Log Architecture, pp. 134–135); Domain 11, §11.1.1 (the
+incident-response checklist: building the attack timeline and chain of
+custody, pp. 254–256) and §11.3.4 (Cloud System Forensics, pp. 265–267).
+Optional deepening: Jøsang, Chapter 16 (Cyber Operations, pp. 337–354), on logging for
+detection and forensics. The Microsoft Learn module is *Describe Azure
+monitoring* (Azure Monitor, Activity Logs, Log Analytics and diagnostic
+settings).
+
+## Summary {#sec-10-summary}
+
+Logs are both an operational tool and security evidence, which raises the
+question whether the record can be trusted when the host producing it is
+compromised. The sources are those of Session 9, management plane logs and
+service and application logs, and concretely the records of Nextcloud,
+Nginx, the journal and the firewall. Because scattered logs are easily lost
+and ephemeral hosts take their logs with them, logs are aggregated centrally
+(@def-logagg) into a SIEM, with cascade-and-filter for cost,
+fast and slow paths for timeliness, and retention set by investigation needs
+and compliance. Log integrity (@def-logintegrity) requires
+that the record leave the host as it is written and be held append-only with
+restricted access, so centralised collection is itself an integrity control.
+Under chain of custody the logs then become the attack timeline and the
+evidence for the response of Session 12 (@exm-logship-trc).
+Session 11 turns from proving harm to surviving it: resilience, RAID and
+backup.
+
+## Exercises {#sec-10-exercises}
+
+::: {#exr-10-two-roles-of-logs}
+## The two roles of logs
+Give the two roles logs play, operational and evidential, and one Nextcloud
+log source relevant to each.
+:::
+
+::: {#exr-10-ephemeral-hosts}
+## Central collection for ephemeral hosts
+Why is centralised log collection especially important for ephemeral cloud
+workloads (Session 5)?
+:::
+
+::: {#exr-10-log-integrity-cia}
+## Log integrity and the CIA triad
+Define log integrity in terms of the CIA triad, and explain why logs kept
+only on a host fail it once the host is compromised.
+:::
+
+::: {#exr-10-protecting-log-integrity}
+## Protecting log integrity
+Name three concrete measures that protect log integrity, and state why
+centralised collection is an integrity control and not only a convenience.
+:::
+
+::: {#exr-10-chain-of-custody}
+## Chain of custody
+What is chain of custody, and why does it make off-host, append-only logging
+matter for the incident response of Session 12?
+:::
+
+## Self-check {#sec-10-self-check}
+
+::: {.callout-note}
+## Check your understanding in Canvas
+
+These questions are also available as a self-marking quiz in Canvas:
+**[Chapter 10 self-check quiz](CANVAS-QUIZ-URL-PLACEHOLDER)** *(link added
+once the quiz is imported — see `canvas-export/README.md`)*.
+:::
+
+**Q1** *(tests @sec-10-logs-events · basic)*
+According to the Guidance's separation of logs and events, which statement
+is correct?
+
+a. A log records only changes and is available within seconds; an event is a complete, persistent record delivered in batches
+b. A log is a relatively complete, persistently stored record, often delivered in batches and therefore delayed; an event records a change, is available within seconds, and is not retained unless explicitly saved
+c. Logs and events are two names for the same records, differing only in the tool that reads them
+d. Events are stored persistently by default, while logs are discarded unless explicitly saved
+
+**Q2** *(tests @sec-10-logs-events · basic)*
+On Azure, why do Resource Logs commonly go missing exactly when they are
+needed?
+
+a. They are retained for only ninety days and then deleted
+b. They can only be read with KQL, which few teams know
+c. They are not collected by default: a diagnostic setting must first be enabled or an agent installed
+d. The Activity Log overwrites them whenever a resource is modified
+
+**Q3** *(tests @sec-10-log-sources · basic)*
+In one or two sentences: what is the first rule of logging, and why?
+
+**Q4** *(tests @sec-10-logs-events · basic)*
+Name the four essentials that every log line in the chapter's examples
+carries.
+
+**Q5** *(tests @sec-10-central-collection · basic)*
+In the cascading log architecture, what path do logs take from an
+environment to the SIEM?
+
+a. Each environment runs its own SIEM, and the SIEMs exchange alerts with each other
+b. Each environment sends logs to one central store; the security-relevant subset is filtered into a separate, well-protected audit environment, from which the logs feed the SIEM
+c. Logs stay on each host, and the SIEM queries them remotely on demand
+d. The SIEM receives all raw logs directly from every host and forwards a copy to the audit store
+
+**Q6** *(tests @sec-10-log-integrity · basic)*
+Which set of measures protects log integrity, as the chapter presents them?
+
+a. Ship logs off-host as they are produced; store them append-only or write-once; restrict access to the log store under least privilege
+b. Encrypt logs on the host; rotate them daily; compress old logs to save space
+c. Keep logs on the host but take a weekly backup; grant all administrators access so tampering is noticed
+d. Delete logs after ninety days; batch-transfer them monthly; store them alongside the application data
+
+**Q7 — applied scenario** *(tests @sec-10-exercises · applied)*
+Building on @exr-10-chain-of-custody: months after an intrusion into the
+Nextcloud VM is discovered, a regulator asks the team to prove what the
+attacker did and when. The attacker had full control of the VM for weeks.
+Explain how the team can still present a trustworthy attack timeline:
+which copies of which logs they rely on, why those copies are beyond doubt
+even though the host was compromised, and why the copies still on the VM
+prove nothing. Justify each point with a concept from this chapter.
