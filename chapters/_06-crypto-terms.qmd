@@ -50,6 +50,7 @@
   const termCol = root.querySelector('.w063-terms');
   const defCol = root.querySelector('.w063-defs');
   const msg = root.querySelector('.w063-msg');
+  const expl = root.querySelector('.w063-expl');
   const PAIRS = [
     ['Symmetric encryption', 'One shared secret key both encrypts and decrypts — fast, suits bulk data'],
     ['Asymmetric encryption', 'Each party has a key pair; what one key locks only the other unlocks'],
@@ -137,6 +138,7 @@
     });
     RIGHT.forEach(k => defCol.appendChild(defCol.querySelector('.w063-def[data-k="' + k + '"]')));
     clearMsg();
+    expl.hidden = true;
   }
   root.querySelector('.w063-reset').addEventListener('click', resetAll);
   root.querySelector('.w063-solution').addEventListener('click', () => {
@@ -149,6 +151,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w063-msg iw-msg ok';
+    expl.hidden = false;
   });
   PAIRS.forEach((p, k) => termCol.appendChild(makeItem(p[0], k, true)));
   RIGHT.forEach(k => defCol.appendChild(makeItem(PAIRS[k][1], k, false)));

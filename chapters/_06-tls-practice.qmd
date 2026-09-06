@@ -26,6 +26,7 @@
 .w064 .w064-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w064 .w064-msg.ok { color: #2e7d32; }
 .w064 .w064-msg.bad { color: #d81e2e; }
+.w064 .w064-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 </style>
 <div class="w064 iw" id="w064">
   <div class="w064-list" aria-label="statements to judge"></div>
@@ -36,6 +37,9 @@
     <span class="w064-note">(no fun if you click it right away)</span>
   </div>
   <div class="w064-msg iw-msg" role="status"></div>
+  <div class="w064-expl iw-expl" hidden>
+    TLS 1.2 is the minimum and 1.0/1.1 are disabled, because a downgrade undoes the protection; certificates must be kept valid; and in the cloud the private keys belong in a managed key store, not in a file beside the application. TLS protects data in motion between endpoints only &mdash; not the same data at rest or in use on the server &mdash; and a deep-packet-inspecting firewall sees only ciphertext, which TLS inspection restores at the price of breaking end-to-end confidentiality at one trusted point &mdash; see <a href="#sec-06-tls">the section on TLS</a>.
+  </div>
 </div>
 <script>
 (function () {

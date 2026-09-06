@@ -29,6 +29,10 @@
 .w123-dd .w123-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w123-dd .w123-msg.ok { color: #2e7d32; }
 .w123-dd .w123-msg.bad { color: #d81e2e; }
+.w123-dd .w123-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w123-dd iw" id="w123-dd">
   <div class="w123-cols">
@@ -42,6 +46,16 @@
     <span class="w123-note">(no fun if you click it right away)</span>
   </div>
   <div class="w123-msg iw-msg" role="status"></div>
+  <div class="w123-expl iw-expl" hidden>
+    The risk register makes risk management systematic; the cloud register lists the
+    providers and deployments the organisation depends on, and contracts make the
+    shared-responsibility model legally binding. Compliance inheritance covers only
+    the infrastructure layer, while side channels and back doors are the structural
+    risks no firewall or password stops — exactly what a register exists to record
+    and accept knowingly — see <a href="#def-riskregister">the definition of the risk
+    register</a> and <a href="#sec-12-risk-audit-compliance">the section on risk,
+    audit and compliance</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -139,6 +153,7 @@
   root.querySelector('.w123-solution').addEventListener('click', () => {
     clearPick();
     PAIRS.forEach(p => lock(p.id));
+    root.querySelector('.w123-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w123-msg iw-msg ok';
   });
