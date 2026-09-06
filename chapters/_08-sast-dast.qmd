@@ -33,6 +33,10 @@
 .w082-sort .w082-msg.ok { color: #2e7d32; }
 .w082-sort .w082-msg.bad { color: #d81e2e; }
 .w082-sort .w082-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w082-sort .w082-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w082-sort" id="w082">
   <div class="w082-buckets">
@@ -53,6 +57,7 @@
     <span class="w082-note">(no fun if you click it right away)</span>
   </div>
   <div class="w082-msg iw-msg" role="status"></div>
+  <div class="w082-expl iw-expl" hidden>SAST examines the source code before deployment, so it runs during continuous integration; DAST probes the running application from outside, so it runs during continuous delivery against the staged application. One sees the code but not its behaviour, the other the behaviour but not the code — see <a href="#sec-08-secure-development-lifecycle">the section on the secure development lifecycle</a>.</div>
 </div>
 <script>
 (function () {
@@ -137,10 +142,12 @@
       if (bucket) place(bucket, c);
     });
     root.querySelectorAll('.w082-chip').forEach(c => c.classList.add('w082-right'));
+    root.querySelector('.w082-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w082-msg iw-msg ok';
   });
   root.querySelector('.w082-reset').addEventListener('click', () => {
+    root.querySelector('.w082-expl').hidden = true;
     root.querySelectorAll('.w082-chip').forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
   });

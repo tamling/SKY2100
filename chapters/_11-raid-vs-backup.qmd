@@ -33,6 +33,10 @@
 .w112-dd .w112-msg.ok { color: #2e7d32; }
 .w112-dd .w112-msg.bad { color: #d81e2e; }
 .w112-dd .w112-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w112-dd .w112-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w112-dd iw" id="w112-dd">
   <div class="w112-pool" aria-label="situations to classify"></div>
@@ -47,6 +51,15 @@
     <span class="w112-note">(no fun if you click it right away)</span>
   </div>
   <div class="w112-msg iw-msg" role="status"></div>
+  <div class="w112-expl iw-expl" hidden>
+    RAID buys <em>uptime</em> through hardware failure: it keeps the service running
+    when a disk fails, even while the disk is swapped. But a mirror or parity array
+    copies a deletion, corruption or ransomware encryption instantly and exactly to
+    every disk, so returning to an earlier state — or surviving the loss of the whole
+    site — needs the separate point-in-time copy a backup provides — see
+    <a href="#sec-11-backup">the section on backup</a> and
+    <a href="#tbl-raidbackup">the RAID-versus-backup table</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -127,11 +140,13 @@
       if (bucket) place(bucket, c);
     });
     root.querySelectorAll('.w112-item').forEach(c => c.classList.add('w112-right'));
+    root.querySelector('.w112-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w112-msg iw-msg ok';
   });
   root.querySelector('.w112-reset').addEventListener('click', () => {
     root.querySelectorAll('.w112-item').forEach(i => pool.appendChild(i));
+    root.querySelector('.w112-expl').hidden = true;
     unpick(); clearMarks();
   });
   ITEMS.forEach(it => pool.appendChild(makeItem(it)));

@@ -33,6 +33,10 @@
 .w106-sort .w106-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w106-sort .w106-msg.ok { color: #2e7d32; }
 .w106-sort .w106-msg.bad { color: #d81e2e; }
+.w106-sort .w106-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w106-sort" id="w106">
   <div class="w106-buckets">
@@ -53,6 +57,7 @@
     <span class="w106-note">(no fun if you click it right away)</span>
   </div>
   <div class="w106-msg iw-msg" role="status"></div>
+  <div class="w106-expl iw-expl" hidden>Management plane logs record control actions — who accessed the infrastructure, what they changed and when — so the Activity Log and a network security group write belong there; service and application logs record the activity of individual services, such as the Nginx access log and the system journal — see <a href="#sec-10-log-sources">the section on log sources</a>.</div>
 </div>
 <script>
 (function () {
@@ -131,6 +136,7 @@
     }
   });
   root.querySelector('.w106-reset').addEventListener('click', () => {
+    root.querySelector('.w106-expl').hidden = true;
     root.querySelectorAll('.w106-chip').forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
   });
@@ -141,6 +147,7 @@
       b.querySelector('.w106-slot').appendChild(c);
       c.classList.add('w106-right');
     });
+    root.querySelector('.w106-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w106-msg iw-msg ok';
   });

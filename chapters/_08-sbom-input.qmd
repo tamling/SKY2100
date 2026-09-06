@@ -19,6 +19,10 @@
 .w085-si .w085-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w085-si .w085-msg.ok { color: #2e7d32; }
 .w085-si .w085-msg.bad { color: #d81e2e; }
+.w085-si .w085-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w085-si" id="w085">
   <div class="w085-q">A critical vulnerability is disclosed in a popular open-source
@@ -35,6 +39,7 @@
     <span class="w085-note">(no fun if you click it right away)</span>
   </div>
   <div class="w085-msg iw-msg" role="status"></div>
+  <div class="w085-expl iw-expl" hidden>The software bill of materials is the inventory of every component and dependency, produced by software composition analysis in the image pipeline; when a library flaw is disclosed it answers the one question that matters during an incident, whether and where the library is in use — see <a href="#sec-08-application-security">the section on application security in the cloud</a>.</div>
 </div>
 <script>
 (function () {
@@ -66,12 +71,14 @@
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
   root.querySelector('.w085-check').addEventListener('click', check);
   root.querySelector('.w085-reset').addEventListener('click', () => {
+    root.querySelector('.w085-expl').hidden = true;
     inp.value = ''; clearMarks();
   });
   root.querySelector('.w085-solution').addEventListener('click', () => {
     clearMarks();
     inp.value = CANON;
     inp.classList.add('w085-right');
+    root.querySelector('.w085-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.classList.add('ok');
   });

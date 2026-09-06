@@ -27,6 +27,10 @@
 .w121-dd .w121-msg.ok { color: #2e7d32; }
 .w121-dd .w121-msg.bad { color: #d81e2e; }
 .w121-dd .w121-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w121-dd .w121-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w121-dd iw" id="w121-dd">
   <ol class="w121-list" aria-label="steps to put in order"></ol>
@@ -37,6 +41,16 @@
     <span class="w121-note">(no fun if you click it right away)</span>
   </div>
   <div class="w121-msg iw-msg" role="status"></div>
+  <div class="w121-expl iw-expl" hidden>
+    The lifecycle runs Preparation → Detection &amp; Analysis → Containment,
+    Eradication &amp; Recovery → Post-Incident Analysis: the team, baseline,
+    monitoring and tested backups exist <em>before</em> anything happens; the alert
+    is validated and scoped before the timeline is built from the logs; isolation
+    comes before credential rotation and the clean restore; and the lessons feed back
+    into preparation, closing the cycle — see
+    <a href="#def-irlifecycle">the definition of the incident response lifecycle</a>
+    and <a href="#sec-12-ir-lifecycle">the section on the lifecycle</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -119,11 +133,13 @@
       .forEach(li => list.appendChild(li));
     clearMarks();
     [...list.children].forEach(li => li.classList.add('w121-right'));
+    root.querySelector('.w121-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w121-msg iw-msg ok';
   });
   root.querySelector('.w121-reset').addEventListener('click', () => {
     build(); clearMarks();
+    root.querySelector('.w121-expl').hidden = true;
   });
   build();
 })();

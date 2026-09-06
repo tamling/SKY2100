@@ -26,6 +26,10 @@
 .w096-order .w096-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w096-order .w096-msg.ok { color: #2e7d32; }
 .w096-order .w096-msg.bad { color: #d81e2e; }
+.w096-order .w096-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w096-order" id="w096">
   <ol class="w096-list"></ol>
@@ -36,6 +40,7 @@
     <span class="w096-note">(no fun if you click it right away)</span>
   </div>
   <div class="w096-msg iw-msg" role="status"></div>
+  <div class="w096-expl iw-expl" hidden>Cascade-and-filter applies a sequence of detection mechanisms to the incoming streams, each narrowing the data further: a first filter flags the broadly suspicious, later filters narrow toward known attack patterns, and a final filter triggers an alert or a response action if a threat is confirmed — see <a href="#sec-09-detection">the section on detection</a>.</div>
 </div>
 <script>
 (function () {
@@ -115,6 +120,7 @@
   STEPS.forEach((s, i) => list.appendChild(makeItem(s[0], s[1], i + 1)));
   const order0 = [...list.children];
   root.querySelector('.w096-reset').addEventListener('click', () => {
+    root.querySelector('.w096-expl').hidden = true;
     order0.forEach(li => list.appendChild(li));
     clearMarks();
   });
@@ -123,6 +129,7 @@
     [...list.children]
       .sort((a, b) => +a.dataset.pos - +b.dataset.pos)
       .forEach(li => { list.appendChild(li); li.classList.add('w096-right'); });
+    root.querySelector('.w096-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w096-msg iw-msg ok';
   });

@@ -33,6 +33,10 @@
 .w102-sort .w102-msg.ok { color: #2e7d32; }
 .w102-sort .w102-msg.bad { color: #d81e2e; }
 .w102-sort .w102-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w102-sort .w102-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w102-sort" id="w102">
   <div class="w102-buckets">
@@ -53,6 +57,7 @@
     <span class="w102-note">(no fun if you click it right away)</span>
   </div>
   <div class="w102-msg iw-msg" role="status"></div>
+  <div class="w102-expl iw-expl" hidden>A log is a relatively complete, persistently stored record, often delivered in batches and therefore delayed; an event records a change, becomes available within seconds, and is not retained unless explicitly saved. Events give timely notice, logs the depth to investigate — see <a href="#sec-10-logs-events">the section on logs, events and the content of a log line</a>.</div>
 </div>
 <script>
 (function () {
@@ -137,10 +142,12 @@
       if (bucket) place(bucket, c);
     });
     root.querySelectorAll('.w102-chip').forEach(c => c.classList.add('w102-right'));
+    root.querySelector('.w102-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w102-msg iw-msg ok';
   });
   root.querySelector('.w102-reset').addEventListener('click', () => {
+    root.querySelector('.w102-expl').hidden = true;
     root.querySelectorAll('.w102-chip').forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
   });

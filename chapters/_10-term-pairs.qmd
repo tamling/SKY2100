@@ -25,6 +25,10 @@
 .w105-pairs .w105-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w105-pairs .w105-msg.ok { color: #2e7d32; }
 .w105-pairs .w105-msg.bad { color: #d81e2e; }
+.w105-pairs .w105-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w105-pairs" id="w105">
   <div class="w105-cols">
@@ -38,6 +42,7 @@
     <span class="w105-note">(no fun if you click it right away)</span>
   </div>
   <div class="w105-msg iw-msg" role="status"></div>
+  <div class="w105-expl iw-expl" hidden>Aggregation moves the record off the host into a central repository, the SIEM correlates it across environments, retention balances investigation needs, compliance and cost, and chain of custody keeps the result usable as evidence — see <a href="#def-logagg">the definition of log aggregation and SIEM</a> and <a href="#sec-10-logs-as-evidence">the section on logs as evidence</a>.</div>
 </div>
 <script>
 (function () {
@@ -82,6 +87,7 @@
   DEF_ORDER.forEach(i => defsCol.appendChild(make(PAIRS[i][1], i, 'def')));
   const defs0 = [...defsCol.children];
   function resetAll() {
+    root.querySelector('.w105-expl').hidden = true;
     unselect(); matched = 0;
     root.querySelectorAll('.w105-card').forEach(c =>
       c.classList.remove('w105-done', 'w105-right', 'w105-flash'));
@@ -109,6 +115,7 @@
     });
     root.querySelectorAll('.w105-card').forEach(c => c.classList.add('w105-done', 'w105-right'));
     matched = PAIRS.length;
+    root.querySelector('.w105-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.classList.add('ok');
   });

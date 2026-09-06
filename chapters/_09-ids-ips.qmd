@@ -33,6 +33,10 @@
 .w091-sort .w091-msg.ok { color: #2e7d32; }
 .w091-sort .w091-msg.bad { color: #d81e2e; }
 .w091-sort .w091-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w091-sort .w091-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w091-sort" id="w091">
   <div class="w091-buckets">
@@ -53,6 +57,7 @@
     <span class="w091-note">(no fun if you click it right away)</span>
   </div>
   <div class="w091-msg iw-msg" role="status"></div>
+  <div class="w091-expl iw-expl" hidden>An IDS is passive and out-of-band: it observes a copy of the traffic, so it cannot break legitimate traffic but is only as fast as the humans who act on its alerts. An IPS sits inline and can drop a malicious packet in real time, at the price that a false positive blocks a real user — see <a href="#def-ids">the definition of intrusion detection and prevention</a>.</div>
 </div>
 <script>
 (function () {
@@ -139,10 +144,12 @@
       if (bucket) place(bucket, c);
     });
     root.querySelectorAll('.w091-chip').forEach(c => c.classList.add('w091-right'));
+    root.querySelector('.w091-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w091-msg iw-msg ok';
   });
   root.querySelector('.w091-reset').addEventListener('click', () => {
+    root.querySelector('.w091-expl').hidden = true;
     root.querySelectorAll('.w091-chip').forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
   });

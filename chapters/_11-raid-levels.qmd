@@ -32,6 +32,10 @@
 .w111-dd .w111-msg.ok { color: #2e7d32; }
 .w111-dd .w111-msg.bad { color: #d81e2e; }
 .w111-dd .w111-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w111-dd .w111-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w111-dd iw" id="w111-dd">
   <div class="w111-grid">
@@ -56,6 +60,13 @@
     <span class="w111-note">(no fun if you click it right away)</span>
   </div>
   <div class="w111-msg iw-msg" role="status"></div>
+  <div class="w111-expl iw-expl" hidden>
+    RAID 0 only <em>stripes</em> data for speed, so any one disk failing destroys the
+    whole — it is the trap among the levels. RAID 1 <em>mirrors</em> a full copy,
+    while RAID 5 and RAID 6 distribute data with <em>parity</em>, tolerating one and
+    two failed disks respectively — see <a href="#def-raid">the definition of RAID</a>
+    and <a href="#sec-11-redundancy-raid">the section on redundancy and RAID</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -134,11 +145,13 @@
       if (chip) place(z, chip);
     });
     zones.forEach(z => z.classList.add('w111-right'));
+    root.querySelector('.w111-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w111-msg iw-msg ok';
   });
   root.querySelector('.w111-reset').addEventListener('click', () => {
     root.querySelectorAll('.w111-chip').forEach(c => pool.appendChild(c));
+    root.querySelector('.w111-expl').hidden = true;
     unpick(); clearMarks();
   });
   TERMS.forEach(t => pool.appendChild(makeChip(t)));

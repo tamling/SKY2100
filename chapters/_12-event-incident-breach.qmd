@@ -33,6 +33,10 @@
 .w122-dd .w122-msg.ok { color: #2e7d32; }
 .w122-dd .w122-msg.bad { color: #d81e2e; }
 .w122-dd .w122-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w122-dd .w122-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w122-dd iw" id="w122-dd">
   <div class="w122-pool" aria-label="occurrences to classify"></div>
@@ -48,6 +52,16 @@
     <span class="w122-note">(no fun if you click it right away)</span>
   </div>
   <div class="w122-msg iw-msg" role="status"></div>
+  <div class="w122-expl iw-expl" hidden>
+    An <em>event</em> is any observable occurrence, most of them benign and simply
+    logged; an <em>incident</em> violates security policy or threatens
+    confidentiality, integrity or availability and demands a response; a
+    <em>breach</em> is a successful penetration or circumvention of controls leading
+    to unauthorised access or extraction of data, and may trigger legal obligations
+    to notify — see <a href="#def-incident">the definition of event, incident and
+    breach</a> in <a href="#sec-12-events-incidents-breaches">the section on events,
+    incidents and breaches</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -128,11 +142,13 @@
       if (bucket) place(bucket, c);
     });
     root.querySelectorAll('.w122-item').forEach(c => c.classList.add('w122-right'));
+    root.querySelector('.w122-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w122-msg iw-msg ok';
   });
   root.querySelector('.w122-reset').addEventListener('click', () => {
     root.querySelectorAll('.w122-item').forEach(i => pool.appendChild(i));
+    root.querySelector('.w122-expl').hidden = true;
     unpick(); clearMarks();
   });
   ITEMS.forEach(it => pool.appendChild(makeItem(it)));

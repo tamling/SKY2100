@@ -33,6 +33,7 @@
 .w051-dd .w051-msg.ok { color: #2e7d32; }
 .w051-dd .w051-msg.bad { color: #d81e2e; }
 .w051-dd .w051-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w051-dd .w051-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 </style>
 <div class="w051-dd iw" id="w051-dd">
   <div class="w051-pool" aria-label="cards to sort"></div>
@@ -47,6 +48,9 @@
     <span class="w051-note">(no fun if you click it right away)</span>
   </div>
   <div class="w051-msg iw-msg" role="status"></div>
+  <div class="w051-expl iw-expl" hidden>
+    A VM virtualises the hardware: a whole guest operating system boots on emulated devices behind the hypervisor&rsquo;s hardware-enforced boundary &mdash; minutes and gigabytes, but the stronger wall. A container virtualises the operating system: an ordinary Linux process wrapped in namespaces and a cgroup, starting within a second, but sharing the host kernel, so an escape endangers every neighbour on the host at once &mdash; see <a href="#def-container">the definition of a container</a> and <a href="#sec-05-containers">the section on containers</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -54,6 +58,7 @@
   const pool = root.querySelector('.w051-pool');
   const buckets = [...root.querySelectorAll('.w051-bucket')];
   const msg = root.querySelector('.w051-msg');
+  const expl = root.querySelector('.w051-expl');
   const ITEMS = [{"t": "Virtualises the operating system", "a": "ct"}, {"t": "Carries a whole guest operating system on emulated devices", "a": "vm"}, {"t": "Starts within a second and costs megabytes", "a": "ct"}, {"t": "Its wall is the hypervisor’s hardware-enforced boundary", "a": "vm"}, {"t": "An ordinary Linux process wrapped in namespaces and a cgroup", "a": "ct"}, {"t": "Takes minutes to boot and gigabytes of memory", "a": "vm"}, {"t": "An escape into the shared kernel endangers every neighbour on the host at once", "a": "ct"}, {"t": "The stronger boundary — a workload that needs a hard wall still gets its own", "a": "vm"}];
   let picked = null;
 
@@ -136,11 +141,13 @@
     chips().forEach(c => c.classList.add('w051-right'));
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w051-msg iw-msg ok';
+    expl.hidden = false;
   });
   root.querySelector('.w051-reset').addEventListener('click', () => {
     chips().sort((a, b) => Number(a.dataset.key) - Number(b.dataset.key))
            .forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
+    expl.hidden = true;
   });
   ITEMS.forEach((it, i) => pool.appendChild(makeChip(it, i)));
 })();

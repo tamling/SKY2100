@@ -33,6 +33,7 @@
 .w052-dd .w052-msg.ok { color: #2e7d32; }
 .w052-dd .w052-msg.bad { color: #d81e2e; }
 .w052-dd .w052-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w052-dd .w052-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 </style>
 <div class="w052-dd iw" id="w052-dd">
   <div class="w052-pool" aria-label="cards to sort"></div>
@@ -47,6 +48,9 @@
     <span class="w052-note">(no fun if you click it right away)</span>
   </div>
   <div class="w052-msg iw-msg" role="status"></div>
+  <div class="w052-expl iw-expl" hidden>
+    Lift-and-shift (rehosting) moves the application with as little change as possible, so it stays a long-running instance maintained by hand &mdash; fast and low-risk to perform, because nothing changes and nothing breaks. Cloud-native re-architecting rebuilds it around interchangeable, ephemeral and immutable instances that are replaced rather than repaired, and it is the only path on which security can be designed in from the start &mdash; see <a href="#sec-05-two-ways-into-the-cloud">the section on the two ways into the cloud</a> and <a href="#def-immutable">the definition of ephemeral and immutable workloads</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -54,6 +58,7 @@
   const pool = root.querySelector('.w052-pool');
   const buckets = [...root.querySelectorAll('.w052-bucket')];
   const msg = root.querySelector('.w052-msg');
+  const expl = root.querySelector('.w052-expl');
   const ITEMS = [{"t": "Moves the application with as little change as possible", "a": "ls"}, {"t": "Ephemeral, immutable workloads — instances are replaced, not repaired", "a": "cn"}, {"t": "Long-running instances, maintained by hand and patched in place", "a": "ls"}, {"t": "Rebuilds the application around interchangeable instances and managed services", "a": "cn"}, {"t": "Fast and low-risk to perform: nothing changes, so nothing breaks", "a": "ls"}, {"t": "The only path on which security can be designed in from the start", "a": "cn"}];
   let picked = null;
 
@@ -136,11 +141,13 @@
     chips().forEach(c => c.classList.add('w052-right'));
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w052-msg iw-msg ok';
+    expl.hidden = false;
   });
   root.querySelector('.w052-reset').addEventListener('click', () => {
     chips().sort((a, b) => Number(a.dataset.key) - Number(b.dataset.key))
            .forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
+    expl.hidden = true;
   });
   ITEMS.forEach((it, i) => pool.appendChild(makeChip(it, i)));
 })();

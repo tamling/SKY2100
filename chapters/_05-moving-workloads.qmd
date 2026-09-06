@@ -26,6 +26,7 @@
 .w055 .w055-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w055 .w055-msg.ok { color: #2e7d32; }
 .w055 .w055-msg.bad { color: #d81e2e; }
+.w055 .w055-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 </style>
 <div class="w055 iw" id="w055">
   <div class="w055-list" aria-label="statements to judge"></div>
@@ -36,12 +37,16 @@
     <span class="w055-note">(no fun if you click it right away)</span>
   </div>
   <div class="w055-msg iw-msg" role="status"></div>
+  <div class="w055-expl iw-expl" hidden>
+    In an autoscaling group addresses and names are handed out and taken back all the time, so an agent must not depend on a fixed IP: a new instance registers itself and its log entries carry the workload&rsquo;s identity. Because closed internal networks defeat network scanning, the Guidance recommends checking images at build time, and the thinner container wall calls for minimal images, least privilege (not running as root) and a patched runtime &mdash; see <a href="#sec-05-securing-moving-workloads">the section on securing workloads in a moving environment</a>.
+  </div>
 </div>
 <script>
 (function () {
   const root = document.getElementById('w055');
   const list = root.querySelector('.w055-list');
   const msg = root.querySelector('.w055-msg');
+  const expl = root.querySelector('.w055-expl');
   const ITEMS = [
     ['In an autoscaling group, a monitoring agent may safely identify a workload by its fixed IP address.', 'f'],
     ['A new instance registers itself with the monitoring system when it starts, and its log entries carry the identity of the workload.', 't'],
@@ -102,6 +107,7 @@
   root.querySelector('.w055-reset').addEventListener('click', () => {
     root.querySelectorAll('.w055-row').forEach(r => select(r, ''));
     clearMarks();
+    expl.hidden = true;
   });
   root.querySelector('.w055-solution').addEventListener('click', () => {
     root.querySelectorAll('.w055-row').forEach(r => {
@@ -110,6 +116,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w055-msg iw-msg ok';
+    expl.hidden = false;
   });
 })();
 </script>

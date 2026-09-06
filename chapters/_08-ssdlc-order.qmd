@@ -26,6 +26,10 @@
 .w086-order .w086-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w086-order .w086-msg.ok { color: #2e7d32; }
 .w086-order .w086-msg.bad { color: #d81e2e; }
+.w086-order .w086-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w086-order" id="w086">
   <ol class="w086-list"></ol>
@@ -36,6 +40,7 @@
     <span class="w086-note">(no fun if you click it right away)</span>
   </div>
   <div class="w086-msg iw-msg" role="status"></div>
+  <div class="w086-expl iw-expl" hidden>The SSDLC integrates security into every stage of building software, in this order: secure design and architecture, secure build, integration and testing, secure deployment, and runtime defence and monitoring in production; moving the work toward the start is called shifting left — see <a href="#def-ssdlc">the definition of the secure development lifecycle</a>.</div>
 </div>
 <script>
 (function () {
@@ -115,6 +120,7 @@
   STEPS.forEach((s, i) => list.appendChild(makeItem(s[0], s[1], i + 1)));
   const order0 = [...list.children];
   root.querySelector('.w086-reset').addEventListener('click', () => {
+    root.querySelector('.w086-expl').hidden = true;
     order0.forEach(li => list.appendChild(li));
     clearMarks();
   });
@@ -123,6 +129,7 @@
     [...list.children]
       .sort((a, b) => +a.dataset.pos - +b.dataset.pos)
       .forEach(li => { list.appendChild(li); li.classList.add('w086-right'); });
+    root.querySelector('.w086-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w086-msg iw-msg ok';
   });

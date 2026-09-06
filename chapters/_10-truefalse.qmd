@@ -24,6 +24,10 @@
 .w104-tf .w104-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w104-tf .w104-msg.ok { color: #2e7d32; }
 .w104-tf .w104-msg.bad { color: #d81e2e; }
+.w104-tf .w104-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w104-tf" id="w104">
   <div class="w104-rows"></div>
@@ -34,6 +38,7 @@
     <span class="w104-note">(no fun if you click it right away)</span>
   </div>
   <div class="w104-msg iw-msg" role="status"></div>
+  <div class="w104-expl iw-expl" hidden>Log integrity is the integrity property of the CIA triad applied to the audit record: a copy that left the compromised host as it was written is beyond the attacker’s reach, so centralised collection is itself an integrity control — while Azure Resource Logs must first be enabled by a diagnostic setting — see <a href="#def-logintegrity">the definition of log integrity</a>.</div>
 </div>
 <script>
 (function () {
@@ -93,6 +98,7 @@
     }
   });
   root.querySelector('.w104-reset').addEventListener('click', () => {
+    root.querySelector('.w104-expl').hidden = true;
     rows.forEach(r => {
       delete r.dataset.sel;
       r.querySelectorAll('.w104-btn').forEach(b => b.classList.remove('w104-on'));
@@ -107,6 +113,7 @@
         b.classList.toggle('w104-on', b.dataset.val === r.dataset.ans));
       r.classList.add('w104-right');
     });
+    root.querySelector('.w104-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.classList.add('ok');
   });

@@ -26,6 +26,7 @@
 .w053 .w053-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w053 .w053-msg.ok { color: #2e7d32; }
 .w053 .w053-msg.bad { color: #d81e2e; }
+.w053 .w053-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 </style>
 <div class="w053 iw" id="w053">
   <div class="w053-cols">
@@ -39,6 +40,9 @@
     <span class="w053-note">(no fun if you click it right away)</span>
   </div>
   <div class="w053-msg iw-msg" role="status"></div>
+  <div class="w053-expl iw-expl" hidden>
+    The kernel is the single program in the processor&rsquo;s privileged mode, and a system call is the only gateway through which a program in user space reaches a resource. Namespaces give a process an isolated view of one class of resource and control groups cap its consumption, which is why a container is an ordinary Linux process wrapped in both; loadable modules extend the monolithic kernel at run time &mdash; see <a href="#sec-05-the-kernel">the section on the kernel</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -46,6 +50,7 @@
   const termCol = root.querySelector('.w053-terms');
   const defCol = root.querySelector('.w053-defs');
   const msg = root.querySelector('.w053-msg');
+  const expl = root.querySelector('.w053-expl');
   const PAIRS = [
     ['Kernel', 'The single program running in the processor’s privileged mode — the only gateway to a resource'],
     ['System call', 'How a program asks for a resource: it traps into the privileged mode'],
@@ -133,6 +138,7 @@
     });
     RIGHT.forEach(k => defCol.appendChild(defCol.querySelector('.w053-def[data-k="' + k + '"]')));
     clearMsg();
+    expl.hidden = true;
   }
   root.querySelector('.w053-reset').addEventListener('click', resetAll);
   root.querySelector('.w053-solution').addEventListener('click', () => {
@@ -145,6 +151,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w053-msg iw-msg ok';
+    expl.hidden = false;
   });
   PAIRS.forEach((p, k) => termCol.appendChild(makeItem(p[0], k, true)));
   RIGHT.forEach(k => defCol.appendChild(makeItem(PAIRS[k][1], k, false)));

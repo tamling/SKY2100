@@ -28,6 +28,10 @@
 .w114-dd .w114-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w114-dd .w114-msg.ok { color: #2e7d32; }
 .w114-dd .w114-msg.bad { color: #d81e2e; }
+.w114-dd .w114-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w114-dd iw" id="w114-dd">
   <div class="w114-cols">
@@ -41,6 +45,15 @@
     <span class="w114-note">(no fun if you click it right away)</span>
   </div>
   <div class="w114-msg iw-msg" role="status"></div>
+  <div class="w114-expl iw-expl" hidden>
+    A small <em>blast radius</em> is the design goal at every level, so that one
+    failure takes down as little as possible; <em>durability</em> is what object
+    storage achieves through geographically separated replicas, and an immutable
+    image lets a system survive an instance by replacing it. The snapshot is only a
+    rollback point, and a backup that has never been restored is not known to work —
+    see <a href="#sec-11-availability-revisited">the section on availability
+    revisited</a> and <a href="#sec-11-backup">the section on backup</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -137,11 +150,13 @@
   root.querySelector('.w114-solution').addEventListener('click', () => {
     clearPick();
     PAIRS.forEach(p => lock(p.id));
+    root.querySelector('.w114-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w114-msg iw-msg ok';
   });
   root.querySelector('.w114-reset').addEventListener('click', () => {
     clearPick(); clearMsg();
+    root.querySelector('.w114-expl').hidden = true;
     PAIRS.forEach(p => {
       termEls[p.id].classList.remove('w114-done');
       defEls[p.id].classList.remove('w114-done');

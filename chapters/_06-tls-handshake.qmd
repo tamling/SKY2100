@@ -28,6 +28,7 @@
 .w061-dd .w061-msg.ok { color: #2e7d32; }
 .w061-dd .w061-msg.bad { color: #d81e2e; }
 .w061-dd .w061-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w061-dd .w061-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 </style>
 <div class="w061-dd iw" id="w061-dd">
   <div class="w061-list" aria-label="handshake steps to order"></div>
@@ -38,12 +39,16 @@
     <span class="w061-note">(no fun if you click it right away)</span>
   </div>
   <div class="w061-msg iw-msg" role="status"></div>
+  <div class="w061-expl iw-expl" hidden>
+    Each step needs the one before it: the hello opens the exchange, the certificate carries the server&rsquo;s public key, and the browser must verify it against a CA it already trusts before the key agreement &mdash; otherwise it could be agreeing a key with an impostor. Only then does slow asymmetric cryptography agree a fresh symmetric session key, and the fast symmetric key encrypts the rest: slow handshake, fast conversation &mdash; see <a href="#sec-06-tls">the section on TLS</a> and <a href="#def-tls">the definition of TLS</a>.
+  </div>
 </div>
 <script>
 (function () {
   const root = document.getElementById('w061-dd');
   const list = root.querySelector('.w061-list');
   const msg = root.querySelector('.w061-msg');
+  const expl = root.querySelector('.w061-expl');
   // STEPS[i] is the step whose correct position is i (0-based).
   const STEPS = [
     'The browser sends its hello to the server',
@@ -158,6 +163,7 @@
     rows().forEach(r => r.classList.add('w061-right'));
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w061-msg iw-msg ok';
+    expl.hidden = false;
   });
   root.querySelector('.w061-reset').addEventListener('click', () => {
     unpick();
@@ -165,6 +171,7 @@
       list.appendChild(list.querySelector('.w061-step[data-step="' + idx + '"]'));
     });
     moved();
+    expl.hidden = true;
   });
   START.forEach(idx => list.appendChild(makeRow(idx)));
   renumber();

@@ -24,6 +24,10 @@
 .w113-dd .w113-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w113-dd .w113-msg.ok { color: #2e7d32; }
 .w113-dd .w113-msg.bad { color: #d81e2e; }
+.w113-dd .w113-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w113-dd iw" id="w113-dd">
   <div class="w113-rows">
@@ -47,6 +51,13 @@
     <span class="w113-note">(no fun if you click it right away)</span>
   </div>
   <div class="w113-msg iw-msg" role="status"></div>
+  <div class="w113-expl iw-expl" hidden>
+    The 3–2–1 rule: <b>three</b> copies of important data, on <b>two</b> different
+    kinds of media, with <b>one</b> copy off-site — in the cloud, in a separate
+    account or region. The off-site copy matters because a backup an attacker can
+    reach and encrypt is no backup — see <a href="#sec-11-backup">the section on
+    backup</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -86,11 +97,13 @@
       r.classList.remove('w113-wrong');
       r.classList.add('w113-right');
     });
+    root.querySelector('.w113-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w113-msg iw-msg ok';
   });
   root.querySelector('.w113-reset').addEventListener('click', () => {
     rows.forEach(r => { r.querySelector('input').value = ''; });
+    root.querySelector('.w113-expl').hidden = true;
     clearMarks();
   });
 })();

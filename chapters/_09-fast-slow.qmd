@@ -33,6 +33,10 @@
 .w092-sort .w092-msg.ok { color: #2e7d32; }
 .w092-sort .w092-msg.bad { color: #d81e2e; }
 .w092-sort .w092-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w092-sort .w092-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w092-sort" id="w092">
   <div class="w092-buckets">
@@ -53,6 +57,7 @@
     <span class="w092-note">(no fun if you click it right away)</span>
   </div>
   <div class="w092-msg iw-msg" role="status"></div>
+  <div class="w092-expl iw-expl" hidden>The fast path carries events, analysed and turned into alerts almost at once, and is necessary for high-risk activity, especially on the management plane; the slow path carries logs, which may arrive up to fifteen minutes late — acceptable for investigation and forensics — see <a href="#sec-09-fast-slow-path">the section on fast path and slow path</a>.</div>
 </div>
 <script>
 (function () {
@@ -137,10 +142,12 @@
       if (bucket) place(bucket, c);
     });
     root.querySelectorAll('.w092-chip').forEach(c => c.classList.add('w092-right'));
+    root.querySelector('.w092-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w092-msg iw-msg ok';
   });
   root.querySelector('.w092-reset').addEventListener('click', () => {
+    root.querySelector('.w092-expl').hidden = true;
     root.querySelectorAll('.w092-chip').forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
   });

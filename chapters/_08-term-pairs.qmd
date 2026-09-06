@@ -25,6 +25,10 @@
 .w083-pairs .w083-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w083-pairs .w083-msg.ok { color: #2e7d32; }
 .w083-pairs .w083-msg.bad { color: #d81e2e; }
+.w083-pairs .w083-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w083-pairs" id="w083">
   <div class="w083-cols">
@@ -38,6 +42,7 @@
     <span class="w083-note">(no fun if you click it right away)</span>
   </div>
   <div class="w083-msg iw-msg" role="status"></div>
+  <div class="w083-expl iw-expl" hidden>Threat modelling happens at design time; canary and blue/green are the two deployment strategies that make frequent releases safe; infrastructure as code replaces hand-configuration with a reviewable, version-controlled specification; and supply-chain risk enters through dependencies one did not write — see <a href="#sec-08-devsecops-pipeline">the section on DevSecOps</a> and <a href="#sec-08-application-security">the section on application security in the cloud</a>.</div>
 </div>
 <script>
 (function () {
@@ -82,6 +87,7 @@
   DEF_ORDER.forEach(i => defsCol.appendChild(make(PAIRS[i][1], i, 'def')));
   const defs0 = [...defsCol.children];
   function resetAll() {
+    root.querySelector('.w083-expl').hidden = true;
     unselect(); matched = 0;
     root.querySelectorAll('.w083-card').forEach(c =>
       c.classList.remove('w083-done', 'w083-right', 'w083-flash'));
@@ -109,6 +115,7 @@
     });
     root.querySelectorAll('.w083-card').forEach(c => c.classList.add('w083-done', 'w083-right'));
     matched = PAIRS.length;
+    root.querySelector('.w083-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.classList.add('ok');
   });

@@ -24,6 +24,10 @@
 .w084-tf .w084-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w084-tf .w084-msg.ok { color: #2e7d32; }
 .w084-tf .w084-msg.bad { color: #d81e2e; }
+.w084-tf .w084-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w084-tf" id="w084">
   <div class="w084-rows"></div>
@@ -34,6 +38,7 @@
     <span class="w084-note">(no fun if you click it right away)</span>
   </div>
   <div class="w084-msg iw-msg" role="status"></div>
+  <div class="w084-expl iw-expl" hidden>The Guidance treats the WAF as a control that prevents attacks from arriving, never as a repair for a flawed application; a declarative specification states the desired end state while the imperative one lists the steps; and shifting left moves security work earlier, toward design — see <a href="#def-waf">the definition of the web application firewall</a> and <a href="#sec-08-devsecops-pipeline">the section on DevSecOps</a>.</div>
 </div>
 <script>
 (function () {
@@ -93,6 +98,7 @@
     }
   });
   root.querySelector('.w084-reset').addEventListener('click', () => {
+    root.querySelector('.w084-expl').hidden = true;
     rows.forEach(r => {
       delete r.dataset.sel;
       r.querySelectorAll('.w084-btn').forEach(b => b.classList.remove('w084-on'));
@@ -107,6 +113,7 @@
         b.classList.toggle('w084-on', b.dataset.val === r.dataset.ans));
       r.classList.add('w084-right');
     });
+    root.querySelector('.w084-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.classList.add('ok');
   });

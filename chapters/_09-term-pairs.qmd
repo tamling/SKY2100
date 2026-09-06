@@ -25,6 +25,10 @@
 .w093-pairs .w093-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w093-pairs .w093-msg.ok { color: #2e7d32; }
 .w093-pairs .w093-msg.bad { color: #d81e2e; }
+.w093-pairs .w093-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w093-pairs" id="w093">
   <div class="w093-cols">
@@ -38,6 +42,7 @@
     <span class="w093-note">(no fun if you click it right away)</span>
   </div>
   <div class="w093-msg iw-msg" role="status"></div>
+  <div class="w093-expl iw-expl" hidden>Events are the raw, mostly normal record; alerts are the few messages that demand attention; telemetry is what shows the environment’s activity; a canary should never be touched by a legitimate process, so any interaction is a near-certain alarm; and in the cloud, SIEM correlates logs while CSPM detects insecure configurations — see <a href="#def-event">the definition of event and alert</a> and <a href="#def-ids">the definition of intrusion detection and prevention</a>.</div>
 </div>
 <script>
 (function () {
@@ -83,6 +88,7 @@
   DEF_ORDER.forEach(i => defsCol.appendChild(make(PAIRS[i][1], i, 'def')));
   const defs0 = [...defsCol.children];
   function resetAll() {
+    root.querySelector('.w093-expl').hidden = true;
     unselect(); matched = 0;
     root.querySelectorAll('.w093-card').forEach(c =>
       c.classList.remove('w093-done', 'w093-right', 'w093-flash'));
@@ -110,6 +116,7 @@
     });
     root.querySelectorAll('.w093-card').forEach(c => c.classList.add('w093-done', 'w093-right'));
     matched = PAIRS.length;
+    root.querySelector('.w093-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.classList.add('ok');
   });

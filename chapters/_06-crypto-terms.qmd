@@ -26,6 +26,7 @@
 .w063 .w063-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w063 .w063-msg.ok { color: #2e7d32; }
 .w063 .w063-msg.bad { color: #d81e2e; }
+.w063 .w063-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 </style>
 <div class="w063 iw" id="w063">
   <div class="w063-cols">
@@ -39,6 +40,9 @@
     <span class="w063-note">(no fun if you click it right away)</span>
   </div>
   <div class="w063-msg iw-msg" role="status"></div>
+  <div class="w063-expl iw-expl" hidden>
+    Symmetric encryption uses one shared secret key and is fast, suiting bulk data; asymmetric encryption uses a key pair and solves the key-sharing problem; a certificate binds a public key to a domain name, vouched for by a CA&rsquo;s signature within the PKI. Tokenisation is a different mechanism, not encryption: it swaps a sensitive value for an unrelated random token, and ciphertext is what an eavesdropper sees without the key &mdash; see <a href="#sec-06-two-crypto-families">the section on the two families of cryptography</a> and <a href="#def-pki">the definition of certificate and PKI</a>.
+  </div>
 </div>
 <script>
 (function () {

@@ -26,6 +26,10 @@
 .w101-order .w101-msg.ok { color: #2e7d32; }
 .w101-order .w101-msg.bad { color: #d81e2e; }
 .w101-order .w101-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w101-order .w101-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w101-order" id="w101">
   <ol class="w101-list"></ol>
@@ -36,6 +40,7 @@
     <span class="w101-note">(no fun if you click it right away)</span>
   </div>
   <div class="w101-msg iw-msg" role="status"></div>
+  <div class="w101-expl iw-expl" hidden>The log leaves the host as it is written: each environment forwards to the one central repository, the security-relevant subset is filtered into the separate, well-protected audit store, and from there the logs feed the SIEM — see <a href="#sec-10-central-collection">the section on central collection</a>.</div>
 </div>
 <script>
 (function () {
@@ -119,10 +124,12 @@
       .forEach(li => list.appendChild(li));
     clearMarks();
     [...list.children].forEach(li => li.classList.add('w101-right'));
+    root.querySelector('.w101-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w101-msg iw-msg ok';
   });
   root.querySelector('.w101-reset').addEventListener('click', () => {
+    root.querySelector('.w101-expl').hidden = true;
     order0.forEach(li => list.appendChild(li));
     clearMarks();
   });

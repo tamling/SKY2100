@@ -33,6 +33,7 @@
 .w062-dd .w062-msg.ok { color: #2e7d32; }
 .w062-dd .w062-msg.bad { color: #d81e2e; }
 .w062-dd .w062-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w062-dd .w062-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 </style>
 <div class="w062-dd iw" id="w062-dd">
   <div class="w062-pool" aria-label="cards to sort"></div>
@@ -48,6 +49,9 @@
     <span class="w062-note">(no fun if you click it right away)</span>
   </div>
   <div class="w062-msg iw-msg" role="status"></div>
+  <div class="w062-expl iw-expl" hidden>
+    Data at rest is held in storage (a virtual disk, object storage) and is guarded by disk and object encryption; data in motion is being transmitted across a network and needs encryption protocols and secure channels such as TLS; data in use is being processed in memory &mdash; the hardest state to protect, because the program working on the data must be able to read it. Each state needs its own control, and protecting one does not protect the others &mdash; see <a href="#def-datastates">the definition of the three data states</a> and <a href="#sec-06-three-data-states">the section on the three states of data</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -55,6 +59,7 @@
   const pool = root.querySelector('.w062-pool');
   const buckets = [...root.querySelectorAll('.w062-bucket')];
   const msg = root.querySelector('.w062-msg');
+  const expl = root.querySelector('.w062-expl');
   const ITEMS = [{"t": "A file and a password crossing the network in plain HTTP", "a": "motion"}, {"t": "Held on a virtual disk or in object storage", "a": "rest"}, {"t": "Currently being processed in memory by the application", "a": "use"}, {"t": "Guarded by disk and object encryption (Session 11)", "a": "rest"}, {"t": "Protected by encryption protocols and secure channels such as TLS", "a": "motion"}, {"t": "The hardest state to protect: the program working on it must be able to read it", "a": "use"}];
   let picked = null;
 
@@ -137,11 +142,13 @@
     chips().forEach(c => c.classList.add('w062-right'));
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w062-msg iw-msg ok';
+    expl.hidden = false;
   });
   root.querySelector('.w062-reset').addEventListener('click', () => {
     chips().sort((a, b) => Number(a.dataset.key) - Number(b.dataset.key))
            .forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
+    expl.hidden = true;
   });
   ITEMS.forEach((it, i) => pool.appendChild(makeChip(it, i)));
 })();

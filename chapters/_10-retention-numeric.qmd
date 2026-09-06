@@ -19,6 +19,10 @@
 .w103-num .w103-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w103-num .w103-msg.ok { color: #2e7d32; }
 .w103-num .w103-msg.bad { color: #d81e2e; }
+.w103-num .w103-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w103-num" id="w103">
   <div class="w103-q">A breach of the Nextcloud VM is discovered and forensics begins
@@ -35,6 +39,7 @@
     <span class="w103-note">(no fun if you click it right away)</span>
   </div>
   <div class="w103-msg iw-msg" role="status"></div>
+  <div class="w103-expl iw-expl" hidden>The Azure Activity Log is enabled by default but retained for only ninety days, and an intrusion may be discovered months after it began — which is why security-relevant logs are routed to Log Analytics or longer-term storage rather than left to expire — see <a href="#sec-10-logs-events">the section on logs, events and the content of a log line</a>.</div>
 </div>
 <script>
 (function () {
@@ -64,12 +69,14 @@
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
   root.querySelector('.w103-check').addEventListener('click', check);
   root.querySelector('.w103-reset').addEventListener('click', () => {
+    root.querySelector('.w103-expl').hidden = true;
     inp.value = ''; clearMarks();
   });
   root.querySelector('.w103-solution').addEventListener('click', () => {
     clearMarks();
     inp.value = String(ANSWER);
     inp.classList.add('w103-right');
+    root.querySelector('.w103-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.classList.add('ok');
   });

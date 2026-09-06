@@ -24,6 +24,10 @@
 .w094-tf .w094-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w094-tf .w094-msg.ok { color: #2e7d32; }
 .w094-tf .w094-msg.bad { color: #d81e2e; }
+.w094-tf .w094-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w094-tf" id="w094">
   <div class="w094-rows"></div>
@@ -34,6 +38,7 @@
     <span class="w094-note">(no fun if you click it right away)</span>
   </div>
   <div class="w094-msg iw-msg" role="status"></div>
+  <div class="w094-expl iw-expl" hidden>Signature-based detection matches known attack patterns while anomaly-based detection flags departures from the established baseline; cloud-native instances start and stop under the orchestrator’s control, so a disappearing instance is not by itself trouble; and Target’s system did generate alerts — nobody acted on them in time — see <a href="#sec-09-detection">the section on detection</a>.</div>
 </div>
 <script>
 (function () {
@@ -93,6 +98,7 @@
     }
   });
   root.querySelector('.w094-reset').addEventListener('click', () => {
+    root.querySelector('.w094-expl').hidden = true;
     rows.forEach(r => {
       delete r.dataset.sel;
       r.querySelectorAll('.w094-btn').forEach(b => b.classList.remove('w094-on'));
@@ -107,6 +113,7 @@
         b.classList.toggle('w094-on', b.dataset.val === r.dataset.ans));
       r.classList.add('w094-right');
     });
+    root.querySelector('.w094-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.classList.add('ok');
   });

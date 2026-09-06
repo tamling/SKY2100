@@ -27,6 +27,7 @@
 .w054 .w054-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w054 .w054-msg.ok { color: #2e7d32; }
 .w054 .w054-msg.bad { color: #d81e2e; }
+.w054 .w054-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 </style>
 <div class="w054 iw" id="w054">
   <div class="w054-grid"></div>
@@ -37,12 +38,16 @@
     <span class="w054-note">(no fun if you click it right away)</span>
   </div>
   <div class="w054-msg iw-msg" role="status"></div>
+  <div class="w054-expl iw-expl" hidden>
+    Linux is the monolithic kernel with a UNIX/POSIX interface, and the only one of the three that runs Linux containers on its own kernel, because its namespaces and cgroups enforce the isolation. Windows (NT) and macOS (XNU) are hybrid designs layering an outer service layer over a small core, and XNU&rsquo;s BSD layer also presents a UNIX/POSIX interface &mdash; which is why Docker Desktop must run a small Linux VM on both &mdash; see <a href="#sec-05-the-kernel">the section on the kernel</a>.
+  </div>
 </div>
 <script>
 (function () {
   const root = document.getElementById('w054');
   const grid = root.querySelector('.w054-grid');
   const msg = root.querySelector('.w054-msg');
+  const expl = root.querySelector('.w054-expl');
   const COLS = [
     ['mono', 'Monolithic'],
     ['hyb', 'Hybrid'],
@@ -112,6 +117,7 @@
   root.querySelector('.w054-reset').addEventListener('click', () => {
     root.querySelectorAll('.w054-cell').forEach(c => setCell(c, false));
     clearMarks();
+    expl.hidden = true;
   });
   root.querySelector('.w054-solution').addEventListener('click', () => {
     ROWS.forEach(row => {
@@ -124,6 +130,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w054-msg iw-msg ok';
+    expl.hidden = false;
   });
 })();
 </script>

@@ -23,6 +23,10 @@
 .w116-dd .w116-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w116-dd .w116-msg.ok { color: #2e7d32; }
 .w116-dd .w116-msg.bad { color: #d81e2e; }
+.w116-dd .w116-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w116-dd iw" id="w116-dd">
   <div class="w116-q">
@@ -40,6 +44,13 @@
     <span class="w116-note">(no fun if you click it right away)</span>
   </div>
   <div class="w116-msg iw-msg" role="status"></div>
+  <div class="w116-expl iw-expl" hidden>
+    Replacing a failed disk while the RAID array continues to run is called
+    <em>hot swapping</em> (Comer, 2021, pp. 103–104): the array's redundancy carries
+    the service through the failure, so the storage system never stops serving — see
+    <a href="#sec-11-provider-redundancy">the section on the redundancy the provider
+    builds in</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -81,11 +92,13 @@
     input.value = SOLUTION;
     input.classList.remove('w116-wrong');
     input.classList.add('w116-right');
+    root.querySelector('.w116-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w116-msg iw-msg ok';
   });
   root.querySelector('.w116-reset').addEventListener('click', () => {
     input.value = '';
+    root.querySelector('.w116-expl').hidden = true;
     clearMarks();
   });
 })();

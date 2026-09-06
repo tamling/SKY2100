@@ -19,6 +19,10 @@
 .w095-si .w095-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w095-si .w095-msg.ok { color: #2e7d32; }
 .w095-si .w095-msg.bad { color: #d81e2e; }
+.w095-si .w095-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="iw w095-si" id="w095">
   <div class="w095-q">To decide what to look for, the Guidance points to a catalogue
@@ -35,6 +39,7 @@
     <span class="w095-note">(no fun if you click it right away)</span>
   </div>
   <div class="w095-msg iw-msg" role="status"></div>
+  <div class="w095-expl iw-expl" hidden>MITRE ATT&amp;CK catalogues the tactics and techniques attackers use and connects a given indicator with the stage of an attack it belongs to, which is how the Guidance decides what detection should look for — see <a href="#sec-09-detection">the section on detection</a>.</div>
 </div>
 <script>
 (function () {
@@ -66,12 +71,14 @@
   inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
   root.querySelector('.w095-check').addEventListener('click', check);
   root.querySelector('.w095-reset').addEventListener('click', () => {
+    root.querySelector('.w095-expl').hidden = true;
     inp.value = ''; clearMarks();
   });
   root.querySelector('.w095-solution').addEventListener('click', () => {
     clearMarks();
     inp.value = CANON;
     inp.classList.add('w095-right');
+    root.querySelector('.w095-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.classList.add('ok');
   });
