@@ -33,6 +33,7 @@
 .w071-dd .w071-msg.ok { color: #2e7d32; }
 .w071-dd .w071-msg.bad { color: #d81e2e; }
 .w071-dd .w071-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w071-dd .w071-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 </style>
 <div class="w071-dd iw" id="w071-dd">
   <div class="w071-pool" aria-label="cards to sort"></div>
@@ -48,6 +49,9 @@
     <span class="w071-note">(no fun if you click it right away)</span>
   </div>
   <div class="w071-msg iw-msg" role="status"></div>
+  <div class="w071-expl iw-expl" hidden>
+    The three factors are categories of evidence for a claim of identity: something one knows (a password or PIN), something one has (a phone, hardware token or key) and something one is (a biometric such as a fingerprint or iris scan). Multi-factor authentication requires evidence from more than one independent category, so a stolen password alone is insufficient &mdash; see <a href="#def-mfa">the definition of multi-factor authentication</a> and <a href="#sec-07-authentication-mfa">the section on authentication and MFA</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -55,6 +59,7 @@
   const pool = root.querySelector('.w071-pool');
   const buckets = [...root.querySelectorAll('.w071-bucket')];
   const msg = root.querySelector('.w071-msg');
+  const expl = root.querySelector('.w071-expl');
   const ITEMS = [{"t": "A hardware token", "a": "has"}, {"t": "A password", "a": "knows"}, {"t": "A fingerprint", "a": "is"}, {"t": "A phone", "a": "has"}, {"t": "A PIN", "a": "knows"}, {"t": "An iris scan", "a": "is"}];
   let picked = null;
 
@@ -137,11 +142,13 @@
     chips().forEach(c => c.classList.add('w071-right'));
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w071-msg iw-msg ok';
+    expl.hidden = false;
   });
   root.querySelector('.w071-reset').addEventListener('click', () => {
     chips().sort((a, b) => Number(a.dataset.key) - Number(b.dataset.key))
            .forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
+    expl.hidden = true;
   });
   ITEMS.forEach((it, i) => pool.appendChild(makeChip(it, i)));
 })();

@@ -30,6 +30,10 @@
 .w025 .w025-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w025 .w025-msg.ok { color: #2e7d32; }
 .w025 .w025-msg.bad { color: #d81e2e; }
+.w025 .w025-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w025 iw" id="w025">
   <div class="w025-cap">Live migration begins (guest still running)</div>
@@ -42,6 +46,9 @@
     <span class="w025-note">(no fun if you click it right away)</span>
   </div>
   <div class="w025-msg iw-msg" role="status"></div>
+  <div class="w025-expl iw-expl" hidden>
+    Because a VM’s entire state — memory, disk, devices — is data, the hypervisor first pre-copies the guest’s memory to another physical host while the guest keeps running, then pauses the guest briefly, finalises the transfer, and the machine continues on the new host with almost no downtime. See <a href="#exm-migration">the snapshot and live-migration example</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -113,7 +120,7 @@
     list.textContent = '';
     START.forEach(t => list.appendChild(makeItem(t[0], t[1])));
   }
-  root.querySelector('.w025-reset').addEventListener('click', () => { build(); clearMarks(); });
+  root.querySelector('.w025-reset').addEventListener('click', () => { build(); clearMarks(); root.querySelector('.w025-expl').hidden = true; });
   root.querySelector('.w025-sol').addEventListener('click', () => {
     clearMarks();
     [...list.children]
@@ -121,6 +128,7 @@
       .forEach(it => { list.appendChild(it); it.classList.add('w025-right'); });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w025-msg iw-msg ok';
+    root.querySelector('.w025-expl').hidden = false;
   });
   build();
 })();

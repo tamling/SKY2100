@@ -24,6 +24,10 @@
 .w034 .w034-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w034 .w034-msg.ok { color: #2e7d32; }
 .w034 .w034-msg.bad { color: #d81e2e; }
+.w034 .w034-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w034 iw" id="w034">
   <div class="w034-cols">
@@ -37,6 +41,9 @@
     <span class="w034-note">(no fun if you click it right away)</span>
   </div>
   <div class="w034-msg iw-msg" role="status"></div>
+  <div class="w034-expl iw-expl" hidden>
+    The layers split by who operates them: on the customer’s own server, rate limiting caps requests per client, timeouts and connection limits stop slow or stuck clients from hoarding state, and caching serves repeated content cheaply; at cloud scale, autoscaling adds capacity under load, CDNs and anycast absorb volume close to its source, and cloud DDoS protection scrubs traffic upstream. See <a href="#sec-03-defending-in-layers">the section on defending availability in layers</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -119,7 +126,7 @@
     if (done === PAIRS.length) { msg.textContent = '✓ All matched — the layers split by who operates them.'; msg.className = 'w034-msg iw-msg ok'; }
     else { msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched — keep going (a wrong attempt flashes red).'; msg.className = 'w034-msg iw-msg'; }
   });
-  root.querySelector('.w034-reset').addEventListener('click', build);
+  root.querySelector('.w034-reset').addEventListener('click', () => { build(); root.querySelector('.w034-expl').hidden = true; });
   root.querySelector('.w034-sol').addEventListener('click', () => {
     unpick(); clearMsg();
     PAIRS.forEach((p, i) => {
@@ -129,6 +136,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w034-msg iw-msg ok';
+    root.querySelector('.w034-expl').hidden = false;
   });
   build();
 })();

@@ -25,6 +25,10 @@
 .w045 .w045-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w045 .w045-msg.ok { color: #2e7d32; }
 .w045 .w045-msg.bad { color: #d81e2e; }
+.w045 .w045-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w045 iw" id="w045">
   <div class="w045-rows" aria-label="statements to judge"></div>
@@ -35,6 +39,9 @@
     <span class="w045-note">(no fun if you click it right away)</span>
   </div>
   <div class="w045-msg iw-msg" role="status"></div>
+  <div class="w045-expl iw-expl" hidden>
+    Zero Trust trusts nobody and nothing merely for its position on the network: it assumes a breach has happened or will happen and checks every user, device, application and transaction again and again. In the NIST reference model the policy decision point decides and the policy enforcement point enforces — and a cloud tenant has no physical perimeter to draw. See <a href="#def-zerotrust">the definition of Zero Trust</a> in <a href="#sec-04-defence-in-depth-zero-trust">the section on defence in depth and Zero Trust</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -89,6 +96,7 @@
   root.querySelector('.w045-reset').addEventListener('click', () => {
     rowsBox.querySelectorAll('.w045-tf').forEach(b => b.classList.remove('w045-sel'));
     clearMarks();
+    root.querySelector('.w045-expl').hidden = true;
   });
   root.querySelector('.w045-sol').addEventListener('click', () => {
     [...rowsBox.children].forEach(row => {
@@ -100,6 +108,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w045-msg iw-msg ok';
+    root.querySelector('.w045-expl').hidden = false;
   });
   STATEMENTS.forEach(s => rowsBox.appendChild(makeRow(s[0], s[1])));
 })();

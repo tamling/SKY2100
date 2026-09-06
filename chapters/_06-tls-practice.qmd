@@ -46,6 +46,7 @@
   const root = document.getElementById('w064');
   const list = root.querySelector('.w064-list');
   const msg = root.querySelector('.w064-msg');
+  const expl = root.querySelector('.w064-expl');
   const ITEMS = [
     ['TLS 1.0 and 1.1 are disabled in a hardened deployment; TLS 1.2 is the minimum.', 't'],
     ['An expired certificate breaks the service as surely as a misconfiguration.', 't'],
@@ -106,6 +107,7 @@
   root.querySelector('.w064-reset').addEventListener('click', () => {
     root.querySelectorAll('.w064-row').forEach(r => select(r, ''));
     clearMarks();
+    expl.hidden = true;
   });
   root.querySelector('.w064-solution').addEventListener('click', () => {
     root.querySelectorAll('.w064-row').forEach(r => {
@@ -114,6 +116,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w064-msg iw-msg ok';
+    expl.hidden = false;
   });
 })();
 </script>

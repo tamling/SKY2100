@@ -24,6 +24,10 @@
 .w133-dd .w133-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w133-dd .w133-msg.ok { color: #2e7d32; }
 .w133-dd .w133-msg.bad { color: #d81e2e; }
+.w133-dd .w133-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w133-dd iw" id="w133-dd">
   <div class="w133-rows">
@@ -47,6 +51,14 @@
     <span class="w133-note">(no fun if you click it right away)</span>
   </div>
   <div class="w133-msg iw-msg" role="status"></div>
+  <div class="w133-expl iw-expl" hidden>
+    CSF 2.0 has three levels: <b>6</b> Functions at the top (Govern, Identify,
+    Protect, Detect, Respond, Recover — Govern at the centre), which divide into
+    <b>22</b> Categories, the level at which completeness is tested, which divide
+    again into <b>106</b> Subcategories, the specific, testable outcomes an
+    organisation achieves — see <a href="#sec-13-csf-mapping">the section on mapping
+    to the NIST Cybersecurity Framework</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -86,11 +98,13 @@
       r.classList.remove('w133-wrong');
       r.classList.add('w133-right');
     });
+    root.querySelector('.w133-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w133-msg iw-msg ok';
   });
   root.querySelector('.w133-reset').addEventListener('click', () => {
     rows.forEach(r => { r.querySelector('input').value = ''; });
+    root.querySelector('.w133-expl').hidden = true;
     clearMarks();
   });
 })();

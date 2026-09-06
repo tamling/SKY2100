@@ -159,6 +159,7 @@
   });
   root.querySelector('.w123-reset').addEventListener('click', () => {
     clearPick(); clearMsg();
+    root.querySelector('.w123-expl').hidden = true;
     PAIRS.forEach(p => {
       termEls[p.id].classList.remove('w123-done');
       defEls[p.id].classList.remove('w123-done');

@@ -32,6 +32,10 @@
 .w042 .w042-msg.ok { color: #2e7d32; }
 .w042 .w042-msg.bad { color: #d81e2e; }
 .w042 .w042-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w042 .w042-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w042 iw" id="w042">
   <div class="w042-pool" aria-label="properties to classify"></div>
@@ -52,6 +56,9 @@
     <span class="w042-note">(no fun if you click it right away)</span>
   </div>
   <div class="w042-msg iw-msg" role="status"></div>
+  <div class="w042-expl iw-expl" hidden>
+    A security group is stateful and attaches to resources such as an instance, network interface or subnet, so a reply to a permitted outgoing request is allowed back automatically; a network ACL works lower in the stack, applies to subnets and is typically stateless, so each direction of a connection needs its own rule. See <a href="#def-secgroup">the definition of the security group</a> in <a href="#sec-04-cloud-networks-software">the section on cloud networks as software</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -136,10 +143,12 @@
     root.querySelectorAll('.w042-chip').forEach(c => c.classList.add('w042-right'));
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w042-msg iw-msg ok';
+    root.querySelector('.w042-expl').hidden = false;
   });
   root.querySelector('.w042-reset').addEventListener('click', () => {
     root.querySelectorAll('.w042-chip').forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
+    root.querySelector('.w042-expl').hidden = true;
   });
   ITEMS.forEach((it, i) => pool.appendChild(makeChip(it[0], it[1], i)));
 })();

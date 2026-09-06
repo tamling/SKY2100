@@ -30,6 +30,10 @@
 .w032 .w032-msg.ok { color: #2e7d32; }
 .w032 .w032-msg.bad { color: #d81e2e; }
 .w032 .w032-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w032 .w032-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w032 iw" id="w032">
   <div class="w032-cap">Internet (clients)</div>
@@ -42,6 +46,9 @@
     <span class="w032-note">(no fun if you click it right away)</span>
   </div>
   <div class="w032-msg iw-msg" role="status"></div>
+  <div class="w032-expl iw-expl" hidden>
+    In a minimum viable network each tier accepts connections only from the tier directly above it: the Internet reaches only the load balancer, on HTTPS; the web tier answers only the balancer; the application tier only the web tier; and the database only the application tier — so the only path to the database runs through the application. See <a href="#sec-03-minimum-viable-network">the section on the minimum viable network</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -120,8 +127,9 @@
     [...list.children].forEach(li => li.classList.add('w032-right'));
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w032-msg iw-msg ok';
+    root.querySelector('.w032-expl').hidden = false;
   });
-  root.querySelector('.w032-reset').addEventListener('click', () => { build(); clearMarks(); });
+  root.querySelector('.w032-reset').addEventListener('click', () => { build(); clearMarks(); root.querySelector('.w032-expl').hidden = true; });
   build();
 })();
 </script>

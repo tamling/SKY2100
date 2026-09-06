@@ -26,6 +26,7 @@
 .w073 .w073-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w073 .w073-msg.ok { color: #2e7d32; }
 .w073 .w073-msg.bad { color: #d81e2e; }
+.w073 .w073-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 </style>
 <div class="w073 iw" id="w073">
   <div class="w073-cols">
@@ -39,6 +40,9 @@
     <span class="w073-note">(no fun if you click it right away)</span>
   </div>
   <div class="w073-msg iw-msg" role="status"></div>
+  <div class="w073-expl iw-expl" hidden>
+    An entity is the unique actor and an identity its verifiable expression within a namespace &mdash; one entity may hold several. Authentication verifies an identity, authorisation then decides whether that authenticated identity may access a resource, and an entitlement maps identities to authorisations, often with conditions; written down as the entitlement matrix, it is the document reviewed to see whether least privilege holds &mdash; see <a href="#def-iam">the definition of the core IAM terms</a> and <a href="#sec-07-identity-perimeter">the section on identity as the new perimeter</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -46,6 +50,7 @@
   const termCol = root.querySelector('.w073-terms');
   const defCol = root.querySelector('.w073-defs');
   const msg = root.querySelector('.w073-msg');
+  const expl = root.querySelector('.w073-expl');
   const PAIRS = [
     ['Entity', 'A unique actor: a person, device, application or system'],
     ['Identity', 'The entity’s verifiable expression within a namespace; one entity may hold several'],
@@ -132,6 +137,7 @@
     });
     RIGHT.forEach(k => defCol.appendChild(defCol.querySelector('.w073-def[data-k="' + k + '"]')));
     clearMsg();
+    expl.hidden = true;
   }
   root.querySelector('.w073-reset').addEventListener('click', resetAll);
   root.querySelector('.w073-solution').addEventListener('click', () => {
@@ -144,6 +150,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w073-msg iw-msg ok';
+    expl.hidden = false;
   });
   PAIRS.forEach((p, k) => termCol.appendChild(makeItem(p[0], k, true)));
   RIGHT.forEach(k => defCol.appendChild(makeItem(PAIRS[k][1], k, false)));

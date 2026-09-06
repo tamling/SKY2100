@@ -27,6 +27,10 @@
 .w124-dd .w124-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w124-dd .w124-msg.ok { color: #2e7d32; }
 .w124-dd .w124-msg.bad { color: #d81e2e; }
+.w124-dd .w124-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w124-dd iw" id="w124-dd">
   <div class="w124-rows"></div>
@@ -37,6 +41,15 @@
     <span class="w124-note">(no fun if you click it right away)</span>
   </div>
   <div class="w124-msg iw-msg" role="status"></div>
+  <div class="w124-expl iw-expl" hidden>
+    The RTO states how quickly a service must be back (time), the RPO how much recent
+    data the organisation can afford to lose (data); together they set how often
+    backups are taken and how fast a restore must be. It is BCM that protects the
+    business function, while Session 11's resilience protects the technical service —
+    and a cloud incident gives management, legal and compliance a part to play too —
+    see <a href="#sec-12-business-continuity">the section on resilience and business
+    continuity</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -111,6 +124,7 @@
       r.el.classList.remove('w124-wrong');
       r.el.classList.add('w124-right');
     });
+    root.querySelector('.w124-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w124-msg iw-msg ok';
   });
@@ -120,6 +134,7 @@
       r.btns[true].classList.remove('w124-sel');
       r.btns[false].classList.remove('w124-sel');
     });
+    root.querySelector('.w124-expl').hidden = true;
     clearMarks();
   });
 })();

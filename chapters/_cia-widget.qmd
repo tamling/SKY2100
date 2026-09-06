@@ -36,6 +36,10 @@
 .cia-dd .cia-msg.ok { color: #2e7d32; }
 .cia-dd .cia-msg.bad { color: #d81e2e; }
 .cia-dd .cia-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.cia-dd .cia-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="cia-dd iw" id="cia-dd">
   <div class="cia-stage">
@@ -61,6 +65,9 @@
     <span class="cia-note">(no fun if you click it right away)</span>
   </div>
   <div class="cia-msg iw-msg" role="status"></div>
+  <div class="cia-expl iw-expl" hidden>
+    Confidentiality means information is disclosed only to authorised parties, integrity that it is not altered without authorisation — or at least not without detection — and availability that information and services are reachable when needed. Redundancy, authentication and non-repudiation are controls and related course concepts, not the three protection goals — see <a href="#def-cia">the definition of the CIA triad</a> in <a href="#sec-01-cia-triad">the section on security defined</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -142,10 +149,12 @@
     zones.forEach(z => z.classList.add('cia-right'));
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'cia-msg iw-msg ok';
+    root.querySelector('.cia-expl').hidden = false;
   });
   root.querySelector('.cia-reset').addEventListener('click', () => {
     root.querySelectorAll('.cia-chip').forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
+    root.querySelector('.cia-expl').hidden = true;
   });
   TERMS.forEach(t => pool.appendChild(makeChip(t)));
 })();

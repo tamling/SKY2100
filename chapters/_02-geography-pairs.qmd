@@ -24,6 +24,10 @@
 .w024 .w024-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w024 .w024-msg.ok { color: #2e7d32; }
 .w024 .w024-msg.bad { color: #d81e2e; }
+.w024 .w024-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w024 iw" id="w024">
   <div class="w024-cols">
@@ -37,6 +41,9 @@
     <span class="w024-note">(no fun if you click it right away)</span>
   </div>
   <div class="w024-msg iw-msg" role="status"></div>
+  <div class="w024-expl iw-expl" hidden>
+    Region, availability zone and region pair are the physical geography: a geographic area of data centres, a physically separate data centre within it, and two regions linked for replication and disaster recovery. Management group, subscription and resource group are the administrative hierarchy Azure places above it. See <a href="#def-regions">the definition of region, availability zone and region pair</a> in <a href="#sec-02-traffic-geography">the section on traffic and geography</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -119,7 +126,7 @@
     if (done === PAIRS.length) { msg.textContent = '✓ All matched — physical geography below, administrative geography above.'; msg.className = 'w024-msg iw-msg ok'; }
     else { msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched — keep going (a wrong attempt flashes red).'; msg.className = 'w024-msg iw-msg'; }
   });
-  root.querySelector('.w024-reset').addEventListener('click', build);
+  root.querySelector('.w024-reset').addEventListener('click', () => { build(); root.querySelector('.w024-expl').hidden = true; });
   root.querySelector('.w024-sol').addEventListener('click', () => {
     unpick(); clearMsg();
     PAIRS.forEach((p, i) => {
@@ -129,6 +136,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w024-msg iw-msg ok';
+    root.querySelector('.w024-expl').hidden = false;
   });
   build();
 })();

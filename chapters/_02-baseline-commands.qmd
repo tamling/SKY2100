@@ -35,6 +35,10 @@
 .w022 .w022-msg.ok { color: #2e7d32; }
 .w022 .w022-msg.bad { color: #d81e2e; }
 .w022 .w022-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w022 .w022-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w022 iw" id="w022">
   <div class="w022-pool" aria-label="commands to place"></div>
@@ -67,6 +71,9 @@
     <span class="w022-note">(no fun if you click it right away)</span>
   </div>
   <div class="w022-msg iw-msg" role="status"></div>
+  <div class="w022-expl iw-expl" hidden>
+    <code>ss -tulpn</code> lists listening sockets and open ports, <code>free -h</code> shows RAM and swap, <code>df -h</code> free space per filesystem, <code>journalctl</code> the system and service log entries, and <code>top</code>/<code>htop</code> the live processes and CPU load; <code>lscpu</code> and <code>du -sh</code> answer none of the five questions here. See <a href="#sec-02-linux-four-pillars">the section on Linux, the shell and the four pillars</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -154,10 +161,12 @@
     zones.forEach(z => z.classList.add('w022-right'));
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w022-msg iw-msg ok';
+    root.querySelector('.w022-expl').hidden = false;
   });
   root.querySelector('.w022-reset').addEventListener('click', () => {
     root.querySelectorAll('.w022-chip').forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
+    root.querySelector('.w022-expl').hidden = true;
   });
   CMDS.forEach(t => pool.appendChild(makeChip(t[0], t[1])));
 })();

@@ -32,6 +32,10 @@
 .w132-dd .w132-msg.ok { color: #2e7d32; }
 .w132-dd .w132-msg.bad { color: #d81e2e; }
 .w132-dd .w132-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w132-dd .w132-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w132-dd iw" id="w132-dd">
   <div class="w132-grid">
@@ -62,6 +66,16 @@
     <span class="w132-note">(no fun if you click it right away)</span>
   </div>
   <div class="w132-msg iw-msg" role="status"></div>
+  <div class="w132-expl iw-expl" hidden>
+    Each session added one independent layer: the baseline (S2) is the picture of
+    normal every later detection measures against, the firewall (S4) closes the ports
+    under default-deny, TLS (S6) protects data in transit, monitoring (S9) catches
+    what the preventive layers let through, logging (S10) keeps the tamper-evident
+    off-host record, and backup (S11) recovers what nothing prevented. WAF and
+    Container are real layers of the stack, but none of the six roles shown describes
+    them — see <a href="#sec-13-hardened-stack">the section on the hardened
+    stack</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -140,11 +154,13 @@
       if (chip) place(z, chip);
     });
     zones.forEach(z => z.classList.add('w132-right'));
+    root.querySelector('.w132-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w132-msg iw-msg ok';
   });
   root.querySelector('.w132-reset').addEventListener('click', () => {
     root.querySelectorAll('.w132-chip').forEach(c => pool.appendChild(c));
+    root.querySelector('.w132-expl').hidden = true;
     unpick(); clearMarks();
   });
   TERMS.forEach(t => pool.appendChild(makeChip(t)));

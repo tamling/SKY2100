@@ -33,6 +33,10 @@
 .w031 .w031-msg.ok { color: #2e7d32; }
 .w031 .w031-msg.bad { color: #d81e2e; }
 .w031 .w031-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w031 .w031-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w031 iw" id="w031">
   <div class="w031-pool" aria-label="attack characteristics to classify"></div>
@@ -60,6 +64,9 @@
     <span class="w031-note">(no fun if you click it right away)</span>
   </div>
   <div class="w031-msg iw-msg" role="status"></div>
+  <div class="w031-expl iw-expl" hidden>
+    Volumetric attacks saturate the network link — UDP floods with amplification, measured in gigabits or terabits per second. Protocol attacks exhaust connection state — the SYN flood, measured in packets per second. Application-layer attacks exhaust the application itself — a flood against a search endpoint — and are hardest to tell apart from real users. See <a href="#def-ddos">the definition of DoS and DDoS</a> in <a href="#sec-03-denial-of-service">the section on denial of service</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -144,10 +151,12 @@
     root.querySelectorAll('.w031-chip').forEach(c => c.classList.add('w031-right'));
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w031-msg iw-msg ok';
+    root.querySelector('.w031-expl').hidden = false;
   });
   root.querySelector('.w031-reset').addEventListener('click', () => {
     root.querySelectorAll('.w031-chip').forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
+    root.querySelector('.w031-expl').hidden = true;
   });
   ITEMS.forEach((it, i) => pool.appendChild(makeChip(it[0], it[1], i)));
 })();

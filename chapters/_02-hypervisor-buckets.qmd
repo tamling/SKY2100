@@ -33,6 +33,10 @@
 .w021 .w021-msg.ok { color: #2e7d32; }
 .w021 .w021-msg.bad { color: #d81e2e; }
 .w021 .w021-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w021 .w021-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w021 iw" id="w021">
   <div class="w021-pool" aria-label="items to classify"></div>
@@ -55,6 +59,9 @@
     <span class="w021-note">(no fun if you click it right away)</span>
   </div>
   <div class="w021-msg iw-msg" role="status"></div>
+  <div class="w021-expl iw-expl" hidden>
+    A Type 1 (bare-metal) hypervisor — ESXi, Xen, Hyper-V — runs directly on the hardware and is what data centres and clouds use, so one sits beneath every rented cloud VM. A Type 2 (hosted) hypervisor — VMware Workstation, VirtualBox — runs as an application on a host operating system and carries the laboratory’s Ubuntu VM. See <a href="#def-hypervisor">the definition of virtualisation and the hypervisor</a> in <a href="#sec-02-virtualisation">the section on virtualisation and the hypervisor</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -140,10 +147,12 @@
     root.querySelectorAll('.w021-chip').forEach(c => c.classList.add('w021-right'));
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w021-msg iw-msg ok';
+    root.querySelector('.w021-expl').hidden = false;
   });
   root.querySelector('.w021-reset').addEventListener('click', () => {
     root.querySelectorAll('.w021-chip').forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
+    root.querySelector('.w021-expl').hidden = true;
   });
   ITEMS.forEach((it, i) => pool.appendChild(makeChip(it[0], it[1], i)));
 })();

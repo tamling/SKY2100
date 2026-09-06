@@ -25,6 +25,10 @@
 .w043 .w043-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w043 .w043-msg.ok { color: #2e7d32; }
 .w043 .w043-msg.bad { color: #d81e2e; }
+.w043 .w043-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w043 iw" id="w043">
   <div class="w043-rows" aria-label="fill in the answers"></div>
@@ -35,6 +39,9 @@
     <span class="w043-note">(no fun if you click it right away)</span>
   </div>
   <div class="w043-msg iw-msg" role="status"></div>
+  <div class="w043-expl iw-expl" hidden>
+    A web server listens on port 80 for plain HTTP and on 443 for HTTPS, SSH listens on 22, and <code>ss -tulpn</code> lists every port the machine listens on — each of which is a door and part of the attack surface, to be justified line by line. See <a href="#sec-04-addresses-ports-attack-surface">the section on addresses, ports and the attack surface</a> and <a href="#def-attacksurface">the definition of the attack surface</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -89,6 +96,7 @@
   root.querySelector('.w043-reset').addEventListener('click', () => {
     rowsBox.querySelectorAll('.w043-in').forEach(i => { i.value = ''; });
     clearMarks();
+    root.querySelector('.w043-expl').hidden = true;
   });
   root.querySelector('.w043-sol').addEventListener('click', () => {
     clearMarks();
@@ -98,6 +106,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w043-msg iw-msg ok';
+    root.querySelector('.w043-expl').hidden = false;
   });
 })();
 </script>

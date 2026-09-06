@@ -25,6 +25,10 @@
 .w014 .w014-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w014 .w014-msg.ok { color: #2e7d32; }
 .w014 .w014-msg.bad { color: #d81e2e; }
+.w014 .w014-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w014 iw" id="w014">
   <div class="w014-rows" aria-label="statements to judge"></div>
@@ -35,6 +39,9 @@
     <span class="w014-note">(no fun if you click it right away)</span>
   </div>
   <div class="w014-msg iw-msg" role="status"></div>
+  <div class="w014-expl iw-expl" hidden>
+    No system was breached and no password was stolen in the Strava case: the failure was a governance decision, aggregated anonymous data still revealed sensitive facts, and confidentiality proved contextual. An IaaS tenant, moreover, cannot examine the provider’s underlying systems, and sudden instance growth is hard to tell apart from a denial-of-service attack. See <a href="#exm-strava">the Strava heat-map example</a> in <a href="#sec-01-why-cloud-security">the section on why cloud security</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -89,6 +96,7 @@
   root.querySelector('.w014-reset').addEventListener('click', () => {
     rowsBox.querySelectorAll('.w014-tf').forEach(b => b.classList.remove('w014-sel'));
     clearMarks();
+    root.querySelector('.w014-expl').hidden = true;
   });
   root.querySelector('.w014-sol').addEventListener('click', () => {
     [...rowsBox.children].forEach(row => {
@@ -100,6 +108,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w014-msg iw-msg ok';
+    root.querySelector('.w014-expl').hidden = false;
   });
   STATEMENTS.forEach(s => rowsBox.appendChild(makeRow(s[0], s[1])));
 })();

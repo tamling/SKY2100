@@ -30,6 +30,10 @@
 .w044 .w044-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w044 .w044-msg.ok { color: #2e7d32; }
 .w044 .w044-msg.bad { color: #d81e2e; }
+.w044 .w044-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w044 iw" id="w044">
   <div class="w044-cap">Capital One, 2019 — the chain of the breach</div>
@@ -42,6 +46,9 @@
     <span class="w044-note">(no fun if you click it right away)</span>
   </div>
   <div class="w044-msg iw-msg" role="status"></div>
+  <div class="w044-expl iw-expl" hidden>
+    The chain began with a misconfigured WAF on a cloud instance whose attached identity held far more permission than it needed; a server-side request forgery flaw made the WAF query the platform’s internal metadata service, which returned the identity’s temporary credentials, and those credentials could list and copy the contents of more than 700 storage buckets — a security control itself became the attack vector. See <a href="#sec-04-firewall-types-ngfw-waf">the section on firewall types, NGFW and WAF</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -113,7 +120,7 @@
     list.textContent = '';
     START.forEach(t => list.appendChild(makeItem(t[0], t[1])));
   }
-  root.querySelector('.w044-reset').addEventListener('click', () => { build(); clearMarks(); });
+  root.querySelector('.w044-reset').addEventListener('click', () => { build(); clearMarks(); root.querySelector('.w044-expl').hidden = true; });
   root.querySelector('.w044-sol').addEventListener('click', () => {
     clearMarks();
     [...list.children]
@@ -121,6 +128,7 @@
       .forEach(it => { list.appendChild(it); it.classList.add('w044-right'); });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w044-msg iw-msg ok';
+    root.querySelector('.w044-expl').hidden = false;
   });
   build();
 })();

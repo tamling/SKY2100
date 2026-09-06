@@ -24,6 +24,10 @@
 .w013 .w013-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w013 .w013-msg.ok { color: #2e7d32; }
 .w013 .w013-msg.bad { color: #d81e2e; }
+.w013 .w013-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w013 iw" id="w013">
   <div class="w013-cols">
@@ -37,6 +41,9 @@
     <span class="w013-note">(no fun if you click it right away)</span>
   </div>
   <div class="w013-msg iw-msg" role="status"></div>
+  <div class="w013-expl iw-expl" hidden>
+    NIST names five essential characteristics, and a service that lacks one of them is hosting rather than cloud computing: provisioning without a human on the provider’s side, reachability over standard networks, hardware pooled among many customers, capacity that grows and shrinks quickly with demand, and metered pay-as-consumed usage. See <a href="#def-cloud">the NIST definition of cloud computing</a> in <a href="#sec-01-definition-cloud-computing">the section on the definition of cloud computing</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -118,7 +125,7 @@
     if (done === PAIRS.length) { msg.textContent = '✓ All five characteristics matched — this is cloud computing, not hosting.'; msg.className = 'w013-msg iw-msg ok'; }
     else { msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched — keep going (a wrong attempt flashes red).'; msg.className = 'w013-msg iw-msg'; }
   });
-  root.querySelector('.w013-reset').addEventListener('click', build);
+  root.querySelector('.w013-reset').addEventListener('click', () => { build(); root.querySelector('.w013-expl').hidden = true; });
   root.querySelector('.w013-sol').addEventListener('click', () => {
     unpick(); clearMsg();
     PAIRS.forEach((p, i) => {
@@ -128,6 +135,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w013-msg iw-msg ok';
+    root.querySelector('.w013-expl').hidden = false;
   });
   build();
 })();

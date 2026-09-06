@@ -26,6 +26,10 @@
 .w035 .w035-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w035 .w035-msg.ok { color: #2e7d32; }
 .w035 .w035-msg.bad { color: #d81e2e; }
+.w035 .w035-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w035 iw" id="w035">
   <div class="w035-rows" aria-label="statements to judge"></div>
@@ -36,6 +40,9 @@
     <span class="w035-note">(no fun if you click it right away)</span>
   </div>
   <div class="w035-msg iw-msg" role="status"></div>
+  <div class="w035-expl iw-expl" hidden>
+    The wall of a specific service on a specific machine can be measured in an afternoon, and beyond it timeouts appear and 503 responses replace 200s — but the shape of the curve is the same whether the demand comes from real customers or an attacker, so the metrics show only that demand exceeded capacity, never why. And pointed at a machine one neither owns nor has written permission to test, <code>ab</code> is an attack regardless of intent. See <a href="#exm-thewall">the example on the wall</a> and <a href="#sec-03-laboratory">the laboratory section</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -90,6 +97,7 @@
   root.querySelector('.w035-reset').addEventListener('click', () => {
     rowsBox.querySelectorAll('.w035-tf').forEach(b => b.classList.remove('w035-sel'));
     clearMarks();
+    root.querySelector('.w035-expl').hidden = true;
   });
   root.querySelector('.w035-sol').addEventListener('click', () => {
     [...rowsBox.children].forEach(row => {
@@ -101,6 +109,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w035-msg iw-msg ok';
+    root.querySelector('.w035-expl').hidden = false;
   });
   STATEMENTS.forEach(s => rowsBox.appendChild(makeRow(s[0], s[1])));
 })();

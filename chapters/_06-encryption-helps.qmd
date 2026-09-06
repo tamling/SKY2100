@@ -30,6 +30,7 @@
   background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
 }
 .w066-dd .w066-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w066-dd .w066-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 .w066-dd .w066-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w066-dd .w066-msg.ok { color: #2e7d32; }
 .w066-dd .w066-msg.bad { color: #d81e2e; }
@@ -47,6 +48,9 @@
     <span class="w066-note">(no fun if you click it right away)</span>
   </div>
   <div class="w066-msg iw-msg" role="status"></div>
+  <div class="w066-expl iw-expl" hidden>
+    Encryption answers the threats where the attacker meets only ciphertext: eavesdropping on the network path, a stolen drive, an exposed bucket whose keys are held elsewhere. It achieves nothing against an attacker who comes through the application (which decrypts the data as part of answering, exactly as designed), against a guessed password, or when the key is stored next to the data with the same access to both &mdash; name the threat first, then choose the control that meets it &mdash; see <a href="#sec-06-limitations-of-encryption">the section on the limitations of encryption</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -54,6 +58,7 @@
   const pool = root.querySelector('.w066-pool');
   const buckets = [...root.querySelectorAll('.w066-bucket')];
   const msg = root.querySelector('.w066-msg');
+  const expl = root.querySelector('.w066-expl');
   const ITEMS = [
     {"t": "An attacker on shared Wi-Fi captures packets between browser and server", "a": "yes"},
     {"t": "Customer records are stolen through an SQL-injection flaw in the application", "a": "no"},
@@ -138,6 +143,7 @@
     chips().sort((a, b) => Number(a.dataset.key) - Number(b.dataset.key))
            .forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
+    expl.hidden = true;
   });
   root.querySelector('.w066-solution').addEventListener('click', () => {
     unpick();
@@ -148,6 +154,7 @@
     chips().forEach(c => { c.classList.remove('w066-wrong'); c.classList.add('w066-right'); });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w066-msg iw-msg ok';
+    expl.hidden = false;
   });
   ITEMS.forEach((it, i) => pool.appendChild(makeChip(it, i)));
 })();

@@ -20,6 +20,7 @@
 .w065 .w065-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w065 .w065-msg.ok { color: #2e7d32; }
 .w065 .w065-msg.bad { color: #d81e2e; }
+.w065 .w065-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 </style>
 <div class="w065 iw" id="w065">
   <div class="w065-list"></div>
@@ -30,12 +31,16 @@
     <span class="w065-note">(no fun if you click it right away)</span>
   </div>
   <div class="w065-msg iw-msg" role="status"></div>
+  <div class="w065-expl iw-expl" hidden>
+    Comer&rsquo;s three principles for remote access: a VPN forms an encrypted connection to the organisation&rsquo;s cloud data centre and routes all of a device&rsquo;s packets through it, protecting the whole connection where TLS protects one application&rsquo;s; whole-disk encryption keeps the business data on a lost laptop or phone confidential at rest; and workflow security makes the security policy travel with the data as it moves between cloud and device &mdash; see <a href="#sec-06-vpns-data-on-move">the section on VPNs and data on the move</a>.
+  </div>
 </div>
 <script>
 (function () {
   const root = document.getElementById('w065');
   const list = root.querySelector('.w065-list');
   const msg = root.querySelector('.w065-msg');
+  const expl = root.querySelector('.w065-expl');
   const QS = [
     {
       q: '1. Employees work from home and public Wi-Fi. Which control forms an encrypted connection to the organisation’s cloud data centre and routes all of a device’s packets through it?',
@@ -96,6 +101,7 @@
   root.querySelector('.w065-reset').addEventListener('click', () => {
     inputs().forEach(i => { i.value = ''; });
     clearMarks();
+    expl.hidden = true;
   });
   root.querySelector('.w065-solution').addEventListener('click', () => {
     inputs().forEach(inp => {
@@ -105,6 +111,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w065-msg iw-msg ok';
+    expl.hidden = false;
   });
 })();
 </script>

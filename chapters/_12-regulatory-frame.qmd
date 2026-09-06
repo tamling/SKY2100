@@ -32,6 +32,10 @@
 .w125-dd .w125-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w125-dd .w125-msg.ok { color: #2e7d32; }
 .w125-dd .w125-msg.bad { color: #d81e2e; }
+.w125-dd .w125-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w125-dd iw" id="w125-dd">
   <div class="w125-grid">
@@ -53,6 +57,16 @@
     <span class="w125-note">(no fun if you click it right away)</span>
   </div>
   <div class="w125-msg iw-msg" role="status"></div>
+  <div class="w125-expl iw-expl" hidden>
+    NIS2 is the EU directive raising cybersecurity and incident-reporting obligations
+    across essential and important sectors; DORA imposes operational-resilience and
+    third-party-risk requirements on the financial sector; ISO 22301 is the
+    international standard for business continuity management. NIST SP 800-61 and the
+    CSA Security Guidance are the course's incident-response and cloud-security
+    sources, not instruments of this regulatory frame — see
+    <a href="#sec-12-risk-audit-compliance">the section on risk, audit and
+    compliance</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -140,11 +154,13 @@
       z.classList.remove('w125-wrong');
       z.classList.add('w125-right');
     });
+    root.querySelector('.w125-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w125-msg iw-msg ok';
   });
   root.querySelector('.w125-reset').addEventListener('click', () => {
     root.querySelectorAll('.w125-chip').forEach(c => pool.appendChild(c));
+    root.querySelector('.w125-expl').hidden = true;
     unpick(); clearMarks();
   });
 })();

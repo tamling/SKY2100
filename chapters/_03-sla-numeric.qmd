@@ -30,6 +30,10 @@
 .w033 .w033-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w033 .w033-msg.ok { color: #2e7d32; }
 .w033 .w033-msg.bad { color: #d81e2e; }
+.w033 .w033-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w033 iw" id="w033">
   <div class="w033-scenario">
@@ -57,6 +61,9 @@
     <span class="w033-note">(no fun if you click it right away)</span>
   </div>
   <div class="w033-msg iw-msg" role="status"></div>
+  <div class="w033-expl iw-expl" hidden>
+    Every request needs all three components, so the combined availability is the product 0.9999 × 0.999 × 0.999 ≈ 99.79 %, and the missing 0.21 % of 8760 h is about 18.4 h of expected downtime per year — every chained component spends availability, and only deliberate redundancy buys it back. See <a href="#exm-compositesla">the composite-SLA example</a> in <a href="#sec-03-sla">the section on availability as a number</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -91,6 +98,7 @@
   root.querySelector('.w033-reset').addEventListener('click', () => {
     inputs.forEach(i => { i.value = ''; });
     clearMarks();
+    root.querySelector('.w033-expl').hidden = true;
   });
   root.querySelector('.w033-sol').addEventListener('click', () => {
     clearMarks();
@@ -100,6 +108,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w033-msg iw-msg ok';
+    root.querySelector('.w033-expl').hidden = false;
   });
 })();
 </script>

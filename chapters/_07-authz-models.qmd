@@ -33,6 +33,7 @@
 .w072-dd .w072-msg.ok { color: #2e7d32; }
 .w072-dd .w072-msg.bad { color: #d81e2e; }
 .w072-dd .w072-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w072-dd .w072-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 </style>
 <div class="w072-dd iw" id="w072-dd">
   <div class="w072-pool" aria-label="cards to sort"></div>
@@ -48,6 +49,9 @@
     <span class="w072-note">(no fun if you click it right away)</span>
   </div>
   <div class="w072-msg iw-msg" role="status"></div>
+  <div class="w072-expl iw-expl" hidden>
+    The three models differ in what the decision is based on: RBAC decides from the identity&rsquo;s role (simple and familiar, but coarse &mdash; everyone in a role gets the same access), PBAC from explicit policies evaluated at access time (central and expressive, but the policies must be written and maintained), and ABAC from attributes of identity, resource and context (fine-grained and context-aware, but complex to design). The Guidance prefers ABAC and PBAC over RBAC where the platform supports them &mdash; see <a href="#def-authz">the definition of the authorisation models</a> and <a href="#sec-07-authorisation-models">the section on RBAC, PBAC and ABAC</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -55,6 +59,7 @@
   const pool = root.querySelector('.w072-pool');
   const buckets = [...root.querySelectorAll('.w072-bucket')];
   const msg = root.querySelector('.w072-msg');
+  const expl = root.querySelector('.w072-expl');
   const ITEMS = [{"t": "Decides from attributes of identity, resource and context", "a": "abac"}, {"t": "Decides from the identity’s role", "a": "rbac"}, {"t": "Decides from explicit policies evaluated at access time", "a": "pbac"}, {"t": "Coarse: everyone in a role gets the same access", "a": "rbac"}, {"t": "Fine-grained and context-aware, but complex to design and reason about", "a": "abac"}, {"t": "Central and expressive, but policies must be written and maintained", "a": "pbac"}];
   let picked = null;
 
@@ -137,11 +142,13 @@
     chips().forEach(c => c.classList.add('w072-right'));
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w072-msg iw-msg ok';
+    expl.hidden = false;
   });
   root.querySelector('.w072-reset').addEventListener('click', () => {
     chips().sort((a, b) => Number(a.dataset.key) - Number(b.dataset.key))
            .forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
+    expl.hidden = true;
   });
   ITEMS.forEach((it, i) => pool.appendChild(makeChip(it, i)));
 })();

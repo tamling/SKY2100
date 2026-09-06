@@ -25,6 +25,10 @@
 .w023 .w023-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w023 .w023-msg.ok { color: #2e7d32; }
 .w023 .w023-msg.bad { color: #d81e2e; }
+.w023 .w023-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w023 iw" id="w023">
   <div class="w023-rows" aria-label="statements to judge"></div>
@@ -35,6 +39,9 @@
     <span class="w023-note">(no fun if you click it right away)</span>
   </div>
   <div class="w023-msg iw-msg" role="status"></div>
+  <div class="w023-expl iw-expl" hidden>
+    North–south traffic runs between the data centre and the outside world, east–west between servers inside it, and east–west dominates in the cloud. A tree-shaped network forces that traffic through the links near the root; the leaf–spine design, in which every leaf switch connects to every spine switch, removes the bottleneck, and link aggregation bonds several physical links into one logical link. Because most traffic stays internal, lateral movement is invisible from outside. See <a href="#sec-02-traffic-geography">the section on traffic and geography</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -89,6 +96,7 @@
   root.querySelector('.w023-reset').addEventListener('click', () => {
     rowsBox.querySelectorAll('.w023-tf').forEach(b => b.classList.remove('w023-sel'));
     clearMarks();
+    root.querySelector('.w023-expl').hidden = true;
   });
   root.querySelector('.w023-sol').addEventListener('click', () => {
     [...rowsBox.children].forEach(row => {
@@ -100,6 +108,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w023-msg iw-msg ok';
+    root.querySelector('.w023-expl').hidden = false;
   });
   STATEMENTS.forEach(s => rowsBox.appendChild(makeRow(s[0], s[1])));
 })();

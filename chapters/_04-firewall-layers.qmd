@@ -27,6 +27,10 @@
 .w041 .w041-msg.ok { color: #2e7d32; }
 .w041 .w041-msg.bad { color: #d81e2e; }
 .w041 .w041-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w041 .w041-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w041 iw" id="w041">
   <div class="w041-grid"></div>
@@ -37,6 +41,9 @@
     <span class="w041-note">(no fun if you click it right away)</span>
   </div>
   <div class="w041-msg iw-msg" role="status"></div>
+  <div class="w041-expl iw-expl" hidden>
+    Packet-filter and stateful firewalls judge traffic by address, port and protocol and therefore stop at Layers 3–4; the next-generation firewall adds deep packet inspection and reaches up through Layer 7; and the WAF inspects the HTTP requests of one web application, operating at Layer 7 only. See <a href="#sec-04-firewall-types-ngfw-waf">the section on firewall types, NGFW and WAF</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -121,6 +128,7 @@
     root.querySelectorAll('.w041-rowlab').forEach(l => l.classList.add('w041-rowok'));
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w041-msg iw-msg ok';
+    root.querySelector('.w041-expl').hidden = false;
   });
   root.querySelector('.w041-reset').addEventListener('click', () => {
     root.querySelectorAll('.w041-cell').forEach(c => {
@@ -128,6 +136,7 @@
       c.setAttribute('aria-pressed', 'false');
     });
     clearMarks();
+    root.querySelector('.w041-expl').hidden = true;
   });
 })();
 </script>

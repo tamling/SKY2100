@@ -25,6 +25,10 @@
 .w015 .w015-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w015 .w015-msg.ok { color: #2e7d32; }
 .w015 .w015-msg.bad { color: #d81e2e; }
+.w015 .w015-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w015 iw" id="w015">
   <div class="w015-rows" aria-label="fill in the missing term"></div>
@@ -35,6 +39,9 @@
     <span class="w015-note">(no fun if you click it right away)</span>
   </div>
   <div class="w015-msg iw-msg" role="status"></div>
+  <div class="w015-expl iw-expl" hidden>
+    A threat is a potential cause of an incident, risk is the weight of a threat expressed as likelihood × impact, and a control is a measure that reduces a risk. The chain runs in exactly that order: name the threat, judge its likelihood and impact, and only then choose a control. See <a href="#def-trc">the definition of threat, risk and control</a> in <a href="#sec-01-threat-risk-control">the section on threat, risk and control</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -90,6 +97,7 @@
   root.querySelector('.w015-reset').addEventListener('click', () => {
     rowsBox.querySelectorAll('.w015-in').forEach(i => { i.value = ''; });
     clearMarks();
+    root.querySelector('.w015-expl').hidden = true;
   });
   root.querySelector('.w015-sol').addEventListener('click', () => {
     clearMarks();
@@ -99,6 +107,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w015-msg iw-msg ok';
+    root.querySelector('.w015-expl').hidden = false;
   });
 })();
 </script>

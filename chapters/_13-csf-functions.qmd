@@ -33,6 +33,10 @@
 .w131-dd .w131-msg.ok { color: #2e7d32; }
 .w131-dd .w131-msg.bad { color: #d81e2e; }
 .w131-dd .w131-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
+.w131-dd .w131-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w131-dd iw" id="w131-dd">
   <div class="w131-pool" aria-label="controls to place"></div>
@@ -51,6 +55,15 @@
     <span class="w131-note">(no fun if you click it right away)</span>
   </div>
   <div class="w131-msg iw-msg" role="status"></div>
+  <div class="w131-expl iw-expl" hidden>
+    Govern holds the risk register, Identify the data classification, Protect the
+    preventive controls (MFA and least privilege, the default-deny firewall), Detect
+    the monitoring and the tamper-evident off-host logs, Respond the containment and
+    eradication, and Recover the tested backup restoration and disaster recovery.
+    Every Function populated is what makes the protection complete rather than merely
+    long — see <a href="#sec-13-csf-mapping">the section on mapping to the NIST
+    Cybersecurity Framework</a> and <a href="#tbl-csf">the mapping table</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -133,11 +146,13 @@
       if (bucket) place(bucket, c);
     });
     root.querySelectorAll('.w131-item').forEach(c => c.classList.add('w131-right'));
+    root.querySelector('.w131-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w131-msg iw-msg ok';
   });
   root.querySelector('.w131-reset').addEventListener('click', () => {
     root.querySelectorAll('.w131-item').forEach(i => pool.appendChild(i));
+    root.querySelector('.w131-expl').hidden = true;
     unpick(); clearMarks();
   });
   ITEMS.forEach(it => pool.appendChild(makeItem(it)));
