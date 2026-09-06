@@ -54,7 +54,7 @@
     ['Tokenisation', 'Replaces a sensitive value with an unrelated random token; the mapping is kept in a secure store'],
     ['Ciphertext', 'What an eavesdropper sees: unreadable without the right key']
   ];
-  const RIGHT = [4, 1, 5, 0, 2, 3]; // fixed scrambled order of definitions (none aligned)
+  const RIGHT = [4, 2, 5, 0, 3, 1]; // fixed scrambled order of definitions (none aligned)
   let picked = null;
 
   function items() { return [...root.querySelectorAll('.w063-item')]; }

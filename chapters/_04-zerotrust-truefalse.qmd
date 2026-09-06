@@ -1,0 +1,107 @@
+```{=html}
+<style>
+.w045 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w045 .w045-rows { display: flex; flex-direction: column; gap: 6px; margin-bottom: 0.75rem; }
+.w045 .w045-row {
+  display: flex; align-items: center; gap: 8px; padding: 5px 8px;
+  border: 2px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff);
+}
+.w045 .w045-row.w045-right { border-color: #2e7d32; }
+.w045 .w045-row.w045-wrong { border-color: #d81e2e; }
+.w045 .w045-st { flex: 1 1 auto; }
+.w045 .w045-tf {
+  flex: 0 0 auto; padding: 2px 10px; border-radius: 999px; cursor: pointer;
+  border: 1.5px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); font-weight: 600;
+}
+.w045 .w045-tf.w045-sel { border-color: #d81e2e; outline: 2px solid #d81e2e; outline-offset: 1px; }
+.w045 .w045-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w045 button.w045-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w045 .w045-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w045 .w045-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w045 .w045-msg.ok { color: #2e7d32; }
+.w045 .w045-msg.bad { color: #d81e2e; }
+</style>
+<div class="w045 iw" id="w045">
+  <div class="w045-rows" aria-label="statements to judge"></div>
+  <div class="w045-controls">
+    <button type="button" class="w045-btn w045-check iw-check">Check</button>
+    <button type="button" class="w045-btn w045-reset iw-reset">Reset</button>
+    <button type="button" class="w045-btn w045-sol iw-solution">Show solution</button>
+    <span class="w045-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w045-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w045');
+  const rowsBox = root.querySelector('.w045-rows');
+  const msg = root.querySelector('.w045-msg');
+  const STATEMENTS = [
+    ['Under Zero Trust, a request is trusted because it comes from inside the network.', 'f'],
+    ['Zero Trust assumes that a breach has happened or will happen.', 't'],
+    ['In the castle-and-moat model, an attacker who breached the perimeter could move freely inside.', 't'],
+    ['A bastion host is a single hardened, closely watched machine that is the only entry point for administration.', 't'],
+    ['In the NIST reference model, the policy enforcement point decides and the policy decision point enforces.', 'f'],
+    ['A cloud tenant can draw a physical perimeter around its own hardware.', 'f']
+  ];
+  function clearMarks() {
+    [...rowsBox.children].forEach(r => r.classList.remove('w045-right', 'w045-wrong'));
+    msg.textContent = ''; msg.className = 'w045-msg iw-msg';
+  }
+  function makeRow(text, answer) {
+    const row = document.createElement('div');
+    row.className = 'w045-row';
+    row.dataset.a = answer;
+    const st = document.createElement('div');
+    st.className = 'w045-st'; st.textContent = text;
+    row.appendChild(st);
+    ['t', 'f'].forEach(v => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'w045-tf'; b.dataset.v = v;
+      b.textContent = v === 't' ? 'True' : 'False';
+      b.addEventListener('click', () => {
+        row.querySelectorAll('.w045-tf').forEach(x => x.classList.remove('w045-sel'));
+        b.classList.add('w045-sel');
+        clearMarks();
+      });
+      row.appendChild(b);
+    });
+    return row;
+  }
+  root.querySelector('.w045-check').addEventListener('click', () => {
+    let right = 0, wrong = 0, open = 0;
+    [...rowsBox.children].forEach(row => {
+      row.classList.remove('w045-right', 'w045-wrong');
+      const sel = row.querySelector('.w045-tf.w045-sel');
+      if (!sel) { open++; return; }
+      if (sel.dataset.v === row.dataset.a) { row.classList.add('w045-right'); right++; }
+      else { row.classList.add('w045-wrong'); wrong++; }
+    });
+    if (right === STATEMENTS.length) { msg.textContent = '✓ All correct — least privilege, verify explicitly, assume breach.'; msg.className = 'w045-msg iw-msg ok'; }
+    else if (open > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + open + ' statement(s) not yet judged.'; msg.className = 'w045-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — the red statements are judged wrongly' + (open ? ', and ' + open + ' still open' : '') + '.'; msg.className = 'w045-msg iw-msg bad'; }
+  });
+  root.querySelector('.w045-reset').addEventListener('click', () => {
+    rowsBox.querySelectorAll('.w045-tf').forEach(b => b.classList.remove('w045-sel'));
+    clearMarks();
+  });
+  root.querySelector('.w045-sol').addEventListener('click', () => {
+    [...rowsBox.children].forEach(row => {
+      row.classList.remove('w045-right', 'w045-wrong');
+      row.querySelectorAll('.w045-tf').forEach(b => {
+        b.classList.toggle('w045-sel', b.dataset.v === row.dataset.a);
+      });
+      row.classList.add('w045-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w045-msg iw-msg ok';
+  });
+  STATEMENTS.forEach(s => rowsBox.appendChild(makeRow(s[0], s[1])));
+})();
+</script>
+```

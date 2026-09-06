@@ -1,0 +1,117 @@
+```{=html}
+<style>
+.w105-pairs { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w105-pairs .w105-cols { display: flex; gap: 10px; margin-bottom: 0.75rem; align-items: stretch; }
+.w105-pairs .w105-col { display: flex; flex-direction: column; gap: 6px; }
+.w105-pairs .w105-terms { flex: 0 0 36%; }
+.w105-pairs .w105-defs { flex: 1 1 0; }
+.w105-pairs .w105-card {
+  padding: 6px 10px; border-radius: 8px; text-align: left; font: inherit;
+  border: 1.5px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  cursor: pointer; user-select: none; flex: 1 1 auto;
+}
+.w105-pairs .w105-terms .w105-card { font-weight: 600; }
+.w105-pairs .w105-card.w105-sel { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w105-pairs .w105-card.w105-done { opacity: 0.5; cursor: default; border-style: dashed; }
+.w105-pairs .w105-card.w105-right { border: 2px solid #2e7d32; border-style: solid; }
+.w105-pairs .w105-card.w105-flash { border: 2px solid #d81e2e; }
+.w105-pairs .w105-controls { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.w105-pairs .w105-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w105-pairs .w105-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w105-pairs .w105-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w105-pairs .w105-msg.ok { color: #2e7d32; }
+.w105-pairs .w105-msg.bad { color: #d81e2e; }
+</style>
+<div class="iw w105-pairs" id="w105">
+  <div class="w105-cols">
+    <div class="w105-col w105-terms" aria-label="terms"></div>
+    <div class="w105-col w105-defs" aria-label="descriptions"></div>
+  </div>
+  <div class="w105-controls">
+    <button type="button" class="w105-check iw-check">Check</button>
+    <button type="button" class="w105-reset iw-reset">Reset</button>
+    <button type="button" class="w105-solution iw-solution">Show solution</button>
+    <span class="w105-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w105-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w105');
+  const termsCol = root.querySelector('.w105-terms');
+  const defsCol = root.querySelector('.w105-defs');
+  const msg = root.querySelector('.w105-msg');
+  const PAIRS = [
+    ['Log aggregation', 'Forwarding logs from many sources to a central repository for storage, search and analysis'],
+    ['SIEM', 'A central repository specialised for security: it correlates logs across environments to identify potential incidents'],
+    ['Chain of custody', 'Evidence is documented and preserved so that its integrity can be demonstrated later'],
+    ['Retention', 'How long logs are kept, balancing operational needs, regulatory requirements and cost'],
+    ['Log Analytics', 'Azure’s aggregation-and-query service, queried in KQL']
+  ];
+  const DEF_ORDER = [1, 3, 0, 4, 2]; // scrambled display order of descriptions
+  let sel = null, matched = 0;
+  function clearMsg() { msg.textContent = ''; msg.className = 'w105-msg iw-msg'; }
+  function unselect() { if (sel) sel.classList.remove('w105-sel'); sel = null; }
+  function make(text, k, kind) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'w105-card';
+    b.textContent = text; b.dataset.k = k; b.dataset.kind = kind;
+    b.addEventListener('click', () => {
+      if (b.classList.contains('w105-done')) return;
+      clearMsg();
+      if (sel === b) { unselect(); return; }
+      if (sel && sel.dataset.kind !== kind) {
+        const a = sel; unselect();
+        if (a.dataset.k === b.dataset.k) {
+          a.classList.add('w105-done'); b.classList.add('w105-done'); matched++;
+        } else {
+          [a, b].forEach(c => { c.classList.add('w105-flash');
+            setTimeout(() => c.classList.remove('w105-flash'), 600); });
+        }
+        return;
+      }
+      unselect(); sel = b; b.classList.add('w105-sel');
+    });
+    return b;
+  }
+  PAIRS.forEach((p, i) => termsCol.appendChild(make(p[0], i, 'term')));
+  DEF_ORDER.forEach(i => defsCol.appendChild(make(PAIRS[i][1], i, 'def')));
+  const defs0 = [...defsCol.children];
+  function resetAll() {
+    unselect(); matched = 0;
+    root.querySelectorAll('.w105-card').forEach(c =>
+      c.classList.remove('w105-done', 'w105-right', 'w105-flash'));
+    defs0.forEach(c => defsCol.appendChild(c));
+    clearMsg();
+  }
+  root.querySelector('.w105-check').addEventListener('click', () => {
+    clearMsg();
+    if (matched === PAIRS.length) {
+      root.querySelectorAll('.w105-done').forEach(c => c.classList.add('w105-right'));
+      msg.textContent = '✓ All pairs matched — the logging vocabulary is in place.';
+      msg.classList.add('ok');
+    } else if (matched === 0) {
+      msg.textContent = 'No pairs matched yet — click a term, then the description that fits it.';
+    } else {
+      msg.textContent = 'Keep going — ' + matched + ' of ' + PAIRS.length + ' pairs matched (a wrong attempt flashes red).';
+    }
+  });
+  root.querySelector('.w105-reset').addEventListener('click', resetAll);
+  root.querySelector('.w105-solution').addEventListener('click', () => {
+    resetAll();
+    PAIRS.forEach((p, i) => {
+      const d = defs0.find(c => +c.dataset.k === i);
+      defsCol.appendChild(d);
+    });
+    root.querySelectorAll('.w105-card').forEach(c => c.classList.add('w105-done', 'w105-right'));
+    matched = PAIRS.length;
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.classList.add('ok');
+  });
+})();
+</script>
+```

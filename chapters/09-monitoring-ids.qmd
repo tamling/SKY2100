@@ -246,6 +246,47 @@ statement to send it back). Then press **Check**.
 {{< include _09-fast-slow.qmd >}}
 :::
 
+::: {#exr-09-term-match}
+## The monitoring vocabulary, interactive
+From event to alert (@def-event) via telemetry, canaries and the cloud
+services that deliver detection (@def-ids), this chapter introduces the
+words the rest of the course watches with. Click a term, then click the
+description that fits it (or start with a description); matched pairs lock
+and grey out, and a wrong attempt flashes red. Then press **Check**.
+
+{{< include _09-term-pairs.qmd >}}
+:::
+
+::: {#exr-09-cascade-filter}
+## Cascade and filter, interactive
+The Guidance's cascade-and-filter pattern applies a sequence of detection
+mechanisms to the incoming streams, each narrowing the data further
+(@sec-09-detection). Arrange the four steps in order, from raw telemetry to
+a confirmed alert: drag a step to its place, or use its arrow buttons to
+move it up and down. Then press **Check**.
+
+{{< include _09-cascade-filter-order.qmd >}}
+:::
+
+::: {#exr-09-true-false}
+## True or false: detection, interactive
+Signature or anomaly, canaries, the Target case and the moving targets of
+cloud-native monitoring (@sec-09-detection): judge each statement by
+clicking **True** or **False**, then press **Check**; wrong rows are marked
+red so you can retry.
+
+{{< include _09-truefalse.qmd >}}
+:::
+
+::: {#exr-09-attck-recall}
+## The attacker's catalogue, interactive
+Deciding what to look for is half of detection (@sec-09-detection). Type
+the name of the framework the Guidance points to, then press **Check** (or
+Enter).
+
+{{< include _09-attck-input.qmd >}}
+:::
+
 ## Self-check {#sec-09-self-check}
 
 **Q1** *(tests @sec-09-monitoring-cloud · basic)*

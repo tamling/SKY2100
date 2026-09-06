@@ -323,6 +323,43 @@ placed card to send it back. Then press **Check**.
 {{< include _07-authz-models.qmd >}}
 :::
 
+::: {#exr-07-iam-terms}
+## The five IAM terms, interactive
+Match each of the five core IAM terms of @def-iam to its description: click a
+term and then its partner (or drag one onto the other). A correct pair locks
+and greys out; a wrong attempt flashes red. Then press **Check**.
+
+{{< include _07-iam-terms.qmd >}}
+:::
+
+::: {#exr-07-sso-pam}
+## SSO and PAM, true or false, interactive
+Judge each statement about single sign-on and privileged access management
+(@sec-07-sso-pam): click **True** or **False** for each (click again to
+clear), then press **Check**.
+
+{{< include _07-sso-pam.qmd >}}
+:::
+
+::: {#exr-07-credentials}
+## Credentials and the management plane, interactive
+Answer the three short questions on @sec-07-credentials-management-plane by
+typing into the boxes; spelling is checked generously and capitalisation does
+not matter. Then press **Check**.
+
+{{< include _07-credentials.qmd >}}
+:::
+
+::: {#exr-07-protection-domains}
+## The access control matrix, interactive
+Place four of the seven terms from @sec-07-protection-domains onto the boxes
+that describe them; three terms are distractors and stay in the pool. Drag a
+term onto a box, or click the term and then the box (click a placed term to
+send it back), then press **Check**.
+
+{{< include _07-protection-domains.qmd >}}
+:::
+
 ## Self-check {#sec-07-self-check}
 
 **Q1** *(tests @sec-07-identity-perimeter · basic)*

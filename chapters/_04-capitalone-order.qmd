@@ -1,0 +1,128 @@
+```{=html}
+<style>
+.w044 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w044 .w044-cap {
+  text-align: center; font-weight: 700; padding: 4px 8px; margin: 0 auto 6px;
+  max-width: 460px; border: 1.5px solid #d81e2e; border-radius: 6px;
+  color: var(--bs-body-color, #222); background: var(--bs-body-bg, #fff);
+}
+.w044 .w044-arrow { text-align: center; color: #d81e2e; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+.w044 .w044-list { display: flex; flex-direction: column; gap: 6px; margin: 0 auto 0.75rem; max-width: 460px; }
+.w044 .w044-item {
+  display: flex; align-items: center; gap: 8px; padding: 5px 8px; cursor: grab;
+  border: 2px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); user-select: none;
+}
+.w044 .w044-item.w044-right { border-color: #2e7d32; }
+.w044 .w044-item.w044-wrong { border-color: #d81e2e; }
+.w044 .w044-label { flex: 1 1 auto; font-weight: 600; }
+.w044 .w044-mini {
+  flex: 0 0 auto; padding: 0 8px; border-radius: 4px; cursor: pointer;
+  border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+}
+.w044 .w044-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w044 button.w044-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w044 .w044-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w044 .w044-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w044 .w044-msg.ok { color: #2e7d32; }
+.w044 .w044-msg.bad { color: #d81e2e; }
+</style>
+<div class="w044 iw" id="w044">
+  <div class="w044-cap">Capital One, 2019 — the chain of the breach</div>
+  <div class="w044-arrow">▼</div>
+  <div class="w044-list" aria-label="steps to order"></div>
+  <div class="w044-controls">
+    <button type="button" class="w044-btn w044-check iw-check">Check</button>
+    <button type="button" class="w044-btn w044-reset iw-reset">Reset</button>
+    <button type="button" class="w044-btn w044-sol iw-solution">Show solution</button>
+    <span class="w044-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w044-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w044');
+  const list = root.querySelector('.w044-list');
+  const msg = root.querySelector('.w044-msg');
+  // start order deliberately scrambled; data-order gives the correct position
+  const START = [
+    ['the metadata service returns the identity’s temporary credentials', 2],
+    ['a misconfigured WAF runs on a cloud instance whose identity holds far more permission than it needs', 0],
+    ['the credentials list and copy the contents of more than 700 storage buckets', 3],
+    ['a server-side request forgery flaw makes the WAF query the platform’s internal metadata service', 1]
+  ];
+  let dragged = null;
+
+  function clearMarks() {
+    [...list.children].forEach(it => it.classList.remove('w044-right', 'w044-wrong'));
+    msg.textContent = ''; msg.className = 'w044-msg iw-msg';
+  }
+  function makeItem(label, order) {
+    const it = document.createElement('div');
+    it.className = 'w044-item';
+    it.dataset.order = order;
+    it.draggable = true;
+    const lab = document.createElement('span');
+    lab.className = 'w044-label';
+    lab.textContent = label;
+    const up = document.createElement('button');
+    up.type = 'button'; up.className = 'w044-mini'; up.textContent = '▲';
+    up.setAttribute('aria-label', 'move up');
+    const down = document.createElement('button');
+    down.type = 'button'; down.className = 'w044-mini'; down.textContent = '▼';
+    down.setAttribute('aria-label', 'move down');
+    up.addEventListener('click', e => {
+      e.stopPropagation();
+      if (it.previousElementSibling) { list.insertBefore(it, it.previousElementSibling); clearMarks(); }
+    });
+    down.addEventListener('click', e => {
+      e.stopPropagation();
+      if (it.nextElementSibling) { list.insertBefore(it.nextElementSibling, it); clearMarks(); }
+    });
+    it.addEventListener('dragstart', () => { dragged = it; });
+    it.addEventListener('dragend', () => { dragged = null; });
+    it.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (!dragged || dragged === it) return;
+      const r = it.getBoundingClientRect();
+      if (e.clientY < r.top + r.height / 2) list.insertBefore(dragged, it);
+      else list.insertBefore(dragged, it.nextElementSibling);
+      clearMarks();
+    });
+    it.addEventListener('drop', e => e.preventDefault());
+    it.appendChild(lab); it.appendChild(up); it.appendChild(down);
+    return it;
+  }
+  list.addEventListener('dragover', e => e.preventDefault());
+  list.addEventListener('drop', e => e.preventDefault());
+  root.querySelector('.w044-check').addEventListener('click', () => {
+    let right = 0;
+    [...list.children].forEach((it, i) => {
+      it.classList.remove('w044-right', 'w044-wrong');
+      if (Number(it.dataset.order) === i) { it.classList.add('w044-right'); right++; }
+      else it.classList.add('w044-wrong');
+    });
+    if (right === START.length) { msg.textContent = '✓ Correct — a security control itself became the attack vector.'; msg.className = 'w044-msg iw-msg ok'; }
+    else { msg.textContent = '✗ Not yet — ' + right + ' of ' + START.length + ' steps are in the right position (green).'; msg.className = 'w044-msg iw-msg bad'; }
+  });
+  function build() {
+    list.textContent = '';
+    START.forEach(t => list.appendChild(makeItem(t[0], t[1])));
+  }
+  root.querySelector('.w044-reset').addEventListener('click', () => { build(); clearMarks(); });
+  root.querySelector('.w044-sol').addEventListener('click', () => {
+    clearMarks();
+    [...list.children]
+      .sort((a, b) => Number(a.dataset.order) - Number(b.dataset.order))
+      .forEach(it => { list.appendChild(it); it.classList.add('w044-right'); });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w044-msg iw-msg ok';
+  });
+  build();
+})();
+</script>
+```

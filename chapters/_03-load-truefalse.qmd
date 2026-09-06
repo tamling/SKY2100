@@ -1,0 +1,108 @@
+```{=html}
+<style>
+.w035 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w035 .w035-rows { display: flex; flex-direction: column; gap: 6px; margin-bottom: 0.75rem; }
+.w035 .w035-row {
+  display: flex; align-items: center; gap: 8px; padding: 5px 8px;
+  border: 2px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff);
+}
+.w035 .w035-row.w035-right { border-color: #2e7d32; }
+.w035 .w035-row.w035-wrong { border-color: #d81e2e; }
+.w035 .w035-st { flex: 1 1 auto; }
+.w035 .w035-st code { font-size: 0.9em; }
+.w035 .w035-tf {
+  flex: 0 0 auto; padding: 2px 10px; border-radius: 999px; cursor: pointer;
+  border: 1.5px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); font-weight: 600;
+}
+.w035 .w035-tf.w035-sel { border-color: #d81e2e; outline: 2px solid #d81e2e; outline-offset: 1px; }
+.w035 .w035-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w035 button.w035-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w035 .w035-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w035 .w035-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w035 .w035-msg.ok { color: #2e7d32; }
+.w035 .w035-msg.bad { color: #d81e2e; }
+</style>
+<div class="w035 iw" id="w035">
+  <div class="w035-rows" aria-label="statements to judge"></div>
+  <div class="w035-controls">
+    <button type="button" class="w035-btn w035-check iw-check">Check</button>
+    <button type="button" class="w035-btn w035-reset iw-reset">Reset</button>
+    <button type="button" class="w035-btn w035-sol iw-solution">Show solution</button>
+    <span class="w035-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w035-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w035');
+  const rowsBox = root.querySelector('.w035-rows');
+  const msg = root.querySelector('.w035-msg');
+  const STATEMENTS = [
+    ['The wall of a specific service on a specific machine can be measured in an afternoon.', 't'],
+    ['The shape of the load curve clearly differs depending on whether the demand comes from real customers or from an attacker.', 'f'],
+    ['ab -n 1000 -c 50 sends one thousand requests, fifty at a time.', 't'],
+    ['Beyond the wall, 503 responses replace 200 responses and timeouts appear.', 't'],
+    ['The load metrics alone can show why demand exceeded capacity.', 'f'],
+    ['Pointed at a machine one neither owns nor has written permission to test, ab is an attack — regardless of intent or outcome.', 't']
+  ];
+  function clearMarks() {
+    [...rowsBox.children].forEach(r => r.classList.remove('w035-right', 'w035-wrong'));
+    msg.textContent = ''; msg.className = 'w035-msg iw-msg';
+  }
+  function makeRow(text, answer) {
+    const row = document.createElement('div');
+    row.className = 'w035-row';
+    row.dataset.a = answer;
+    const st = document.createElement('div');
+    st.className = 'w035-st'; st.textContent = text;
+    row.appendChild(st);
+    ['t', 'f'].forEach(v => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'w035-tf'; b.dataset.v = v;
+      b.textContent = v === 't' ? 'True' : 'False';
+      b.addEventListener('click', () => {
+        row.querySelectorAll('.w035-tf').forEach(x => x.classList.remove('w035-sel'));
+        b.classList.add('w035-sel');
+        clearMarks();
+      });
+      row.appendChild(b);
+    });
+    return row;
+  }
+  root.querySelector('.w035-check').addEventListener('click', () => {
+    let right = 0, wrong = 0, open = 0;
+    [...rowsBox.children].forEach(row => {
+      row.classList.remove('w035-right', 'w035-wrong');
+      const sel = row.querySelector('.w035-tf.w035-sel');
+      if (!sel) { open++; return; }
+      if (sel.dataset.v === row.dataset.a) { row.classList.add('w035-right'); right++; }
+      else { row.classList.add('w035-wrong'); wrong++; }
+    });
+    if (right === STATEMENTS.length) { msg.textContent = '✓ All correct — measure the wall before someone else finds it.'; msg.className = 'w035-msg iw-msg ok'; }
+    else if (open > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + open + ' statement(s) not yet judged.'; msg.className = 'w035-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — the red statements are judged wrongly' + (open ? ', and ' + open + ' still open' : '') + '.'; msg.className = 'w035-msg iw-msg bad'; }
+  });
+  root.querySelector('.w035-reset').addEventListener('click', () => {
+    rowsBox.querySelectorAll('.w035-tf').forEach(b => b.classList.remove('w035-sel'));
+    clearMarks();
+  });
+  root.querySelector('.w035-sol').addEventListener('click', () => {
+    [...rowsBox.children].forEach(row => {
+      row.classList.remove('w035-right', 'w035-wrong');
+      row.querySelectorAll('.w035-tf').forEach(b => {
+        b.classList.toggle('w035-sel', b.dataset.v === row.dataset.a);
+      });
+      row.classList.add('w035-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w035-msg iw-msg ok';
+  });
+  STATEMENTS.forEach(s => rowsBox.appendChild(makeRow(s[0], s[1])));
+})();
+</script>
+```

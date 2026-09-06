@@ -1,0 +1,127 @@
+```{=html}
+<style>
+.w134-dd { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w134-dd .w134-rows { margin-bottom: 0.75rem; }
+.w134-dd .w134-row {
+  display: flex; align-items: center; gap: 10px;
+  border: 1.5px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  padding: 6px 10px; margin-bottom: 6px;
+}
+.w134-dd .w134-row.w134-right { border-color: #2e7d32; border-width: 2px; }
+.w134-dd .w134-row.w134-wrong { border-color: #d81e2e; border-width: 2px; }
+.w134-dd .w134-text { flex: 1; }
+.w134-dd .w134-tf { display: flex; gap: 4px; }
+.w134-dd .w134-tf button {
+  padding: 2px 10px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+  font-weight: 600;
+}
+.w134-dd .w134-tf button.w134-sel { background: #d81e2e; border-color: #d81e2e; color: #fff; }
+.w134-dd .w134-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w134-dd .w134-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w134-dd .w134-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w134-dd .w134-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w134-dd .w134-msg.ok { color: #2e7d32; }
+.w134-dd .w134-msg.bad { color: #d81e2e; }
+</style>
+<div class="w134-dd iw" id="w134-dd">
+  <div class="w134-rows"></div>
+  <div class="w134-controls">
+    <button type="button" class="w134-check iw-check">Check</button>
+    <button type="button" class="w134-reset iw-reset">Reset</button>
+    <button type="button" class="w134-solution iw-solution">Show solution</button>
+    <span class="w134-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w134-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w134-dd');
+  const rowsBox = root.querySelector('.w134-rows');
+  const msg = root.querySelector('.w134-msg');
+  const STATEMENTS = [
+    { answer: true,  text: 'A cloud-native application is a large distributed system, and such systems are complex by nature, however carefully they are built.' },
+    { answer: true,  text: 'Govern, Identify, Protect and Detect run continuously, while Respond and Recover stand ready for the incident.' },
+    { answer: true,  text: 'Security is a method rather than a product: name the threat, judge the risk, choose the control that fits, state why.' },
+    { answer: false, text: 'The defensible system is built as a single mechanism rather than a set of independent layers.' },
+    { answer: false, text: 'In a distributed system, network delays have only the effects the designers planned for.' },
+    { answer: false, text: 'Once every layer is in place, the question whether the system is secure has a permanent yes as its answer.' }
+  ];
+  const rows = [];
+
+  function clearMarks() {
+    rows.forEach(r => r.el.classList.remove('w134-right', 'w134-wrong'));
+    msg.textContent = ''; msg.className = 'w134-msg iw-msg';
+  }
+  STATEMENTS.forEach(st => {
+    const row = document.createElement('div');
+    row.className = 'w134-row';
+    const span = document.createElement('span');
+    span.className = 'w134-text';
+    span.textContent = st.text;
+    const tf = document.createElement('span');
+    tf.className = 'w134-tf';
+    const state = { el: row, answer: st.answer, sel: null, btns: {} };
+    [['True', true], ['False', false]].forEach(([label, val]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = label;
+      b.addEventListener('click', () => {
+        state.sel = (state.sel === val) ? null : val;
+        state.btns[true].classList.toggle('w134-sel', state.sel === true);
+        state.btns[false].classList.toggle('w134-sel', state.sel === false);
+        clearMarks();
+      });
+      state.btns[val] = b;
+      tf.appendChild(b);
+    });
+    row.appendChild(span); row.appendChild(tf);
+    rowsBox.appendChild(row);
+    rows.push(state);
+  });
+
+  root.querySelector('.w134-check').addEventListener('click', () => {
+    let right = 0, wrong = 0, open = 0;
+    rows.forEach(r => {
+      r.el.classList.remove('w134-right', 'w134-wrong');
+      if (r.sel === null) { open++; return; }
+      if (r.sel === r.answer) { r.el.classList.add('w134-right'); right++; }
+      else { r.el.classList.add('w134-wrong'); wrong++; }
+    });
+    if (right === rows.length) {
+      msg.textContent = '✓ All correct — the layers are independent, the complexity is real, and the argument is never finished.';
+      msg.className = 'w134-msg iw-msg ok';
+    } else if (open > 0 && wrong === 0) {
+      msg.textContent = 'Keep going — ' + open + ' statement(s) still unanswered.';
+      msg.className = 'w134-msg iw-msg';
+    } else {
+      msg.textContent = '✗ Not yet — the red statements are marked wrongly. Re-read the closing argument.';
+      msg.className = 'w134-msg iw-msg bad';
+    }
+  });
+  root.querySelector('.w134-solution').addEventListener('click', () => {
+    rows.forEach(r => {
+      r.sel = r.answer;
+      r.btns[true].classList.toggle('w134-sel', r.answer === true);
+      r.btns[false].classList.toggle('w134-sel', r.answer === false);
+      r.el.classList.remove('w134-wrong');
+      r.el.classList.add('w134-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w134-msg iw-msg ok';
+  });
+  root.querySelector('.w134-reset').addEventListener('click', () => {
+    rows.forEach(r => {
+      r.sel = null;
+      r.btns[true].classList.remove('w134-sel');
+      r.btns[false].classList.remove('w134-sel');
+    });
+    clearMarks();
+  });
+})();
+</script>
+```

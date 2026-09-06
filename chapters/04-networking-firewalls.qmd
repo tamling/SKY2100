@@ -370,6 +370,35 @@ send it back). Then press **Check**.
 {{< include _04-sg-nacl.qmd >}}
 :::
 
+::: {#exr-04-ports-input}
+## Named ports and the listening list
+Every firewall rule of this chapter is written against the port numbers of
+@sec-04-addresses-ports-attack-surface, and every listening port is part of
+the attack surface (@def-attacksurface). Fill in each answer, then press
+**Check**.
+
+{{< include _04-ports-input.qmd >}}
+:::
+
+::: {#exr-04-capital-one-order}
+## The Capital One chain, step by step
+Arrange the four steps of the Capital One breach (the *Real world* box of
+@sec-04-firewall-types-ngfw-waf) into the order in which they happened.
+Drag a step to a new position, or click its ▲/▼ buttons to move it. Then
+press **Check**.
+
+{{< include _04-capitalone-order.qmd >}}
+:::
+
+::: {#exr-04-zero-trust-truefalse}
+## Defence in depth and Zero Trust, true or false
+Judge each statement about the layered defences and the Zero Trust strategy
+of @sec-04-defence-in-depth-zero-trust (@def-zerotrust): click **True** or
+**False** on every row, then press **Check**.
+
+{{< include _04-zerotrust-truefalse.qmd >}}
+:::
+
 ## Self-check {#sec-04-self-check}
 
 **Q1** *(tests @sec-04-addresses-ports-attack-surface · basic)*

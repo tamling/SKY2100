@@ -1,0 +1,98 @@
+```{=html}
+<style>
+.w133-dd { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w133-dd .w133-rows { margin-bottom: 0.75rem; }
+.w133-dd .w133-row {
+  display: flex; align-items: center; gap: 10px; justify-content: flex-start;
+  border: 1.5px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  padding: 8px 10px; margin-bottom: 6px;
+}
+.w133-dd .w133-row.w133-right { border-color: #2e7d32; border-width: 2px; }
+.w133-dd .w133-row.w133-wrong { border-color: #d81e2e; border-width: 2px; }
+.w133-dd .w133-row input {
+  width: 4.5em; padding: 4px 6px; border-radius: 6px; text-align: center;
+  border: 1.5px solid #d81e2e; font-weight: 700;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+}
+.w133-dd .w133-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w133-dd .w133-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w133-dd .w133-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w133-dd .w133-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w133-dd .w133-msg.ok { color: #2e7d32; }
+.w133-dd .w133-msg.bad { color: #d81e2e; }
+</style>
+<div class="w133-dd iw" id="w133-dd">
+  <div class="w133-rows">
+    <div class="w133-row" data-answer="6">
+      <input type="number" inputmode="numeric" min="0" max="999" aria-label="number of Functions">
+      <span>Functions at the top (Govern at the centre)</span>
+    </div>
+    <div class="w133-row" data-answer="22">
+      <input type="number" inputmode="numeric" min="0" max="999" aria-label="number of Categories">
+      <span>Categories — the level at which completeness is tested</span>
+    </div>
+    <div class="w133-row" data-answer="106">
+      <input type="number" inputmode="numeric" min="0" max="999" aria-label="number of Subcategories">
+      <span>Subcategories — the specific, testable outcomes</span>
+    </div>
+  </div>
+  <div class="w133-controls">
+    <button type="button" class="w133-check iw-check">Check</button>
+    <button type="button" class="w133-reset iw-reset">Reset</button>
+    <button type="button" class="w133-solution iw-solution">Show solution</button>
+    <span class="w133-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w133-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w133-dd');
+  const rows = [...root.querySelectorAll('.w133-row')];
+  const msg = root.querySelector('.w133-msg');
+
+  function clearMarks() {
+    rows.forEach(r => r.classList.remove('w133-right', 'w133-wrong'));
+    msg.textContent = ''; msg.className = 'w133-msg iw-msg';
+  }
+  rows.forEach(r => r.querySelector('input').addEventListener('input', clearMarks));
+
+  root.querySelector('.w133-check').addEventListener('click', () => {
+    let right = 0, empty = 0;
+    rows.forEach(r => {
+      r.classList.remove('w133-right', 'w133-wrong');
+      const v = r.querySelector('input').value.trim();
+      if (v === '') { empty++; return; }
+      if (parseInt(v, 10) === parseInt(r.dataset.answer, 10)) { r.classList.add('w133-right'); right++; }
+      else { r.classList.add('w133-wrong'); }
+    });
+    if (right === rows.length) {
+      msg.textContent = '✓ All correct — that is the three-level structure of CSF 2.0.';
+      msg.className = 'w133-msg iw-msg ok';
+    } else if (empty > 0 && right + empty === rows.length) {
+      msg.textContent = 'Keep going — ' + empty + ' number(s) still missing.';
+      msg.className = 'w133-msg iw-msg';
+    } else {
+      msg.textContent = '✗ Not yet — the red lines hold the wrong number. The chapter states all three.';
+      msg.className = 'w133-msg iw-msg bad';
+    }
+  });
+  root.querySelector('.w133-solution').addEventListener('click', () => {
+    rows.forEach(r => {
+      r.querySelector('input').value = r.dataset.answer;
+      r.classList.remove('w133-wrong');
+      r.classList.add('w133-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w133-msg iw-msg ok';
+  });
+  root.querySelector('.w133-reset').addEventListener('click', () => {
+    rows.forEach(r => { r.querySelector('input').value = ''; });
+    clearMarks();
+  });
+})();
+</script>
+```

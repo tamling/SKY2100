@@ -1,0 +1,130 @@
+```{=html}
+<style>
+.w135-dd { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w135-dd ol.w135-list { list-style: none; margin: 0 0 0.75rem; padding: 0; counter-reset: w135; }
+.w135-dd .w135-item {
+  display: flex; align-items: center; gap: 8px; counter-increment: w135;
+  border: 1.5px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  padding: 6px 8px; margin-bottom: 6px; cursor: grab; user-select: none;
+}
+.w135-dd .w135-item::before {
+  content: counter(w135); font-weight: 700; min-width: 1.5em; text-align: center;
+  color: #d81e2e;
+}
+.w135-dd .w135-item.w135-right { border-color: #2e7d32; border-width: 2px; }
+.w135-dd .w135-item.w135-wrong { border-color: #d81e2e; border-width: 2px; }
+.w135-dd .w135-text { flex: 1; }
+.w135-dd .w135-btns { display: flex; flex-direction: column; gap: 2px; }
+.w135-dd .w135-btns button, .w135-dd .w135-controls button {
+  padding: 1px 8px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+  line-height: 1.3;
+}
+.w135-dd .w135-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w135-dd .w135-controls button { padding: 5px 14px; }
+.w135-dd .w135-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w135-dd .w135-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w135-dd .w135-msg.ok { color: #2e7d32; }
+.w135-dd .w135-msg.bad { color: #d81e2e; }
+</style>
+<div class="w135-dd iw" id="w135-dd">
+  <ol class="w135-list" aria-label="steps to put in order"></ol>
+  <div class="w135-controls">
+    <button type="button" class="w135-check iw-check">Check</button>
+    <button type="button" class="w135-reset iw-reset">Reset</button>
+    <button type="button" class="w135-solution iw-solution">Show solution</button>
+    <span class="w135-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w135-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w135-dd');
+  const list = root.querySelector('.w135-list');
+  const msg = root.querySelector('.w135-msg');
+  // pos = correct position (1-based); INITIAL = fixed scrambled starting order.
+  const STEPS = [
+    { pos: 1, text: 'Name the threat' },
+    { pos: 2, text: 'Judge the risk' },
+    { pos: 3, text: 'Choose the control that fits' },
+    { pos: 4, text: 'State why' },
+    { pos: 5, text: 'Add the next layer, because no single control is sufficient' }
+  ];
+  const INITIAL = [3, 5, 1, 4, 2]; // pos values in starting display order
+  let dragEl = null;
+
+  function clearMarks() {
+    list.querySelectorAll('.w135-item').forEach(li => li.classList.remove('w135-right', 'w135-wrong'));
+    msg.textContent = ''; msg.className = 'w135-msg iw-msg';
+  }
+  function makeItem(step) {
+    const li = document.createElement('li');
+    li.className = 'w135-item';
+    li.dataset.pos = step.pos;
+    li.draggable = true;
+    const span = document.createElement('span');
+    span.className = 'w135-text';
+    span.textContent = step.text;
+    const btns = document.createElement('span');
+    btns.className = 'w135-btns';
+    const up = document.createElement('button');
+    up.type = 'button'; up.className = 'w135-up'; up.textContent = '▲';
+    up.setAttribute('aria-label', 'move up');
+    up.addEventListener('click', e => {
+      e.stopPropagation();
+      if (li.previousElementSibling) { list.insertBefore(li, li.previousElementSibling); clearMarks(); }
+    });
+    const down = document.createElement('button');
+    down.type = 'button'; down.className = 'w135-down'; down.textContent = '▼';
+    down.setAttribute('aria-label', 'move down');
+    down.addEventListener('click', e => {
+      e.stopPropagation();
+      if (li.nextElementSibling) { list.insertBefore(li.nextElementSibling, li); clearMarks(); }
+    });
+    btns.appendChild(up); btns.appendChild(down);
+    li.appendChild(span); li.appendChild(btns);
+    li.addEventListener('dragstart', e => { dragEl = li; e.dataTransfer.setData('text/plain', step.pos); });
+    li.addEventListener('dragend', () => { dragEl = null; });
+    return li;
+  }
+  list.addEventListener('dragover', e => {
+    e.preventDefault();
+    if (!dragEl) return;
+    const li = e.target.closest('.w135-item');
+    if (!li || li === dragEl) return;
+    const r = li.getBoundingClientRect();
+    const before = (e.clientY - r.top) < r.height / 2;
+    list.insertBefore(dragEl, before ? li : li.nextSibling);
+    clearMarks();
+  });
+  list.addEventListener('drop', e => e.preventDefault());
+  function build() {
+    list.textContent = '';
+    INITIAL.forEach(p => list.appendChild(makeItem(STEPS.find(s => s.pos === p))));
+  }
+  root.querySelector('.w135-check').addEventListener('click', () => {
+    let wrong = 0;
+    [...list.querySelectorAll('.w135-item')].forEach((li, i) => {
+      li.classList.remove('w135-right', 'w135-wrong');
+      if (Number(li.dataset.pos) === i + 1) { li.classList.add('w135-right'); }
+      else { li.classList.add('w135-wrong'); wrong++; }
+    });
+    if (wrong === 0) { msg.textContent = '✓ All correct — that is the method, applied eleven times to one service.'; msg.className = 'w135-msg iw-msg ok'; }
+    else { msg.textContent = '✗ Not yet — ' + wrong + ' step(s) out of place. What must be understood before a control can fit?'; msg.className = 'w135-msg iw-msg bad'; }
+  });
+  root.querySelector('.w135-solution').addEventListener('click', () => {
+    [...list.children].sort((a, b) => Number(a.dataset.pos) - Number(b.dataset.pos))
+      .forEach(li => list.appendChild(li));
+    clearMarks();
+    [...list.children].forEach(li => li.classList.add('w135-right'));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w135-msg iw-msg ok';
+  });
+  root.querySelector('.w135-reset').addEventListener('click', () => {
+    build(); clearMarks();
+  });
+  build();
+})();
+</script>
+```

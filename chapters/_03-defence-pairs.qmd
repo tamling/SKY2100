@@ -1,0 +1,136 @@
+```{=html}
+<style>
+.w034 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w034 .w034-cols { display: flex; gap: 10px; margin-bottom: 0.75rem; }
+.w034 .w034-col { flex: 1 1 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.w034 .w034-item {
+  padding: 5px 8px; border: 2px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  cursor: pointer; user-select: none;
+}
+.w034 .w034-term { font-weight: 700; text-align: center; }
+.w034 .w034-def { font-size: 0.84rem; }
+.w034 .w034-item.w034-picked { outline: 3px solid #d81e2e; outline-offset: 1px; }
+.w034 .w034-item.w034-done {
+  border-color: #2e7d32; opacity: 0.55; cursor: default; pointer-events: none;
+}
+.w034 .w034-item.w034-flash { border-color: #d81e2e; }
+.w034 .w034-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w034 button.w034-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w034 .w034-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w034 .w034-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w034 .w034-msg.ok { color: #2e7d32; }
+.w034 .w034-msg.bad { color: #d81e2e; }
+</style>
+<div class="w034 iw" id="w034">
+  <div class="w034-cols">
+    <div class="w034-col w034-terms" aria-label="defence layers"></div>
+    <div class="w034-col w034-defs" aria-label="what each does"></div>
+  </div>
+  <div class="w034-controls">
+    <button type="button" class="w034-btn w034-check iw-check">Check</button>
+    <button type="button" class="w034-btn w034-reset iw-reset">Reset</button>
+    <button type="button" class="w034-btn w034-sol iw-solution">Show solution</button>
+    <span class="w034-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w034-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w034');
+  const termsCol = root.querySelector('.w034-terms');
+  const defsCol = root.querySelector('.w034-defs');
+  const msg = root.querySelector('.w034-msg');
+  const PAIRS = [
+    ['Rate limiting', 'caps requests per client and thereby blunts application-layer floods'],
+    ['Timeouts & connection limits', 'stop slow or stuck clients from hoarding state'],
+    ['Caching', 'serves repeated content cheaply, raising the effective capacity of the expensive paths'],
+    ['Autoscaling', 'adds capacity under load, at cloud scale'],
+    ['CDN & anycast', 'absorb volume close to its source'],
+    ['Cloud DDoS protection', 'scrubs traffic upstream, before it reaches the customer']
+  ];
+  const DEF_ORDER = [3, 0, 4, 1, 5, 2]; // fixed scramble of the descriptions
+  let pickedTerm = null, pickedDef = null;
+
+  function clearMsg() { msg.textContent = ''; msg.className = 'w034-msg iw-msg'; }
+  function unpick() {
+    if (pickedTerm) pickedTerm.classList.remove('w034-picked');
+    if (pickedDef) pickedDef.classList.remove('w034-picked');
+    pickedTerm = null; pickedDef = null;
+  }
+  function lockPair(t, d) {
+    t.classList.remove('w034-picked'); d.classList.remove('w034-picked');
+    t.classList.add('w034-done'); d.classList.add('w034-done');
+  }
+  function tryMatch() {
+    if (!pickedTerm || !pickedDef) return;
+    const t = pickedTerm, d = pickedDef;
+    unpick(); clearMsg();
+    if (t.dataset.k === d.dataset.k) { lockPair(t, d); }
+    else {
+      t.classList.add('w034-flash'); d.classList.add('w034-flash');
+      setTimeout(() => { t.classList.remove('w034-flash'); d.classList.remove('w034-flash'); }, 450);
+    }
+  }
+  function makeItem(text, k, isTerm) {
+    const el = document.createElement('div');
+    el.className = 'w034-item ' + (isTerm ? 'w034-term' : 'w034-def');
+    el.textContent = text;
+    el.dataset.k = k;
+    el.addEventListener('click', () => {
+      clearMsg();
+      if (isTerm) {
+        if (pickedTerm === el) { el.classList.remove('w034-picked'); pickedTerm = null; return; }
+        if (pickedTerm) pickedTerm.classList.remove('w034-picked');
+        pickedTerm = el; el.classList.add('w034-picked');
+      } else {
+        if (pickedDef === el) { el.classList.remove('w034-picked'); pickedDef = null; return; }
+        if (pickedDef) pickedDef.classList.remove('w034-picked');
+        pickedDef = el; el.classList.add('w034-picked');
+      }
+      tryMatch();
+    });
+    if (isTerm) {
+      el.draggable = true;
+      el.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', k));
+    } else {
+      el.addEventListener('dragover', e => e.preventDefault());
+      el.addEventListener('drop', e => {
+        e.preventDefault();
+        const t = termsCol.querySelector('.w034-item[data-k="' + e.dataTransfer.getData('text/plain') + '"]');
+        if (t && !t.classList.contains('w034-done') && !el.classList.contains('w034-done')) {
+          unpick(); pickedTerm = t; pickedDef = el; tryMatch();
+        }
+      });
+    }
+    return el;
+  }
+  function build() {
+    termsCol.textContent = ''; defsCol.textContent = '';
+    PAIRS.forEach((p, i) => termsCol.appendChild(makeItem(p[0], String(i), true)));
+    DEF_ORDER.forEach(i => defsCol.appendChild(makeItem(PAIRS[i][1], String(i), false)));
+    unpick(); clearMsg();
+  }
+  root.querySelector('.w034-check').addEventListener('click', () => {
+    const done = termsCol.querySelectorAll('.w034-done').length;
+    if (done === PAIRS.length) { msg.textContent = '✓ All matched — the layers split by who operates them.'; msg.className = 'w034-msg iw-msg ok'; }
+    else { msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched — keep going (a wrong attempt flashes red).'; msg.className = 'w034-msg iw-msg'; }
+  });
+  root.querySelector('.w034-reset').addEventListener('click', build);
+  root.querySelector('.w034-sol').addEventListener('click', () => {
+    unpick(); clearMsg();
+    PAIRS.forEach((p, i) => {
+      const t = termsCol.querySelector('.w034-item[data-k="' + i + '"]');
+      const d = defsCol.querySelector('.w034-item[data-k="' + i + '"]');
+      lockPair(t, d);
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w034-msg iw-msg ok';
+  });
+  build();
+})();
+</script>
+```

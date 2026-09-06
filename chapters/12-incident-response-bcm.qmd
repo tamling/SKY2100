@@ -266,7 +266,7 @@ use the arrow buttons to move it up and down, then press **Check**.
 {{< include _12-ir-lifecycle.qmd >}}
 :::
 
-::: {#exr-12-event-incident-breach}
+::: {#exr-12-sort-event-incident-breach}
 ## Event, incident or breach?, interactive
 @def-incident gives response its three-level scale. Sort each occurrence
 below into the right level: drag it onto a box, or click the occurrence and
@@ -274,6 +274,36 @@ then the box, then press **Check**. Click a placed item to send it back to
 the pool.
 
 {{< include _12-event-incident-breach.qmd >}}
+:::
+
+::: {#exr-12-grc-pairs}
+## The GRC toolbox, interactive
+@sec-12-risk-audit-compliance names the non-technical tools of governance,
+risk and compliance, and Comer adds the risks a register exists to record.
+Match each term to its description: click a term and then its description
+(or drag the term onto it) — a correct pair locks and greys out, a wrong
+attempt flashes red. Press **Check** to see how many pairs you have.
+
+{{< include _12-grc-pairs.qmd >}}
+:::
+
+::: {#exr-12-rto-rpo-tf}
+## Continuity targets: true or false?, interactive
+@sec-12-business-continuity sets the two targets that quantify business
+continuity. Mark each statement below **True** or **False**, then press
+**Check** — each statement is judged on its own.
+
+{{< include _12-rto-rpo-tf.qmd >}}
+:::
+
+::: {#exr-12-regulatory-frame}
+## The European regulatory frame, interactive
+For a Norwegian institution the regulatory frame is European
+(@sec-12-risk-audit-compliance). Place the right instrument on each
+description: drag a name onto a box, or click the name and then the box,
+then press **Check**. Two of the five names belong to none of the boxes.
+
+{{< include _12-regulatory-frame.qmd >}}
 :::
 
 ## Self-check {#sec-12-self-check}

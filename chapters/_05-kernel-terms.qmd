@@ -54,7 +54,7 @@
     ['Control groups (cgroups)', 'Cap how much CPU, memory and I/O a process may consume'],
     ['Loadable module', 'Extends the monolithic kernel at run time']
   ];
-  const RIGHT = [3, 0, 5, 2, 4, 1]; // fixed scrambled order of definitions (none aligned)
+  const RIGHT = [3, 0, 5, 1, 2, 4]; // fixed scrambled order of definitions (none aligned)
   let picked = null;
 
   function items() { return [...root.querySelectorAll('.w053-item')]; }

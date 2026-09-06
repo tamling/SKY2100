@@ -1,0 +1,155 @@
+```{=html}
+<style>
+.w066-dd { max-width: 620px; margin: 0 auto; font-size: 0.9rem; }
+.w066-dd .w066-pool {
+  display: flex; flex-direction: column; gap: 6px; min-height: 44px;
+  padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.w066-dd .w066-buckets { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 0.75rem; }
+.w066-dd .w066-bucket {
+  flex: 1 1 250px; min-width: 250px; padding: 8px;
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); cursor: pointer;
+}
+.w066-dd .w066-bucket.w066-armed { border-color: #d81e2e; }
+.w066-dd .w066-btitle { text-align: center; font-weight: 700; margin-bottom: 6px; }
+.w066-dd .w066-slot { display: flex; flex-direction: column; gap: 6px; min-height: 40px; }
+.w066-dd .w066-chip {
+  padding: 4px 10px; border-radius: 6px; cursor: grab; user-select: none;
+  border: 1.5px solid #d81e2e; color: var(--bs-body-color, #222);
+  background: var(--bs-body-bg, #fff); font-weight: 600; text-align: center;
+  font-size: 0.85rem;
+}
+.w066-dd .w066-chip.w066-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w066-dd .w066-chip.w066-right { border: 2px solid #2e7d32; }
+.w066-dd .w066-chip.w066-wrong { border: 2px solid #d81e2e; }
+.w066-dd .w066-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w066-dd button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w066-dd .w066-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w066-dd .w066-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w066-dd .w066-msg.ok { color: #2e7d32; }
+.w066-dd .w066-msg.bad { color: #d81e2e; }
+</style>
+<div class="w066-dd iw" id="w066-dd">
+  <div class="w066-pool" aria-label="scenarios to sort"></div>
+  <div class="w066-buckets">
+    <div class="w066-bucket" data-bucket="yes"><div class="w066-btitle">Encryption answers this threat</div><div class="w066-slot"></div></div>
+    <div class="w066-bucket" data-bucket="no"><div class="w066-btitle">Encryption achieves nothing here</div><div class="w066-slot"></div></div>
+  </div>
+  <div class="w066-controls">
+    <button type="button" class="w066-check iw-check">Check</button>
+    <button type="button" class="w066-reset iw-reset">Reset</button>
+    <button type="button" class="w066-solution iw-solution">Show solution</button>
+    <span class="w066-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w066-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w066-dd');
+  const pool = root.querySelector('.w066-pool');
+  const buckets = [...root.querySelectorAll('.w066-bucket')];
+  const msg = root.querySelector('.w066-msg');
+  const ITEMS = [
+    {"t": "An attacker on shared Wi-Fi captures packets between browser and server", "a": "yes"},
+    {"t": "Customer records are stolen through an SQL-injection flaw in the application", "a": "no"},
+    {"t": "A disk drive is stolen from the data centre", "a": "yes"},
+    {"t": "A weak administrator password is guessed", "a": "no"},
+    {"t": "The key is stored next to the data it protects, with the same access to both", "a": "no"},
+    {"t": "An outsider reads an exposed object-storage bucket (keys held elsewhere)", "a": "yes"}
+  ];
+  let picked = null;
+
+  function chips() { return [...root.querySelectorAll('.w066-chip')]; }
+  function unpick() {
+    if (picked) picked.classList.remove('w066-picked');
+    picked = null;
+    buckets.forEach(b => b.classList.remove('w066-armed'));
+  }
+  function clearMarks() {
+    chips().forEach(c => c.classList.remove('w066-right', 'w066-wrong'));
+    msg.textContent = ''; msg.className = 'w066-msg iw-msg';
+  }
+  function place(bucket, chip) {
+    bucket.querySelector('.w066-slot').appendChild(chip);
+    clearMarks();
+  }
+  function makeChip(item, i) {
+    const c = document.createElement('div');
+    c.className = 'w066-chip';
+    c.textContent = item.t;
+    c.dataset.key = String(i);
+    c.dataset.answer = item.a;
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement === pool) {
+        if (picked === c) { unpick(); return; }
+        unpick(); picked = c; c.classList.add('w066-picked');
+        buckets.forEach(b => b.classList.add('w066-armed'));
+      } else { pool.appendChild(c); unpick(); clearMarks(); }
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.dataset.key));
+    return c;
+  }
+  buckets.forEach(bucket => {
+    bucket.addEventListener('click', () => { if (picked) { place(bucket, picked); unpick(); } });
+    bucket.addEventListener('dragover', e => e.preventDefault());
+    bucket.addEventListener('drop', e => {
+      e.preventDefault(); e.stopPropagation();
+      const key = e.dataTransfer.getData('text/plain');
+      const chip = root.querySelector('.w066-chip[data-key="' + key + '"]');
+      if (chip) { place(bucket, chip); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const key = e.dataTransfer.getData('text/plain');
+    const chip = root.querySelector('.w066-chip[data-key="' + key + '"]');
+    if (chip) { pool.appendChild(chip); unpick(); clearMarks(); }
+  });
+  root.querySelector('.w066-check').addEventListener('click', () => {
+    let right = 0, wrong = 0;
+    chips().forEach(c => {
+      c.classList.remove('w066-right', 'w066-wrong');
+      const b = c.closest('.w066-bucket');
+      if (!b) return;
+      if (b.dataset.bucket === c.dataset.answer) { c.classList.add('w066-right'); right++; }
+      else { c.classList.add('w066-wrong'); wrong++; }
+    });
+    const unplaced = ITEMS.length - right - wrong;
+    if (right === ITEMS.length) {
+      msg.textContent = '✓ All correct — name the threat first, then choose the control that meets it.';
+      msg.className = 'w066-msg iw-msg ok';
+    } else if (wrong === 0) {
+      msg.textContent = 'Keep going — ' + unplaced + ' card(s) still to place.';
+      msg.className = 'w066-msg iw-msg';
+    } else {
+      msg.textContent = '✗ Not yet — the red cards are in the wrong box. Send them back and try again.';
+      msg.className = 'w066-msg iw-msg bad';
+    }
+  });
+  root.querySelector('.w066-reset').addEventListener('click', () => {
+    chips().sort((a, b) => Number(a.dataset.key) - Number(b.dataset.key))
+           .forEach(c => pool.appendChild(c));
+    unpick(); clearMarks();
+  });
+  root.querySelector('.w066-solution').addEventListener('click', () => {
+    unpick();
+    chips().sort((a, b) => Number(a.dataset.key) - Number(b.dataset.key)).forEach(c => {
+      const bucket = buckets.find(b => b.dataset.bucket === c.dataset.answer);
+      bucket.querySelector('.w066-slot').appendChild(c);
+    });
+    chips().forEach(c => { c.classList.remove('w066-wrong'); c.classList.add('w066-right'); });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w066-msg iw-msg ok';
+  });
+  ITEMS.forEach((it, i) => pool.appendChild(makeChip(it, i)));
+})();
+</script>
+```

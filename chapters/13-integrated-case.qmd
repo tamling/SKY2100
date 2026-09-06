@@ -154,6 +154,34 @@ of the eight layers offered belong to none of the boxes shown.
 {{< include _13-stack-layers.qmd >}}
 :::
 
+::: {#exr-13-csf-numbers}
+## CSF 2.0 by the numbers, interactive
+@sec-13-csf-mapping describes the three levels of the NIST Cybersecurity
+Framework 2.0. Fill in how many of each the framework defines and press
+**Check** — each line turns green or red on its own.
+
+{{< include _13-csf-numbers.qmd >}}
+:::
+
+::: {#exr-13-argument-tf}
+## The closing argument: true or false?, interactive
+@sec-13-argument closes the course with what security is, and with Comer's
+warning about the complexity of cloud-native systems. Mark each statement
+below **True** or **False**, then press **Check**.
+
+{{< include _13-argument-tf.qmd >}}
+:::
+
+::: {#exr-13-method-order}
+## The method, interactive
+@sec-13-argument states the method the course has applied eleven times to
+one service. Arrange its five steps into the right order: drag a step to
+its place, or use the arrow buttons to move it up and down, then press
+**Check**.
+
+{{< include _13-method-order.qmd >}}
+:::
+
 ## Self-check {#sec-13-self-check}
 
 **Q1** *(tests @sec-13-csf-mapping · basic)*

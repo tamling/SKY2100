@@ -254,6 +254,48 @@ click a box (click a placed statement to send it back). Then press
 {{< include _08-sast-dast.qmd >}}
 :::
 
+::: {#exr-08-term-match}
+## The pipeline vocabulary, interactive
+Five practices carry this chapter, from threat modelling at design time
+(@sec-08-secure-development-lifecycle) to the deployment strategies and
+infrastructure as code of the pipeline (@sec-08-devsecops-pipeline). Click a
+term, then click the description that fits it (or start with a description);
+matched pairs lock and grey out, and a wrong attempt flashes red. Then press
+**Check**.
+
+{{< include _08-term-pairs.qmd >}}
+:::
+
+::: {#exr-08-ssdlc-order}
+## The secure development lifecycle, interactive
+@def-ssdlc integrates security into every stage of building software, and
+shifting left moves the work toward the start. Arrange the four stages of
+the SSDLC in order: drag a stage to its place, or use its arrow buttons to
+move it up and down. Then press **Check**.
+
+{{< include _08-ssdlc-order.qmd >}}
+:::
+
+::: {#exr-08-true-false}
+## True or false: securing the application, interactive
+The chapter draws several sharp lines: what a WAF is and is not for
+(@def-waf), what SAST needs, what declarative means, and where shifting
+left points. Judge each statement by clicking **True** or **False**, then
+press **Check**; wrong rows are marked red so you can retry.
+
+{{< include _08-truefalse.qmd >}}
+:::
+
+::: {#exr-08-sbom-recall}
+## The document that answers the question, interactive
+When Log4Shell broke, the hard part was not the patch but knowing where the
+library was used at all (@sec-08-application-security). Type the name or
+abbreviation of the document that answers that question in advance, then
+press **Check** (or Enter).
+
+{{< include _08-sbom-input.qmd >}}
+:::
+
 ## Self-check {#sec-08-self-check}
 
 **Q1** *(tests @sec-08-application-security · basic)*

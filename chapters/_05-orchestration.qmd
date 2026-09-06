@@ -85,7 +85,7 @@
       const v = norm(inp.value);
       if (!v) { empty++; return; }
       const acc = QS[Number(inp.dataset.k)].accept;
-      const hit = acc.some(a => v === a || v.indexOf(a) !== -1);
+      const hit = acc.some(a => v === a || (' ' + v + ' ').indexOf(' ' + a + ' ') !== -1);
       if (hit) { inp.classList.add('w056-right'); right++; }
       else inp.classList.add('w056-wrong');
     });

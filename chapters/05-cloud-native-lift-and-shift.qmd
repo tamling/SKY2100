@@ -318,6 +318,42 @@ press **Check**.
 {{< include _05-two-worlds.qmd >}}
 :::
 
+::: {#exr-05-kernel-terms}
+## The kernel and its mechanisms, interactive
+Match each term from @sec-05-the-kernel to its description: click a term and
+then its partner (or drag one onto the other). A correct pair locks and greys
+out; a wrong attempt flashes red. Then press **Check**.
+
+{{< include _05-kernel-terms.qmd >}}
+:::
+
+::: {#exr-05-three-kernels}
+## Three kernels, one shape, interactive
+Fill in the properties of the three kernels of @fig-kernels: click a cell to
+mark that the property holds for that kernel, click again to clear it. A row
+is right only when exactly its true cells are filled. Then press **Check**.
+
+{{< include _05-three-kernels.qmd >}}
+:::
+
+::: {#exr-05-moving-workloads}
+## Security in a moving environment, true or false, interactive
+Judge each statement about securing workloads in a moving environment
+(@sec-05-securing-moving-workloads): click **True** or **False** for each
+(click again to clear), then press **Check**.
+
+{{< include _05-moving-workloads.qmd >}}
+:::
+
+::: {#exr-05-orchestration}
+## Orchestration in three answers, interactive
+Answer the three short questions on orchestration
+(@sec-05-why-containers-orchestration) by typing into the boxes; spelling is
+checked generously and capitalisation does not matter. Then press **Check**.
+
+{{< include _05-orchestration.qmd >}}
+:::
+
 ## Self-check {#sec-05-self-check}
 
 **Q1** *(tests @sec-05-two-ways-into-the-cloud · basic)*

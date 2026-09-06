@@ -1,0 +1,78 @@
+```{=html}
+<style>
+.w103-num { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w103-num .w103-q { margin-bottom: 0.6rem; }
+.w103-num .w103-row { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.w103-num .w103-in {
+  padding: 5px 10px; border-radius: 6px; width: 8em; font: inherit; text-align: right;
+  border: 1.5px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+}
+.w103-num .w103-in.w103-right { border: 2px solid #2e7d32; }
+.w103-num .w103-in.w103-wrong { border: 2px solid #d81e2e; }
+.w103-num .w103-controls { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.w103-num .w103-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w103-num .w103-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w103-num .w103-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w103-num .w103-msg.ok { color: #2e7d32; }
+.w103-num .w103-msg.bad { color: #d81e2e; }
+</style>
+<div class="iw w103-num" id="w103">
+  <div class="w103-q">A breach of the Nextcloud VM is discovered and forensics begins
+  with the Azure Activity Log, which is enabled by default. For how many days is it
+  retained — and after which any management-plane action not routed elsewhere is gone?</div>
+  <div class="w103-row">
+    <input type="number" class="w103-in" aria-label="number of days"
+           step="any" placeholder="…"> <span>days</span>
+  </div>
+  <div class="w103-controls">
+    <button type="button" class="w103-check iw-check">Check</button>
+    <button type="button" class="w103-reset iw-reset">Reset</button>
+    <button type="button" class="w103-solution iw-solution">Show solution</button>
+    <span class="w103-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w103-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w103');
+  const inp = root.querySelector('.w103-in');
+  const msg = root.querySelector('.w103-msg');
+  const ANSWER = 90, TOL = 0.5;
+  function clearMarks() {
+    inp.classList.remove('w103-right', 'w103-wrong');
+    msg.textContent = ''; msg.className = 'w103-msg iw-msg';
+  }
+  function check() {
+    clearMarks();
+    const v = parseFloat(inp.value);
+    if (inp.value.trim() === '' || isNaN(v)) { msg.textContent = 'Enter a number of days first.'; return; }
+    if (Math.abs(v - ANSWER) < TOL) {
+      inp.classList.add('w103-right');
+      msg.textContent = '✓ Correct — which is why an intrusion discovered months later needs the logs routed to longer-term storage.';
+      msg.classList.add('ok');
+    } else {
+      inp.classList.add('w103-wrong');
+      msg.textContent = '✗ Not the default retention the chapter gives — try again.';
+      msg.classList.add('bad');
+    }
+  }
+  inp.addEventListener('input', clearMarks);
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  root.querySelector('.w103-check').addEventListener('click', check);
+  root.querySelector('.w103-reset').addEventListener('click', () => {
+    inp.value = ''; clearMarks();
+  });
+  root.querySelector('.w103-solution').addEventListener('click', () => {
+    clearMarks();
+    inp.value = String(ANSWER);
+    inp.classList.add('w103-right');
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.classList.add('ok');
+  });
+})();
+</script>
+```

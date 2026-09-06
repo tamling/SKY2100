@@ -1,0 +1,150 @@
+```{=html}
+<style>
+.w106-sort { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w106-sort .w106-buckets { display: flex; gap: 10px; margin-bottom: 0.75rem; align-items: stretch; }
+.w106-sort .w106-bucket {
+  flex: 1 1 0; min-height: 170px; padding: 6px 8px;
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); cursor: pointer;
+}
+.w106-sort .w106-title { text-align: center; font-weight: 700; color: #d81e2e; margin-bottom: 6px; }
+.w106-sort .w106-bucket.w106-armed { border-color: #d81e2e; }
+.w106-sort .w106-pool {
+  display: flex; flex-direction: column; gap: 6px;
+  min-height: 44px; padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.w106-sort .w106-chip {
+  display: block; margin: 0; padding: 4px 10px; border-radius: 8px;
+  cursor: grab; user-select: none; font-weight: 600; text-align: center;
+  border: 1.5px solid var(--bs-border-color, #999);
+  color: var(--bs-body-color, #222); background: var(--bs-body-bg, #fff);
+}
+.w106-sort .w106-bucket .w106-chip { margin: 6px 0; }
+.w106-sort .w106-chip.w106-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w106-sort .w106-chip.w106-right { border: 2px solid #2e7d32; }
+.w106-sort .w106-chip.w106-wrong { border: 2px solid #d81e2e; }
+.w106-sort .w106-controls { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.w106-sort button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w106-sort .w106-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w106-sort .w106-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w106-sort .w106-msg.ok { color: #2e7d32; }
+.w106-sort .w106-msg.bad { color: #d81e2e; }
+</style>
+<div class="iw w106-sort" id="w106">
+  <div class="w106-buckets">
+    <div class="w106-bucket" data-cat="mgmt">
+      <div class="w106-title">Management plane log</div>
+      <div class="w106-slot"></div>
+    </div>
+    <div class="w106-bucket" data-cat="svc">
+      <div class="w106-title">Service / application log</div>
+      <div class="w106-slot"></div>
+    </div>
+  </div>
+  <div class="w106-pool" aria-label="items to sort"></div>
+  <div class="w106-controls">
+    <button type="button" class="w106-check iw-check">Check</button>
+    <button type="button" class="w106-reset iw-reset">Reset</button>
+    <button type="button" class="w106-solution iw-solution">Show solution</button>
+    <span class="w106-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w106-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w106');
+  const pool = root.querySelector('.w106-pool');
+  const buckets = [...root.querySelectorAll('.w106-bucket')];
+  const msg = root.querySelector('.w106-msg');
+  const ITEMS = [
+    ['The Azure Activity Log', 'mgmt'],
+    ['The Nginx access log', 'svc'],
+    ['Records who accessed the infrastructure, what they changed and when', 'mgmt'],
+    ['The system journal (journalctl)', 'svc'],
+    ['A network security group write, with caller and result “Succeeded”', 'mgmt'],
+    ['Records authentication attempts, API calls, network traffic and errors of one service', 'svc']
+  ];
+  let picked = null;
+  function chipByKey(key) { return root.querySelector('.w106-chip[data-key="' + key + '"]'); }
+  function unpick() {
+    if (picked) picked.classList.remove('w106-picked');
+    picked = null;
+    buckets.forEach(b => b.classList.remove('w106-armed'));
+  }
+  function clearMarks() {
+    root.querySelectorAll('.w106-chip').forEach(c => c.classList.remove('w106-right', 'w106-wrong'));
+    msg.textContent = ''; msg.className = 'w106-msg iw-msg';
+  }
+  function place(bucket, chip) { bucket.querySelector('.w106-slot').appendChild(chip); clearMarks(); }
+  function makeChip(text, cat, key) {
+    const c = document.createElement('span');
+    c.className = 'w106-chip';
+    c.textContent = text;
+    c.dataset.cat = cat; c.dataset.key = key;
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement !== pool) { pool.appendChild(c); unpick(); clearMarks(); return; }
+      if (picked === c) { unpick(); return; }
+      unpick(); picked = c; c.classList.add('w106-picked');
+      buckets.forEach(b => b.classList.add('w106-armed'));
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', key));
+    return c;
+  }
+  buckets.forEach(b => {
+    b.addEventListener('click', () => { if (picked) { place(b, picked); unpick(); } });
+    b.addEventListener('dragover', e => e.preventDefault());
+    b.addEventListener('drop', e => {
+      e.preventDefault();
+      const chip = chipByKey(e.dataTransfer.getData('text/plain'));
+      if (chip) { place(b, chip); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const chip = chipByKey(e.dataTransfer.getData('text/plain'));
+    if (chip) { pool.appendChild(chip); clearMarks(); }
+  });
+  root.querySelector('.w106-check').addEventListener('click', () => {
+    root.querySelectorAll('.w106-chip').forEach(c => c.classList.remove('w106-right', 'w106-wrong'));
+    let right = 0, wrong = 0;
+    buckets.forEach(b => b.querySelectorAll('.w106-chip').forEach(c => {
+      if (c.dataset.cat === b.dataset.cat) { c.classList.add('w106-right'); right++; }
+      else { c.classList.add('w106-wrong'); wrong++; }
+    }));
+    const left = pool.querySelectorAll('.w106-chip').length;
+    msg.className = 'w106-msg iw-msg';
+    if (wrong === 0 && left === 0) {
+      msg.textContent = '✓ All correct — the two telemetry sources are cleanly separated.';
+      msg.classList.add('ok');
+    } else if (wrong === 0) {
+      msg.textContent = 'Keep going — ' + left + ' item(s) still to sort.';
+    } else {
+      msg.textContent = '✗ Not yet — ' + wrong + ' item(s) sit in the wrong box (marked red).';
+      msg.classList.add('bad');
+    }
+  });
+  root.querySelector('.w106-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w106-chip').forEach(c => pool.appendChild(c));
+    unpick(); clearMarks();
+  });
+  root.querySelector('.w106-solution').addEventListener('click', () => {
+    unpick(); clearMarks();
+    root.querySelectorAll('.w106-chip').forEach(c => {
+      const b = buckets.find(x => x.dataset.cat === c.dataset.cat);
+      b.querySelector('.w106-slot').appendChild(c);
+      c.classList.add('w106-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w106-msg iw-msg ok';
+  });
+  ITEMS.forEach((it, i) => pool.appendChild(makeChip(it[0], it[1], 'k' + i)));
+})();
+</script>
+```

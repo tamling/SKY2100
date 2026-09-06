@@ -261,6 +261,44 @@ it back. Then press **Check**.
 {{< include _06-data-states.qmd >}}
 :::
 
+::: {#exr-06-crypto-terms}
+## The vocabulary of encryption, interactive
+Match each term of @sec-06-two-crypto-families (@def-crypto, @def-pki) to its
+description: click a term and then its partner (or drag one onto the other).
+A correct pair locks and greys out; a wrong attempt flashes red. Then press
+**Check**.
+
+{{< include _06-crypto-terms.qmd >}}
+:::
+
+::: {#exr-06-tls-practice}
+## TLS in practice, true or false, interactive
+Judge each statement about the practical points of @sec-06-tls — versions,
+certificates, key storage, scope and TLS inspection: click **True** or
+**False** for each (click again to clear), then press **Check**.
+
+{{< include _06-tls-practice.qmd >}}
+:::
+
+::: {#exr-06-beyond-browser}
+## Data on the move, interactive
+Answer the three short questions on Comer's principles for remote access
+(@sec-06-vpns-data-on-move) by typing into the boxes; spelling is checked
+generously and capitalisation does not matter. Then press **Check**.
+
+{{< include _06-beyond-browser.qmd >}}
+:::
+
+::: {#exr-06-encryption-helps}
+## Does encryption answer this threat, interactive
+Encryption helps only when it answers the threat that was actually identified
+(@sec-06-limitations-of-encryption). Sort the six scenarios into the box where
+they belong: drag a card into a box, or click the card and then the box (click
+a placed card to send it back), then press **Check**.
+
+{{< include _06-encryption-helps.qmd >}}
+:::
+
 ## Self-check {#sec-06-self-check}
 
 **Q1** *(tests @sec-06-three-data-states · basic)*

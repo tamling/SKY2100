@@ -1,0 +1,106 @@
+```{=html}
+<style>
+.w033 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w033 .w033-scenario {
+  padding: 8px 10px; border: 1px solid var(--bs-border-color, #ccc); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); margin-bottom: 0.75rem;
+}
+.w033 .w033-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 0.75rem; }
+.w033 .w033-row {
+  display: flex; align-items: center; gap: 10px; padding: 6px 8px;
+  border: 1px solid var(--bs-border-color, #ccc); border-radius: 6px;
+  background: var(--bs-body-bg, #fff);
+}
+.w033 .w033-q { flex: 1 1 auto; }
+.w033 .w033-in {
+  flex: 0 0 110px; padding: 3px 8px; border-radius: 6px;
+  border: 2px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  font-weight: 600; min-width: 0;
+}
+.w033 .w033-in.w033-right { border-color: #2e7d32; }
+.w033 .w033-in.w033-wrong { border-color: #d81e2e; }
+.w033 .w033-unit { flex: 0 0 auto; opacity: 0.8; }
+.w033 .w033-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w033 button.w033-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w033 .w033-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w033 .w033-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w033 .w033-msg.ok { color: #2e7d32; }
+.w033 .w033-msg.bad { color: #d81e2e; }
+</style>
+<div class="w033 iw" id="w033">
+  <div class="w033-scenario">
+    A service chains three components, and every request needs all three:
+    a load balancer at <strong>99.99&nbsp;%</strong>, a web virtual machine at
+    <strong>99.9&nbsp;%</strong> and a database virtual machine at
+    <strong>99.9&nbsp;%</strong>. Take 1&nbsp;year&nbsp;≈&nbsp;8760&nbsp;h.
+  </div>
+  <div class="w033-rows">
+    <div class="w033-row">
+      <label class="w033-q" for="w033-in0">Combined availability (round to two decimals)</label>
+      <input class="w033-in" id="w033-in0" type="text" inputmode="decimal" autocomplete="off" data-k="0">
+      <span class="w033-unit">%</span>
+    </div>
+    <div class="w033-row">
+      <label class="w033-q" for="w033-in1">Expected downtime per year (about)</label>
+      <input class="w033-in" id="w033-in1" type="text" inputmode="decimal" autocomplete="off" data-k="1">
+      <span class="w033-unit">h</span>
+    </div>
+  </div>
+  <div class="w033-controls">
+    <button type="button" class="w033-btn w033-check iw-check">Check</button>
+    <button type="button" class="w033-btn w033-reset iw-reset">Reset</button>
+    <button type="button" class="w033-btn w033-sol iw-solution">Show solution</button>
+    <span class="w033-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w033-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w033');
+  const msg = root.querySelector('.w033-msg');
+  const inputs = [...root.querySelectorAll('.w033-in')];
+  // 0.9999 * 0.999 * 0.999 = 0.9979012... -> 99.79 % ; (1 - 0.9979012) * 8760 h = 18.39 h
+  const ANSWERS = [
+    { value: 99.79, tol: 0.02, show: '99.79' },
+    { value: 18.39, tol: 0.7, show: '18.4' }
+  ];
+  function clearMarks() {
+    inputs.forEach(i => i.classList.remove('w033-right', 'w033-wrong'));
+    msg.textContent = ''; msg.className = 'w033-msg iw-msg';
+  }
+  inputs.forEach(i => i.addEventListener('input', clearMarks));
+  root.querySelector('.w033-check').addEventListener('click', () => {
+    let right = 0, wrong = 0, empty = 0;
+    inputs.forEach(inp => {
+      inp.classList.remove('w033-right', 'w033-wrong');
+      const raw = inp.value.trim().replace(',', '.').replace(/%$/, '').trim();
+      if (!raw) { empty++; return; }
+      const v = parseFloat(raw);
+      const a = ANSWERS[Number(inp.dataset.k)];
+      if (isFinite(v) && Math.abs(v - a.value) <= a.tol) { inp.classList.add('w033-right'); right++; }
+      else { inp.classList.add('w033-wrong'); wrong++; }
+    });
+    if (right === ANSWERS.length) { msg.textContent = '✓ Correct — every chained component spends availability.'; msg.className = 'w033-msg iw-msg ok'; }
+    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' field(s) still empty (multiply the availabilities first).'; msg.className = 'w033-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — the red value is off; the combined availability is the product of the three.'; msg.className = 'w033-msg iw-msg bad'; }
+  });
+  root.querySelector('.w033-reset').addEventListener('click', () => {
+    inputs.forEach(i => { i.value = ''; });
+    clearMarks();
+  });
+  root.querySelector('.w033-sol').addEventListener('click', () => {
+    clearMarks();
+    inputs.forEach(inp => {
+      inp.value = ANSWERS[Number(inp.dataset.k)].show;
+      inp.classList.add('w033-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w033-msg iw-msg ok';
+  });
+})();
+</script>
+```

@@ -261,6 +261,46 @@ statement to send it back). Then press **Check**.
 {{< include _10-log-event.qmd >}}
 :::
 
+::: {#exr-10-source-sort}
+## Management plane or service log, interactive
+The chapter's log sources fall into the two kinds Session 9 named
+(@sec-10-log-sources). Drag each item into the box of the kind it belongs
+to, or click an item and then click a box (click a placed item to send it
+back). Then press **Check**.
+
+{{< include _10-source-buckets.qmd >}}
+:::
+
+::: {#exr-10-term-match}
+## The logging vocabulary, interactive
+From aggregation and the SIEM (@def-logagg) to retention and the chain of
+custody (@sec-10-logs-as-evidence), this chapter turns scattered records
+into evidence. Click a term, then click the description that fits it (or
+start with a description); matched pairs lock and grey out, and a wrong
+attempt flashes red. Then press **Check**.
+
+{{< include _10-term-pairs.qmd >}}
+:::
+
+::: {#exr-10-true-false}
+## True or false: trusting the record, interactive
+Ephemeral hosts, append-only stores, Azure's default settings and the CIA
+property behind log integrity (@def-logintegrity): judge each statement by
+clicking **True** or **False**, then press **Check**; wrong rows are marked
+red so you can retry.
+
+{{< include _10-truefalse.qmd >}}
+:::
+
+::: {#exr-10-retention-numeric}
+## The forensic window, interactive
+Forensics after a breach begins with the Azure Activity Log
+(@sec-10-logs-events), but only for as long as the platform keeps it. Enter
+the default retention period in days, then press **Check** (or Enter).
+
+{{< include _10-retention-numeric.qmd >}}
+:::
+
 ## Self-check {#sec-10-self-check}
 
 **Q1** *(tests @sec-10-logs-events · basic)*
