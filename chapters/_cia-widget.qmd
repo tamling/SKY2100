@@ -1,0 +1,140 @@
+```{=html}
+<style>
+.cia-dd { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.cia-dd .cia-stage { position: relative; height: 360px; margin-bottom: 0.75rem; }
+.cia-dd svg.cia-lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cia-dd .cia-zone {
+  position: absolute; width: 180px; min-height: 74px; padding: 6px 8px 30px;
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); text-align: center; cursor: pointer;
+}
+.cia-dd .cia-zone .cia-desc { font-size: 0.8rem; font-style: italic; opacity: 0.75; }
+.cia-dd .cia-zone.cia-armed { border-color: #d81e2e; }
+.cia-dd .cia-zone.cia-right { border: 2px solid #2e7d32; }
+.cia-dd .cia-zone.cia-wrong { border: 2px solid #d81e2e; }
+.cia-dd .cia-z-top { top: 0; left: 50%; transform: translateX(-50%); }
+.cia-dd .cia-z-left { bottom: 0; left: 0; }
+.cia-dd .cia-z-right { bottom: 0; right: 0; }
+.cia-dd .cia-pool {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  min-height: 44px; padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.cia-dd .cia-chip {
+  padding: 4px 12px; border-radius: 999px; cursor: grab; user-select: none;
+  border: 1.5px solid #d81e2e; color: var(--bs-body-color, #222);
+  background: var(--bs-body-bg, #fff); font-weight: 600;
+}
+.cia-dd .cia-chip.cia-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.cia-dd .cia-zone .cia-chip { position: absolute; left: 50%; bottom: -16px; transform: translateX(-50%); white-space: nowrap; }
+.cia-dd .cia-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.cia-dd button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.cia-dd .cia-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.cia-dd .cia-msg.ok { color: #2e7d32; }
+.cia-dd .cia-msg.bad { color: #d81e2e; }
+</style>
+<div class="cia-dd" id="cia-dd">
+  <div class="cia-stage">
+    <svg class="cia-lines" viewBox="0 0 620 360" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M310,60 L95,290 M310,60 L525,290 M95,290 L525,290"
+            stroke="#d81e2e" stroke-width="2" fill="none"/>
+    </svg>
+    <div class="cia-zone cia-z-top" data-answer="confidentiality">
+      <div class="cia-desc">disclosed only to<br>the authorised</div>
+    </div>
+    <div class="cia-zone cia-z-left" data-answer="integrity">
+      <div class="cia-desc">not altered<br>undetectably</div>
+    </div>
+    <div class="cia-zone cia-z-right" data-answer="availability">
+      <div class="cia-desc">reachable<br>when needed</div>
+    </div>
+  </div>
+  <div class="cia-pool" aria-label="terms to place"></div>
+  <div class="cia-controls">
+    <button type="button" class="cia-check">Check</button>
+    <button type="button" class="cia-reset">Reset</button>
+  </div>
+  <div class="cia-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('cia-dd');
+  const pool = root.querySelector('.cia-pool');
+  const zones = [...root.querySelectorAll('.cia-zone')];
+  const msg = root.querySelector('.cia-msg');
+  const TERMS = ['Redundancy', 'Confidentiality', 'Authentication',
+                 'Availability', 'Non-repudiation', 'Integrity'];
+  let picked = null;
+
+  function makeChip(term) {
+    const c = document.createElement('span');
+    c.className = 'cia-chip';
+    c.textContent = term;
+    c.dataset.term = term.toLowerCase();
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement !== pool) { pool.appendChild(c); unpick(); clearMarks(); return; }
+      if (picked === c) { unpick(); return; }
+      unpick(); picked = c; c.classList.add('cia-picked');
+      zones.forEach(z => z.classList.add('cia-armed'));
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', term));
+    return c;
+  }
+  function unpick() {
+    if (picked) picked.classList.remove('cia-picked');
+    picked = null;
+    zones.forEach(z => z.classList.remove('cia-armed'));
+  }
+  function clearMarks() {
+    zones.forEach(z => z.classList.remove('cia-right', 'cia-wrong'));
+    msg.textContent = ''; msg.className = 'cia-msg';
+  }
+  function place(zone, chip) {
+    const old = zone.querySelector('.cia-chip');
+    if (old) pool.appendChild(old);
+    zone.appendChild(chip);
+    clearMarks();
+  }
+  zones.forEach(zone => {
+    zone.addEventListener('click', () => { if (picked) { place(zone, picked); unpick(); } });
+    zone.addEventListener('dragover', e => e.preventDefault());
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      const term = e.dataTransfer.getData('text/plain');
+      const chip = root.querySelector('.cia-chip[data-term="' + term.toLowerCase() + '"]');
+      if (chip) { place(zone, chip); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const term = e.dataTransfer.getData('text/plain');
+    const chip = root.querySelector('.cia-chip[data-term="' + term.toLowerCase() + '"]');
+    if (chip) { pool.appendChild(chip); clearMarks(); }
+  });
+  root.querySelector('.cia-check').addEventListener('click', () => {
+    let right = 0, wrong = 0, empty = 0;
+    zones.forEach(z => {
+      z.classList.remove('cia-right', 'cia-wrong');
+      const chip = z.querySelector('.cia-chip');
+      if (!chip) { empty++; return; }
+      if (chip.dataset.term === z.dataset.answer) { z.classList.add('cia-right'); right++; }
+      else { z.classList.add('cia-wrong'); wrong++; }
+    });
+    if (right === 3) { msg.textContent = '✓ All correct — the CIA triad is in place.'; msg.className = 'cia-msg ok'; }
+    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' corner(s) still empty.'; msg.className = 'cia-msg'; }
+    else { msg.textContent = '✗ Not yet — the red corners are wrong (three of the six terms are distractors).'; msg.className = 'cia-msg bad'; }
+  });
+  root.querySelector('.cia-reset').addEventListener('click', () => {
+    root.querySelectorAll('.cia-chip').forEach(c => pool.appendChild(c));
+    unpick(); clearMarks();
+  });
+  TERMS.forEach(t => pool.appendChild(makeChip(t)));
+})();
+</script>
+```

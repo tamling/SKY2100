@@ -352,6 +352,16 @@ Give one realistic scenario in which moving from IaaS to SaaS reduces the
 security workload, and one responsibility that the move does not remove.
 :::
 
+::: {#exr-01-cia-triangle}
+## The CIA triad, interactive
+Three of the six terms below are the protection goals of @def-cia; the other
+three are distractors. Drag each protection goal onto the corner of the
+triangle whose description matches it (or click a term, then click a corner),
+then press **Check**.
+
+{{< include _cia-widget.qmd >}}
+:::
+
 ## Self-check {#sec-01-self-check}
 
 **Q1** *(tests @sec-01-definition-cloud-computing · basic)*
