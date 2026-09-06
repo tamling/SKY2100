@@ -240,6 +240,27 @@ What is chain of custody, and why does it make off-host, append-only logging
 matter for the incident response of Session 12?
 :::
 
+::: {#exr-10-cascade-order}
+## The cascading log architecture, interactive
+@fig-cascade shows logs flowing from one layer to the next
+(@sec-10-central-collection), and leaving the host at once is what makes
+the record trustworthy (@def-logintegrity). Arrange the four steps a log
+line takes from the host to the SIEM in order: drag a step to its place, or
+use its arrow buttons to move it up and down. Then press **Check**.
+
+{{< include _10-cascade-order.qmd >}}
+:::
+
+::: {#exr-10-log-vs-event}
+## Log or event, interactive
+The Guidance's separation of logs from events decides how each is used
+(@sec-10-logs-events). Drag each statement into the box of the record it
+describes, or click a statement and then click a box (click a placed
+statement to send it back). Then press **Check**.
+
+{{< include _10-log-event.qmd >}}
+:::
+
 ## Self-check {#sec-10-self-check}
 
 **Q1** *(tests @sec-10-logs-events · basic)*
