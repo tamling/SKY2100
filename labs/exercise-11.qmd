@@ -1,0 +1,185 @@
+# Survive failure - mirror a disk & restore a backup {#sec-lab-11 .unnumbered}
+
+*Exercise 11 · Session 11 lab · Estimated time: 90-120 min*
+
+::: {.callout-note icon=false}
+This is the practical task for [Chapter 11: Resilience, RAID and backup](../chapters/11-resilience-raid-backup.qmd).
+Work through it in your lab group; you talk your answers through at the
+session after next (the review runs one session behind). **This page
+mirrors the worksheet for reading and reference - the official worksheet
+is the PDF distributed via Canvas.**
+:::
+
+Write your answers in the answer document `SKY2100_Exercise11_Answers.docx`. Last week's recovery assumed a clean backup existed. Today you build the safety net: a RAID 1 mirror that survives a dead disk, and a tested backup that survives deletion. You will prove both work by deliberately breaking things - and prove that RAID is *not* a backup.
+
+**Caution:** Work only on your *own* VM. Use *spare* virtual disks for the RAID array - never your system disk. Double-check device names (`lsblk`) before any `mdadm` command.
+
+## Build a RAID 1 mirror
+
+- [ ] **Add two small virtual disks to your VM, then create a mirror with mdadm (adjust device names from `lsblk`):**
+
+  ```bash
+  sudo apt install -y mdadm
+  sudo mdadm --create /dev/md0 --level=1 --raid-devices=2 /dev/sdb /dev/sdc
+  cat /proc/mdstat
+  sudo mkfs.ext4 /dev/md0 && sudo mkdir -p /mnt/raid
+  sudo mount /dev/md0 /mnt/raid
+  ```
+
+- [ ] **Write a test file to `/mnt/raid`. What does `/proc/mdstat` show about the two disks?**
+
+::: {.callout-note}
+**RAID 1 vs RAID 0 - read before the exam.** This lab uses **RAID 1** (`--level=1`): two disks hold *identical* copies, so the array survives one disk dying. **RAID 0** (`--level=0`) is the opposite: it *stripes* data across disks for speed with **no redundancy** - lose one disk and you lose everything. If a task ever asks you to build RAID 0, the point is to *demonstrate* that it provides neither redundancy nor backup; do it only on spare disks and explain the risk. The rule this lab proves - "RAID is not backup" - holds for *both* levels.
+:::
+
+## Fail a disk - and rebuild
+
+- [ ] **Simulate a disk failure, confirm the data survives, then replace and rebuild:**
+
+  ```bash
+  sudo mdadm /dev/md0 --fail /dev/sdb
+  cat /proc/mdstat                      # now "degraded"; is your test file still readable?
+  sudo mdadm /dev/md0 --remove /dev/sdb
+  sudo mdadm /dev/md0 --add /dev/sdb    # watch it re-sync
+  ```
+
+- [ ] **Was your test file still readable while the array was degraded? What does "rebuild/recovery" in `/proc/mdstat` mean for your protection during that time?**
+
+## Back up your data
+
+- [ ] **Make a point-in-time backup of your Nextcloud data to a *separate* location (another disk or folder - ideally not the same array).** The Docker Nextcloud keeps its files inside the container: copy them out first with `sudo docker cp nextcloud:/var/www/html/data /srv/nextcloud-data` and use that as `/path/to/nextcloud-data`.
+
+  ```bash
+  sudo mkdir -p /backup
+  sudo tar -czf /backup/nextcloud-$(date +%F).tar.gz /path/to/nextcloud-data
+  ls -lh /backup/
+  ```
+
+- [ ] **Which of the threats from the lecture (disk failure, deletion, ransomware, disaster) does this backup cover that your RAID 1 mirror does *not*?**
+
+## Restore - prove RAID is not backup {#sec-lab-11-restore}
+
+- [ ] **Delete a file from the live data, then restore it from your backup:**
+
+  ```bash
+  rm /path/to/nextcloud-data/<some-file>
+  sudo tar -xzf /backup/nextcloud-<date>.tar.gz -C / path/to/.../<some-file>
+  # verify the file is back
+  ```
+
+- [ ] **Your RAID 1 mirror did not help recover the deleted file - why not? State the one-sentence rule this demonstrates.**
+
+::: {.callout-tip title="Aha"}
+You just watched the two failures RAID handles and does not handle. When you failed a disk, the data stayed readable, because the mirror is built for exactly that. When you deleted a file, the mirror was useless, because RAID copies every write to both disks at once, so the deletion hit both copies instantly. That is the whole point of "RAID is not backup": a mirror protects against a disk dying, not against deletion, ransomware or a bad write, which it faithfully reproduces. Only a separate point-in-time backup, ideally off-site and immutable, can bring the file back, which is why you need both and why the restore, not the mirror, is what saved you here.
+:::
+
+## Define RPO & RTO
+
+- [ ] **For your Nextcloud service, decide and justify:**
+
+  - **RPO** - how much data (in time) could you afford to lose? What backup frequency does that imply?
+  - **RTO** - how long could the service be down? Did your restore in [Section 4](#sec-lab-11-restore) meet it?
+
+## Cloud transfer: Microsoft Learn
+
+- [ ] **Work through "Protect your virtual machines by using Azure Backup" and note schedule, retention and restore.**
+
+  [learn.microsoft.com/training/modules/protect-virtual-machines-with-azure-backup](https://learn.microsoft.com/training/modules/protect-virtual-machines-with-azure-backup/)
+
+- [ ] **Azure offers LRS, ZRS and GRS redundant storage. Which protects against a *regional* outage, and which is cheapest? One line.**
+
+## Azure reflection
+
+- [ ] **Your RAID 1 lab mirrors within one machine. Which Azure construct gives the equivalent protection across *physically separate* data centres, and against what does it protect?**
+- [ ] **Why is an *immutable* or off-site backup copy specifically important against ransomware, given that RAID and even normal backups may not help?**
+
+## Knowledge check
+
+1. Why is **availability** a security property (CIA)?
+
+   **Hint:** It is the A of the CIA triad - down means the service fails its users.
+
+2. What is a **single point of failure**, and what is the general cure?
+
+   **Hint:** One component whose failure kills the whole system; cure it with redundancy.
+
+3. What does **RAID 1** do, and what does it cost in capacity?
+
+   **Hint:** Mirroring - two disks holding identical copies; you give up half the capacity.
+
+4. Contrast **RAID 0** and **RAID 1** in one line each.
+
+   **Hint:** Stripe for speed with no safety net, versus mirror for redundancy.
+
+5. Explain "**RAID is not backup**" with one concrete example.
+
+   **Hint:** It survives a dead disk, not a deleted or ransomware-encrypted file.
+
+6. What is **hot swapping**, and what risk exists during a rebuild?
+
+   **Hint:** Replace a failed disk while it runs; redundancy is thin during the rebuild.
+
+7. State the **3-2-1** backup rule.
+
+   **Hint:** Three copies, two kinds of media, one off-site.
+
+8. Difference between **full**, **incremental** and **differential** backups.
+
+   **Hint:** Everything each time, versus only what changed since last time.
+
+9. Define **RPO** and **RTO**.
+
+   **Hint:** How much data you can lose, versus how long until you are back.
+
+10. Why must backups be **tested**?
+
+    **Hint:** Backups fail silently - only a real restore proves one works.
+
+11. Name CSA's three levels of cloud resiliency.
+
+    **Hint:** Single-region, multi-region, multi-provider - rising protection and cost.
+
+12. What is **chaos engineering**, and what assumption does it build in?
+
+    **Hint:** Inject faults on purpose to keep proving resiliency holds.
+
+**Progress check:** Discuss your answers in the group, then talk the teacher through them verbally at the next session only to track progress; nothing is handed in, signed or graded.
+
+## Solutions
+
+Work through the lab first, then check here. Model answers are indicative - equivalent reasoning is fine.
+
+**Note:** Model answers are indicative - accept equivalent reasoning. Multiple-choice answers are in **bold**.
+
+## Knowledge check {.unnumbered}
+
+1. Availability is the **A** of the CIA triad: a service that is down - through hardware failure, disaster, DDoS or ransomware - has failed its users, however confidential and intact its data. Resilience protects availability.
+2. A **single point of failure (SPOF)** is any one component whose failure takes down the whole system. The cure is **redundancy** - duplicate the component so no single failure is fatal.
+3. **RAID 1** mirrors: every write goes to two disks holding identical copies, surviving either disk failing. Cost: usable capacity is that of *one* disk from two - 50% overhead.
+4. **RAID 0** stripes data across disks for speed with *no* redundancy (one disk lost = all lost). **RAID 1** mirrors for redundancy (survives one disk) at 50% capacity cost.
+5. **RAID is not backup:** it only protects against *disk failure*. Example: a deleted file (or ransomware encryption, or a corrupt write) is applied to *both* mirrored disks instantly - RAID preserves the deletion. Only a separate point-in-time backup can restore it.
+6. **Hot swapping** = replacing a failed disk while the array keeps running (Comer p. 99). During the **rebuild**, redundancy is temporarily gone - a second disk failure then loses everything.
+7. **3-2-1:** keep **3** copies of the data, on **2** different media, with **1** off-site.
+8. **Full** copies everything each time (slow backup, simple restore). **Incremental** copies changes since the *last* backup (fast backup, restore needs full + every increment). **Differential** copies changes since the last *full* (medium; restore needs full + last differential).
+9. **RPO (Recovery Point Objective)** = how much data, measured in time, you can afford to lose (drives backup frequency). **RTO (Recovery Time Objective)** = how much downtime you can afford (drives restore speed).
+10. Backups fail silently (full disks, bad credentials, missing/unreadable files). The only proof a backup works is a successful *restore*; CSA prescribes regular restoration and yearly DR tests (p. 255).
+11. **Single-region**, **multi-region**, and **multi-provider** resiliency - escalating in protection and cost (CSA p. 270).
+12. **Chaos engineering** deliberately injects faults (even in production) to continuously validate resiliency, building in the assumption that failures *will* happen rather than assuming little downtime (CSA p. 271).
+
+## Lab checkpoints
+
+- **RAID 1:** `/proc/mdstat` should show `md0` active with two disks `[UU]` and a mounted ext4 filesystem holding the test file.
+- **Fail & rebuild:** after `--fail`, the array is *degraded* (`[U_]`) but the test file is still readable - the mirror did its job. After `--add`, `/proc/mdstat` shows *recovery* (re-sync); during that window protection is reduced, so a second failure would be fatal. This is why backups still matter.
+- **Backup:** a `tar.gz` archive of the data in a separate location. It covers *deletion, corruption, ransomware and disaster* - the threats RAID does *not*.
+- **Restore:** the deleted file is recovered from the archive. RAID did not help because the deletion was mirrored to both disks instantly - demonstrating "RAID is not backup".
+- **RPO/RTO:** reward a justified choice (e.g. hourly backups $\rightarrow$ RPO $\le$ 1h) and an honest comparison of the measured restore time against the chosen RTO.
+
+## Cloud transfer & reflection
+
+- **Azure redundant storage:** **GRS** (geo-redundant) replicates across *regions* and protects against a regional outage; **LRS** (locally redundant, within one data centre) is cheapest; ZRS sits between (across zones in one region).
+- **Azure equivalent of mirroring:** **Availability Zones** place replicas in physically separate data centres within a region, protecting against a building/power/zone failure - the cloud version of "no single point of failure".
+- **Immutable / off-site backup vs ransomware:** ransomware seeks out and deletes reachable backups; an *immutable* (write-once) or off-site/air-gapped copy cannot be altered or deleted by the attacker, so a clean recovery point survives. RAID cannot help (the encryption is mirrored), and even normal backups fail if they are reachable and deletable.
+
+## References
+
+CSA Security Guidance v5, **Domain 11.6: Resilience** (p. 270-271, verified): resiliency definition and the single-/multi-region/multi-provider levels (p. 270), IaaS/PaaS resiliency tools and chaos engineering (p. 271), SaaS resilience and BCP/DR via periodic data extracts (p. 271); backup-restoration and DR testing (p. 255). Comer, *The Cloud Computing Book*: RAID, redundant disks & hot swapping, Ch. 8 (p. 99); high availability & off-site backup, Ch. 2 (p. 21), verified. MS Learn: *Protect your virtual machines by using Azure Backup* (verified, June 2026).
