@@ -31,6 +31,7 @@
   background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
 }
 .w076-dd .w076-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w076-dd .w076-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 .w076-dd .w076-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w076-dd .w076-msg.ok { color: #2e7d32; }
 .w076-dd .w076-msg.bad { color: #d81e2e; }
@@ -62,6 +63,9 @@
     <span class="w076-note">(no fun if you click it right away)</span>
   </div>
   <div class="w076-msg iw-msg" role="status"></div>
+  <div class="w076-expl iw-expl" hidden>
+    A protection domain is a set of (object, rights) pairs for one actor, and with every domain as a row and every object as a column the result is the access control matrix, the most general statement of who may do what to what. On UNIX and Linux a process&rsquo;s domain is defined by its UID and GID, received at login and inherited by every process, and a system call is a switch to the more privileged kernel domain; role, entitlement and set-UID are related course terms, but they do not fit these four descriptions &mdash; see <a href="#sec-07-protection-domains">the section on protection domains and the access control matrix</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -69,6 +73,7 @@
   const pool = root.querySelector('.w076-pool');
   const zones = [...root.querySelectorAll('.w076-zone')];
   const msg = root.querySelector('.w076-msg');
+  const expl = root.querySelector('.w076-expl');
   const TERMS = ['Access control matrix', 'Entitlement', 'System call', 'Protection domain',
                  'Role', 'UID and GID', 'set-UID'];
   let picked = null;
@@ -138,6 +143,7 @@
   function resetAll() {
     root.querySelectorAll('.w076-chip').forEach(c => pool.appendChild(c));
     unpick(); clearMarks();
+    expl.hidden = true;
   }
   root.querySelector('.w076-reset').addEventListener('click', resetAll);
   root.querySelector('.w076-solution').addEventListener('click', () => {
@@ -149,6 +155,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w076-msg iw-msg ok';
+    expl.hidden = false;
   });
   TERMS.forEach(t => pool.appendChild(makeChip(t)));
 })();

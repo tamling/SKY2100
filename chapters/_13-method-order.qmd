@@ -27,6 +27,10 @@
 .w135-dd .w135-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w135-dd .w135-msg.ok { color: #2e7d32; }
 .w135-dd .w135-msg.bad { color: #d81e2e; }
+.w135-dd .w135-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w135-dd iw" id="w135-dd">
   <ol class="w135-list" aria-label="steps to put in order"></ol>
@@ -37,6 +41,13 @@
     <span class="w135-note">(no fun if you click it right away)</span>
   </div>
   <div class="w135-msg iw-msg" role="status"></div>
+  <div class="w135-expl iw-expl" hidden>
+    The method runs: name the threat, judge the risk, choose the control that fits,
+    state why, and add the next layer, because no single control is sufficient. A
+    control can only be chosen once the threat and its risk are understood — the
+    course has applied this eleven times to one service, and it transfers to any
+    other — see <a href="#sec-13-argument">the section on the argument</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -118,11 +129,13 @@
       .forEach(li => list.appendChild(li));
     clearMarks();
     [...list.children].forEach(li => li.classList.add('w135-right'));
+    root.querySelector('.w135-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w135-msg iw-msg ok';
   });
   root.querySelector('.w135-reset').addEventListener('click', () => {
     build(); clearMarks();
+    root.querySelector('.w135-expl').hidden = true;
   });
   build();
 })();
