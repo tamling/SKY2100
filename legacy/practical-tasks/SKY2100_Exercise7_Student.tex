@@ -1,0 +1,261 @@
+% SKY2100 -- Exercise 7 (self-contained article; no external .sty needed)
+\documentclass[11pt]{article}
+
+% ---- Packages ------------------------------------------------------
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{pgffor}
+\usepackage{amssymb}
+\usepackage{array}
+
+% ---- Colours -------------------------------------------------------
+\definecolor{kred}{HTML}{D81E2E}
+\definecolor{kgrey}{HTML}{595959}
+
+\usepackage[colorlinks=true,urlcolor=kred,linkcolor=kred]{hyperref}
+
+% ---- Worksheet macros (inlined) ------------------------------------
+\newcommand{\wbsection}[1]{\par\vspace{11pt}\noindent
+  {\large\bfseries\color{kred}#1}\par\vspace{2pt}
+  {\color{kred!35}\hrule height 1pt}\par\vspace{6pt}}
+
+\newcommand{\task}[1]{\par\vspace{4pt}\noindent
+  \textcolor{kred}{\textbf{$\triangleright$}}~#1\par\vspace{2pt}}
+
+% Answers are discussed verbally -- no writing rules, just a small gap.
+\newcommand{\answerlines}[1]{\par\vspace{0.4em}}
+
+\newcommand{\boxlabel}[2]{\par\vspace{3pt}\noindent
+  \fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\textbf{#1:}\enspace #2}}\par\vspace{3pt}}
+\newcommand{\evidence}[1]{\boxlabel{Evidence to capture}{#1}}
+\newcommand{\note}[1]{\boxlabel{Note}{#1}}
+\newcommand{\caution}[1]{\boxlabel{Caution}{#1}}
+
+% ---- Aha box + no italics (added) ----------------------------------
+\newcommand{\aha}[1]{\par\vspace{5pt}\noindent
+  \setlength{\fboxrule}{1.2pt}%
+  {\color{kred}\fbox{\normalcolor\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{%
+     {\bfseries\color{kred}AHA.}\enspace #1}}}%
+  \setlength{\fboxrule}{0.4pt}\par\vspace{5pt}}
+\renewcommand{\emph}[1]{\textup{#1}}
+
+\newcommand{\cmd}[1]{\texttt{#1}}
+\newcommand{\cbox}{$\square$\enspace}
+
+% ---- Hint and solutions divider -- same definitions as in kristiania-workbook.sty ----
+\newcommand{\hint}[1]{\par\vspace{1pt}{\footnotesize\color{kgrey}\textbf{Hint:}\enspace #1}\par\vspace{2pt}}
+\newcommand{\solheader}{\par\vspace{9pt}\noindent{\color{kred}\rule{\linewidth}{1.2pt}}\par\vspace{4pt}}
+
+\newcommand{\signoff}{\par\vspace{9pt}\noindent
+  {\color{kred}\rule{\linewidth}{0.4pt}}\par\vspace{3pt}
+  \noindent{\footnotesize\color{kgrey}\textbf{Progress check:} Discuss your answers in the group, then
+  talk the teacher through them verbally at the next session only to track progress; nothing is handed
+  in, signed or graded.}\par}
+
+\setlist[enumerate]{itemsep=3pt,topsep=2pt,parsep=0pt}
+\setlist[itemize]{itemsep=2pt,topsep=2pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+
+\begin{document}
+\begin{center}
+  {\LARGE\bfseries Harden your service \& control access}\\[3pt]
+  {\large Session 7 -- Hardening \& access control}\\[5pt]
+  {\small Exercise 7 \textperiodcentered\ Session 7 lab \textperiodcentered\ Estimated time: 90--120 min}
+\end{center}
+\vspace{2pt}\hrule\vspace{1.1em}
+
+Write your answers in the answer document \cmd{SKY2100\_Exercise7\_Answers.docx}. Last week you put Nextcloud behind HTTPS. The service is
+encrypted but still exposed: default settings, an open SSH port, a single admin account. Today you
+\emph{shrink the attack surface} and decide \emph{who} may get in. You will reduce running services,
+lock down the firewall and SSH, add brute-force protection, and apply least privilege inside the app.
+
+\noindent\textbf{Caution:} Work only on your \emph{own} VM. Before you disable SSH password login,
+make sure key-based login already works in a second terminal -- so you cannot lock yourself out.
+
+\wbsection{1\quad Map the attack surface}
+\task{List everything that is listening on your VM and who owns each port:}
+\begin{quote}\ttfamily
+ss -tulpn
+\end{quote}
+\task{Which ports are exposed, and which do you actually need for an HTTPS Nextcloud you administer
+over SSH? Mark any you can switch off.}
+
+\wbsection{2\quad Default-deny firewall (UFW)}
+\task{Configure UFW to deny everything inbound, then allow only what you need:}
+\begin{quote}\ttfamily
+sudo ufw --force reset\hfill\# start clean: the S4 rules (22 and 80 open to all) would otherwise stay\\
+sudo ufw default deny incoming\\
+sudo ufw default allow outgoing\\
+sudo ufw allow 443/tcp\\
+sudo ufw allow from <your-ip> to any port 22\\
+sudo ufw enable \&\& sudo ufw status verbose
+\end{quote}
+\task{Why is ``default deny, then allow'' safer than ``allow the bad ports''? (one or two lines)}
+
+\wbsection{3\quad Harden SSH}
+\task{Set up key-based login (if not already), then in \cmd{/etc/ssh/sshd\_config} set:}
+\begin{quote}\ttfamily
+PasswordAuthentication no\\
+PermitRootLogin no
+\end{quote}
+Reload with \cmd{sudo systemctl reload ssh}. \textbf{Keep your current session open} and confirm a new
+key-based login works before closing it.
+\task{Why disable password authentication and root login specifically? Link each to a threat.}
+
+\wbsection{4\quad Brute-force protection (fail2ban)}
+\task{Install and enable fail2ban for SSH:}
+\begin{quote}\ttfamily
+sudo apt install -y fail2ban\\
+sudo systemctl enable --now fail2ban\\
+sudo fail2ban-client status sshd
+\end{quote}
+\task{Trigger a few failed logins from another machine/IP, then check the jail again. What changed?}
+
+\wbsection{5\quad Least privilege inside the app}
+\task{In Nextcloud, create a \emph{non-admin} user and give it only the access it needs. Do \emph{not}
+use the admin account for everyday work.}
+\task{Enable two-factor authentication (2FA) on the admin account.}
+\task{State one thing the admin can do that your new user cannot -- and why that is least privilege.}
+
+\wbsection{6\quad Cloud transfer: Microsoft Learn}
+\task{Work through ``Secure your Azure resources with Azure role-based access control (Azure RBAC)''.}
+\par\noindent\mbox{\href{https://learn.microsoft.com/training/modules/secure-azure-resources-with-rbac/}{learn.microsoft.com/training/modules/secure-azure-resources-with-rbac}}
+\task{In Azure RBAC you assign a \textbf{role} to an \textbf{identity} at a \textbf{scope}. Name the
+four scope levels from broadest to narrowest, and say which you would choose for least privilege.}
+
+\wbsection{7\quad Azure reflection}
+\task{Your UFW rules protect one VM. Which Azure construct enforces the \emph{same} default-deny idea
+across your cloud resources, and at which layer (host vs.\ network)?}
+\task{CSA calls IAM ``the new perimeter''. In your own words, why does identity matter \emph{more} in
+the cloud than the network perimeter did on-premises?}
+
+\aha{Last week the service was encrypted, yet today you still had work to do: an open SSH port, a single
+all-powerful admin, default settings. Encryption did not make the service safe, because reachability and
+access are separate problems from confidentiality on the wire. Notice where the real boundary sits now.
+On-premises you could draw a line around the building and trust what was inside, but your cloud service
+has no inside; anyone who reaches it is judged by who they are, not where they connect from. That is why
+identity is the new perimeter, and why least privilege, MFA and a locked-down SSH matter more than any
+network wall.}
+
+\wbsection{8\quad Knowledge check}
+\begin{enumerate}
+\item Define \textbf{attack surface} and give two ways hardening reduces it.
+\hint{Every point an attacker could enter or extract data — hardening shrinks it.}
+\item Why can a cloud tenant \emph{not} rely on traditional perimeter security? (Comer)
+\hint{You share physical servers and links with other tenants — no hard perimeter.}
+\item State the difference between \textbf{authentication} and \textbf{authorisation}.
+\hint{One proves who you are; one decides what you may do.}
+\item Name the three authentication factors and say what \textbf{MFA} combines.
+\hint{Something you know, have, are — and combining two different ones.}
+\item Distinguish \textbf{RBAC} from \textbf{ABAC} with one example each.
+\hint{Permissions by role, versus permissions by attributes and conditions.}
+\item State the \textbf{principle of least privilege} in one sentence.
+\hint{The minimum access an identity needs, and nothing more.}
+\item CSA defines an \textbf{entitlement} as a rule over which four things?
+\hint{A rule: which entity, which actions, which resources, under which conditions.}
+\item What does \textbf{zero trust} mean for how each request is handled?
+\hint{Trust nothing by default; verify every request instead of a one-time gate.}
+\item What is \textbf{single sign-on (SSO)}, and what problem does it solve?
+\hint{One login across services from a central identity system — no password sprawl.}
+\item What is \textbf{PAM}, and why are privileged accounts treated specially?
+\hint{Identity for admin accounts, which can do the most damage if taken.}
+\item In Azure RBAC, what three things make up a role assignment?
+\hint{Identity, role, and the scope it applies to.}
+\item Name two \textbf{common cloud access-control mistakes} and the fix for each.
+\hint{Admin roles without MFA, long-lived static keys, over-broad roles.}
+\end{enumerate}
+
+\signoff
+
+\clearpage
+\solheader
+{\LARGE\bfseries\color{kred} Solutions}\\[2pt]
+{\small Work through the lab first, then check here. Model answers are indicative — equivalent reasoning is fine.}\par\vspace{8pt}
+\noindent\textbf{Note:} Model answers are indicative -- accept equivalent reasoning. Multiple-choice
+answers are in \textbf{bold}.
+
+\wbsection{Knowledge check}
+\begin{enumerate}
+\item The \textbf{attack surface} is the sum of all points where an attacker could try to enter or
+      extract data -- open ports, services, accounts, APIs, dependencies. Hardening reduces it by, e.g.,
+      removing unused services/packages and closing ports (default-deny firewall).
+\item In the cloud, VMs and containers share physical servers and links with other tenants, so attacks
+      can arise \emph{from within} the facility; there is no clear inside/outside, so traditional
+      perimeter security cannot define the network boundary (Comer p.~236).
+\item \textbf{Authentication} verifies \emph{who} you are (identity of a user/process/device).
+      \textbf{Authorisation} decides \emph{what} you may do (access control via granted permissions).
+      Authenticate first, then authorise (CSA p.~105).
+\item Factors: \textbf{something you know} (password), \textbf{something you have} (phone/token),
+      \textbf{something you are} (biometric). \textbf{MFA} combines two or more, so a stolen password
+      alone is not enough.
+\item \textbf{RBAC} attaches permissions to roles and assigns roles to users (e.g.\ ``editor''
+      $\rightarrow$ edit files). \textbf{ABAC} grants access based on attributes/conditions (e.g.\
+      only with MFA on, only from a managed device, only if a resource tag matches) (CSA p.~105).
+\item \textbf{Least privilege}: give every identity the minimum access it needs to do its job, and no
+      more (Comer p.~236--237; CSA p.~119).
+\item An \textbf{entitlement} is a rule: this \textbf{entity} may perform \textbf{these actions} on
+      \textbf{these resources} under \textbf{these conditions} (with these attributes) (CSA p.~119).
+\item \textbf{Zero trust}: trust nothing by default; validate \emph{every} request using identity (and
+      attributes/risk), instead of granting blanket access after a single login (Comer p.~237; CSA
+      p.~120).
+\item \textbf{Single sign-on (SSO)}: one set of credentials for all services via a central identity
+      system; it solves the problem of separate logins per service and lets a user authenticate once
+      per task (Comer p.~238).
+\item \textbf{PAM (Privileged Access Management)} handles identity for administrative/superuser
+      accounts. They are treated specially because forging one lets an attacker cause serious damage;
+      PAM limits each admin to the systems they manage and logs all (and failed) accesses (Comer
+      p.~238--239).
+\item A role assignment = an \textbf{identity} (user/group/service principal/managed identity) +
+      a \textbf{role} (e.g.\ Reader, Contributor) + a \textbf{scope} (management group / subscription /
+      resource group / resource).
+\item Any two of: admin roles without MFA; long-lived static access keys; over-broad roles (Owner where
+      Reader suffices); public-by-accident storage; management plane exposed with weak auth. Fix:
+      enforce MFA; rotate/eliminate static secrets (use managed identities); apply least-privilege
+      roles; close public access; restrict and protect the management plane (CSA p.~104, 120).
+\end{enumerate}
+
+\wbsection{Lab checkpoints}
+\begin{itemize}
+\item \textbf{Surface:} \cmd{ss -tulpn} should show only what is needed (443 for HTTPS, 22 for SSH).
+      Anything else -- old test servers, databases bound to \cmd{0.0.0.0} -- is a candidate to disable
+      or bind to localhost.
+\item \textbf{Firewall:} \cmd{ufw status verbose} must show \emph{default deny incoming} plus explicit
+      allows. ``Default deny then allow'' fails safe -- an unforeseen service is blocked unless you
+      opened it; ``block the bad ports'' fails open.
+\item \textbf{SSH:} key-based login works; \cmd{PasswordAuthentication no} defeats password
+      guessing/brute force; \cmd{PermitRootLogin no} removes the highest-value target (use a normal
+      user + \cmd{sudo}). Verify a new session \emph{before} closing the old one.
+\item \textbf{fail2ban:} after a few failed attempts, \cmd{fail2ban-client status sshd} shows failed/
+      banned counts -- continuous brute force becomes a few blocked tries. This is detection feeding
+      response (Comer p.~238: record failed logins to track attackers).
+\item \textbf{App least privilege:} a non-admin user cannot change server settings, manage users, or
+      install apps; admin has 2FA enabled. Everyday work should not use the admin account.
+\end{itemize}
+
+\wbsection{Cloud transfer \& reflection}
+\begin{itemize}
+\item \textbf{RBAC scope (broadest$\rightarrow$narrowest):} management group, subscription, resource
+      group, resource. For least privilege, assign at the \emph{narrowest} scope that still lets the
+      task succeed.
+\item \textbf{Azure default-deny:} a \textbf{Network Security Group (NSG)} enforces allow/deny by port/
+      protocol/source at the \emph{network} layer around resources (the host UFW works at the host
+      layer). Both should be default-deny.
+\item \textbf{IAM as the new perimeter:} cloud consolidates data-centre controls into Internet-facing
+      consoles and APIs protected mainly by identity; with no network wall, identity is what stands
+      between an attacker and everything. CSA notes the vast majority of cloud-native breaches start
+      with IAM failures (CSA p.~103--104).
+\end{itemize}
+
+\wbsection{References}
+CSA Security Guidance v5, \textbf{Domain~5: Identity \& Access Management} (p.~103--120, verified) and
+\textbf{Domain~7: Infrastructure \& Networking} (p.~147--148, verified). Comer, \emph{The Cloud
+Computing Book}, Ch.~17 -- Cloud Security \& Privacy: attack surface (p.~233--235), perimeter \& zero
+trust (p.~236--237), Identity Management \& SSO (p.~238), PAM (p.~238--239), verified. MS Learn:
+\emph{Secure your Azure resources with Azure RBAC} (verified, June 2026) -- role + identity + scope,
+with an activity log of RBAC changes.
+
+\end{document}

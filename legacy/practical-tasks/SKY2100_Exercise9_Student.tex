@@ -1,0 +1,254 @@
+% SKY2100 -- Exercise 9 (self-contained article; no external .sty needed)
+\documentclass[11pt]{article}
+
+% ---- Packages ------------------------------------------------------
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{pgffor}
+\usepackage{amssymb}
+\usepackage{array}
+
+% ---- Colours -------------------------------------------------------
+\definecolor{kred}{HTML}{D81E2E}
+\definecolor{kgrey}{HTML}{595959}
+
+\usepackage[colorlinks=true,urlcolor=kred,linkcolor=kred]{hyperref}
+
+% ---- Worksheet macros (inlined) ------------------------------------
+\newcommand{\wbsection}[1]{\par\vspace{11pt}\noindent
+  {\large\bfseries\color{kred}#1}\par\vspace{2pt}
+  {\color{kred!35}\hrule height 1pt}\par\vspace{6pt}}
+
+\newcommand{\task}[1]{\par\vspace{4pt}\noindent
+  \textcolor{kred}{\textbf{$\triangleright$}}~#1\par\vspace{2pt}}
+
+% Answers are discussed verbally -- no writing rules, just a small gap.
+\newcommand{\answerlines}[1]{\par\vspace{0.4em}}
+
+\newcommand{\boxlabel}[2]{\par\vspace{3pt}\noindent
+  \fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\textbf{#1:}\enspace #2}}\par\vspace{3pt}}
+\newcommand{\evidence}[1]{\boxlabel{Evidence to capture}{#1}}
+\newcommand{\note}[1]{\boxlabel{Note}{#1}}
+\newcommand{\caution}[1]{\boxlabel{Caution}{#1}}
+
+% ---- Aha box + no italics (added) ----------------------------------
+\newcommand{\aha}[1]{\par\vspace{5pt}\noindent
+  \setlength{\fboxrule}{1.2pt}%
+  {\color{kred}\fbox{\normalcolor\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{%
+     {\bfseries\color{kred}AHA.}\enspace #1}}}%
+  \setlength{\fboxrule}{0.4pt}\par\vspace{5pt}}
+\renewcommand{\emph}[1]{\textup{#1}}
+
+\newcommand{\cmd}[1]{\texttt{#1}}
+\newcommand{\cbox}{$\square$\enspace}
+
+% ---- Hint and solutions divider -- same definitions as in kristiania-workbook.sty ----
+\newcommand{\hint}[1]{\par\vspace{1pt}{\footnotesize\color{kgrey}\textbf{Hint:}\enspace #1}\par\vspace{2pt}}
+\newcommand{\solheader}{\par\vspace{9pt}\noindent{\color{kred}\rule{\linewidth}{1.2pt}}\par\vspace{4pt}}
+
+\newcommand{\signoff}{\par\vspace{9pt}\noindent
+  {\color{kred}\rule{\linewidth}{0.4pt}}\par\vspace{3pt}
+  \noindent{\footnotesize\color{kgrey}\textbf{Progress check:} Discuss your answers in the group, then
+  talk the teacher through them verbally at the next session only to track progress; nothing is handed
+  in, signed or graded.}\par}
+
+\setlist[enumerate]{itemsep=3pt,topsep=2pt,parsep=0pt}
+\setlist[itemize]{itemsep=2pt,topsep=2pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+
+\begin{document}
+\begin{center}
+  {\LARGE\bfseries Watch your service --- find the attack in the logs}\\[3pt]
+  {\large Session 9 -- Security monitoring \& IDS}\\[5pt]
+  {\small Exercise 9 \textperiodcentered\ Session 9 lab \textperiodcentered\ Estimated time: 90--120 min}
+\end{center}
+\vspace{2pt}\hrule\vspace{1.1em}
+
+Write your answers in the answer document \cmd{SKY2100\_Exercise9\_Answers.docx}. Your Nextcloud is encrypted (S6), hardened (S7) and shielded by a WAF (S8). Those
+controls already \emph{produce} telemetry. Today you collect it in one place, then hunt for the attacks
+you blocked last week and a brute-force pattern -- the difference between \emph{blocking} an attack and
+\emph{seeing} it.
+
+\noindent\textbf{Caution:} Monitor and generate traffic only on your \emph{own} VM. The ``attacks'' below
+are harmless probes against your own service.
+
+\wbsection{1\quad Collect the logs in one place}
+\task{Identify and gather the security-relevant logs your VM already produces:}
+\begin{quote}\ttfamily
+sudo tail -n 20 /var/log/auth.log\\
+sudo fail2ban-client status sshd\\
+sudo tail -n 20 /var/log/modsec\_audit.log\hfill\# WAF (path may differ)\\
+sudo journalctl -u nginx --no-pager | tail -n 20
+\end{quote}
+\note{No \cmd{/var/log/auth.log}? Ubuntu without rsyslog keeps these lines in the journal:
+\cmd{sudo journalctl -u ssh --no-pager | tail -n 20}, and in Section~3 use
+\cmd{sudo journalctl -u ssh | grep "Failed password"} instead of the \cmd{grep} on the file.}
+
+\task{Which log would you check first if you suspected (a) a brute-force login, (b) a blocked web
+attack, (c) a service crash? One line.}
+
+\wbsection{2\quad Find last week's attack in the WAF log}
+\task{Re-send one of your S8 test payloads, then locate it in the ModSecurity audit log:}
+\begin{quote}\ttfamily
+curl -k "https://<your-host>/?q=<script>alert(1)</script>"\\
+sudo grep -iE "alert\textbackslash(1\textbackslash)|XSS|941" /var/log/modsec\_audit.log | tail
+\end{quote}
+\task{Which CRS rule fired (rule ID / message), what was the source IP, and what status was returned?}
+
+\wbsection{3\quad Spot a pattern --- brute force over time}
+\task{Generate a few failed SSH logins (from another host or with a wrong key/user), then look for the
+\emph{pattern}, not the single line:}
+\begin{quote}\ttfamily
+sudo grep "Failed password" /var/log/auth.log | tail -n 20\\
+sudo grep "Failed password" /var/log/auth.log | wc -l\\
+sudo fail2ban-client status sshd
+\end{quote}
+\task{How many failures, from how many distinct IPs, over what time window? Why is the \emph{pattern} the
+alert, not any single failed login?}
+
+\aha{You blocked these attacks weeks ago, so why look at them now? Because blocking and seeing are
+different things. fail2ban and the WAF stopped the attempts, but only the logs tell you they happened
+at all, who tried, and how often. Notice too what counts as the signal. A single failed login is
+nothing; people mistype passwords all the time. The alert is the pattern, many failures from one or a
+few addresses in a short window, which no single line reveals. This is exactly why logs have to be
+collected in one place and read together, and it is the groundwork for the timeline you build next week.}
+
+\wbsection{4\quad (Optional) Run an IDS --- Suricata}
+\task{Install Suricata, run it on your interface, and read one alert:}
+\begin{quote}\ttfamily
+sudo apt install -y suricata\\
+sudo suricata -i <iface> \&\\
+sudo tail -f /var/log/suricata/fast.log
+\end{quote}
+\task{Is Suricata here a NIDS or a HIDS, and is it signature- or anomaly-based by default? One line.}
+
+\wbsection{5\quad Cloud transfer: Microsoft Learn}
+\task{Work through ``Introduction to Microsoft Sentinel'' and note what a cloud-native SIEM does.}
+\par\noindent\mbox{\href{https://learn.microsoft.com/training/modules/intro-to-azure-sentinel/}{learn.microsoft.com/training/modules/intro-to-azure-sentinel}}
+\task{Name the three things a SIEM does with telemetry (hint: collect, \dots, \dots), and one advantage
+of a SIEM over reading each host's logs by hand.}
+
+\wbsection{6\quad Azure reflection}
+\task{CSA distinguishes \emph{logs} (slow path) from \emph{events} (fast path). For detecting a
+fast-moving management-plane attack, which would you rely on, and why?}
+\task{Your fail2ban and WAF \emph{blocked} attacks. Why is also \emph{logging and alerting} on them
+valuable, even though they were already stopped?}
+
+\wbsection{7\quad Knowledge check}
+\begin{enumerate}
+\item Why is ``assume breach'' the starting point for monitoring?
+\hint{Prevention is never perfect — plan to catch what gets through.}
+\item State the difference between a \textbf{log} and an \textbf{event} (CSA).
+\hint{One is the full, durable record; one is a single notable occurrence.}
+\item State the difference between an \textbf{event} and an \textbf{alert}.
+\hint{Raw captured data, versus an actionable notification derived from it.}
+\item Name three telemetry sources you would collect on a VM.
+\hint{auth.log, fail2ban, the WAF audit log, the web access log — any three.}
+\item Why must logs be \emph{centralised} and \emph{protected}?
+\hint{Scattered logs cannot be correlated; local ones an attacker can edit.}
+\item Signature vs anomaly detection: one strength and one weakness of each.
+\hint{One is precise but blind to new attacks; one catches new ones but is noisy.}
+\item Difference between \textbf{NIDS} and \textbf{HIDS}, with one example tool each.
+\hint{One watches network traffic; one watches a single host's logs and files.}
+\item Difference between an \textbf{IDS} and an \textbf{IPS}.
+\hint{One alerts, one blocks — a WAF is the blocking kind for HTTP.}
+\item What is a \textbf{SIEM}, and what does ``correlation'' add?
+\hint{It aggregates many sources; correlation ties separate events into one story.}
+\item What does the \textbf{MITRE ATT\&CK} framework provide?
+\hint{A map of real attacker tactics — context for which indicator means what.}
+\item Define \textbf{MTTD} and why it matters.
+\hint{Mean time to detect — the longer the dwell time, the worse the damage.}
+\item What is \textbf{alert fatigue}, and how is it reduced?
+\hint{Too many low-value alerts hide the real one; prioritise and tune.}
+\end{enumerate}
+
+\signoff
+
+\clearpage
+\solheader
+{\LARGE\bfseries\color{kred} Solutions}\\[2pt]
+{\small Work through the lab first, then check here. Model answers are indicative — equivalent reasoning is fine.}\par\vspace{8pt}
+\noindent\textbf{Note:} Model answers are indicative -- accept equivalent reasoning. Multiple-choice
+answers are in \textbf{bold}.
+
+\wbsection{Knowledge check}
+\begin{enumerate}
+\item Prevention (firewall, TLS, hardening, WAF) is never perfect -- new vulnerabilities, stolen
+      credentials and novel payloads slip through. ``Assume breach'' means you also build detection to
+      catch what gets in, rather than trusting that nothing will.
+\item A \textbf{log} is a relatively complete, detailed, durable record of activity (CRUD), often batched
+      and slightly delayed. An \textbf{event} records only a change (C-UD), is ephemeral (not kept unless
+      saved) and is available within seconds (CSA p.~125).
+\item An \textbf{event} is raw captured data/activity; an \textbf{alert} is an \emph{actionable
+      notification} derived from analysing events, signalling a potential threat. Events are the input;
+      alerts are the output worth acting on (CSA p.~124).
+\item Any three of: \cmd{/var/log/auth.log} (logins/sudo), fail2ban log (bans), the WAF/ModSecurity audit
+      log (blocked attacks), the web access log (requests/status), \cmd{journalctl}/syslog (service \&
+      system events). (CSA management-plane / service / resource logs, p.~128.)
+\item \textbf{Centralised:} scattered logs cannot be correlated and give no overview of the whole estate
+      (CSA p.~125). \textbf{Protected:} an attacker who can edit/delete logs erases their trail (the C-UD
+      evasion, CSA p.~137); ship logs off-host, append-only.
+\item \textbf{Signature:} precise, low false positives, but blind to novel attacks. \textbf{Anomaly:} can
+      catch unknown attacks by learning ``normal'', but more false positives and needs tuning (CSA
+      p.~126).
+\item \textbf{NIDS} inspects network traffic (e.g.\ Suricata, Snort); \textbf{HIDS} watches one
+      host's logs, files and processes (e.g.\ Wazuh, OSSEC). NIDS sees the knock; HIDS sees what happens
+      inside.
+\item An \textbf{IDS} detects and \emph{alerts}; an \textbf{IPS} detects and \emph{blocks}. The WAF is an
+      application-layer IPS.
+\item A \textbf{SIEM} aggregates, analyses and correlates logs/events from many sources (CSA p.~138).
+      \textbf{Correlation} ties separate events (failed login + config change + data export) into one
+      meaningful incident no single log would reveal.
+\item \textbf{MITRE ATT\&CK} maps real attacker tactics and techniques, giving context for which
+      indicators relate to which attack stage, so teams focus on the attacks most relevant to them (CSA
+      p.~126).
+\item \textbf{MTTD} = mean time to detect: the gap between an attack starting and being noticed. It
+      matters because the longer the dwell time, the more an attacker learns, spreads and exfiltrates.
+\item \textbf{Alert fatigue:} too many low-value alerts cause analysts to miss the real one. Reduced by
+      prioritising (severity/confidence), tuning out false positives, and correlating many events into
+      fewer incidents (CSA p.~124).
+\end{enumerate}
+
+\wbsection{Lab checkpoints}
+\begin{itemize}
+\item \textbf{Collect:} students should locate at least \cmd{auth.log}, the fail2ban status, the WAF
+      audit log and the web/access log. First-check mapping: brute force $\rightarrow$
+      \cmd{auth.log}/fail2ban; blocked web attack $\rightarrow$ WAF audit log; crash $\rightarrow$
+      \cmd{journalctl}/syslog.
+\item \textbf{WAF log:} the re-sent XSS probe should appear with a CRS rule (typically a 941xxx XSS rule),
+      the source IP and a 403. This is the ``see what you blocked'' moment -- blocking and logging are
+      different jobs.
+\item \textbf{Brute-force pattern:} several \cmd{Failed password} lines from one or more IPs in a short
+      window. The teaching point (CSA p.~137): one failure is noise; ``repeated login attempts from
+      different IPs'' over time is the alert-worthy pattern.
+\item \textbf{Suricata (optional):} by default a \textbf{NIDS}, \textbf{signature}-based (rule sets). A
+      single \cmd{fast.log} alert (e.g.\ a scan or a rule hit) is enough.
+\end{itemize}
+
+\wbsection{Cloud transfer \& reflection}
+\begin{itemize}
+\item \textbf{SIEM:} collects, \emph{correlates} and \emph{alerts} on telemetry from many sources.
+      Advantage over per-host logs: one place to search, cross-source correlation, and consistent
+      alerting -- you see the whole estate, not one machine.
+\item \textbf{Logs vs events for a fast attack:} rely on \textbf{events} (the fast path, near-real-time,
+      e.g.\ Defender/GuardDuty/Sentinel) for management-plane attacks, because logs are the slow path and
+      delays are unacceptable when attacks move fast (CSA p.~126, 137).
+\item \textbf{Why log blocked attacks:} blocking stops \emph{this} attempt; logging/alerting reveals that
+      you are being targeted, by whom and how often, feeds correlation and forensics, and meets
+      compliance -- detection and prevention are complementary, not redundant.
+\end{itemize}
+
+\wbsection{References}
+CSA Security Guidance v5, \textbf{Domain~6: Security Monitoring} (p.~124--143, verified): cloud monitoring
+challenges and management plane (p.~125--126), logs vs events and their uses (p.~125--126), events vs
+alerts (p.~124), timeliness and key indicators / MITRE ATT\&CK (p.~126), telemetry sources (p.~127--128),
+detection paths and the C-UD evasion example (p.~137), SIEM vs CSP alerts vs CSPM (p.~138). Comer,
+\emph{The Cloud Computing Book}, Ch.~17.8 -- AI \& security analytics: context-aware anomaly detection and
+DDoS detection (p.~239), verified. MS Learn: \emph{Introduction to Microsoft Sentinel} (verified, June
+2026) -- cloud-native SIEM + SOAR.
+
+\end{document}

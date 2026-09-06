@@ -401,6 +401,16 @@ vocabulary - one word per field. Then press **Check**.
 {{< include _01-trc-input.qmd >}}
 :::
 
+::: {.callout-important icon=false}
+## Related lab: hands-on for this session
+Theory done - now build it. This session's practical task is
+[Exercise 1: Set up your team, your lab & your Microsoft Learn profile](../labs/exercise-01.qmd)
+(60-90 min, in your lab group); it puts this chapter's concepts to
+work on your own service. Work from the official worksheet PDF in
+Canvas - the page here mirrors it for reading and reference; the lab
+rhythm is explained in [Practical tasks](../labs/index.qmd).
+:::
+
 ## Self-check {#sec-01-self-check}
 
 **Q1** *(tests @sec-01-definition-cloud-computing · basic)*

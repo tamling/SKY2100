@@ -1,0 +1,146 @@
+\documentclass[11pt]{article}
+\usepackage{kristiania-workbook}
+
+\begin{document}
+\begin{center}
+  {\LARGE\bfseries Run a cloud-native workload in Docker}\\[3pt]
+  {\large Session 5 -- Cloud-native vs lift-and-shift}\\[5pt]
+  {\small Exercise 5 \textperiodcentered\ Session 5 lab \textperiodcentered\ Estimated time: 75--100 min}
+\end{center}
+\vspace{2pt}\hrule\vspace{1.1em}
+
+Write your answers in the answer document \cmd{SKY2100\_Exercise5\_Answers.docx}. Last week you locked down a host; today you run a real
+application as a \textbf{container} and feel the difference between a virtual machine and a container
+first-hand. You will keep this Nextcloud workload: in session~6 you put it behind HTTPS, and in
+session~7 you configure its access control.
+
+\noindent\textbf{Caution:} Run everything in your own VM. Containers here are for learning; do not
+expose this Nextcloud to the public internet.
+
+\wbsection{1\quad Install Docker}
+\task{Install and verify Docker} (note the version in the answer document):
+\begin{quote}\ttfamily
+sudo apt update \&\& sudo apt install -y docker.io\\
+sudo docker --version\\
+sudo docker run hello-world
+\end{quote}
+
+\wbsection{2\quad Run Nextcloud as a container}
+\task{Pull and start the container:}
+\begin{quote}\ttfamily
+sudo docker run -d -p 8080:80 --name nextcloud nextcloud
+\end{quote}
+Open \cmd{http://localhost:8080} in the VM browser and complete the first-run admin setup.
+
+\task{Inspect the running container:} \cmd{sudo docker ps}, \cmd{sudo docker logs nextcloud}.
+
+\wbsection{3\quad Container vs VM --- observe the difference}
+\task{Note in the answer document, and compare with your VM baseline (Exercise 2):} the approximate
+start-up time of the container, the ports it exposes (\cmd{docker ps}), and whether it runs its own
+kernel (Y/N).
+\task{In one or two sentences: why did the container start so much faster than booting a VM?}
+
+\aha{The container started in seconds because it did not boot an operating system. Your VM from
+Exercise~2 boots a whole kernel and its background services; the Nextcloud container reuses the host's
+kernel and is really just an isolated process. That is why it is small and fast, and it is also why its
+isolation is weaker than a VM's. A VM is separated by the hypervisor, but every container on this host
+shares one kernel, so a kernel-level escape reaches the host and its neighbours. The speed you liked
+and the security you have to think about come from the same design choice.}
+
+\wbsection{4\quad Cloud transfer: Microsoft Learn}
+\task{Complete ``Introduction to Docker containers''.}
+\par\noindent\mbox{\href{https://learn.microsoft.com/training/modules/intro-to-docker-containers/}{learn.microsoft.com/training/modules/intro-to-docker-containers}}
+
+\task{Define the terms} you met in the lab, one line each in the answer document: image, container,
+registry (Docker Hub).
+
+\wbsection{5\quad Azure reflection}
+\task{You ran Nextcloud with \cmd{docker run}. Azure Container Apps would run the \emph{same} image
+for you. Name one thing you would no longer manage, and one new thing you would have to configure.}
+
+\wbsection{6\quad Knowledge check}
+\begin{enumerate}
+\item Order these from least to most cloud change: refactor, rehost, rebuild, replatform.
+\hint{Rehost is the least change; rebuild is the most.}
+\item What is the key technical difference between a \textbf{VM} and a \textbf{container}?
+\hint{One runs its own kernel; one shares the host's.}
+\item Which kernel does a container use?\\
+      \cbox its own \quad \cbox a copy of the host's \quad \cbox the shared host kernel \quad \cbox none
+\hint{It shares the host's.}
+\item Name the two operating-system features that make containers possible (Comer Ch.~6).
+\hint{Namespaces give isolation, control groups (cgroups) impose limits.}
+\item Define \textbf{image}, \textbf{container} and \textbf{Dockerfile} in one line each.
+\hint{A read-only template, a running instance of it, and the recipe that builds the template.}
+\item Give \emph{two} container-specific security risks that do not apply to a single VM.
+\hint{Shared-kernel escape, untrusted or outdated images, secrets baked into a layer.}
+\item Contrast a \textbf{monolith} with \textbf{microservices} in one sentence each.
+\hint{One codebase with everything, versus many small independent services.}
+\item State one \emph{advantage} and one \emph{disadvantage} of microservices (Comer Ch.~12).
+\hint{Independent scaling and fault containment — at the cost of many network calls.}
+\item What does a \textbf{service mesh} do, and which security control can it enforce on internal
+      calls?
+\hint{A sidecar proxy beside each service; it can enforce mutual TLS.}
+\item As you move from lift-and-shift to serverless, who becomes responsible for patching the
+      \textbf{operating system}?
+\hint{As you move toward serverless, the provider takes it over.}
+\item True or false: cloud-native architecture removes security risk. Justify.
+\hint{It relocates risk (to configuration, images, identity); it does not remove it.}
+\item (Reflection) For your Nextcloud, name one workload-security control (CSA Domain~8) you would
+      apply first, and why.
+\end{enumerate}
+
+\signoff
+
+\clearpage
+\solheader
+{\LARGE\bfseries\color{kred} Solutions}\\[2pt]
+{\small Work through the lab first, then check here. Model answers are indicative — equivalent reasoning is fine.}\par\vspace{8pt}
+\noindent\textbf{Note:} Model answers are indicative -- accept equivalent reasoning. Multiple-choice
+answers are in \textbf{bold}.
+
+\wbsection{Knowledge check}
+\begin{enumerate}
+\item \textbf{Rehost $\rightarrow$ replatform $\rightarrow$ refactor $\rightarrow$ rebuild.}
+\item A \textbf{VM} virtualises the \emph{hardware} and runs its own OS kernel; a \textbf{container}
+      virtualises the \emph{operating system} and shares the host kernel -- it is essentially an
+      isolated process.
+\item \textbf{The shared host kernel.}
+\item \textbf{Namespaces} (give a process its own view of processes, network, filesystem, users) and
+      \textbf{control groups / cgroups} (limit CPU, memory, I/O). (Comer Ch.~6, p.~73--74, verified.)
+\item \textbf{Image} = a read-only template (app + dependencies, built in layers); \textbf{Container} =
+      a running instance of an image; \textbf{Dockerfile} = a recipe that builds an image step by step.
+\item Any two of: shared-kernel escape (weaker isolation than a VM); untrusted/outdated images;
+      secrets baked into an image layer; over-privileged or root containers / host networking.
+\item \textbf{Monolith} = one large program with all features in a single codebase; \textbf{microservices}
+      = many small independent services communicating over the network. (Comer Ch.~12, p.~163--165.)
+\item Advantage: independent scaling/deployment, fault containment, parallel teams. Disadvantage: many
+      network calls (complexity/latency), harder to test and trace, more connections to secure. (Comer
+      Ch.~12, p.~165--167, verified.)
+\item A \textbf{service mesh} puts a sidecar proxy beside each service to manage service-to-service
+      traffic; it can enforce \textbf{mutual TLS (mTLS)}, identity and policy on internal calls. (Comer
+      Ch.~12, p.~175.)
+\item \textbf{The provider} (as you move toward serverless / PaaS).
+\item \textbf{False} -- cloud-native \emph{relocates} risk (from patching servers to securing
+      configuration, images and identity); it does not remove it.
+\item Reflection -- e.g.\ harden the image, run non-root, scan for vulnerabilities, or segment the
+      workload (CSA Domain~8).
+\end{enumerate}
+
+\wbsection{Lab checkpoints}
+\begin{itemize}
+\item The container starts in seconds because it does \emph{not} boot an operating system -- it is a
+      process using the host kernel (contrast with the VM boot in Exercise~2).
+\item \cmd{docker ps} should show the \cmd{nextcloud} container mapping host \cmd{8080} to container
+      \cmd{80}. The container does \emph{not} run its own kernel.
+\item Good answers connect ``faster start-up'' to ``no guest OS / shared kernel'', not just ``smaller''.
+\end{itemize}
+
+\wbsection{References}
+Comer Ch.~6 -- Containers (VM overhead \textbf{p.~71--72}, namespaces \textbf{p.~74}, container approach
+\textbf{p.~75}, Docker images/Dockerfile \textbf{p.~76--83}); Comer Ch.~12 -- Microservices (monolith vs
+microservices \textbf{p.~163--165}, advantages/disadvantages \textbf{p.~165--167}, service mesh
+\textbf{p.~175}) -- all verified. CSA Security Guidance v5, \textbf{Domain~8: Cloud Workload Security}
+(verified). J\o sang (application/workload security -- syllabus, page numbers not verified). MS Learn:
+\emph{Introduction to Docker containers} (verified, June 2026).
+
+\end{document}

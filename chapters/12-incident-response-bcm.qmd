@@ -306,6 +306,16 @@ then press **Check**. Two of the five names belong to none of the boxes.
 {{< include _12-regulatory-frame.qmd >}}
 :::
 
+::: {.callout-important icon=false}
+## Related lab: hands-on for this session
+Theory done - now build it. This session's practical task is
+[Exercise 12: Automate a control - and govern with NIST CSF 2.0](../labs/exercise-12.qmd)
+(90-120 min, in your lab group); it puts this chapter's concepts to
+work on your own service. Work from the official worksheet PDF in
+Canvas - the page here mirrors it for reading and reference; the lab
+rhythm is explained in [Practical tasks](../labs/index.qmd).
+:::
+
 ## Self-check {#sec-12-self-check}
 
 **Q1** *(tests @sec-12-events-incidents-breaches · basic)*

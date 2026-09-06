@@ -1,0 +1,292 @@
+% SKY2100 -- Exercise 12 (self-contained article; no external .sty needed)
+\documentclass[11pt]{article}
+
+% ---- Packages ------------------------------------------------------
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{pgffor}
+\usepackage{amssymb}
+\usepackage{array}
+
+% ---- Colours -------------------------------------------------------
+\definecolor{kred}{HTML}{D81E2E}
+\definecolor{kgrey}{HTML}{595959}
+
+\usepackage[colorlinks=true,urlcolor=kred,linkcolor=kred]{hyperref}
+
+% ---- Worksheet macros (inlined) ------------------------------------
+\newcommand{\wbsection}[1]{\par\vspace{11pt}\noindent
+  {\large\bfseries\color{kred}#1}\par\vspace{2pt}
+  {\color{kred!35}\hrule height 1pt}\par\vspace{6pt}}
+
+\newcommand{\task}[1]{\par\vspace{4pt}\noindent
+  \textcolor{kred}{\textbf{$\triangleright$}}~#1\par\vspace{2pt}}
+
+% Answers are discussed verbally -- no writing rules, just a small gap.
+\newcommand{\answerlines}[1]{\par\vspace{0.4em}}
+
+\newcommand{\boxlabel}[2]{\par\vspace{3pt}\noindent
+  \fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\textbf{#1:}\enspace #2}}\par\vspace{3pt}}
+\newcommand{\evidence}[1]{\boxlabel{Evidence to capture}{#1}}
+\newcommand{\note}[1]{\boxlabel{Note}{#1}}
+\newcommand{\caution}[1]{\boxlabel{Caution}{#1}}
+
+% ---- Aha box + no italics (added) ----------------------------------
+\newcommand{\aha}[1]{\par\vspace{5pt}\noindent
+  \setlength{\fboxrule}{1.2pt}%
+  {\color{kred}\fbox{\normalcolor\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{%
+     {\bfseries\color{kred}AHA.}\enspace #1}}}%
+  \setlength{\fboxrule}{0.4pt}\par\vspace{5pt}}
+\renewcommand{\emph}[1]{\textup{#1}}
+
+\newcommand{\cmd}[1]{\texttt{#1}}
+\newcommand{\cbox}{$\square$\enspace}
+
+% ---- Hint and solutions divider -- same definitions as in kristiania-workbook.sty ----
+\newcommand{\hint}[1]{\par\vspace{1pt}{\footnotesize\color{kgrey}\textbf{Hint:}\enspace #1}\par\vspace{2pt}}
+\newcommand{\solheader}{\par\vspace{9pt}\noindent{\color{kred}\rule{\linewidth}{1.2pt}}\par\vspace{4pt}}
+
+\newcommand{\signoff}{\par\vspace{9pt}\noindent
+  {\color{kred}\rule{\linewidth}{0.4pt}}\par\vspace{3pt}
+  \noindent{\footnotesize\color{kgrey}\textbf{Progress check:} Discuss your answers in the group, then
+  talk the teacher through them verbally at the next session only to track progress; nothing is handed
+  in, signed or graded.}\par}
+
+\setlist[enumerate]{itemsep=3pt,topsep=2pt,parsep=0pt}
+\setlist[itemize]{itemsep=2pt,topsep=2pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+
+\begin{document}
+\begin{center}
+  {\LARGE\bfseries Automate a control --- and govern with NIST CSF 2.0}\\[3pt]
+  {\large Session 12 -- Security automation, AI}\\[5pt]
+  {\small Exercise 12 \textperiodcentered\ Session 12 lab \textperiodcentered\ Estimated time: 90--120 min}
+\end{center}
+\vspace{2pt}\hrule\vspace{1.1em}
+
+Write your answers in the answer document \cmd{SKY2100\_Exercise12\_Answers.docx}. You spent eleven sessions building security by hand. Today you take one step toward
+running it at scale: automate a single control, then step back and \emph{govern} -- mapping your whole
+term's work onto the NIST CSF~2.0 functions and reflecting on the role of AI.
+
+\noindent\textbf{Caution:} Run scripts only against your \emph{own} VM. A script that \emph{enforces} a
+setting can also break things -- test it, and read it before you run it.
+
+\wbsection{1\quad Automate one control}
+\task{Turn one manual control from this term into a small script that \emph{checks} (and optionally
+\emph{enforces}) a setting. Pick one, e.g.:}
+\begin{quote}\ttfamily
+\# Example: check that UFW is active and SSH is limited\\
+sudo ufw status | grep -q "Status: active" \textbackslash\\
+\quad \&\& echo OK || echo "FAIL: firewall off"\\
+\# Example: check a key file is not world-readable\\
+test "\$(stat -c \%A /path/to/secret)" = "-rw-------" \&\& echo OK || echo "FAIL: perms"
+\end{quote}
+\task{What does your script check, and what would it do (or alert) on failure? Why is a script better
+than checking by hand across many machines?}
+
+\aha{You spent eleven weeks applying controls by hand on one VM. The script you just wrote does the same
+check in a second, and it would do it identically on a hundred machines without getting tired or
+skipping one. That is the difference between governance and automation: governance decides the rule,
+such as ``the firewall must be on'', and automation enforces it consistently at a scale no person can
+match. Keep one caution in view. The same script that enforces a setting everywhere can also break
+things everywhere if the rule is wrong, and passing your own check is not the same as being secure,
+since a checkbox cannot stop an attack it was never written to look for.}
+
+\wbsection{2\quad Map your term to NIST CSF 2.0}
+\task{Place each of your S1--S11 deliverables under the right CSF~2.0 function} --- Govern, Identify,
+Protect, Detect, Respond, Recover --- in the mapping table of the answer document (session + what you did).
+
+\wbsection{3\quad Governance reflection}
+\task{Governance sets the rules; automation enforces them. Give one example of a \emph{policy} for your
+service (e.g.\ ``all backups must be off-site''), and how \emph{policy as code} could enforce it
+automatically.}
+\task{For one CSF function, name the single best thing you did this term and one gap that still remains.}
+
+\wbsection{4\quad AI reflection}
+\task{Name one way AI could help \emph{defend} your service (e.g.\ anomaly detection, alert
+summarisation), and one new \emph{risk} that deploying or using AI introduces (e.g.\ prompt injection,
+hallucinated output).}
+\task{Why does ``a human stays accountable'' remain true even when AI does the work? (one line)}
+
+\wbsection{5\quad Risk register \& assurance (the auditor's view)}
+A control is only worth what you can \emph{justify} and \emph{evidence}. This is the governance work a
+cloud-risk or audit team does on top of the technical build --- and it uses the CSA \textbf{Risk, Audit \&
+Compliance} domain (Domain~3) you have not yet touched.
+
+\task{\textbf{Risk register.} Record three cloud risks for your service in the risk register of the answer
+document (CSA Domain~3, p.~65--66). Columns: asset / service, threat, risk level, owner, review. Derive
+the level as \cmd{Risk = impact $\times$ likelihood} and pick critical / high / moderate / low --- for
+example: Nextcloud data on the VM / ransomware / High (high $\times$ moderate) / you / annual.}
+
+\task{\textbf{Risk treatment.} For your highest risk, choose one of the four options ---
+\emph{mitigate / transfer / avoid / accept} --- name the control, and state the \textbf{residual risk}
+left after it (CSA p.~62). Who should formally \emph{accept} that residual risk?}
+
+\task{\textbf{Assurance.} You cannot audit a hyperscaler yourself --- you read its assurance report
+instead. Name one report you would request before trusting a provider with this data, and one thing you
+would check in it: a \textbf{SOC~2 / ISAE~3402} attestation, an \textbf{ISO/IEC 27001} certificate,
+\textbf{BSI~C5}, or the provider's \textbf{CSA STAR} entry. For your choice, say whether it is an
+\emph{audit} (independent opinion, high assurance) or an \emph{attestation} (a statement of posture,
+moderate assurance) --- CSA Domain~3, p.~73--76.}
+
+\wbsection{6\quad Cloud transfer: Microsoft Learn}
+\task{Work through ``Introduction to Azure Policy'' and note how a policy is \emph{defined}, \emph{assigned} and \emph{enforced} (audit / deny / remediate).}
+\par\noindent\mbox{\href{https://learn.microsoft.com/training/modules/intro-to-azure-policy/}{learn.microsoft.com/training/modules/intro-to-azure-policy}}
+\task{How is an Azure Policy that \emph{denies} non-compliant resources an example of ``governance +
+automation'' from the lecture? One or two lines.}
+
+\wbsection{7\quad Azure reflection}
+\task{NIST CSF~2.0 added \textbf{Govern} as a new central function. In your own words, what does Govern do
+that Protect/Detect/Respond/Recover do not?}
+\task{``Compliance is not security.'' Give one example from this term of something that could pass a
+checkbox audit yet still be insecure.}
+
+\wbsection{8\quad Knowledge check}
+\begin{enumerate}
+\item Why does manual security ``not scale'' in the cloud?
+\hint{Hundreds of resources change constantly — manual work is slow and inconsistent.}
+\item Distinguish \textbf{automation} from \textbf{governance}.
+\hint{One enforces controls at scale; one sets the rules and the accountability.}
+\item Define \textbf{governance} (CSA / ISACA).
+\hint{Policies, procedures and controls — for transparency and accountability.}
+\item Name the six functions of \textbf{NIST CSF 2.0}, and which one is new in 2.0.
+\hint{Identify, protect, detect, respond, recover — and the new sixth one.}
+\item What is \textbf{policy as code}, and how does it relate to governance?
+\hint{Security rules written as machine-readable definitions the platform enforces.}
+\item What does \textbf{CSPM} automate, and \textbf{SOAR}?
+\hint{One finds misconfigurations continuously; one automates incident response.}
+\item Give two benefits and two risks of security automation.
+\hint{Speed and consistency — but a bad rule applied everywhere, instantly.}
+\item Name one way AI helps defenders and one way it helps attackers.
+\hint{Defenders triage faster; attackers scale phishing and find flaws quicker.}
+\item What is \textbf{prompt injection}, and which earlier topic is it related to?
+\hint{Malicious input that hijacks the AI's instructions — the injection family from S8.}
+\item What are CSF \textbf{Tiers} and \textbf{Profiles} used for?
+\hint{How mature your practice is, versus current-state-against-target.}
+\item Why is ``compliance is not security'' an important distinction?
+\hint{Meeting requirements at a point in time, versus actually resisting attackers.}
+\item Map each CSF function (except Govern) to a session of this course.
+\hint{Identify=S1, Protect=S6–8, Detect=S9, Respond=S10, Recover=S11.}
+\item Define \textbf{residual risk}, and name the four risk-treatment options.
+\hint{What is left after the control; the four options are the ones from the risk-register task.}
+\item What is the difference between an \textbf{audit} and an \textbf{attestation} (e.g.\ SOC~2), and which gives higher assurance?
+\hint{Independent opinion versus a statement of posture — one of them carries more weight.}
+\end{enumerate}
+
+\signoff
+
+\clearpage
+\solheader
+{\LARGE\bfseries\color{kred} Solutions}\\[2pt]
+{\small Work through the lab first, then check here. Model answers are indicative — equivalent reasoning is fine.}\par\vspace{8pt}
+\noindent\textbf{Note:} Model answers are indicative -- accept equivalent reasoning. Multiple-choice
+answers are in \textbf{bold}.
+
+\wbsection{Knowledge check}
+\begin{enumerate}
+\item At cloud scale there are hundreds of resources created and destroyed constantly. Manual work is
+      slow, inconsistent and error-prone (most breaches start with a misconfiguration), and humans cannot
+      watch everything in real time -- attacks move faster than people.
+\item \textbf{Automation} is \emph{how} security is enforced at scale -- machines applying controls
+      consistently. \textbf{Governance} is \emph{what} the rules are and \emph{who} decides -- policy,
+      roles, accountability and risk. Governance sets policy; automation enforces it.
+\item Governance is a framework of \textbf{policies, procedures and controls} promoting transparency and
+      accountability, covering strategic guidance, risk management, compliance and cost control (CSA
+      p.~28). ISACA: it sets direction through prioritisation, decision-making and monitoring.
+\item \textbf{Govern, Identify, Protect, Detect, Respond, Recover.} \textbf{Govern} is the new sixth
+      function added in CSF~2.0 (2024), placed centrally.
+\item \textbf{Policy as code} expresses security rules as machine-readable definitions the platform
+      enforces automatically (e.g.\ ``no public storage''). It makes governance \emph{executable} -- a
+      written policy becomes an enforced rule on every deployment.
+\item \textbf{CSPM} automates continuous configuration/compliance checking (finding misconfigurations).
+      \textbf{SOAR} automates incident response steps via playbooks (enrich, block, isolate, ticket).
+\item \textbf{Benefits:} speed, scale, consistency, fewer human errors (any two). \textbf{Risks:} a bad
+      rule applied everywhere instantly; reduced visibility/over-reliance; attackers automate too;
+      automation failures (any two). Keep humans in the loop for high-impact actions.
+\item \textbf{Defenders:} anomaly detection, alert triage/summarisation, faster investigation (Comer
+      p.~239; CSA p.~143). \textbf{Attackers:} deepfakes, automated/evasive attacks, faster
+      reconnaissance (Comer p.~239).
+\item \textbf{Prompt injection} is malicious input that hijacks an AI's instructions -- the same
+      \emph{injection} family as SQLi/XSS from S8 (application security), aimed at a model. Validate input
+      and never trust output blindly.
+\item \textbf{Tiers} describe how mature your practices are (Partial$\rightarrow$Adaptive, Tier~1--4).
+      \textbf{Profiles} compare your \emph{current} state to a \emph{target} state; the gap is your
+      roadmap. You choose a target matching your risk appetite.
+\item Compliance = meeting requirements at a point in time; security = actually resisting attackers
+      continuously. You can be compliant and breached -- a checkbox does not stop a novel attack. Use
+      frameworks as a floor, not a ceiling.
+\item \textbf{Identify} = S1 (cloud, shared responsibility, assets/risk); \textbf{Protect} = S6 (TLS),
+      S7 (hardening/access), S8 (secure apps/WAF); \textbf{Detect} = S9 (monitoring \& IDS);
+      \textbf{Respond} = S10 (incident response); \textbf{Recover} = S11 (resilience \& backup).
+      (Govern = S12, overarching.)
+\item \textbf{Residual risk} is the risk that remains after the chosen control is applied. The four
+      treatment options are \textbf{mitigate} (reduce with a control), \textbf{transfer} (e.g.\ insurance
+      or a provider), \textbf{avoid} (do not do the risky thing) and \textbf{accept} (formally, by an
+      accountable owner). (CSA Domain~3, p.~62.)
+\item An \textbf{audit} is an independent examination that ends in an opinion against a defined standard
+      (e.g.\ ISO/IEC 27001 certification) --- high assurance. An \textbf{attestation} (e.g.\ SOC~2 /
+      ISAE~3402) is a statement of the provider's control posture, examined by an auditor but scoped and
+      described by the provider --- moderate assurance. The audit gives the higher assurance.
+      (CSA Domain~3, p.~73--76.)
+\end{enumerate}
+
+\wbsection{Lab checkpoints}
+\begin{itemize}
+\item \textbf{Automation:} any sensible check/enforce script is acceptable (firewall active, file
+      permissions, encryption on, a required config). Reward output that clearly reports OK/FAIL and an
+      explanation of why a script scales better than manual checking across many machines.
+\item \textbf{CSF mapping:} expect Identify~=~S1, Protect~=~S6/S7/S8, Detect~=~S9, Respond~=~S10,
+      Recover~=~S11, and Govern~=~S12 (this lecture -- policy, risk, accountability). The insight is that
+      the whole course \emph{is} the CSF lifecycle.
+\item \textbf{Governance reflection:} a concrete policy (e.g.\ ``backups off-site'', ``disks
+      encrypted'') plus how policy as code / Azure Policy would enforce it (deny or auto-remediate).
+\item \textbf{AI reflection:} one defensive use (anomaly detection, summarisation) and one real risk
+      (prompt injection, hallucination, data leakage). A human stays accountable because models err and
+      accountability cannot be delegated to software.
+\end{itemize}
+
+\wbsection{Risk register \& assurance (model answers)}
+\begin{itemize}
+\item \textbf{Risk register:} accept any sensible row where the level follows from impact $\times$
+      likelihood, with a named owner and a review date, e.g.\ \emph{Nextcloud data on the VM / ransomware /
+      High (high$\times$moderate) / owner: ops / review: annual}. The point is the \emph{structure}, not the
+      exact wording (CSA Domain~3, p.~65--66).
+\item \textbf{Risk treatment:} one of \emph{mitigate / transfer / avoid / accept}; the \textbf{residual
+      risk} is what remains after the control (e.g.\ immutable backups mitigate ransomware, but residual
+      risk = the most recent unbacked-up changes). The \textbf{business owner} formally accepts residual
+      risk, after a cost--benefit decision, and it is re-reviewed periodically (CSA p.~62).
+\item \textbf{Assurance:} a credible answer names a provider report and classifies it --- \textbf{SOC~2 /
+      ISAE~3402} = \emph{attestation} (moderate assurance, a statement of posture); an \textbf{ISO/IEC
+      27001} certificate or a \textbf{BSI~C5} report; or a \textbf{CSA STAR} entry. Key insight: you cannot
+      audit a hyperscaler yourself, so you \emph{inherit} assurance by reading its report --- but inheritance
+      does not shift your responsibility for your own layer (CSA Domain~3, p.~73--76).
+\end{itemize}
+
+\wbsection{Cloud transfer \& reflection}
+\begin{itemize}
+\item \textbf{Azure Policy deny = governance + automation:} the \emph{policy} (governance) states the
+      rule; Azure \emph{automatically} blocks non-compliant resources at creation (automation). Written
+      intent becomes enforced reality with no human in the loop -- the lecture's core idea.
+\item \textbf{What Govern adds:} Govern sets strategy, roles, policy, risk appetite and oversight -- it
+      decides \emph{what} matters and \emph{who} is accountable, which the operational functions
+      (Protect/Detect/Respond/Recover) then carry out. It is the new central function in CSF~2.0.
+\item \textbf{Compliance $\ne$ security example:} e.g.\ a system that ``has backups'' (ticks the box) but
+      whose backups were never restore-tested (S11), or a WAF in detection-only mode (S8) that logs but
+      blocks nothing -- compliant on paper, exposed in practice.
+\end{itemize}
+
+\wbsection{References}
+CSA Security Guidance v5, \textbf{Domain~2: Cloud Governance and Strategies} (p.~28--29, verified):
+governance definition and ISACA framing, frameworks (ISO/IEC 38500, COBIT, ISO/IEC 27014) and laws
+(GLBA, SOX, HIPAA, GDPR) (p.~28), cloud adoption drivers, risk appetite and secure-by-design (p.~29);
+Domain~6.5 GenAI for security monitoring (p.~143). \textbf{NIST Cybersecurity Framework (CSF) 2.0},
+published February 2024 (verified, June 2026): six core functions -- Govern, Identify, Protect, Detect,
+Respond, Recover -- with Govern newly added and central; Core, Tiers and Profiles. Comer, \emph{The Cloud
+Computing Book}, Ch.~17.8 -- AI for attackers and defenders (p.~239); Ch.~10 -- orchestration \&
+replication. MS Learn: \emph{Govern your Azure resources with Azure Policy} (verified, June 2026).
+
+\end{document}

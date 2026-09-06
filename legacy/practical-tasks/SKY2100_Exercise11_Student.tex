@@ -1,0 +1,270 @@
+% SKY2100 -- Exercise 11 (self-contained article; no external .sty needed)
+\documentclass[11pt]{article}
+
+% ---- Packages ------------------------------------------------------
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{pgffor}
+\usepackage{amssymb}
+\usepackage{array}
+
+% ---- Colours -------------------------------------------------------
+\definecolor{kred}{HTML}{D81E2E}
+\definecolor{kgrey}{HTML}{595959}
+
+\usepackage[colorlinks=true,urlcolor=kred,linkcolor=kred]{hyperref}
+
+% ---- Worksheet macros (inlined) ------------------------------------
+\newcommand{\wbsection}[1]{\par\vspace{11pt}\noindent
+  {\large\bfseries\color{kred}#1}\par\vspace{2pt}
+  {\color{kred!35}\hrule height 1pt}\par\vspace{6pt}}
+
+\newcommand{\task}[1]{\par\vspace{4pt}\noindent
+  \textcolor{kred}{\textbf{$\triangleright$}}~#1\par\vspace{2pt}}
+
+% Answers are discussed verbally -- no writing rules, just a small gap.
+\newcommand{\answerlines}[1]{\par\vspace{0.4em}}
+
+\newcommand{\boxlabel}[2]{\par\vspace{3pt}\noindent
+  \fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\textbf{#1:}\enspace #2}}\par\vspace{3pt}}
+\newcommand{\evidence}[1]{\boxlabel{Evidence to capture}{#1}}
+\newcommand{\note}[1]{\boxlabel{Note}{#1}}
+\newcommand{\caution}[1]{\boxlabel{Caution}{#1}}
+
+% ---- Aha box + no italics (added) ----------------------------------
+\newcommand{\aha}[1]{\par\vspace{5pt}\noindent
+  \setlength{\fboxrule}{1.2pt}%
+  {\color{kred}\fbox{\normalcolor\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{%
+     {\bfseries\color{kred}AHA.}\enspace #1}}}%
+  \setlength{\fboxrule}{0.4pt}\par\vspace{5pt}}
+\renewcommand{\emph}[1]{\textup{#1}}
+
+\newcommand{\cmd}[1]{\texttt{#1}}
+\newcommand{\cbox}{$\square$\enspace}
+
+% ---- Hint and solutions divider -- same definitions as in kristiania-workbook.sty ----
+\newcommand{\hint}[1]{\par\vspace{1pt}{\footnotesize\color{kgrey}\textbf{Hint:}\enspace #1}\par\vspace{2pt}}
+\newcommand{\solheader}{\par\vspace{9pt}\noindent{\color{kred}\rule{\linewidth}{1.2pt}}\par\vspace{4pt}}
+
+\newcommand{\signoff}{\par\vspace{9pt}\noindent
+  {\color{kred}\rule{\linewidth}{0.4pt}}\par\vspace{3pt}
+  \noindent{\footnotesize\color{kgrey}\textbf{Progress check:} Discuss your answers in the group, then
+  talk the teacher through them verbally at the next session only to track progress; nothing is handed
+  in, signed or graded.}\par}
+
+\setlist[enumerate]{itemsep=3pt,topsep=2pt,parsep=0pt}
+\setlist[itemize]{itemsep=2pt,topsep=2pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+
+\begin{document}
+\begin{center}
+  {\LARGE\bfseries Survive failure --- mirror a disk \& restore a backup}\\[3pt]
+  {\large Session 11 -- Resilience, RAID1 \& backup}\\[5pt]
+  {\small Exercise 11 \textperiodcentered\ Session 11 lab \textperiodcentered\ Estimated time: 90--120 min}
+\end{center}
+\vspace{2pt}\hrule\vspace{1.1em}
+
+Write your answers in the answer document \cmd{SKY2100\_Exercise11\_Answers.docx}. Last week's recovery assumed a clean backup existed. Today you build the safety net:
+a RAID~1 mirror that survives a dead disk, and a tested backup that survives deletion. You will prove
+both work by deliberately breaking things -- and prove that RAID is \emph{not} a backup.
+
+\noindent\textbf{Caution:} Work only on your \emph{own} VM. Use \emph{spare} virtual disks for the RAID
+array -- never your system disk. Double-check device names (\cmd{lsblk}) before any \cmd{mdadm} command.
+
+\wbsection{1\quad Build a RAID 1 mirror}
+\task{Add two small virtual disks to your VM, then create a mirror with mdadm (adjust device names from
+\cmd{lsblk}):}
+\begin{quote}\ttfamily
+sudo apt install -y mdadm\\
+sudo mdadm --create /dev/md0 --level=1 --raid-devices=2 /dev/sdb /dev/sdc\\
+cat /proc/mdstat\\
+sudo mkfs.ext4 /dev/md0 \&\& sudo mkdir -p /mnt/raid\\
+sudo mount /dev/md0 /mnt/raid
+\end{quote}
+\task{Write a test file to \cmd{/mnt/raid}. What does \cmd{/proc/mdstat} show about the two disks?}
+
+\note{\textbf{RAID 1 vs RAID 0 --- read before the exam.} This lab uses \textbf{RAID 1} (\cmd{--level=1}):
+two disks hold \emph{identical} copies, so the array survives one disk dying. \textbf{RAID 0}
+(\cmd{--level=0}) is the opposite: it \emph{stripes} data across disks for speed with \textbf{no
+redundancy} --- lose one disk and you lose everything. If a task ever asks you to build RAID 0, the point
+is to \emph{demonstrate} that it provides neither redundancy nor backup; do it only on spare disks and
+explain the risk. The rule this lab proves --- ``RAID is not backup'' --- holds for \emph{both} levels.}
+
+\wbsection{2\quad Fail a disk --- and rebuild}
+\task{Simulate a disk failure, confirm the data survives, then replace and rebuild:}
+\begin{quote}\ttfamily
+sudo mdadm /dev/md0 --fail /dev/sdb\\
+cat /proc/mdstat\hfill\# now ``degraded''; is your test file still readable?\\
+sudo mdadm /dev/md0 --remove /dev/sdb\\
+sudo mdadm /dev/md0 --add /dev/sdb\hfill\# watch it re-sync
+\end{quote}
+\task{Was your test file still readable while the array was degraded? What does ``rebuild/recovery'' in
+\cmd{/proc/mdstat} mean for your protection during that time?}
+
+\wbsection{3\quad Back up your data}
+\task{Make a point-in-time backup of your Nextcloud data to a \emph{separate} location (another disk or
+folder -- ideally not the same array).} The Docker Nextcloud keeps its files inside the container: copy
+them out first with \cmd{sudo docker cp nextcloud:/var/www/html/data /srv/nextcloud-data} and use
+that as \cmd{/path/to/nextcloud-data}.
+\begin{quote}\ttfamily
+sudo mkdir -p /backup\\
+sudo tar -czf /backup/nextcloud-\$(date +\%F).tar.gz /path/to/nextcloud-data\\
+ls -lh /backup/
+\end{quote}
+\task{Which of the threats from the lecture (disk failure, deletion, ransomware, disaster) does this
+backup cover that your RAID~1 mirror does \emph{not}?}
+
+\wbsection{4\quad Restore --- prove RAID is not backup}
+\task{Delete a file from the live data, then restore it from your backup:}
+\begin{quote}\ttfamily
+rm /path/to/nextcloud-data/<some-file>\\
+sudo tar -xzf /backup/nextcloud-<date>.tar.gz -C / path/to/.../<some-file>\\
+\# verify the file is back
+\end{quote}
+\task{Your RAID~1 mirror did not help recover the deleted file -- why not? State the one-sentence rule
+this demonstrates.}
+
+\aha{You just watched the two failures RAID handles and does not handle. When you failed a disk, the
+data stayed readable, because the mirror is built for exactly that. When you deleted a file, the mirror
+was useless, because RAID copies every write to both disks at once, so the deletion hit both copies
+instantly. That is the whole point of ``RAID is not backup'': a mirror protects against a disk dying,
+not against deletion, ransomware or a bad write, which it faithfully reproduces. Only a separate
+point-in-time backup, ideally off-site and immutable, can bring the file back, which is why you need
+both and why the restore, not the mirror, is what saved you here.}
+
+\wbsection{5\quad Define RPO \& RTO}
+\task{For your Nextcloud service, decide and justify:}
+\begin{itemize}
+\item \textbf{RPO} -- how much data (in time) could you afford to lose? What backup frequency does that
+      imply?
+\item \textbf{RTO} -- how long could the service be down? Did your restore in Section~4 meet it?
+\end{itemize}
+
+\wbsection{6\quad Cloud transfer: Microsoft Learn}
+\task{Work through ``Protect your virtual machines by using Azure Backup'' and note schedule, retention
+and restore.}
+\par\noindent\mbox{\href{https://learn.microsoft.com/training/modules/protect-virtual-machines-with-azure-backup/}{learn.microsoft.com/training/modules/protect-virtual-machines-with-azure-backup}}
+\task{Azure offers LRS, ZRS and GRS redundant storage. Which protects against a \emph{regional} outage,
+and which is cheapest? One line.}
+
+\wbsection{7\quad Azure reflection}
+\task{Your RAID~1 lab mirrors within one machine. Which Azure construct gives the equivalent protection
+across \emph{physically separate} data centres, and against what does it protect?}
+\task{Why is an \emph{immutable} or off-site backup copy specifically important against ransomware, given
+that RAID and even normal backups may not help?}
+
+\wbsection{8\quad Knowledge check}
+\begin{enumerate}
+\item Why is \textbf{availability} a security property (CIA)?
+\hint{It is the A of the CIA triad — down means the service fails its users.}
+\item What is a \textbf{single point of failure}, and what is the general cure?
+\hint{One component whose failure kills the whole system; cure it with redundancy.}
+\item What does \textbf{RAID 1} do, and what does it cost in capacity?
+\hint{Mirroring — two disks holding identical copies; you give up half the capacity.}
+\item Contrast \textbf{RAID 0} and \textbf{RAID 1} in one line each.
+\hint{Stripe for speed with no safety net, versus mirror for redundancy.}
+\item Explain ``\textbf{RAID is not backup}'' with one concrete example.
+\hint{It survives a dead disk, not a deleted or ransomware-encrypted file.}
+\item What is \textbf{hot swapping}, and what risk exists during a rebuild?
+\hint{Replace a failed disk while it runs; redundancy is thin during the rebuild.}
+\item State the \textbf{3-2-1} backup rule.
+\hint{Three copies, two kinds of media, one off-site.}
+\item Difference between \textbf{full}, \textbf{incremental} and \textbf{differential} backups.
+\hint{Everything each time, versus only what changed since last time.}
+\item Define \textbf{RPO} and \textbf{RTO}.
+\hint{How much data you can lose, versus how long until you are back.}
+\item Why must backups be \textbf{tested}?
+\hint{Backups fail silently — only a real restore proves one works.}
+\item Name CSA's three levels of cloud resiliency.
+\hint{Single-region, multi-region, multi-provider — rising protection and cost.}
+\item What is \textbf{chaos engineering}, and what assumption does it build in?
+\hint{Inject faults on purpose to keep proving resiliency holds.}
+\end{enumerate}
+
+\signoff
+
+\clearpage
+\solheader
+{\LARGE\bfseries\color{kred} Solutions}\\[2pt]
+{\small Work through the lab first, then check here. Model answers are indicative — equivalent reasoning is fine.}\par\vspace{8pt}
+\noindent\textbf{Note:} Model answers are indicative -- accept equivalent reasoning. Multiple-choice
+answers are in \textbf{bold}.
+
+\wbsection{Knowledge check}
+\begin{enumerate}
+\item Availability is the \textbf{A} of the CIA triad: a service that is down -- through hardware
+      failure, disaster, DDoS or ransomware -- has failed its users, however confidential and intact its
+      data. Resilience protects availability.
+\item A \textbf{single point of failure (SPOF)} is any one component whose failure takes down the whole
+      system. The cure is \textbf{redundancy} -- duplicate the component so no single failure is fatal.
+\item \textbf{RAID 1} mirrors: every write goes to two disks holding identical copies, surviving either
+      disk failing. Cost: usable capacity is that of \emph{one} disk from two -- 50\% overhead.
+\item \textbf{RAID 0} stripes data across disks for speed with \emph{no} redundancy (one disk lost =
+      all lost). \textbf{RAID 1} mirrors for redundancy (survives one disk) at 50\% capacity cost.
+\item \textbf{RAID is not backup:} it only protects against \emph{disk failure}. Example: a deleted file
+      (or ransomware encryption, or a corrupt write) is applied to \emph{both} mirrored disks instantly
+      -- RAID preserves the deletion. Only a separate point-in-time backup can restore it.
+\item \textbf{Hot swapping} = replacing a failed disk while the array keeps running (Comer p.~99). During
+      the \textbf{rebuild}, redundancy is temporarily gone -- a second disk failure then loses everything.
+\item \textbf{3-2-1:} keep \textbf{3} copies of the data, on \textbf{2} different media, with \textbf{1}
+      off-site.
+\item \textbf{Full} copies everything each time (slow backup, simple restore). \textbf{Incremental}
+      copies changes since the \emph{last} backup (fast backup, restore needs full + every increment).
+      \textbf{Differential} copies changes since the last \emph{full} (medium; restore needs full + last
+      differential).
+\item \textbf{RPO (Recovery Point Objective)} = how much data, measured in time, you can afford to lose
+      (drives backup frequency). \textbf{RTO (Recovery Time Objective)} = how much downtime you can
+      afford (drives restore speed).
+\item Backups fail silently (full disks, bad credentials, missing/unreadable files). The only proof a
+      backup works is a successful \emph{restore}; CSA prescribes regular restoration and yearly DR tests
+      (p.~255).
+\item \textbf{Single-region}, \textbf{multi-region}, and \textbf{multi-provider} resiliency -- escalating
+      in protection and cost (CSA p.~270).
+\item \textbf{Chaos engineering} deliberately injects faults (even in production) to continuously
+      validate resiliency, building in the assumption that failures \emph{will} happen rather than
+      assuming little downtime (CSA p.~271).
+\end{enumerate}
+
+\wbsection{Lab checkpoints}
+\begin{itemize}
+\item \textbf{RAID 1:} \cmd{/proc/mdstat} should show \cmd{md0} active with two disks \cmd{[UU]} and a
+      mounted ext4 filesystem holding the test file.
+\item \textbf{Fail \& rebuild:} after \cmd{--fail}, the array is \emph{degraded} (\cmd{[U\_]}) but the
+      test file is still readable -- the mirror did its job. After \cmd{--add}, \cmd{/proc/mdstat} shows
+      \emph{recovery} (re-sync); during that window protection is reduced, so a second failure would be
+      fatal. This is why backups still matter.
+\item \textbf{Backup:} a \cmd{tar.gz} archive of the data in a separate location. It covers
+      \emph{deletion, corruption, ransomware and disaster} -- the threats RAID does \emph{not}.
+\item \textbf{Restore:} the deleted file is recovered from the archive. RAID did not help because the
+      deletion was mirrored to both disks instantly -- demonstrating ``RAID is not backup''.
+\item \textbf{RPO/RTO:} reward a justified choice (e.g.\ hourly backups $\rightarrow$ RPO~$\le$~1h) and an
+      honest comparison of the measured restore time against the chosen RTO.
+\end{itemize}
+
+\wbsection{Cloud transfer \& reflection}
+\begin{itemize}
+\item \textbf{Azure redundant storage:} \textbf{GRS} (geo-redundant) replicates across \emph{regions} and
+      protects against a regional outage; \textbf{LRS} (locally redundant, within one data centre) is
+      cheapest; ZRS sits between (across zones in one region).
+\item \textbf{Azure equivalent of mirroring:} \textbf{Availability Zones} place replicas in physically
+      separate data centres within a region, protecting against a building/power/zone failure -- the
+      cloud version of ``no single point of failure''.
+\item \textbf{Immutable / off-site backup vs ransomware:} ransomware seeks out and deletes reachable
+      backups; an \emph{immutable} (write-once) or off-site/air-gapped copy cannot be altered or deleted
+      by the attacker, so a clean recovery point survives. RAID cannot help (the encryption is mirrored),
+      and even normal backups fail if they are reachable and deletable.
+\end{itemize}
+
+\wbsection{References}
+CSA Security Guidance v5, \textbf{Domain~11.6: Resilience} (p.~270--271, verified): resiliency definition
+and the single-/multi-region/multi-provider levels (p.~270), IaaS/PaaS resiliency tools and chaos
+engineering (p.~271), SaaS resilience and BCP/DR via periodic data extracts (p.~271); backup-restoration
+and DR testing (p.~255). Comer, \emph{The Cloud Computing Book}: RAID, redundant disks \& hot swapping,
+Ch.~8 (p.~99); high availability \& off-site backup, Ch.~2 (p.~21), verified. MS Learn: \emph{Protect your
+virtual machines by using Azure Backup} (verified, June 2026).
+
+\end{document}

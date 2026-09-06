@@ -1,0 +1,260 @@
+% SKY2100 -- Exercise 10 (self-contained article; no external .sty needed)
+\documentclass[11pt]{article}
+
+% ---- Packages ------------------------------------------------------
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{pgffor}
+\usepackage{amssymb}
+\usepackage{array}
+
+% ---- Colours -------------------------------------------------------
+\definecolor{kred}{HTML}{D81E2E}
+\definecolor{kgrey}{HTML}{595959}
+
+\usepackage[colorlinks=true,urlcolor=kred,linkcolor=kred]{hyperref}
+
+% ---- Worksheet macros (inlined) ------------------------------------
+\newcommand{\wbsection}[1]{\par\vspace{11pt}\noindent
+  {\large\bfseries\color{kred}#1}\par\vspace{2pt}
+  {\color{kred!35}\hrule height 1pt}\par\vspace{6pt}}
+
+\newcommand{\task}[1]{\par\vspace{4pt}\noindent
+  \textcolor{kred}{\textbf{$\triangleright$}}~#1\par\vspace{2pt}}
+
+% Answers are discussed verbally -- no writing rules, just a small gap.
+\newcommand{\answerlines}[1]{\par\vspace{0.4em}}
+
+\newcommand{\boxlabel}[2]{\par\vspace{3pt}\noindent
+  \fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\textbf{#1:}\enspace #2}}\par\vspace{3pt}}
+\newcommand{\evidence}[1]{\boxlabel{Evidence to capture}{#1}}
+\newcommand{\note}[1]{\boxlabel{Note}{#1}}
+\newcommand{\caution}[1]{\boxlabel{Caution}{#1}}
+
+% ---- Aha box + no italics (added) ----------------------------------
+\newcommand{\aha}[1]{\par\vspace{5pt}\noindent
+  \setlength{\fboxrule}{1.2pt}%
+  {\color{kred}\fbox{\normalcolor\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{%
+     {\bfseries\color{kred}AHA.}\enspace #1}}}%
+  \setlength{\fboxrule}{0.4pt}\par\vspace{5pt}}
+\renewcommand{\emph}[1]{\textup{#1}}
+
+\newcommand{\cmd}[1]{\texttt{#1}}
+\newcommand{\cbox}{$\square$\enspace}
+
+% ---- Hint and solutions divider -- same definitions as in kristiania-workbook.sty ----
+\newcommand{\hint}[1]{\par\vspace{1pt}{\footnotesize\color{kgrey}\textbf{Hint:}\enspace #1}\par\vspace{2pt}}
+\newcommand{\solheader}{\par\vspace{9pt}\noindent{\color{kred}\rule{\linewidth}{1.2pt}}\par\vspace{4pt}}
+
+\newcommand{\signoff}{\par\vspace{9pt}\noindent
+  {\color{kred}\rule{\linewidth}{0.4pt}}\par\vspace{3pt}
+  \noindent{\footnotesize\color{kgrey}\textbf{Progress check:} Discuss your answers in the group, then
+  talk the teacher through them verbally at the next session only to track progress; nothing is handed
+  in, signed or graded.}\par}
+
+\setlist[enumerate]{itemsep=3pt,topsep=2pt,parsep=0pt}
+\setlist[itemize]{itemsep=2pt,topsep=2pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+
+\begin{document}
+\begin{center}
+  {\LARGE\bfseries Reconstruct the attack --- build a timeline \& report}\\[3pt]
+  {\large Session 10 -- Incident response \& log timeline}\\[5pt]
+  {\small Exercise 10 \textperiodcentered\ Session 10 lab \textperiodcentered\ Estimated time: 90--120 min}
+\end{center}
+\vspace{2pt}\hrule\vspace{1.1em}
+
+Write your answers in the answer document \cmd{SKY2100\_Exercise10\_Answers.docx}. Last week you \emph{detected} attacks in your logs. Today you \emph{respond} like an
+incident handler: preserve the evidence, build a timestamp-ordered timeline of what happened, analyse the
+scope, practise one containment action, and write a short incident report. This ties S6--S10 together.
+
+\noindent\textbf{Caution:} Work only on your \emph{own} VM and logs. Treat the original logs as evidence:
+copy them and work on the copies; keep clocks in UTC.
+
+\wbsection{1\quad Preserve the evidence}
+\task{Make read-only copies of the logs you collected in S9, so analysis cannot alter the originals:}
+\begin{quote}\ttfamily
+mkdir -p \textasciitilde/ir-evidence \&\& cd \textasciitilde/ir-evidence\\
+sudo cp /var/log/auth.log /var/log/modsec\_audit.log .\hfill\# no auth.log? sudo journalctl -u ssh > auth.log\\
+sudo journalctl -u nginx > nginx.log\\
+sudo fail2ban-client status sshd > fail2ban.txt\\
+sudo chown "\$USER": * \&\& chmod 444 *
+\end{quote}
+\task{Why copy and work on the evidence rather than investigating the live system directly? (one line)}
+
+\aha{The reason you work on copies is the same reason a timeline is hard: the moment you touch a live
+system you change it. Opening files updates timestamps, your own logins add log lines, and an attacker
+watching may notice. A read-only copy freezes the state so your account of events stays faithful, and
+in the cloud the equivalent first step is to snapshot the VM before you investigate. Keep one more thing
+in mind as you reconstruct what happened. Blocking an IP or disabling an account does not always stop
+access, because a session token already issued can stay valid until it expires. Containing an incident
+often means acting on identity, not just on the network.}
+
+\wbsection{2\quad Build the timeline}
+\task{From your copies, extract the security-relevant lines (failed logins, the ban, the WAF block) and
+order them by timestamp in the timeline table of the answer document --- columns: time (UTC), source,
+event (actor / action / result). Normalise to UTC.}
+
+\wbsection{3\quad Analyse --- RECIPE PICKS}
+\task{Apply a few RECIPE-PICKS questions to your incident and answer briefly:}
+\begin{itemize}
+\item \textbf{Identity / IP} -- which user/IP was the source of each action?
+\item \textbf{Permissions / blast radius} -- what could that actor have reached if it had succeeded?
+\item \textbf{Public} -- was anything exposed to the internet that should not have been?
+\item \textbf{TracK} -- any sign the attacker tried to pivot (e.g.\ from web attack to login)?
+\end{itemize}
+
+\wbsection{4\quad Contain}
+\task{Practise \emph{one} containment action and record it (command + result):}
+\begin{quote}\ttfamily
+sudo ufw deny from <attacker-ip>\hfill\# or: sudo fail2ban-client set sshd banip <ip>\\
+sudo ufw status numbered
+\end{quote}
+\task{Why are \emph{identity} and \emph{management-plane} containment higher priority than blocking a
+single IP? (one or two lines)}
+
+\wbsection{5\quad Write the incident report}
+\task{Write a one-page report with these sections:}
+\begin{enumerate}
+\item \textbf{Summary} -- what happened, in two sentences.
+\item \textbf{Timeline} -- your table from Section 2.
+\item \textbf{Scope / impact} -- what was affected; was anything successful?
+\item \textbf{Actions taken} -- detection, containment, recovery.
+\item \textbf{Lessons learned} -- what would you improve (detection sooner? a missing log?).
+\end{enumerate}
+
+\wbsection{6\quad Cloud transfer: Microsoft Learn}
+\task{Read the concept units of ``Security incident management in Microsoft Sentinel'' (or the docs
+article ``Microsoft Sentinel incident investigation in the Azure portal'') and note how a SIEM groups
+alerts into an \emph{incident} with a timeline.}
+\par\noindent\mbox{\href{https://learn.microsoft.com/training/modules/incident-management-sentinel/}{learn.microsoft.com/training/modules/incident-management-sentinel}}
+\par\noindent\mbox{\href{https://learn.microsoft.com/azure/sentinel/incident-investigation}{learn.microsoft.com/azure/sentinel/incident-investigation}}
+\task{Name the four phases of the IR lifecycle (NIST/CSA), and which phase ``build a timeline'' belongs
+to.}
+
+\wbsection{7\quad Azure reflection}
+\task{In the cloud, why is \emph{snapshotting} a compromised VM the first forensic step, and what does a
+\emph{chain of custody} protect?}
+\task{CSA warns a session token can outlive a ban (the AuthN/AuthZ gap). Why does that mean ``I disabled
+the account'' is not always ``access stopped''?}
+
+\wbsection{8\quad Knowledge check}
+\begin{enumerate}
+\item Distinguish an \textbf{event}, an \textbf{incident}, and a \textbf{breach}.
+\hint{Any observable occurrence, versus one that breaks a security policy.}
+\item Name the four phases of the IR lifecycle in order.
+\hint{Prepare; detect and analyse; contain, eradicate, recover; review.}
+\item Why is most of incident response done during \textbf{preparation}?
+\hint{Under pressure there is no time to invent a plan — it must already exist.}
+\item What is a \textbf{runbook/playbook}, and how does SOAR relate to it?
+\hint{Documented steps for one incident type; SOAR automates some of them.}
+\item Why must clocks be \textbf{synchronised} before you build a timeline?
+\hint{Correlation needs aligned clocks, or the order of events scrambles.}
+\item What four things should you extract from each log line?
+\hint{Time, actor, action, result — from every line.}
+\item What does \textbf{RECIPE PICKS} help a responder do?
+\hint{A mnemonic for first priorities in a cloud management-plane incident.}
+\item Why \textbf{snapshot first}, before investigating a compromised VM?
+\hint{Investigating a live system alters its state and can tip off the attacker.}
+\item What is a \textbf{chain of custody}, and why does it matter?
+\hint{The documented record of who handled evidence and when — it keeps it admissible.}
+\item In cloud containment, why are IAM and the management plane the top priority?
+\hint{The management plane can reach everything — the largest blast radius to contain.}
+\item Explain the \textbf{AuthN/AuthZ gap} and its effect on containment.
+\hint{A session token can be accepted even after the account is disabled.}
+\item What happens in \textbf{post-incident analysis}, and where do its outputs go?
+\hint{Capture the lessons — could it have been detected sooner, with what data?}
+\end{enumerate}
+
+\signoff
+
+\clearpage
+\solheader
+{\LARGE\bfseries\color{kred} Solutions}\\[2pt]
+{\small Work through the lab first, then check here. Model answers are indicative — equivalent reasoning is fine.}\par\vspace{8pt}
+\noindent\textbf{Note:} Model answers are indicative -- accept equivalent reasoning. Multiple-choice
+answers are in \textbf{bold}.
+
+\wbsection{Knowledge check}
+\begin{enumerate}
+\item An \textbf{event} is any observable occurrence (may or may not be security-relevant). An
+      \textbf{incident} is an event that violates a security policy and threatens operations. A
+      \textbf{breach} is a successful penetration leading to unauthorised access or data extraction. All
+      incidents are events; not all events are incidents (CSA p.~254).
+\item \textbf{Preparation} $\rightarrow$ \textbf{Detection \& Analysis} $\rightarrow$
+      \textbf{Containment, Eradication \& Recovery} $\rightarrow$ \textbf{Post-Incident Analysis}
+      (NIST SP~800-61 / CSA p.~254--255).
+\item Under pressure there is no time to invent a plan. Preparation builds the team, roles, comms plan,
+      responder access, baselines, runbooks and tested backups -- so the response is deliberate, not
+      improvised (CSA p.~255).
+\item A \textbf{runbook/playbook} is the documented series of steps for a specific incident type. SOAR
+      automates some of those steps (and stores the playbooks), but a manual fallback is needed in case
+      SOAR fails (CSA p.~260).
+\item Correlation across sources only works if timestamps align. A host with a wrong clock scrambles the
+      order of events, breaking the narrative. Use UTC and synchronised time (NTP).
+\item \textbf{Time}, \textbf{actor} (source IP / user), \textbf{action}, and \textbf{result} -- from
+      every line, so the timeline assembles itself.
+\item \textbf{RECIPE PICKS} is a mnemonic for the first analysis priorities in a cloud management-plane
+      incident (Resource, Events, Changes, Identity, Permissions, Entitlements, Public, IP, Caller,
+      TracK, ForenSics). It focuses the responder and resolves a high percentage of incidents (CSA
+      p.~265).
+\item Investigating a live system alters timestamps, memory and state and can tip off the attacker.
+      Snapshotting first preserves the VM's state so you analyse a faithful copy (CSA p.~266).
+\item A \textbf{chain of custody} is the documented record of who handled evidence, when and how. It keeps
+      evidence trustworthy and admissible, and proves it was not tampered with (CSA p.~266).
+\item IAM and the management plane can reach \emph{everything} -- containing them limits the blast radius
+      fastest. Blocking a single IP only stops one path; the attacker may hold credentials or tokens to
+      get back in (CSA p.~267).
+\item Federated identity separates authentication (IdP) from authorisation (relying party). A session
+      token may be accepted until its TTL expires even after the account is disabled, so containment may
+      require action on \emph{both} sides (deny policies, accept only newer tokens) (CSA p.~267).
+\item \textbf{Post-incident analysis} captures lessons learned (could it have been detected sooner? what
+      data would have helped? does the process need to change?) and shares them. Its outputs feed back
+      into \emph{preparation}, closing the lifecycle loop (CSA p.~255).
+\end{enumerate}
+
+\wbsection{Lab checkpoints}
+\begin{itemize}
+\item \textbf{Preserve:} students should copy logs to a working folder and set them read-only, then work
+      on copies. The point: logs are evidence; investigating the live system alters it (CSA p.~266).
+\item \textbf{Timeline:} a correct table has 4+ rows in UTC order, e.g.\ failed SSH logins (auth.log)
+      $\rightarrow$ fail2ban ban $\rightarrow$ WAF block (ModSecurity, a 941xxx XSS rule) $\rightarrow$
+      403 in the access log. Each row should name time, source and actor/action/result.
+\item \textbf{RECIPE PICKS:} identity/IP of each action; the (non-)blast-radius since both attacks were
+      blocked; whether anything was public; and whether the attacker tried to pivot. Conclusion: no
+      successful compromise -- but provable.
+\item \textbf{Containment:} a UFW deny or fail2ban ban of the attacker IP is acceptable. The teaching
+      point: blocking an IP is easy but lowest-leverage; identity/management-plane containment matters
+      more in a real incident (CSA p.~267).
+\item \textbf{Report:} the one-page report is the key deliverable -- summary, timeline, scope/impact,
+      actions, lessons learned. Reward a clear timeline and concrete, honest lessons.
+\end{itemize}
+
+\wbsection{Cloud transfer \& reflection}
+\begin{itemize}
+\item \textbf{IR lifecycle:} Preparation; Detection \& Analysis; Containment, Eradication \& Recovery;
+      Post-Incident Analysis. ``Build a timeline of the attack'' is part of \textbf{Detection \&
+      Analysis} (CSA p.~255).
+\item \textbf{Snapshot \& chain of custody:} snapshotting preserves the VM's state immediately, before
+      investigation or containment changes it (CSA p.~266); the chain of custody documents who handled
+      the evidence so it stays trustworthy and admissible.
+\item \textbf{AuthN/AuthZ gap:} a still-valid session token can be accepted until its TTL expires even
+      after the account is disabled, so disabling the account does not instantly stop access -- you may
+      also need deny policies or token-issuance conditions at the relying party (CSA p.~267).
+\end{itemize}
+
+\wbsection{References}
+CSA Security Guidance v5, \textbf{Domain~11: Incident Response \& Resilience} (p.~253--267, verified):
+event/incident/breach (p.~254), IR lifecycle phases (p.~254--255), preparation and ``build a timeline''
+(p.~255), runbooks \& playbooks (p.~260), RECIPE PICKS (p.~265), cloud forensics, snapshots \& chain of
+custody (p.~265--266), container/serverless forensics (p.~266), IAM/management-plane \& network
+containment and the AuthN/AuthZ gap (p.~267). Based on the CSA Cloud Incident Response Framework and
+\textbf{NIST SP~800-61 Rev.~2}. Comer, \emph{The Cloud Computing Book}, Ch.~17.8 -- security analytics
+(p.~239, recap). MS Learn: \emph{Security incident management in Microsoft Sentinel} and the docs
+article \emph{Microsoft Sentinel incident investigation in the Azure portal} (verified, August 2026).
+
+\end{document}

@@ -299,6 +299,16 @@ a placed card to send it back), then press **Check**.
 {{< include _06-encryption-helps.qmd >}}
 :::
 
+::: {.callout-important icon=false}
+## Related lab: hands-on for this session
+Theory done - now build it. This session's practical task is
+[Exercise 6: Put your service behind HTTPS](../labs/exercise-06.qmd)
+(80-110 min, in your lab group); it puts this chapter's concepts to
+work on your own service. Work from the official worksheet PDF in
+Canvas - the page here mirrors it for reading and reference; the lab
+rhythm is explained in [Practical tasks](../labs/index.qmd).
+:::
+
 ## Self-check {#sec-06-self-check}
 
 **Q1** *(tests @sec-06-three-data-states · basic)*

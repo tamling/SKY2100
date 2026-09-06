@@ -1,0 +1,43 @@
+# Practical tasks {#sec-labs .unnumbered}
+
+One lab per session, building the same red thread the script follows: from
+the local Ubuntu laboratory of Session 1 to the hardened, monitored,
+recoverable service the integrated case defends in Session 13. Each chapter
+links to its lab at the end of its exercises; each lab links back to its
+chapter.
+
+::: {.callout-note}
+These pages **mirror** the lab worksheets so you can read them alongside
+the script and follow the cross-links. **The official worksheets remain
+the PDFs distributed via Canvas** - work from those, together with the
+weekly answer documents.
+:::
+
+::: {.callout-important}
+## How the labs work (applies all semester)
+
+Work through each lab *in your group* and discuss the answers together. At
+the next session you briefly talk the teacher through your answers -
+*verbally*, just so progress can be tracked (nothing is handed in, signed
+or graded here). The review runs *one session behind*, so you always have
+the week in between: Session 2 → Exercise 1; Session 3 → Exercise 2; …
+Session N → Exercise N-1. Each week you fill in that session's **answer
+document** (`SKY2100_ExerciseN_Answers.docx`, distributed via Canvas); the
+final home-exam report is built from these weekly documents.
+:::
+
+| # | Lab | Companion chapter |
+|---|-----|-------------------|
+| 1 | [Set up your team, your lab & your Microsoft Learn profile](exercise-01.qmd) | [Cloud computing and information security](../chapters/01-cloud-information-security.qmd) |
+| 2 | [Profile your Linux system - the baseline](exercise-02.qmd) | [Data centres, virtualisation and Linux](../chapters/02-data-centres-virtualisation-linux.qmd) |
+| 3 | [Put a web service under load](exercise-03.qmd) | [Web services, load and denial of service](../chapters/03-web-services-load-dos.qmd) |
+| 4 | [Lock down your VM with a firewall](exercise-04.qmd) | [Networking and firewall controls](../chapters/04-networking-firewalls.qmd) |
+| 5 | [Run a cloud-native workload in Docker](exercise-05.qmd) | [Cloud-native versus lift-and-shift](../chapters/05-cloud-native-lift-and-shift.qmd) |
+| 6 | [Put your service behind HTTPS](exercise-06.qmd) | [TLS and data in transit](../chapters/06-tls-data-in-transit.qmd) |
+| 7 | [Harden your service & control access](exercise-07.qmd) | [Hardening and access control](../chapters/07-hardening-access-control.qmd) |
+| 8 | [Scan your app, then shield it with a WAF](exercise-08.qmd) | [DevSecOps, WAF and secure applications](../chapters/08-devsecops-waf.qmd) |
+| 9 | [Watch your service - find the attack in the logs](exercise-09.qmd) | [Security monitoring and IDS](../chapters/09-monitoring-ids.qmd) |
+| 10 | [Reconstruct the attack - build a timeline & report](exercise-10.qmd) | [Logging and log integrity](../chapters/10-logging-log-integrity.qmd) |
+| 11 | [Survive failure - mirror a disk & restore a backup](exercise-11.qmd) | [Resilience, RAID and backup](../chapters/11-resilience-raid-backup.qmd) |
+| 12 | [Automate a control - and govern with NIST CSF 2.0](exercise-12.qmd) | [Incident response, BCM, risk and compliance](../chapters/12-incident-response-bcm.qmd) |
+| 13 | [Integrated case & exam workshop - MediCloud](exercise-13.qmd) | [The integrated case](../chapters/13-integrated-case.qmd) |

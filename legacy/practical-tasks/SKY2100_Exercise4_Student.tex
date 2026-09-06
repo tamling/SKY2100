@@ -1,0 +1,172 @@
+\documentclass[11pt]{article}
+\usepackage{kristiania-workbook}
+
+\begin{document}
+\begin{center}
+  {\LARGE\bfseries Lock down your VM with a firewall}\\[3pt]
+  {\large Session 4 -- Networking \& firewall controls}\\[5pt]
+  {\small Exercise 4 \textperiodcentered\ Session 4 lab \textperiodcentered\ Estimated time: 75--100 min}
+\end{center}
+\vspace{2pt}\hrule\vspace{1.1em}
+
+Write your answers in the answer document \cmd{SKY2100\_Exercise4\_Answers.docx}. Last week you saw what \emph{too much} traffic does;
+today you control \emph{which} traffic is allowed at all. You will turn your Ubuntu VM into a
+\textbf{default-deny} host with UFW, open only the ports you can justify, and prove the rules work by
+testing from the host. This is the same reasoning you will later apply to an Azure Network Security
+Group.
+
+\noindent\textbf{Caution:} Keep the SSH port (22) open throughout. If you are working on a remote VM,
+closing it can lock you out. Test changes locally first.
+
+\wbsection{1\quad Baseline: what is open now?}
+\task{List the ports your VM is currently listening on:} \cmd{ss -tulpn}. Note which services are
+bound to all interfaces (\cmd{0.0.0.0} / \cmd{[::]}) versus localhost only.
+
+\task{For each listening port, decide: does it need to be reachable from outside?}
+
+\wbsection{2\quad Configure a default-deny firewall}
+\task{Set the policy and open only what you need:}
+\begin{quote}\ttfamily
+sudo ufw default deny incoming\\
+sudo ufw default allow outgoing\\
+sudo ufw allow 22/tcp\\
+sudo ufw allow 80/tcp\\
+sudo ufw enable
+\end{quote}
+
+\task{Inspect the result:} \cmd{sudo ufw status verbose}. Which ports did you allow, and why exactly
+those?
+
+\wbsection{3\quad Test that the rules actually work}
+\task{Start a web server if one is not running} (\cmd{sudo apt install -y nginx}) and find the VM's
+address with \cmd{ip a}.
+
+\task{Test from your \emph{host} machine, not from inside the VM} --- UFW does not filter loopback
+traffic, so \cmd{localhost} would never show a block. On the host, test an \emph{allowed} and a
+\emph{denied} port:
+\begin{quote}\ttfamily
+curl -I http://<vm-ip>:80\quad(\# allowed -> responds)\\
+curl --max-time 5 http://<vm-ip>:8080\quad(\# denied -> times out)
+\end{quote}
+\note{VirtualBox users: VirtualBox NAT is not reachable from the host --- switch the VM's network
+adapter to \emph{Bridged} or \emph{Host-only} first. VMware NAT works as it is.}
+
+\task{For comparison, disable the firewall for a moment} (\cmd{sudo ufw disable}), repeat the second
+\cmd{curl}, then \cmd{sudo ufw enable} again. Without the firewall, the closed port answers
+``connection refused'' at once.
+
+\task{Briefly, what is the difference between how a \emph{denied} port and a \emph{closed} port fail?
+(timeout vs.\ connection refused)}
+
+\task{Re-run \cmd{ss -tulpn} and compare with your baseline.}
+
+\aha{Compare the two \cmd{ss} outputs: they are almost identical. The firewall did not stop a single
+service from running; every daemon still listens exactly as before. What changed is who can reach it
+from outside. A firewall controls reachability, not whether software runs, and that distinction is the
+whole point of the attack-surface idea from the lecture: the service is still there, you have just shut
+the door in front of it. The two failures you saw also differ for a reason worth remembering. A closed
+port with no firewall in the way answers with a quick ``connection refused'', while a port the firewall
+drops simply times out, because the packet is silently discarded and the attacker is left waiting with
+no reply.}
+
+\wbsection{4\quad Cloud transfer: Microsoft Learn}
+\task{Revisit ``Describe Azure networking services''} and focus on \textbf{Virtual Network (VNet)} and
+\textbf{Network Security Group (NSG)}.
+\par\noindent\mbox{\href{https://learn.microsoft.com/training/modules/describe-azure-networking-services/}{learn.microsoft.com/training/modules/describe-azure-networking-services}}
+
+\task{Map your UFW rules to an NSG.} For each rule --- \cmd{allow 22/tcp} (SSH), \cmd{allow 80/tcp}
+(HTTP) and the default deny --- write in the answer document what the equivalent NSG rule would look
+like.
+
+\wbsection{5\quad Azure reflection}
+\task{An NSG protects a whole subnet; UFW protects one host. Why is running \emph{both} an example of
+defence in depth, rather than redundant effort?}
+
+\wbsection{6\quad Knowledge check}
+\begin{enumerate}
+\item What does a socket consist of?\\
+      \cbox an IP address only \quad \cbox a port only \quad \cbox an IP address + a port \quad
+      \cbox a MAC address + a port
+\hint{Two things together: which machine, and which program on it.}
+\item Why is \textbf{default-deny} the only safe default policy for a firewall?
+\hint{You cannot foresee every threat, so you open only what you can justify.}
+\item Which port is which? \cmd{22} = \rule{2.2cm}{0.3pt}; \cmd{80} = \rule{2.2cm}{0.3pt};
+      \cmd{443} = \rule{2.2cm}{0.3pt}; \cmd{53} = \rule{2.2cm}{0.3pt}.
+\hint{22, 80, 443, 53 — match them to SSH, HTTP, HTTPS, DNS.}
+\item State the difference between a \textbf{stateless} and a \textbf{stateful} firewall, and say
+      which UFW and NSGs are.
+\hint{One judges each packet alone; one remembers active connections.}
+\item In a firewall rule, name the five things a rule typically specifies.
+\hint{Action, protocol, source, destination, port.}
+\item What is the security benefit of \textbf{NAT}, even though it is not a firewall?
+\hint{It hides internal machines behind one public address.}
+\item Explain \textbf{network segmentation} and how it limits ``lateral movement''.
+\hint{Separate zones, so a breach in one cannot roam into the others.}
+\item True or false: a host firewall is unnecessary if there is a network firewall in front of it.
+      Justify.
+\hint{Defence in depth — what if the network firewall is bypassed or misconfigured?}
+\item What problem does a \textbf{bastion / jump host} solve?
+\hint{One hardened, watched entry point instead of exposing every host to SSH.}
+\item In Azure, NSG rules are evaluated by \rule{3cm}{0.3pt}; the \rule{2cm}{0.3pt} match wins.
+\hint{By priority, lowest number first; the first match wins.}
+\item Why does \textbf{SDN} make a cloud network both easier to secure \emph{and} riskier? (one line)
+\hint{Central control can program the whole network at once — powerful, and a target.}
+\item (Reflection) Which single listening port on your VM would you remove first, and why?
+\end{enumerate}
+
+\signoff
+
+\clearpage
+\solheader
+{\LARGE\bfseries\color{kred} Solutions}\\[2pt]
+{\small Work through the lab first, then check here. Model answers are indicative — equivalent reasoning is fine.}\par\vspace{8pt}
+\noindent\textbf{Note:} Model answers are indicative -- accept equivalent reasoning. Multiple-choice
+answers are in \textbf{bold}.
+
+\wbsection{Knowledge check}
+\begin{enumerate}
+\item \textbf{An IP address + a port.}
+\item Because you cannot anticipate every threat. With default-deny you open only what you can
+      justify, so anything unforeseen is blocked automatically -- the principle of least exposure.
+\item \cmd{22} = \textbf{SSH}; \cmd{80} = \textbf{HTTP}; \cmd{443} = \textbf{HTTPS}; \cmd{53} =
+      \textbf{DNS}.
+\item \textbf{Stateless} judges each packet in isolation; \textbf{stateful} tracks active connections
+      and automatically allows replies to traffic you started. UFW and NSGs are \textbf{stateful}.
+\item \textbf{Action} (allow/deny), \textbf{protocol} (TCP/UDP), \textbf{source}, \textbf{destination},
+      and \textbf{port}.
+\item NAT hides internal machines behind one public address; they are not directly reachable from
+      outside unless a port is explicitly forwarded -- a crude but real first barrier. (Comer Ch.~7,
+      p.~91, verified.)
+\item \textbf{Segmentation} divides the network into separate zones so a breach in one cannot freely
+      reach the others, limiting \emph{lateral movement}. (CSA Domain~7; Comer VLAN/VXLAN p.~89--90.)
+\item \textbf{False} -- defence in depth. The host firewall still protects the host if the network
+      firewall is bypassed or misconfigured, or if the threat originates \emph{inside} the network.
+\item A \textbf{bastion / jump host} provides a single hardened, heavily-monitored entry point for
+      admin access (SSH), instead of exposing SSH on every server.
+\item Rules are evaluated by \textbf{priority} (lowest number first); the \textbf{first} match wins.
+\item SDN centralises and programs the network, so a policy can be applied everywhere at once (easier
+      to secure); but the controller is a single high-value target and a misconfiguration propagates
+      just as fast (riskier). (Comer Ch.~7, p.~94--95, verified.)
+\item Reflection -- no fixed answer; expect students to name an unneeded service bound to a public
+      interface.
+\end{enumerate}
+
+\wbsection{Lab checkpoints}
+\begin{itemize}
+\item \cmd{ufw status verbose} should show \emph{default deny (incoming)} plus explicit allow rules for
+      22 and 80.
+\item Tested from the host: an allowed port responds to \cmd{curl}; a port the firewall drops
+      \emph{times out}; with UFW disabled the same closed port answers \emph{connection refused} at once
+      -- a good discussion point. Testing against \cmd{localhost} inside the VM proves nothing, because
+      UFW does not filter loopback traffic.
+\item The before/after \cmd{ss -tulpn} should be unchanged (services still listen); the firewall
+      controls \emph{reachability}, not whether a service runs.
+\end{itemize}
+
+\wbsection{References}
+CSA Security Guidance v5, \textbf{Domain~7: Infrastructure \& Networking} (verified); Comer Ch.~7
+(NAT \textbf{p.~91}, VLANs \textbf{p.~89}, VXLAN \textbf{p.~90}, virtual switch \textbf{p.~91}, SDN
+\textbf{p.~94}, OpenFlow \textbf{p.~95}) -- all verified; J\o sang Ch.~6 (syllabus, page numbers not
+verified). MS Learn: \emph{Describe Azure networking services} (verified, June 2026).
+
+\end{document}

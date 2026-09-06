@@ -1,0 +1,154 @@
+\documentclass[11pt]{article}
+\usepackage{kristiania-workbook}
+
+\begin{document}
+\begin{center}
+  {\LARGE\bfseries Put your service behind HTTPS}\\[3pt]
+  {\large Session 6 -- TLS, data in transit \& Wireshark}\\[5pt]
+  {\small Exercise 6 \textperiodcentered\ Session 6 lab \textperiodcentered\ Estimated time: 80--110 min}
+\end{center}
+\vspace{2pt}\hrule\vspace{1.1em}
+
+Write your answers in the answer document \cmd{SKY2100\_Exercise6\_Answers.docx}. Last week you ran Nextcloud over plain HTTP. Today you
+\emph{see} why that is dangerous, then fix it with TLS. You will capture your own login in the clear,
+turn on HTTPS, and capture again to prove the traffic is now unreadable.
+
+\noindent\textbf{Caution:} Capture only your \emph{own} traffic in your \emph{own} VM. Sniffing other
+people's traffic is both unethical and illegal. This lab is about understanding, not interception.
+
+\wbsection{1\quad Capture the problem (plain HTTP)}
+\task{Make sure Nextcloud from Exercise 5 is reachable over HTTP} (e.g.\ \cmd{http://localhost:8080}).
+\task{Start a capture on the loopback (or VM) interface and log in once:}
+\begin{quote}\ttfamily
+sudo tcpdump -i lo -s 0 'tcp port 8080' -w http.pcap
+\end{quote}
+Open the capture in Wireshark (or \cmd{tcpdump -A -r http.pcap}) and find the login request.
+\task{What can you read in the captured request? Quote the field names you find (do \emph{not} write a
+real password here).}
+
+\wbsection{2\quad Turn on TLS (HTTPS)}
+\task{Put Nextcloud behind a reverse proxy with TLS.} The quickest option is Caddy, which obtains/serves
+a certificate automatically; a self-signed certificate via Nginx is also fine. Example with Caddy:
+\begin{quote}\ttfamily
+sudo apt install -y caddy\\
+sudo caddy reverse-proxy --from https://localhost --to localhost:8080
+\end{quote}
+Browse to \cmd{https://localhost} and accept the certificate (self-signed in the lab).
+
+\wbsection{3\quad Capture again (HTTPS) and compare}
+\task{Repeat the capture while logging in over HTTPS:}
+\begin{quote}\ttfamily
+sudo tcpdump -i lo -s 0 'tcp port 443' -w https.pcap
+\end{quote}
+\task{Compare the two captures. Can you find the credentials this time? What do you see instead?}
+
+\task{In Wireshark, inspect the TLS handshake. Note the \textbf{TLS version} and that a
+\textbf{certificate} is exchanged.}
+
+\note{Capture \cmd{tcp port 8080} once more during the HTTPS login: the hop from Caddy to Nextcloud is
+still plain HTTP inside your VM. TLS ends at the proxy --- keep this in mind for the Azure reflection
+below.}
+
+\aha{Put the two captures side by side. It is the same login, but in the first the field names and the
+value are plain text anyone on the path could read, and in the second there is nothing but ciphertext.
+Only one thing changed, TLS, and it turned readable traffic into noise. Notice what TLS does not do. It
+protects the data while it travels, but the server still decrypts and reads your password at the other
+end, and the capture still shows which host you talked to and when. Encryption in transit is one
+specific guarantee, not a blanket of secrecy, which is why later sessions still deal with access control
+and with protecting data at rest.}
+
+\wbsection{4\quad Cloud transfer: Microsoft Learn}
+\task{Work through ``Implement Azure Key Vault''} and note what a vault stores.
+\par\noindent\mbox{\href{https://learn.microsoft.com/training/modules/implement-azure-key-vault/}{learn.microsoft.com/training/modules/implement-azure-key-vault}}
+\task{Name the three kinds of object a Key Vault holds, and which one a TLS certificate is.}
+
+\wbsection{5\quad Azure reflection}
+\task{In Azure, TLS is often terminated at an Application Gateway using a certificate from Key Vault.
+Name one advantage of terminating TLS at the gateway, and one risk it introduces for traffic
+\emph{behind} the gateway.}
+
+\wbsection{6\quad Knowledge check}
+\begin{enumerate}
+\item What three guarantees does TLS provide for data in transit?
+\hint{Secrecy, tamper-detection, and knowing who the server really is.}
+\item Difference between \textbf{symmetric} and \textbf{asymmetric} encryption (one line each).
+\hint{One shared key for both directions, versus a public/private pair.}
+\item Why does TLS use \emph{both} (hybrid encryption)?
+\hint{Asymmetric once to agree a key, then fast symmetric for the actual data.}
+\item What is a \textbf{hash} used for, and why is it not encryption?
+\hint{A one-way fingerprint — it hides nothing and cannot be reversed.}
+\item What does a \textbf{certificate} bind together, and who signs it?
+\hint{A public key to an identity (a hostname), signed by a Certificate Authority.}
+\item Explain the \textbf{chain of trust} in one or two sentences.
+\hint{Server certificate to an intermediate CA to a root the browser already trusts.}
+\item What attack does certificate \emph{validation} prevent, and how?
+\hint{Man-in-the-middle — an attacker cannot get a valid cert for a domain it does not own.}
+\item Self-signed vs CA-signed: when is each appropriate?
+\hint{Self-signed for labs and internal testing; CA-signed for anything users reach.}
+\item Name two \textbf{common TLS mistakes}.
+\hint{Expired certs, obsolete protocols, weak ciphers, mixed content.}
+\item What does \textbf{forward secrecy} protect against?
+\hint{It protects yesterday's recorded traffic even if the key leaks tomorrow.}
+\item Data in transit vs data at rest: give the typical control for each (CSA Domain~9).
+\hint{TLS in transit; disk or storage encryption at rest.}
+\item (Reflection) TLS hid your password on the wire. Name one thing TLS does \emph{not} protect.
+\end{enumerate}
+
+\signoff
+
+\clearpage
+\solheader
+{\LARGE\bfseries\color{kred} Solutions}\\[2pt]
+{\small Work through the lab first, then check here. Model answers are indicative — equivalent reasoning is fine.}\par\vspace{8pt}
+\noindent\textbf{Note:} Model answers are indicative -- accept equivalent reasoning. Multiple-choice
+answers are in \textbf{bold}.
+
+\wbsection{Knowledge check}
+\begin{enumerate}
+\item \textbf{Confidentiality} (encryption), \textbf{integrity} (hashing / MAC), and \textbf{authenticity}
+      (the server's certificate).
+\item \textbf{Symmetric} uses one shared key for both encrypt and decrypt -- fast, but with a key-
+      distribution problem. \textbf{Asymmetric} uses a public/private key pair -- it solves distribution
+      but is slower.
+\item TLS uses asymmetric crypto once, to authenticate the server and agree on a shared key, then fast
+      symmetric encryption for the data -- the best of both (hybrid).
+\item A \textbf{hash} is a one-way fingerprint used to \emph{detect change} (integrity). It is not
+      encryption: it hides nothing and cannot be reversed.
+\item A certificate binds a \textbf{public key} to an \textbf{identity} (e.g.\ a hostname), \textbf{signed
+      by a Certificate Authority}.
+\item The server certificate is signed by an intermediate CA, which is signed by a root CA trusted by
+      the browser. If every signature checks out to a trusted root, the certificate is trusted (PKI).
+\item \textbf{Man-in-the-middle.} An attacker cannot present a CA-signed certificate for a domain it
+      does not own, so a validating client detects the imposter.
+\item \textbf{Self-signed} -- labs / internal testing (encrypts, but browsers warn; no third-party
+      identity). \textbf{CA-signed} -- anything public (accepted silently).
+\item Any two of: expired certificates; obsolete protocols (SSLv3, TLS 1.0/1.1) or weak ciphers; mixed
+      content; missing HSTS; a leaked private key.
+\item \textbf{Forward secrecy} protects \emph{past} recorded sessions even if the server's long-term
+      private key is later compromised (each session uses an ephemeral key).
+\item In transit $\rightarrow$ \textbf{TLS}; at rest $\rightarrow$ \textbf{storage/disk encryption} with
+      careful key management. (CSA Domain~9.)
+\item Reflection -- TLS does not protect: metadata (that you connected and to which host); data
+      \emph{after} TLS terminates; a compromised endpoint; or a malicious site that holds a valid
+      certificate.
+\end{enumerate}
+
+\wbsection{Lab checkpoints}
+\begin{itemize}
+\item \textbf{HTTP capture:} the POST body shows the credentials in cleartext
+      (\cmd{user=...\&password=...}). This is the ``aha'' moment of the lab.
+\item \textbf{HTTPS capture:} only the TLS handshake (ClientHello, ServerHello, Certificate) is
+      visible; the application data is encrypted (``Application Data'' records) -- no readable
+      password. The TLS version should be \textbf{1.2 or 1.3}.
+\item A self-signed certificate is expected to trigger a browser warning -- a good prompt to discuss
+      \emph{why} validation matters.
+\end{itemize}
+
+\wbsection{References}
+CSA Security Guidance v5, \textbf{Domain~9: Data Security} (verified); J\o sang -- cryptography chapter
+(syllabus, page numbers not verified); Comer Ch.~17 -- Cloud Security \& Privacy (p.~233--243, context,
+verified sections). MS Learn: \emph{Implement Azure Key Vault} (verified, June 2026) -- a vault stores
+\textbf{keys}, \textbf{secrets} and \textbf{certificates}; a TLS certificate is a \emph{certificate}
+object.
+
+\end{document}

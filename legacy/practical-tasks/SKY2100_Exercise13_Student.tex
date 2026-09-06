@@ -1,0 +1,247 @@
+% SKY2100 -- Exercise 13 (self-contained article; no external .sty needed)
+\documentclass[11pt]{article}
+
+% ---- Packages ------------------------------------------------------
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{pgffor}
+\usepackage{amssymb}
+\usepackage{array}
+
+% ---- Colours -------------------------------------------------------
+\definecolor{kred}{HTML}{D81E2E}
+\definecolor{kgrey}{HTML}{595959}
+
+\usepackage[colorlinks=true,urlcolor=kred,linkcolor=kred]{hyperref}
+
+% ---- Worksheet macros (inlined) ------------------------------------
+\newcommand{\wbsection}[1]{\par\vspace{11pt}\noindent
+  {\large\bfseries\color{kred}#1}\par\vspace{2pt}
+  {\color{kred!35}\hrule height 1pt}\par\vspace{6pt}}
+
+\newcommand{\task}[1]{\par\vspace{4pt}\noindent
+  \textcolor{kred}{\textbf{$\triangleright$}}~#1\par\vspace{2pt}}
+
+% Answers are discussed verbally -- no writing rules, just a small gap.
+\newcommand{\answerlines}[1]{\par\vspace{0.4em}}
+
+\newcommand{\boxlabel}[2]{\par\vspace{3pt}\noindent
+  \fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\textbf{#1:}\enspace #2}}\par\vspace{3pt}}
+\newcommand{\evidence}[1]{\boxlabel{Bring / capture}{#1}}
+\newcommand{\note}[1]{\boxlabel{Note}{#1}}
+\newcommand{\caution}[1]{\boxlabel{Caution}{#1}}
+
+% ---- Aha box + no italics (added) ----------------------------------
+\newcommand{\aha}[1]{\par\vspace{5pt}\noindent
+  \setlength{\fboxrule}{1.2pt}%
+  {\color{kred}\fbox{\normalcolor\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{%
+     {\bfseries\color{kred}AHA.}\enspace #1}}}%
+  \setlength{\fboxrule}{0.4pt}\par\vspace{5pt}}
+\renewcommand{\emph}[1]{\textup{#1}}
+
+\newcommand{\cmd}[1]{\texttt{#1}}
+\newcommand{\cbox}{$\square$\enspace}
+
+% ---- Hint and solutions divider -- same definitions as in kristiania-workbook.sty ----
+\newcommand{\hint}[1]{\par\vspace{1pt}{\footnotesize\color{kgrey}\textbf{Hint:}\enspace #1}\par\vspace{2pt}}
+\newcommand{\solheader}{\par\vspace{9pt}\noindent{\color{kred}\rule{\linewidth}{1.2pt}}\par\vspace{4pt}}
+
+\newcommand{\signoff}{\par\vspace{9pt}\noindent
+  {\color{kred}\rule{\linewidth}{0.4pt}}\par\vspace{3pt}
+  \noindent{\footnotesize\color{kgrey}\textbf{Progress check:} Discuss your designs in the group, then
+  talk the teacher through them verbally; nothing is handed in, signed or graded. This workshop is
+  preparation for the exam.}\par}
+
+\setlist[enumerate]{itemsep=3pt,topsep=2pt,parsep=0pt}
+\setlist[itemize]{itemsep=2pt,topsep=2pt,parsep=0pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+
+\begin{document}
+\begin{center}
+  {\LARGE\bfseries Integrated case \& exam workshop --- MediCloud}\\[3pt]
+  {\large Session 13 -- Bringing it all together}\\[5pt]
+  {\small Exercise 13 \textperiodcentered\ Capstone workshop \textperiodcentered\ Estimated time: 90--120 min}
+\end{center}
+\vspace{2pt}\hrule\vspace{1.1em}
+
+Write your answers in the answer document \cmd{SKY2100\_Exercise13\_Answers.docx}. Today you apply the \emph{whole} course to one scenario. There
+is \textbf{no single correct design} -- several are valid. What is assessed is whether you cover the
+lifecycle, recognise trade-offs, and \emph{justify} your choices against the context.
+
+\note{Bring your answer documents from S1--S12 --- above all your knowledge-check answers and your
+CSF~2.0 mapping (S12). The case draws on all of them.}
+
+\wbsection{The brief --- MediCloud}
+\textbf{MediCloud} is a small health-tech start-up. Clinics use its web app to upload and share
+\emph{patient records} (much like your Nextcloud). It is moving from one office server to the cloud.
+\emph{Constraints:} sensitive health data under GDPR; small team; limited budget; clinics need it
+available during working hours.
+
+\aha{This case has no single correct design, and that is the point of it. Two very different answers can
+both be right: a lean self-managed VM with tested backups, or a managed PaaS setup with a cloud SIEM and
+multi-region failover. What is assessed is not which one you pick but whether you cover the whole
+lifecycle, name the alternative you rejected, and justify your choice against MediCloud's health data,
+small team and limited budget. ``No single answer'' is not ``anything goes'', though. A handful of things
+must be true in any valid design, such as encryption in transit and at rest, least privilege with MFA,
+and backups that are restore-tested. The trade-offs live around those fixed points, and a design that
+skips one is wrong however cleverly it is argued.}
+
+\wbsection{1\quad Design across the CSF 2.0 functions}
+\task{Sketch a security design for MediCloud.} For each function --- Identify, Protect, Detect, Respond,
+Recover, Govern --- state in the design table of the answer document your decision, the main alternative
+you considered, and a one-line justification.
+
+\task{\textbf{Govern in depth.} The Govern row is where most designs are thin. Do three concrete things an
+auditor would expect:}
+\begin{itemize}
+\item \textbf{Risk register:} write \emph{one} row for MediCloud --- asset, threat, risk level
+      (impact\,$\times$\,likelihood), owner, review date (CSA Domain~3, p.~65--66).
+\item \textbf{Assurance:} name which provider report MediCloud should require before trusting the cloud
+      with patient data --- a \textbf{SOC~2 / ISAE~3402} attestation, \textbf{ISO/IEC 27001}, \textbf{BSI~C5},
+      or a \textbf{CSA STAR} entry --- and say whether it is an \emph{audit} or an \emph{attestation}.
+\item \textbf{Exit strategy:} how would MediCloud get its data \emph{out} if it had to leave the provider?
+      State the reversibility / anti-lock-in plan (a resilience-against-\emph{provider}-failure control, and
+      a DORA expectation for regulated sectors).
+\end{itemize}
+
+\wbsection{2\quad Defend two trade-offs}
+\task{Pick \emph{two} functions where you had a real choice. For each, give two reasonable options, their
+trade-offs, your decision, and why -- tied to MediCloud's health data and small budget.}
+
+\wbsection{3\quad The non-negotiables}
+\task{``No single answer'' does not mean ``anything goes''. List the things that \emph{must} be true in
+\emph{any} valid MediCloud design, and say which session each comes from.}
+\note{Strong lists include: encryption in transit \emph{and} at rest (S6); least privilege with no shared
+admin accounts, plus 2FA (S7); backups that exist \emph{and} are restore-tested (S11); logging of access
+to patient data (S9, also a GDPR/NIS2 requirement); and a documented \textbf{exit / data-portability}
+plan (S5/S11). The trade-offs live \emph{around} these fixed points --- a design that skips one is wrong,
+however cleverly justified.}
+
+\wbsection{4\quad Brief the founders (plain language)}
+\task{The founders are clinicians, not engineers. In 4--5 sentences, explain your design in terms of
+\emph{risk and outcomes} -- no jargon. Be honest about one thing you chose \emph{not} to do and why.}
+
+\wbsection{5\quad Mock exam --- scenario practice}
+Answer briefly, using the method: assumptions $\rightarrow$ options $\rightarrow$ trade-offs $\rightarrow$
+decision $\rightarrow$ justification.
+\begin{enumerate}
+\item MediCloud's budget allows either a managed SIEM \emph{or} multi-region failover, not both. Which
+      would you fund first, and why?
+\hint{Either is defensible — justify by the bigger gap you have right now.}
+\item A clinician reports the app was briefly unreachable this morning. Walk through how you would tell
+      whether this was an \emph{incident} -- which logs, which steps (S9--S10)?
+\hint{Validate first (S9–S10): read the access log and fail2ban before calling it an attack.}
+\item Justify, in one sentence each, whether MediCloud needs: (a) a WAF, (b) multi-provider resilience,
+      (c) immutable backups.
+\hint{The app takes untrusted web input — cheap, high-value protection fits.}
+\item Where does the line of \emph{shared responsibility} sit if MediCloud chooses PaaS instead of a
+      self-managed VM?
+\hint{PaaS moves OS patching to the provider; you still own data, identity, config.}
+\item Name one way MediCloud could safely use AI, and one governance rule it should set for that use.
+\hint{Safe use: anomaly detection or alert summarisation for a small team — and declare it.}
+\end{enumerate}
+
+\wbsection{6\quad Self-check against the revision map}
+\task{For each CSF function, write in the revision map of the answer document the single most important
+idea you must be able to explain in the exam. If any row is blank, that is your revision priority.}
+
+\signoff
+
+\clearpage
+\solheader
+{\LARGE\bfseries\color{kred} Solutions}\\[2pt]
+{\small Work through the lab first, then check here. Model answers are indicative — equivalent reasoning is fine.}\par\vspace{8pt}
+\noindent\textbf{How to use this key.} This case has \emph{no single correct answer}. Do not mark for a
+specific architecture -- mark for \emph{coverage of the lifecycle}, \emph{recognition of trade-offs}, and
+\emph{justification against the context} (health data, small team, budget). Below are two valid reference
+designs, the non-negotiables, a grading rubric, and model directions for the mock questions.
+
+\wbsection{Two valid reference designs}
+\begin{itemize}
+\item \textbf{Design 1 -- lean / self-managed.} Hardened VM (S7) running the app with TLS (S6) and a WAF
+      (S8); self-hosted logs + fail2ban + WAF audit log, read by the team (S9); manual IR with a simple
+      playbook (S10); single-region with tested, immutable backups and a defined RPO/RTO (S11); governed
+      to NIST CSF 2.0 + GDPR, with a written AI-use policy (S12). \emph{Fits a skilled, budget-tight team
+      that accepts more operational load.}
+\item \textbf{Design 2 -- managed.} PaaS web app (provider patches the OS); managed WAF; managed SIEM
+      (Sentinel) + SOAR for detection and response; multi-region failover for higher availability;
+      provider-managed automated backups; same CSF 2.0 + GDPR governance. \emph{Fits a team that prefers
+      to pay to offload risk and operational burden.}
+\end{itemize}
+Both are defensible. A weak answer is gold-plated (``multi-provider + full SOC + every product'') with no
+reference to budget, team size, or the risk each control addresses.
+
+\wbsection{The non-negotiables (must appear in any valid design)}
+\begin{itemize}
+\item Health data \textbf{encrypted in transit and at rest} (S6) -- not optional under GDPR.
+\item \textbf{Least privilege}, no shared admin accounts, MFA on admin access (S7).
+\item Backups that \textbf{exist and are restore-tested}; access to patient data \textbf{logged} (S9,
+      S11).
+\item A response plan, however lightweight, and a clear \textbf{owner/accountability} (S10, S12).
+\end{itemize}
+A design that omits a non-negotiable is wrong regardless of how well the rest is justified.
+
+\wbsection{Govern in depth (model answers)}
+\begin{itemize}
+\item \textbf{Risk-register row:} e.g.\ \emph{patient records / unauthorised disclosure / Critical
+      (high$\times$moderate) / owner: MediCloud DPO / review: annual}. Accept any defensible row with a
+      level derived from impact $\times$ likelihood (CSA Domain~3).
+\item \textbf{Assurance report:} for health data a strong answer requires the provider's \textbf{ISO/IEC
+      27001} certificate \emph{and/or} a \textbf{SOC~2 / ISAE~3402} attestation (and notes \textbf{BSI~C5}
+      for a German market, or the \textbf{CSA STAR} entry). Must classify it: SOC~2 = attestation; ISO~27001
+      = certification/audit. The student should name one thing to check (scope, exceptions, the report
+      period, sub-service organisations).
+\item \textbf{Exit strategy:} data export in an open format, documented restore-elsewhere procedure,
+      avoiding proprietary lock-in; for a regulated start-up this is also a \textbf{DORA}-style expectation.
+      A design with no exit plan is a real audit finding.
+\end{itemize}
+
+\wbsection{Grading rubric (what separates strong from weak)}
+\begin{itemize}
+\item \textbf{Strong:} covers all six CSF functions; offers options with trade-offs; decisions justified
+      against MediCloud's specific context; honest about what is \emph{not} done and why; non-negotiables
+      respected; communicates in plain risk language.
+\item \textbf{Adequate:} covers most functions; some justification; at least one explicit trade-off.
+\item \textbf{Weak:} lists tools with no reasoning; ignores budget/team; gold-plated or missing a
+      non-negotiable; no trade-offs; one ``right answer'' asserted without context.
+\end{itemize}
+
+\wbsection{Mock exam --- model directions}
+\begin{enumerate}
+\item \textbf{SIEM vs multi-region (fund first).} Either can be justified. Common strong answer: fund the
+      \emph{managed SIEM} first -- detection of a breach of patient data (confidentiality) is the higher
+      risk for health records, and single-region + tested backups already cover most availability needs;
+      multi-region addresses a rarer regional-outage risk. The reverse is acceptable \emph{if} justified
+      by an availability-critical context. Mark the reasoning, not the pick.
+\item \textbf{Incident or not?} Validate the alert (S9--S10): check the web/access log and
+      \cmd{journalctl} for an outage/restart, \cmd{auth.log}/fail2ban for suspicious logins, the WAF log
+      for blocked attacks; correlate timestamps into a short timeline; decide event vs incident vs breach;
+      if an incident, follow the lifecycle (contain, analyse, recover, learn). A brief outage with a
+      benign cause (e.g.\ a restart) is an \emph{event}, not necessarily an incident.
+\item \textbf{(a) WAF -- yes:} the app handles untrusted input over the web; cheap, high-value protection
+      against injection/XSS against patient data. \textbf{(b) Multi-provider -- no (for a start-up):}
+      complexity and cost outweigh the benefit; single- or multi-region is proportionate. \textbf{(c)
+      Immutable backups -- yes:} ransomware against health data is a real, high-impact threat; immutability
+      is low-cost insurance.
+\item \textbf{Shared responsibility with PaaS:} the provider takes on OS patching, runtime and more of the
+      platform; MediCloud still owns its data, access control, app configuration, encryption choices and
+      monitoring of its own activity. Choosing PaaS legitimately shifts operational burden to the provider
+      -- a sound move for a small team.
+\item \textbf{AI use + governance rule.} Safe use: anomaly detection or alert summarisation to help a small
+      team triage (S9, S12). Governance rule examples: keep a human accountable for decisions; do not feed
+      patient data into tools that may retain it; disclose where AI is used. Any sensible pairing is fine.
+\end{enumerate}
+
+\wbsection{References}
+Synthesises the whole course. Frameworks: \textbf{NIST CSF 2.0} (Govern, Identify, Protect, Detect,
+Respond, Recover; verified, Feb 2024); CSA Security Guidance v5 -- shared responsibility \& governance
+(Domains~1--2), IAM \& hardening (Domain~5), application security (Domain~10), security monitoring
+(Domain~6), incident response \& resilience (Domain~11). Comer, \emph{The Cloud Computing Book} --
+foundations, storage/RAID (Ch.~8), DevOps (Ch.~15), security \& AI (Ch.~17). Maps to course sessions
+S1--S12.
+
+\end{document}
