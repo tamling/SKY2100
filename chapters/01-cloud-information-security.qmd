@@ -156,6 +156,231 @@ has attacked the file without reading it.
 Three attacks, three defences, one file.
 :::
 
+<!-- Interactive self-check: drag the three protection goals into the
+     triangle. Self-contained HTML/JS/CSS (works in light and dark mode,
+     mouse and touch). The correct set is compared via djb2 hashes so the
+     answer never appears in plain text in the page source — in keeping
+     with the repo rule that answers are not published. -->
+
+```{=html}
+<div class="cia-game" id="cia-game">
+  <p class="cia-game-intro"><strong>Try it — build the triad.</strong>
+  Nine security terms, but only three are protection goals. Drag each of
+  the three into a corner of the triangle (or tap a term, then tap a
+  corner). The other six are controls or related concepts — they do not
+  belong.</p>
+  <div class="cia-pool" id="cia-pool" aria-label="Term pool"></div>
+  <div class="cia-tri">
+    <svg viewBox="0 0 520 300" aria-hidden="true">
+      <polygon points="260,44 44,256 476,256" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5"></polygon>
+      <text x="260" y="200" text-anchor="middle" class="cia-tri-label">information</text>
+    </svg>
+    <div class="cia-slot cia-slot-top" data-slot="0" aria-label="Corner 1"></div>
+    <div class="cia-slot cia-slot-bl" data-slot="1" aria-label="Corner 2"></div>
+    <div class="cia-slot cia-slot-br" data-slot="2" aria-label="Corner 3"></div>
+  </div>
+  <p class="cia-status" id="cia-status" role="status">Place three terms — one at each corner.</p>
+  <button type="button" class="cia-reset" id="cia-reset">Reset</button>
+</div>
+<script>
+(function () {
+  var TERMS = ["Confidentiality", "Integrity", "Availability",
+               "Authentication", "Non-repudiation", "Encryption",
+               "Redundancy", "Anonymity", "Compliance"];
+  // djb2 hashes of the lowercased correct terms — the answer set is
+  // deliberately not stored in plain text.
+  var CORRECT = { 2824700651: 1, 301275364: 1, 1870233280: 1 };
+  function djb2(s) {
+    var h = 5381;
+    for (var i = 0; i < s.length; i++) h = (Math.imul(h, 33) + s.charCodeAt(i)) >>> 0;
+    return h;
+  }
+  var pool = document.getElementById("cia-pool");
+  var status = document.getElementById("cia-status");
+  var slots = Array.prototype.slice.call(document.querySelectorAll("#cia-game .cia-slot"));
+  var selected = null;
+
+  function makeChip(term) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "cia-chip";
+    b.textContent = term;
+    b.draggable = true;
+    b.addEventListener("dragstart", function (e) {
+      e.dataTransfer.setData("text/plain", term);
+      selectChip(null);
+    });
+    b.addEventListener("click", function () {
+      if (b.parentElement.classList.contains("cia-slot")) {
+        // tapping a placed chip returns it to the pool
+        pool.appendChild(b);
+        b.classList.remove("cia-wrong");
+        selectChip(null);
+        evaluate();
+      } else {
+        selectChip(selected === b ? null : b);
+      }
+    });
+    return b;
+  }
+
+  function selectChip(chip) {
+    if (selected) selected.classList.remove("cia-selected");
+    selected = chip;
+    if (selected) selected.classList.add("cia-selected");
+  }
+
+  function place(slot, chip) {
+    if (!chip || slot.firstElementChild) return;
+    chip.classList.remove("cia-selected", "cia-wrong");
+    slot.appendChild(chip);
+    selected = null;
+    evaluate();
+  }
+
+  slots.forEach(function (slot) {
+    slot.addEventListener("dragover", function (e) {
+      if (!slot.firstElementChild) e.preventDefault();
+    });
+    slot.addEventListener("drop", function (e) {
+      e.preventDefault();
+      var term = e.dataTransfer.getData("text/plain");
+      var chip = Array.prototype.find.call(pool.children, function (c) {
+        return c.textContent === term;
+      });
+      place(slot, chip);
+    });
+    slot.addEventListener("click", function () {
+      if (!slot.firstElementChild && selected) place(slot, selected);
+    });
+  });
+
+  function evaluate() {
+    var placed = slots.map(function (s) { return s.firstElementChild; }).filter(Boolean);
+    slots.forEach(function (s) { s.classList.remove("cia-ok"); });
+    if (placed.length < 3) {
+      status.className = "cia-status";
+      status.textContent = "Place three terms — one at each corner.";
+      return;
+    }
+    var wrong = placed.filter(function (c) {
+      return !CORRECT[djb2(c.textContent.toLowerCase())];
+    });
+    if (wrong.length === 0) {
+      status.className = "cia-status cia-status-ok";
+      status.textContent = "✓ Correct — that is the CIA triad: the three protection goals every control in this course serves.";
+      slots.forEach(function (s) { s.classList.add("cia-ok"); });
+    } else {
+      wrong.forEach(function (c) { c.classList.add("cia-wrong"); });
+      status.className = "cia-status cia-status-bad";
+      status.textContent = "Not quite — the highlighted terms are controls or related concepts, not protection goals. Tap them to return them to the pool.";
+    }
+  }
+
+  function reset() {
+    slots.forEach(function (s) {
+      if (s.firstElementChild) pool.appendChild(s.firstElementChild);
+      s.classList.remove("cia-ok");
+    });
+    Array.prototype.forEach.call(pool.children, function (c) {
+      c.classList.remove("cia-wrong", "cia-selected");
+    });
+    // re-shuffle the pool
+    Array.prototype.slice.call(pool.children)
+      .sort(function () { return Math.random() - 0.5; })
+      .forEach(function (c) { pool.appendChild(c); });
+    selected = null;
+    evaluate();
+  }
+  document.getElementById("cia-reset").addEventListener("click", reset);
+
+  TERMS.sort(function () { return Math.random() - 0.5; })
+       .forEach(function (t) { pool.appendChild(makeChip(t)); });
+})();
+</script>
+<style>
+.cia-game {
+  --cia-border: #adb5bd;
+  --cia-chip-bg: #f1f3f5;
+  --cia-chip-border: #ced4da;
+  --cia-accent: #d81e2e;
+  --cia-ok: #2e7d32;
+  border: 1px solid var(--cia-border);
+  border-left: 4px solid var(--cia-accent);
+  border-radius: 6px;
+  padding: 1rem 1.1rem;
+  margin: 1.5rem 0;
+}
+body.quarto-dark .cia-game {
+  --cia-border: #495057;
+  --cia-chip-bg: #343a40;
+  --cia-chip-border: #495057;
+  --cia-ok: #81c784;
+}
+.cia-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.9rem;
+  min-height: 2.2rem;
+}
+.cia-chip {
+  font: inherit;
+  font-size: 0.88em;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid var(--cia-chip-border);
+  border-radius: 999px;
+  background: var(--cia-chip-bg);
+  color: inherit;
+  cursor: grab;
+}
+.cia-chip.cia-selected { outline: 2px solid var(--cia-accent); }
+.cia-chip.cia-wrong { border-color: var(--cia-accent); color: var(--cia-accent); }
+.cia-tri {
+  position: relative;
+  max-width: 520px;
+  margin: 0 auto;
+}
+.cia-tri svg { display: block; width: 100%; height: auto; }
+.cia-tri-label {
+  font-size: 15px;
+  fill: currentColor;
+  fill-opacity: 0.6;
+  font-style: italic;
+}
+.cia-slot {
+  position: absolute;
+  width: 10rem;
+  max-width: 34%;
+  min-height: 2.1rem;
+  border: 1.5px dashed var(--cia-border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem;
+}
+.cia-slot.cia-ok { border-style: solid; border-color: var(--cia-ok); }
+.cia-slot .cia-chip { cursor: pointer; }
+.cia-slot-top { top: 0; left: 50%; transform: translateX(-50%); }
+.cia-slot-bl { bottom: 0; left: 0; }
+.cia-slot-br { bottom: 0; right: 0; }
+.cia-status { margin: 0.8rem 0 0.3rem; font-size: 0.92em; }
+.cia-status-ok { color: var(--cia-ok); font-weight: 600; }
+.cia-status-bad { color: var(--cia-accent); }
+.cia-reset {
+  font: inherit;
+  font-size: 0.85em;
+  padding: 0.2rem 0.7rem;
+  border: 1px solid var(--cia-border);
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+</style>
+```
+
 ## Threat, risk and control {#sec-01-threat-risk-control}
 
 In everyday language threat and risk are near-synonyms. In this course they
