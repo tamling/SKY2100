@@ -26,6 +26,7 @@
 .w074 .w074-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w074 .w074-msg.ok { color: #2e7d32; }
 .w074 .w074-msg.bad { color: #d81e2e; }
+.w074 .w074-expl { font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32; padding: 6px 10px; margin-top: 8px; }
 </style>
 <div class="w074 iw" id="w074">
   <div class="w074-list" aria-label="statements to judge"></div>
@@ -36,12 +37,16 @@
     <span class="w074-note">(no fun if you click it right away)</span>
   </div>
   <div class="w074-msg iw-msg" role="status"></div>
+  <div class="w074-expl iw-expl" hidden>
+    With SSO a central identity management system holds one set of credentials and access rights, every service consults it, and the user enters credentials once per task &mdash; which is what makes Zero Trust&rsquo;s per-request validation workable; in Azure that central system is Microsoft Entra ID. PAM is identity management for the administrators themselves: no single master password, rights only on the systems one is responsible for, all accesses logged and suspicious use alerted &mdash; and the Guidance still demands the strongest available authentication for these accounts &mdash; see <a href="#sec-07-sso-pam">the section on single sign-on and privileged access</a>.
+  </div>
 </div>
 <script>
 (function () {
   const root = document.getElementById('w074');
   const list = root.querySelector('.w074-list');
   const msg = root.querySelector('.w074-msg');
+  const expl = root.querySelector('.w074-expl');
   const ITEMS = [
     ['With single sign-on, each service still keeps its own user list and grants privileges on its own.', 'f'],
     ['SSO is what makes Zero Trust’s per-request validation workable: the user enters credentials once per task.', 't'],
@@ -102,6 +107,7 @@
   root.querySelector('.w074-reset').addEventListener('click', () => {
     root.querySelectorAll('.w074-row').forEach(r => select(r, ''));
     clearMarks();
+    expl.hidden = true;
   });
   root.querySelector('.w074-solution').addEventListener('click', () => {
     root.querySelectorAll('.w074-row').forEach(r => {
@@ -110,6 +116,7 @@
     });
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w074-msg iw-msg ok';
+    expl.hidden = false;
   });
 })();
 </script>

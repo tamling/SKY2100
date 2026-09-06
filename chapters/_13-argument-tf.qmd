@@ -27,6 +27,10 @@
 .w134-dd .w134-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w134-dd .w134-msg.ok { color: #2e7d32; }
 .w134-dd .w134-msg.bad { color: #d81e2e; }
+.w134-dd .w134-expl {
+  font-size: 0.85rem; opacity: 0.85; border-left: 3px solid #2e7d32;
+  padding: 6px 10px; margin-top: 8px;
+}
 </style>
 <div class="w134-dd iw" id="w134-dd">
   <div class="w134-rows"></div>
@@ -37,6 +41,15 @@
     <span class="w134-note">(no fun if you click it right away)</span>
   </div>
   <div class="w134-msg iw-msg" role="status"></div>
+  <div class="w134-expl iw-expl" hidden>
+    Security is a method rather than a product, and the defensible system is a set of
+    <em>independent</em> layers, not a single mechanism, precisely because a
+    cloud-native application is a complex distributed system in which network delays
+    have effects nobody planned for. That complexity is also why the question whether
+    a system is secure never has a permanent yes, only a position that must be argued
+    again as the system changes — see <a href="#sec-13-argument">the section on the
+    argument</a>.
+  </div>
 </div>
 <script>
 (function () {
@@ -111,6 +124,7 @@
       r.el.classList.remove('w134-wrong');
       r.el.classList.add('w134-right');
     });
+    root.querySelector('.w134-expl').hidden = false;
     msg.textContent = 'Solution shown — reset to try it yourself.';
     msg.className = 'w134-msg iw-msg ok';
   });
@@ -120,6 +134,7 @@
       r.btns[true].classList.remove('w134-sel');
       r.btns[false].classList.remove('w134-sel');
     });
+    root.querySelector('.w134-expl').hidden = true;
     clearMarks();
   });
 })();
