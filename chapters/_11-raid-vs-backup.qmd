@@ -1,0 +1,127 @@
+```{=html}
+<style>
+.w112-dd { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w112-dd .w112-buckets { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 0.75rem; }
+.w112-dd .w112-bucket {
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  padding: 8px; min-height: 150px; cursor: pointer;
+}
+.w112-dd .w112-bucket h5 { margin: 0 0 6px; font-size: 0.95rem; text-align: center; font-weight: 700; }
+.w112-dd .w112-bucket.w112-armed { border-color: #d81e2e; }
+.w112-dd .w112-pool {
+  display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+  min-height: 44px; padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.w112-dd .w112-item {
+  display: block; padding: 4px 10px; border-radius: 6px; cursor: grab;
+  user-select: none; border: 1.5px solid #d81e2e; color: var(--bs-body-color, #222);
+  background: var(--bs-body-bg, #fff); font-weight: 600; font-size: 0.85rem;
+  margin: 3px 0; text-align: center;
+}
+.w112-dd .w112-pool .w112-item { margin: 0; }
+.w112-dd .w112-item.w112-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w112-dd .w112-item.w112-right { border-color: #2e7d32; border-width: 2px; }
+.w112-dd .w112-item.w112-wrong { border-color: #d81e2e; border-width: 2px; box-shadow: 0 0 0 1px #d81e2e inset; }
+.w112-dd .w112-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w112-dd button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w112-dd .w112-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w112-dd .w112-msg.ok { color: #2e7d32; }
+.w112-dd .w112-msg.bad { color: #d81e2e; }
+</style>
+<div class="w112-dd iw" id="w112-dd">
+  <div class="w112-pool" aria-label="situations to classify"></div>
+  <div class="w112-buckets">
+    <div class="w112-bucket" data-cat="raid"><h5>RAID handles it</h5></div>
+    <div class="w112-bucket" data-cat="backup"><h5>Only a backup handles it</h5></div>
+  </div>
+  <div class="w112-controls">
+    <button type="button" class="w112-check iw-check">Check</button>
+    <button type="button" class="w112-reset iw-reset">Reset</button>
+  </div>
+  <div class="w112-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w112-dd');
+  const pool = root.querySelector('.w112-pool');
+  const buckets = [...root.querySelectorAll('.w112-bucket')];
+  const msg = root.querySelector('.w112-msg');
+  const ITEMS = [
+    { id: 'i0', cat: 'raid',   text: 'A single disk fails and the service must keep running' },
+    { id: 'i1', cat: 'backup', text: 'An administrator deletes the wrong directory' },
+    { id: 'i2', cat: 'backup', text: 'Ransomware encrypts the live data' },
+    { id: 'i3', cat: 'raid',   text: 'A failed disk is swapped while the array keeps operating' },
+    { id: 'i4', cat: 'backup', text: 'The system must return to an earlier point in time' },
+    { id: 'i5', cat: 'backup', text: 'The whole site is lost' }
+  ];
+  let picked = null;
+
+  function makeItem(it) {
+    const c = document.createElement('span');
+    c.className = 'w112-item';
+    c.textContent = it.text;
+    c.dataset.id = it.id;
+    c.dataset.cat = it.cat;
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement !== pool) { pool.appendChild(c); unpick(); clearMarks(); return; }
+      if (picked === c) { unpick(); return; }
+      unpick(); picked = c; c.classList.add('w112-picked');
+      buckets.forEach(b => b.classList.add('w112-armed'));
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', it.id));
+    return c;
+  }
+  function unpick() {
+    if (picked) picked.classList.remove('w112-picked');
+    picked = null;
+    buckets.forEach(b => b.classList.remove('w112-armed'));
+  }
+  function clearMarks() {
+    root.querySelectorAll('.w112-item').forEach(i => i.classList.remove('w112-right', 'w112-wrong'));
+    msg.textContent = ''; msg.className = 'w112-msg iw-msg';
+  }
+  function place(bucket, item) { bucket.appendChild(item); clearMarks(); }
+  buckets.forEach(b => {
+    b.addEventListener('click', () => { if (picked) { place(b, picked); unpick(); } });
+    b.addEventListener('dragover', e => e.preventDefault());
+    b.addEventListener('drop', e => {
+      e.preventDefault();
+      const item = root.querySelector('.w112-item[data-id="' + e.dataTransfer.getData('text/plain') + '"]');
+      if (item) { place(b, item); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const item = root.querySelector('.w112-item[data-id="' + e.dataTransfer.getData('text/plain') + '"]');
+    if (item) { pool.appendChild(item); clearMarks(); }
+  });
+  root.querySelector('.w112-check').addEventListener('click', () => {
+    let right = 0, wrong = 0;
+    const unplaced = pool.querySelectorAll('.w112-item').length;
+    buckets.forEach(b => {
+      b.querySelectorAll('.w112-item').forEach(i => {
+        i.classList.remove('w112-right', 'w112-wrong');
+        if (i.dataset.cat === b.dataset.cat) { i.classList.add('w112-right'); right++; }
+        else { i.classList.add('w112-wrong'); wrong++; }
+      });
+    });
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct — RAID buys uptime through hardware failure, backup recovers from everything else.'; msg.className = 'w112-msg iw-msg ok'; }
+    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + unplaced + ' situation(s) still unsorted.'; msg.className = 'w112-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — the red items sit in the wrong box. Remember: a mirror copies the damage exactly.'; msg.className = 'w112-msg iw-msg bad'; }
+  });
+  root.querySelector('.w112-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w112-item').forEach(i => pool.appendChild(i));
+    unpick(); clearMarks();
+  });
+  ITEMS.forEach(it => pool.appendChild(makeItem(it)));
+})();
+</script>
+```

@@ -390,6 +390,27 @@ A deployment runs in one availability zone of one region. Which failures in
 first?
 :::
 
+::: {#exr-02-hypervisor-sort}
+## Type 1 or Type 2, interactive
+Sort the seven items below into the two hypervisor types of
+@def-hypervisor: drag each item into the matching box, or click an item and
+then click a box (click a placed item to send it back). Then press
+**Check**.
+
+{{< include _02-hypervisor-buckets.qmd >}}
+:::
+
+::: {#exr-02-baseline-commands}
+## The baseline commands, interactive
+Building on @exr-02-which-command: match the observation commands of
+@tbl-baseline to the question each one answers. Drag a command onto a
+question, or click a command and then click a question (click a placed
+command to send it back); two of the seven commands answer none of these
+questions. Then press **Check**.
+
+{{< include _02-baseline-commands.qmd >}}
+:::
+
 ## Self-check {#sec-02-self-check}
 
 **Q1** *(tests @sec-02-traffic-geography · basic)*

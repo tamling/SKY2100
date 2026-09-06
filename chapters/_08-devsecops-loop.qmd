@@ -1,0 +1,123 @@
+```{=html}
+<style>
+.w081-order { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w081-order .w081-list { list-style: none; margin: 0 0 0.75rem; padding: 0; counter-reset: w081n; }
+.w081-order .w081-item {
+  display: flex; align-items: center; gap: 10px; margin: 6px 0; padding: 6px 10px;
+  border: 1.5px solid var(--bs-border-color, #999); border-radius: 8px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  cursor: grab; user-select: none; font-weight: 600;
+}
+.w081-order .w081-item::before {
+  counter-increment: w081n; content: counter(w081n);
+  font-weight: 700; opacity: 0.55; min-width: 1.2em; text-align: right;
+}
+.w081-order .w081-locked { border: 1.5px solid #d81e2e; cursor: default; }
+.w081-order .w081-fixed { margin-left: auto; font-size: 0.75rem; font-style: italic; opacity: 0.7; }
+.w081-order .w081-dragging { opacity: 0.5; }
+.w081-order .w081-item.w081-right { border: 2px solid #2e7d32; }
+.w081-order .w081-item.w081-wrong { border: 2px solid #d81e2e; }
+.w081-order .w081-btns { margin-left: auto; display: flex; gap: 4px; }
+.w081-order button {
+  padding: 2px 8px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w081-order .w081-controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.w081-order .w081-controls button { padding: 5px 14px; }
+.w081-order .w081-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w081-order .w081-msg.ok { color: #2e7d32; }
+.w081-order .w081-msg.bad { color: #d81e2e; }
+</style>
+<div class="iw w081-order" id="w081">
+  <ol class="w081-list">
+    <li class="w081-item w081-locked" data-pos="0"><span class="w081-label">Plan</span><span class="w081-fixed">fixed start of the loop</span></li>
+  </ol>
+  <div class="w081-controls">
+    <button type="button" class="w081-check iw-check">Check</button>
+    <button type="button" class="w081-reset iw-reset">Reset</button>
+  </div>
+  <div class="w081-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w081');
+  const list = root.querySelector('.w081-list');
+  const msg = root.querySelector('.w081-msg');
+  // [stage, correct index in the list (Plan = 0)], given in scrambled display order
+  const STAGES = [
+    ['Deploy', 5], ['Monitor', 7], ['Code', 1], ['Release', 4],
+    ['Operate', 6], ['Build', 2], ['Test', 3]
+  ];
+  function clearMarks() {
+    [...list.children].forEach(li => li.classList.remove('w081-right', 'w081-wrong'));
+    msg.textContent = ''; msg.className = 'w081-msg iw-msg';
+  }
+  function makeItem(text, pos) {
+    const li = document.createElement('li');
+    li.className = 'w081-item';
+    li.dataset.pos = pos;
+    li.draggable = true;
+    const label = document.createElement('span');
+    label.className = 'w081-label'; label.textContent = text;
+    const btns = document.createElement('span'); btns.className = 'w081-btns';
+    const up = document.createElement('button');
+    up.type = 'button'; up.textContent = '▲';
+    up.setAttribute('aria-label', 'move ' + text + ' up');
+    const dn = document.createElement('button');
+    dn.type = 'button'; dn.textContent = '▼';
+    dn.setAttribute('aria-label', 'move ' + text + ' down');
+    up.addEventListener('click', e => {
+      e.stopPropagation();
+      const p = li.previousElementSibling;
+      if (p && !p.classList.contains('w081-locked')) { list.insertBefore(li, p); clearMarks(); }
+    });
+    dn.addEventListener('click', e => {
+      e.stopPropagation();
+      const n = li.nextElementSibling;
+      if (n) { list.insertBefore(n, li); clearMarks(); }
+    });
+    btns.append(up, dn);
+    li.append(label, btns);
+    li.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', text);
+      li.classList.add('w081-dragging');
+    });
+    li.addEventListener('dragend', () => li.classList.remove('w081-dragging'));
+    return li;
+  }
+  list.addEventListener('dragover', e => {
+    e.preventDefault();
+    const dragging = list.querySelector('.w081-dragging');
+    if (!dragging) return;
+    const after = [...list.querySelectorAll('li:not(.w081-dragging):not(.w081-locked)')]
+      .find(li => e.clientY < li.getBoundingClientRect().top + li.offsetHeight / 2);
+    if (after) list.insertBefore(dragging, after); else list.appendChild(dragging);
+    clearMarks();
+  });
+  list.addEventListener('drop', e => e.preventDefault());
+  root.querySelector('.w081-check').addEventListener('click', () => {
+    let right = 0;
+    [...list.children].forEach((li, i) => {
+      if (li.classList.contains('w081-locked')) return;
+      li.classList.remove('w081-right', 'w081-wrong');
+      if (+li.dataset.pos === i) { li.classList.add('w081-right'); right++; }
+      else li.classList.add('w081-wrong');
+    });
+    msg.className = 'w081-msg iw-msg';
+    if (right === STAGES.length) {
+      msg.textContent = '✓ Correct — development flows into operations and the loop closes back at Plan.';
+      msg.classList.add('ok');
+    } else {
+      msg.textContent = '✗ Not yet — ' + right + ' of ' + STAGES.length + ' movable stages are in the right place (marked green).';
+      msg.classList.add('bad');
+    }
+  });
+  STAGES.forEach(s => list.appendChild(makeItem(s[0], s[1])));
+  const order0 = [...list.children];
+  root.querySelector('.w081-reset').addEventListener('click', () => {
+    order0.forEach(li => list.appendChild(li));
+    clearMarks();
+  });
+})();
+</script>
+```

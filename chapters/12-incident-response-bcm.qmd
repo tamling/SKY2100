@@ -256,6 +256,26 @@ What is a risk register, and what is compliance inheritance? Relate the
 latter to the shared-responsibility model of Session 1.
 :::
 
+::: {#exr-12-ir-lifecycle}
+## The incident response lifecycle, interactive
+The six actions below come from the lifecycle of @def-irlifecycle as
+@sec-12-ir-lifecycle describes it for the cloud. Arrange them into the
+order in which the lifecycle performs them: drag a step to its place, or
+use the arrow buttons to move it up and down, then press **Check**.
+
+{{< include _12-ir-lifecycle.qmd >}}
+:::
+
+::: {#exr-12-event-incident-breach}
+## Event, incident or breach?, interactive
+@def-incident gives response its three-level scale. Sort each occurrence
+below into the right level: drag it onto a box, or click the occurrence and
+then the box, then press **Check**. Click a placed item to send it back to
+the pool.
+
+{{< include _12-event-incident-breach.qmd >}}
+:::
+
 ## Self-check {#sec-12-self-check}
 
 **Q1** *(tests @sec-12-events-incidents-breaches · basic)*

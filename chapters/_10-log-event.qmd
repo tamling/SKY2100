@@ -1,0 +1,137 @@
+```{=html}
+<style>
+.w102-sort { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w102-sort .w102-buckets { display: flex; gap: 10px; margin-bottom: 0.75rem; align-items: stretch; }
+.w102-sort .w102-bucket {
+  flex: 1 1 0; min-height: 170px; padding: 6px 8px;
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); cursor: pointer;
+}
+.w102-sort .w102-title { text-align: center; font-weight: 700; color: #d81e2e; margin-bottom: 6px; }
+.w102-sort .w102-bucket.w102-armed { border-color: #d81e2e; }
+.w102-sort .w102-pool {
+  display: flex; flex-direction: column; gap: 6px;
+  min-height: 44px; padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.w102-sort .w102-chip {
+  display: block; margin: 0; padding: 4px 10px; border-radius: 8px;
+  cursor: grab; user-select: none; font-weight: 600; text-align: center;
+  border: 1.5px solid var(--bs-border-color, #999);
+  color: var(--bs-body-color, #222); background: var(--bs-body-bg, #fff);
+}
+.w102-sort .w102-bucket .w102-chip { margin: 6px 0; }
+.w102-sort .w102-chip.w102-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w102-sort .w102-chip.w102-right { border: 2px solid #2e7d32; }
+.w102-sort .w102-chip.w102-wrong { border: 2px solid #d81e2e; }
+.w102-sort .w102-controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.w102-sort button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w102-sort .w102-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w102-sort .w102-msg.ok { color: #2e7d32; }
+.w102-sort .w102-msg.bad { color: #d81e2e; }
+</style>
+<div class="iw w102-sort" id="w102">
+  <div class="w102-buckets">
+    <div class="w102-bucket" data-cat="log">
+      <div class="w102-title">Log</div>
+      <div class="w102-slot"></div>
+    </div>
+    <div class="w102-bucket" data-cat="event">
+      <div class="w102-title">Event</div>
+      <div class="w102-slot"></div>
+    </div>
+  </div>
+  <div class="w102-pool" aria-label="statements to sort"></div>
+  <div class="w102-controls">
+    <button type="button" class="w102-check iw-check">Check</button>
+    <button type="button" class="w102-reset iw-reset">Reset</button>
+  </div>
+  <div class="w102-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w102');
+  const pool = root.querySelector('.w102-pool');
+  const buckets = [...root.querySelectorAll('.w102-bucket')];
+  const msg = root.querySelector('.w102-msg');
+  const ITEMS = [
+    ['Typically records only a change (create, update, delete)', 'event'],
+    ['A relatively complete record of activity: create, read, update and delete', 'log'],
+    ['Available within seconds, so it can trigger a real-time alert', 'event'],
+    ['Detailed and stored persistently, but often delivered in batches and therefore delayed', 'log'],
+    ['Not retained unless explicitly saved', 'event'],
+    ['Gives the depth to investigate what happened', 'log']
+  ];
+  let picked = null;
+  function chipByKey(key) { return root.querySelector('.w102-chip[data-key="' + key + '"]'); }
+  function unpick() {
+    if (picked) picked.classList.remove('w102-picked');
+    picked = null;
+    buckets.forEach(b => b.classList.remove('w102-armed'));
+  }
+  function clearMarks() {
+    root.querySelectorAll('.w102-chip').forEach(c => c.classList.remove('w102-right', 'w102-wrong'));
+    msg.textContent = ''; msg.className = 'w102-msg iw-msg';
+  }
+  function place(bucket, chip) { bucket.querySelector('.w102-slot').appendChild(chip); clearMarks(); }
+  function makeChip(text, cat, key) {
+    const c = document.createElement('span');
+    c.className = 'w102-chip';
+    c.textContent = text;
+    c.dataset.cat = cat; c.dataset.key = key;
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement !== pool) { pool.appendChild(c); unpick(); clearMarks(); return; }
+      if (picked === c) { unpick(); return; }
+      unpick(); picked = c; c.classList.add('w102-picked');
+      buckets.forEach(b => b.classList.add('w102-armed'));
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', key));
+    return c;
+  }
+  buckets.forEach(b => {
+    b.addEventListener('click', () => { if (picked) { place(b, picked); unpick(); } });
+    b.addEventListener('dragover', e => e.preventDefault());
+    b.addEventListener('drop', e => {
+      e.preventDefault();
+      const chip = chipByKey(e.dataTransfer.getData('text/plain'));
+      if (chip) { place(b, chip); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const chip = chipByKey(e.dataTransfer.getData('text/plain'));
+    if (chip) { pool.appendChild(chip); clearMarks(); }
+  });
+  root.querySelector('.w102-check').addEventListener('click', () => {
+    root.querySelectorAll('.w102-chip').forEach(c => c.classList.remove('w102-right', 'w102-wrong'));
+    let right = 0, wrong = 0;
+    buckets.forEach(b => b.querySelectorAll('.w102-chip').forEach(c => {
+      if (c.dataset.cat === b.dataset.cat) { c.classList.add('w102-right'); right++; }
+      else { c.classList.add('w102-wrong'); wrong++; }
+    }));
+    const left = pool.querySelectorAll('.w102-chip').length;
+    msg.className = 'w102-msg iw-msg';
+    if (wrong === 0 && left === 0) {
+      msg.textContent = '✓ All correct — logs and events are cleanly separated.';
+      msg.classList.add('ok');
+    } else if (wrong === 0) {
+      msg.textContent = 'Keep going — ' + left + ' statement(s) still to sort.';
+    } else {
+      msg.textContent = '✗ Not yet — ' + wrong + ' statement(s) sit in the wrong box (marked red).';
+      msg.classList.add('bad');
+    }
+  });
+  root.querySelector('.w102-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w102-chip').forEach(c => pool.appendChild(c));
+    unpick(); clearMarks();
+  });
+  ITEMS.forEach((it, i) => pool.appendChild(makeChip(it[0], it[1], 'k' + i)));
+})();
+</script>
+```

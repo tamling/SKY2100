@@ -1,0 +1,117 @@
+```{=html}
+<style>
+.w032 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w032 .w032-cap {
+  text-align: center; font-weight: 700; padding: 4px 8px; margin: 0 auto 6px;
+  max-width: 340px; border: 1.5px solid #d81e2e; border-radius: 6px;
+  color: var(--bs-body-color, #222); background: var(--bs-body-bg, #fff);
+}
+.w032 .w032-arrow { text-align: center; color: #d81e2e; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+.w032 .w032-list { display: flex; flex-direction: column; gap: 6px; margin: 0 auto 0.75rem; max-width: 340px; }
+.w032 .w032-item {
+  display: flex; align-items: center; gap: 8px; padding: 5px 8px; cursor: grab;
+  border: 2px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); user-select: none;
+}
+.w032 .w032-item.w032-right { border-color: #2e7d32; }
+.w032 .w032-item.w032-wrong { border-color: #d81e2e; }
+.w032 .w032-label { flex: 1 1 auto; font-weight: 600; }
+.w032 .w032-mini {
+  flex: 0 0 auto; padding: 0 8px; border-radius: 4px; cursor: pointer;
+  border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+}
+.w032 .w032-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w032 button.w032-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w032 .w032-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w032 .w032-msg.ok { color: #2e7d32; }
+.w032 .w032-msg.bad { color: #d81e2e; }
+</style>
+<div class="w032 iw" id="w032">
+  <div class="w032-cap">Internet (clients)</div>
+  <div class="w032-arrow">▼</div>
+  <div class="w032-list" aria-label="tiers to order"></div>
+  <div class="w032-controls">
+    <button type="button" class="w032-btn w032-check iw-check">Check</button>
+    <button type="button" class="w032-btn w032-reset iw-reset">Reset</button>
+  </div>
+  <div class="w032-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w032');
+  const list = root.querySelector('.w032-list');
+  const msg = root.querySelector('.w032-msg');
+  // start order deliberately scrambled; data-order gives the correct position
+  const START = [
+    ['web tier (answers only the balancer)', 1],
+    ['database tier (durable data)', 3],
+    ['load balancer (HTTPS from the Internet)', 0],
+    ['application tier (business logic)', 2]
+  ];
+  let dragged = null;
+
+  function clearMarks() {
+    [...list.children].forEach(it => it.classList.remove('w032-right', 'w032-wrong'));
+    msg.textContent = ''; msg.className = 'w032-msg iw-msg';
+  }
+  function makeItem(label, order) {
+    const it = document.createElement('div');
+    it.className = 'w032-item';
+    it.dataset.order = order;
+    it.draggable = true;
+    const lab = document.createElement('span');
+    lab.className = 'w032-label';
+    lab.textContent = label;
+    const up = document.createElement('button');
+    up.type = 'button'; up.className = 'w032-mini'; up.textContent = '▲';
+    up.setAttribute('aria-label', 'move up');
+    const down = document.createElement('button');
+    down.type = 'button'; down.className = 'w032-mini'; down.textContent = '▼';
+    down.setAttribute('aria-label', 'move down');
+    up.addEventListener('click', e => {
+      e.stopPropagation();
+      if (it.previousElementSibling) { list.insertBefore(it, it.previousElementSibling); clearMarks(); }
+    });
+    down.addEventListener('click', e => {
+      e.stopPropagation();
+      if (it.nextElementSibling) { list.insertBefore(it.nextElementSibling, it); clearMarks(); }
+    });
+    it.addEventListener('dragstart', () => { dragged = it; });
+    it.addEventListener('dragend', () => { dragged = null; });
+    it.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (!dragged || dragged === it) return;
+      const r = it.getBoundingClientRect();
+      if (e.clientY < r.top + r.height / 2) list.insertBefore(dragged, it);
+      else list.insertBefore(dragged, it.nextElementSibling);
+      clearMarks();
+    });
+    it.addEventListener('drop', e => e.preventDefault());
+    it.appendChild(lab); it.appendChild(up); it.appendChild(down);
+    return it;
+  }
+  list.addEventListener('dragover', e => e.preventDefault());
+  list.addEventListener('drop', e => e.preventDefault());
+  root.querySelector('.w032-check').addEventListener('click', () => {
+    let right = 0;
+    [...list.children].forEach((it, i) => {
+      it.classList.remove('w032-right', 'w032-wrong');
+      if (Number(it.dataset.order) === i) { it.classList.add('w032-right'); right++; }
+      else it.classList.add('w032-wrong');
+    });
+    if (right === START.length) { msg.textContent = '✓ Correct — each tier accepts connections only from the tier directly above it.'; msg.className = 'w032-msg iw-msg ok'; }
+    else { msg.textContent = '✗ Not yet — ' + right + ' of ' + START.length + ' tiers are in the right position (green).'; msg.className = 'w032-msg iw-msg bad'; }
+  });
+  function build() {
+    list.textContent = '';
+    START.forEach(t => list.appendChild(makeItem(t[0], t[1])));
+  }
+  root.querySelector('.w032-reset').addEventListener('click', () => { build(); clearMarks(); });
+  build();
+})();
+</script>
+```

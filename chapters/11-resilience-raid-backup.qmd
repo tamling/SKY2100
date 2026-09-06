@@ -233,6 +233,27 @@ controls for the loss of the Nextcloud data, and identify the single control
 that actually guarantees recovery.
 :::
 
+::: {#exr-11-raid-levels}
+## RAID levels, interactive
+Each box below describes one of the four RAID levels of @def-raid. Drag
+each level onto the description that matches it (or click a level, then
+click a box), then press **Check**. One of the four is the trap of
+@sec-11-redundancy-raid — make sure it lands where its lack of redundancy
+belongs.
+
+{{< include _11-raid-levels.qmd >}}
+:::
+
+::: {#exr-11-raid-vs-backup}
+## RAID or backup?, interactive
+@tbl-raidbackup divides the labour between redundancy and backup. Sort each
+situation below into the box of the control that handles it: drag it onto a
+box, or click the situation and then the box, then press **Check**. Click a
+placed item to send it back to the pool.
+
+{{< include _11-raid-vs-backup.qmd >}}
+:::
+
 ## Self-check {#sec-11-self-check}
 
 **Q1** *(tests @sec-11-redundancy-raid · basic)*

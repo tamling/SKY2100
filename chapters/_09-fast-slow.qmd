@@ -1,0 +1,137 @@
+```{=html}
+<style>
+.w092-sort { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w092-sort .w092-buckets { display: flex; gap: 10px; margin-bottom: 0.75rem; align-items: stretch; }
+.w092-sort .w092-bucket {
+  flex: 1 1 0; min-height: 170px; padding: 6px 8px;
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); cursor: pointer;
+}
+.w092-sort .w092-title { text-align: center; font-weight: 700; color: #d81e2e; margin-bottom: 6px; }
+.w092-sort .w092-bucket.w092-armed { border-color: #d81e2e; }
+.w092-sort .w092-pool {
+  display: flex; flex-direction: column; gap: 6px;
+  min-height: 44px; padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.w092-sort .w092-chip {
+  display: block; margin: 0; padding: 4px 10px; border-radius: 8px;
+  cursor: grab; user-select: none; font-weight: 600; text-align: center;
+  border: 1.5px solid var(--bs-border-color, #999);
+  color: var(--bs-body-color, #222); background: var(--bs-body-bg, #fff);
+}
+.w092-sort .w092-bucket .w092-chip { margin: 6px 0; }
+.w092-sort .w092-chip.w092-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w092-sort .w092-chip.w092-right { border: 2px solid #2e7d32; }
+.w092-sort .w092-chip.w092-wrong { border: 2px solid #d81e2e; }
+.w092-sort .w092-controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.w092-sort button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w092-sort .w092-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w092-sort .w092-msg.ok { color: #2e7d32; }
+.w092-sort .w092-msg.bad { color: #d81e2e; }
+</style>
+<div class="iw w092-sort" id="w092">
+  <div class="w092-buckets">
+    <div class="w092-bucket" data-cat="fast">
+      <div class="w092-title">Fast path</div>
+      <div class="w092-slot"></div>
+    </div>
+    <div class="w092-bucket" data-cat="slow">
+      <div class="w092-title">Slow path</div>
+      <div class="w092-slot"></div>
+    </div>
+  </div>
+  <div class="w092-pool" aria-label="statements to sort"></div>
+  <div class="w092-controls">
+    <button type="button" class="w092-check iw-check">Check</button>
+    <button type="button" class="w092-reset iw-reset">Reset</button>
+  </div>
+  <div class="w092-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w092');
+  const pool = root.querySelector('.w092-pool');
+  const buckets = [...root.querySelectorAll('.w092-bucket')];
+  const msg = root.querySelector('.w092-msg');
+  const ITEMS = [
+    ['Carries logs, which can arrive up to fifteen minutes after the fact', 'slow'],
+    ['Carries events, analysed and turned into alerts almost at once', 'fast'],
+    ['Investigation and forensics', 'slow'],
+    ['High-risk activity on the management plane', 'fast'],
+    ['The deeper analysis that follows detection', 'slow'],
+    ['Alerts on authentication failures and impossible-travel logins', 'fast']
+  ];
+  let picked = null;
+  function chipByKey(key) { return root.querySelector('.w092-chip[data-key="' + key + '"]'); }
+  function unpick() {
+    if (picked) picked.classList.remove('w092-picked');
+    picked = null;
+    buckets.forEach(b => b.classList.remove('w092-armed'));
+  }
+  function clearMarks() {
+    root.querySelectorAll('.w092-chip').forEach(c => c.classList.remove('w092-right', 'w092-wrong'));
+    msg.textContent = ''; msg.className = 'w092-msg iw-msg';
+  }
+  function place(bucket, chip) { bucket.querySelector('.w092-slot').appendChild(chip); clearMarks(); }
+  function makeChip(text, cat, key) {
+    const c = document.createElement('span');
+    c.className = 'w092-chip';
+    c.textContent = text;
+    c.dataset.cat = cat; c.dataset.key = key;
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement !== pool) { pool.appendChild(c); unpick(); clearMarks(); return; }
+      if (picked === c) { unpick(); return; }
+      unpick(); picked = c; c.classList.add('w092-picked');
+      buckets.forEach(b => b.classList.add('w092-armed'));
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', key));
+    return c;
+  }
+  buckets.forEach(b => {
+    b.addEventListener('click', () => { if (picked) { place(b, picked); unpick(); } });
+    b.addEventListener('dragover', e => e.preventDefault());
+    b.addEventListener('drop', e => {
+      e.preventDefault();
+      const chip = chipByKey(e.dataTransfer.getData('text/plain'));
+      if (chip) { place(b, chip); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const chip = chipByKey(e.dataTransfer.getData('text/plain'));
+    if (chip) { pool.appendChild(chip); clearMarks(); }
+  });
+  root.querySelector('.w092-check').addEventListener('click', () => {
+    root.querySelectorAll('.w092-chip').forEach(c => c.classList.remove('w092-right', 'w092-wrong'));
+    let right = 0, wrong = 0;
+    buckets.forEach(b => b.querySelectorAll('.w092-chip').forEach(c => {
+      if (c.dataset.cat === b.dataset.cat) { c.classList.add('w092-right'); right++; }
+      else { c.classList.add('w092-wrong'); wrong++; }
+    }));
+    const left = pool.querySelectorAll('.w092-chip').length;
+    msg.className = 'w092-msg iw-msg';
+    if (wrong === 0 && left === 0) {
+      msg.textContent = '✓ All correct — timely alerting and deep analysis are on the right tracks.';
+      msg.classList.add('ok');
+    } else if (wrong === 0) {
+      msg.textContent = 'Keep going — ' + left + ' statement(s) still to sort.';
+    } else {
+      msg.textContent = '✗ Not yet — ' + wrong + ' statement(s) sit in the wrong box (marked red).';
+      msg.classList.add('bad');
+    }
+  });
+  root.querySelector('.w092-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w092-chip').forEach(c => pool.appendChild(c));
+    unpick(); clearMarks();
+  });
+  ITEMS.forEach((it, i) => pool.appendChild(makeChip(it[0], it[1], 'k' + i)));
+})();
+</script>
+```

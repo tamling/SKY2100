@@ -304,6 +304,25 @@ controls for a single shared Nextcloud administrator account protected only by
 a password.
 :::
 
+::: {#exr-07-sort-auth-factors}
+## The three authentication factors, interactive
+Sort the six pieces of evidence into the three authentication factors of
+@def-mfa. Drag each card onto its factor, or click a card and then a box
+(click a placed card to send it back), then press **Check**.
+
+{{< include _07-auth-factors.qmd >}}
+:::
+
+::: {#exr-07-match-authz-models}
+## RBAC, PBAC or ABAC, interactive
+Each card describes one of the three authorisation models of @def-authz and
+@tbl-authz: what it decides from, or a strength or a weakness. Drag each
+card into the model's box, or click the card and then the box; click a
+placed card to send it back. Then press **Check**.
+
+{{< include _07-authz-models.qmd >}}
+:::
+
 ## Self-check {#sec-07-self-check}
 
 **Q1** *(tests @sec-07-identity-perimeter · basic)*

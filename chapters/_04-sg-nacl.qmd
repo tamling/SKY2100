@@ -1,0 +1,134 @@
+```{=html}
+<style>
+.w042 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w042 .w042-pool {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  min-height: 44px; padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.w042 .w042-buckets { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.w042 .w042-bucket {
+  flex: 1 1 220px; min-height: 140px; padding: 8px;
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); cursor: pointer;
+}
+.w042 .w042-bucket.w042-armed { border-color: #d81e2e; }
+.w042 .w042-btitle { text-align: center; font-weight: 700; margin-bottom: 6px; }
+.w042 .w042-drop { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 34px; }
+.w042 .w042-chip {
+  padding: 4px 10px; border-radius: 999px; cursor: grab; user-select: none;
+  border: 1.5px solid var(--bs-border-color, #999); color: var(--bs-body-color, #222);
+  background: var(--bs-body-bg, #fff); font-weight: 600; text-align: center;
+}
+.w042 .w042-chip.w042-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w042 .w042-chip.w042-right { border: 2px solid #2e7d32; }
+.w042 .w042-chip.w042-wrong { border: 2px solid #d81e2e; }
+.w042 .w042-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w042 button.w042-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w042 .w042-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w042 .w042-msg.ok { color: #2e7d32; }
+.w042 .w042-msg.bad { color: #d81e2e; }
+</style>
+<div class="w042 iw" id="w042">
+  <div class="w042-pool" aria-label="properties to classify"></div>
+  <div class="w042-buckets">
+    <div class="w042-bucket" data-cat="sg">
+      <div class="w042-btitle">Security group</div>
+      <div class="w042-drop"></div>
+    </div>
+    <div class="w042-bucket" data-cat="nacl">
+      <div class="w042-btitle">Network ACL</div>
+      <div class="w042-drop"></div>
+    </div>
+  </div>
+  <div class="w042-controls">
+    <button type="button" class="w042-btn w042-check iw-check">Check</button>
+    <button type="button" class="w042-btn w042-reset iw-reset">Reset</button>
+  </div>
+  <div class="w042-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w042');
+  const pool = root.querySelector('.w042-pool');
+  const buckets = [...root.querySelectorAll('.w042-bucket')];
+  const msg = root.querySelector('.w042-msg');
+  const ITEMS = [
+    ['typically stateless', 'nacl'],
+    ['attaches to resources such as an instance or network interface', 'sg'],
+    ['stateful', 'sg'],
+    ['works lower in the stack and applies to subnets', 'nacl'],
+    ['a reply to a permitted outgoing request is allowed back automatically', 'sg'],
+    ['each direction of a connection needs its own rule', 'nacl']
+  ];
+  let picked = null;
+
+  function unpick() {
+    if (picked) picked.classList.remove('w042-picked');
+    picked = null;
+    buckets.forEach(b => b.classList.remove('w042-armed'));
+  }
+  function clearMarks() {
+    root.querySelectorAll('.w042-chip').forEach(c => c.classList.remove('w042-right', 'w042-wrong'));
+    msg.textContent = ''; msg.className = 'w042-msg iw-msg';
+  }
+  function place(bucket, chip) {
+    bucket.querySelector('.w042-drop').appendChild(chip);
+    clearMarks();
+  }
+  function makeChip(label, cat, i) {
+    const c = document.createElement('span');
+    c.className = 'w042-chip';
+    c.textContent = label;
+    c.dataset.cat = cat;
+    c.dataset.id = 'w042i' + i;
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement !== pool) { pool.appendChild(c); unpick(); clearMarks(); return; }
+      if (picked === c) { unpick(); return; }
+      unpick(); picked = c; c.classList.add('w042-picked');
+      buckets.forEach(b => b.classList.add('w042-armed'));
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.dataset.id));
+    return c;
+  }
+  buckets.forEach(bucket => {
+    bucket.addEventListener('click', () => { if (picked) { place(bucket, picked); unpick(); } });
+    bucket.addEventListener('dragover', e => e.preventDefault());
+    bucket.addEventListener('drop', e => {
+      e.preventDefault();
+      const chip = root.querySelector('.w042-chip[data-id="' + e.dataTransfer.getData('text/plain') + '"]');
+      if (chip) { place(bucket, chip); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const chip = root.querySelector('.w042-chip[data-id="' + e.dataTransfer.getData('text/plain') + '"]');
+    if (chip) { pool.appendChild(chip); clearMarks(); }
+  });
+  root.querySelector('.w042-check').addEventListener('click', () => {
+    let right = 0, wrong = 0, unplaced = 0;
+    root.querySelectorAll('.w042-chip').forEach(c => {
+      c.classList.remove('w042-right', 'w042-wrong');
+      if (c.parentElement === pool) { unplaced++; return; }
+      const bucket = c.closest('.w042-bucket');
+      if (c.dataset.cat === bucket.dataset.cat) { c.classList.add('w042-right'); right++; }
+      else { c.classList.add('w042-wrong'); wrong++; }
+    });
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct — the two tools are cleanly separated.'; msg.className = 'w042-msg iw-msg ok'; }
+    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + unplaced + ' item(s) still unplaced.'; msg.className = 'w042-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — the red items are in the wrong box.'; msg.className = 'w042-msg iw-msg bad'; }
+  });
+  root.querySelector('.w042-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w042-chip').forEach(c => pool.appendChild(c));
+    unpick(); clearMarks();
+  });
+  ITEMS.forEach((it, i) => pool.appendChild(makeChip(it[0], it[1], i)));
+})();
+</script>
+```

@@ -1,0 +1,160 @@
+```{=html}
+<style>
+.w061-dd { max-width: 620px; margin: 0 auto; font-size: 0.9rem; }
+.w061-dd .w061-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 0.75rem; }
+.w061-dd .w061-step {
+  display: flex; align-items: center; gap: 8px; padding: 6px 8px;
+  border: 1.5px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  cursor: grab; user-select: none;
+}
+.w061-dd .w061-step.w061-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w061-dd .w061-step.w061-right { border: 2px solid #2e7d32; }
+.w061-dd .w061-step.w061-wrong { border: 2px solid #d81e2e; }
+.w061-dd .w061-num { font-weight: 700; color: #d81e2e; min-width: 1.3em; text-align: center; }
+.w061-dd .w061-txt { flex: 1 1 auto; }
+.w061-dd .w061-mv { display: flex; flex-direction: column; gap: 2px; }
+.w061-dd .w061-mv button {
+  padding: 0 8px; line-height: 1.25; font-size: 0.8rem; border-radius: 4px;
+  border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w061-dd .w061-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w061-dd .w061-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w061-dd .w061-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w061-dd .w061-msg.ok { color: #2e7d32; }
+.w061-dd .w061-msg.bad { color: #d81e2e; }
+</style>
+<div class="w061-dd iw" id="w061-dd">
+  <div class="w061-list" aria-label="handshake steps to order"></div>
+  <div class="w061-controls">
+    <button type="button" class="w061-check iw-check">Check</button>
+    <button type="button" class="w061-reset iw-reset">Reset</button>
+  </div>
+  <div class="w061-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w061-dd');
+  const list = root.querySelector('.w061-list');
+  const msg = root.querySelector('.w061-msg');
+  // STEPS[i] is the step whose correct position is i (0-based).
+  const STEPS = [
+    'The browser sends its hello to the server',
+    'The server returns its certificate, carrying its public key',
+    'The browser verifies the certificate against a CA it already trusts',
+    'The parties agree a fresh symmetric session key (asymmetric cryptography)',
+    'The rest of the connection is encrypted with the session key (symmetric)'
+  ];
+  const START = [1, 3, 0, 4, 2]; // fixed scrambled display order (no step in place)
+  let picked = null;
+
+  function rows() { return [...list.querySelectorAll('.w061-step')]; }
+  function unpick() {
+    if (picked) picked.classList.remove('w061-picked');
+    picked = null;
+  }
+  function clearMarks() {
+    rows().forEach(r => r.classList.remove('w061-right', 'w061-wrong'));
+    msg.textContent = ''; msg.className = 'w061-msg iw-msg';
+  }
+  function renumber() {
+    rows().forEach((r, i) => { r.querySelector('.w061-num').textContent = String(i + 1); });
+  }
+  function moved() { renumber(); clearMarks(); }
+  function swapRows(a, b) {
+    if (a === b) return;
+    const aNext = a.nextSibling;
+    if (aNext === b) { list.insertBefore(b, a); }
+    else if (b.nextSibling === a) { list.insertBefore(a, b); }
+    else { const bNext = b.nextSibling; list.insertBefore(a, bNext); list.insertBefore(b, aNext); }
+    moved();
+  }
+  function makeRow(stepIdx) {
+    const r = document.createElement('div');
+    r.className = 'w061-step';
+    r.dataset.step = String(stepIdx);
+    r.draggable = true;
+    const num = document.createElement('span');
+    num.className = 'w061-num';
+    const txt = document.createElement('span');
+    txt.className = 'w061-txt';
+    txt.textContent = STEPS[stepIdx];
+    const mv = document.createElement('span');
+    mv.className = 'w061-mv';
+    const up = document.createElement('button');
+    up.type = 'button'; up.textContent = '▲'; up.title = 'Move up'; up.setAttribute('aria-label', 'Move step up');
+    const down = document.createElement('button');
+    down.type = 'button'; down.textContent = '▼'; down.title = 'Move down'; down.setAttribute('aria-label', 'Move step down');
+    up.addEventListener('click', e => {
+      e.stopPropagation(); unpick();
+      const prev = r.previousElementSibling;
+      if (prev) { list.insertBefore(r, prev); moved(); }
+    });
+    down.addEventListener('click', e => {
+      e.stopPropagation(); unpick();
+      const next = r.nextElementSibling;
+      if (next) { list.insertBefore(next, r); moved(); }
+    });
+    mv.appendChild(up); mv.appendChild(down);
+    r.appendChild(num); r.appendChild(txt); r.appendChild(mv);
+    r.addEventListener('click', () => {
+      if (!picked) { picked = r; r.classList.add('w061-picked'); return; }
+      if (picked === r) { unpick(); return; }
+      const other = picked; unpick(); swapRows(other, r);
+    });
+    r.addEventListener('dragstart', e => {
+      unpick();
+      e.dataTransfer.setData('text/plain', r.dataset.step);
+    });
+    r.addEventListener('dragover', e => e.preventDefault());
+    r.addEventListener('drop', e => {
+      e.preventDefault(); e.stopPropagation();
+      const key = e.dataTransfer.getData('text/plain');
+      const dragged = list.querySelector('.w061-step[data-step="' + key + '"]');
+      if (!dragged || dragged === r) return;
+      const rect = r.getBoundingClientRect();
+      const after = (e.clientY - rect.top) > rect.height / 2;
+      list.insertBefore(dragged, after ? r.nextSibling : r);
+      moved();
+    });
+    return r;
+  }
+  list.addEventListener('dragover', e => e.preventDefault());
+  list.addEventListener('drop', e => {
+    e.preventDefault();
+    const key = e.dataTransfer.getData('text/plain');
+    const dragged = list.querySelector('.w061-step[data-step="' + key + '"]');
+    if (dragged) { list.appendChild(dragged); moved(); }
+  });
+  root.querySelector('.w061-check').addEventListener('click', () => {
+    unpick();
+    let right = 0;
+    rows().forEach((r, i) => {
+      r.classList.remove('w061-right', 'w061-wrong');
+      if (Number(r.dataset.step) === i) { r.classList.add('w061-right'); right++; }
+      else { r.classList.add('w061-wrong'); }
+    });
+    if (right === STEPS.length) {
+      msg.textContent = '✓ Correct — slow handshake, fast conversation.';
+      msg.className = 'w061-msg iw-msg ok';
+    } else {
+      msg.textContent = '✗ Not yet — ' + right + ' of ' + STEPS.length + ' steps are in the right place (green).';
+      msg.className = 'w061-msg iw-msg bad';
+    }
+  });
+  root.querySelector('.w061-reset').addEventListener('click', () => {
+    unpick();
+    START.forEach(idx => {
+      list.appendChild(list.querySelector('.w061-step[data-step="' + idx + '"]'));
+    });
+    moved();
+  });
+  START.forEach(idx => list.appendChild(makeRow(idx)));
+  renumber();
+})();
+</script>
+```

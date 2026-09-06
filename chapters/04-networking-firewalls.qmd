@@ -350,6 +350,26 @@ control for an SSH port left open to the whole Internet, and give the
 `ufw` rule that implements the control.
 :::
 
+::: {#exr-04-firewall-layers}
+## Firewalls by inspection depth, interactive
+Rebuild the grid of @fig-fwlayers (compare @tbl-firewalls) from memory:
+for each tool, click the cells of the layers at which it operates — click a
+cell again to clear it. A row is right only when exactly the correct cells
+are filled. Then press **Check**.
+
+{{< include _04-firewall-layers.qmd >}}
+:::
+
+::: {#exr-04-sg-vs-nacl}
+## Security group or network ACL, interactive
+Sort the six properties below between the security group of @def-secgroup
+and the network access control list: drag each property into the matching
+box, or click a property and then click a box (click a placed property to
+send it back). Then press **Check**.
+
+{{< include _04-sg-nacl.qmd >}}
+:::
+
 ## Self-check {#sec-04-self-check}
 
 **Q1** *(tests @sec-04-addresses-ports-attack-surface · basic)*

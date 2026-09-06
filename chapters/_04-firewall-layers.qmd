@@ -1,0 +1,117 @@
+```{=html}
+<style>
+.w041 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w041 .w041-grid {
+  display: grid; grid-template-columns: minmax(120px, 1.6fr) repeat(3, 1fr);
+  gap: 6px; margin-bottom: 0.75rem; align-items: stretch;
+}
+.w041 .w041-head { text-align: center; font-weight: 700; align-self: end; line-height: 1.25; }
+.w041 .w041-rowlab {
+  display: flex; align-items: center; padding: 4px 6px; font-weight: 600;
+  border: 2px solid transparent; border-radius: 6px;
+}
+.w041 .w041-rowlab.w041-rowok { border-color: #2e7d32; color: #2e7d32; }
+.w041 .w041-rowlab.w041-rowbad { border-color: #d81e2e; color: #d81e2e; }
+.w041 button.w041-cell {
+  min-height: 38px; border-radius: 6px; cursor: pointer;
+  border: 1.5px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); padding: 0;
+}
+.w041 button.w041-cell.w041-on { background: #d81e2e; border-color: #d81e2e; }
+.w041 .w041-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w041 button.w041-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w041 .w041-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w041 .w041-msg.ok { color: #2e7d32; }
+.w041 .w041-msg.bad { color: #d81e2e; }
+</style>
+<div class="w041 iw" id="w041">
+  <div class="w041-grid"></div>
+  <div class="w041-controls">
+    <button type="button" class="w041-btn w041-check iw-check">Check</button>
+    <button type="button" class="w041-btn w041-reset iw-reset">Reset</button>
+  </div>
+  <div class="w041-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w041');
+  const grid = root.querySelector('.w041-grid');
+  const msg = root.querySelector('.w041-msg');
+  const COLS = [
+    ['l3', 'L3 Network (IP)'],
+    ['l4', 'L4 Transport (ports)'],
+    ['l7', 'L7 Application (HTTP)']
+  ];
+  const ROWS = [
+    ['pf', 'Packet-filter firewall', ['l3', 'l4']],
+    ['sf', 'Stateful firewall', ['l3', 'l4']],
+    ['ngfw', 'Next-gen firewall (NGFW)', ['l3', 'l4', 'l7']],
+    ['waf', 'Web app firewall (WAF)', ['l7']]
+  ];
+
+  function clearMarks() {
+    root.querySelectorAll('.w041-rowlab').forEach(l => l.classList.remove('w041-rowok', 'w041-rowbad'));
+    msg.textContent = ''; msg.className = 'w041-msg iw-msg';
+  }
+  // header row
+  const corner = document.createElement('div');
+  grid.appendChild(corner);
+  COLS.forEach(col => {
+    const h = document.createElement('div');
+    h.className = 'w041-head';
+    h.textContent = col[1];
+    grid.appendChild(h);
+  });
+  // tool rows
+  ROWS.forEach(row => {
+    const lab = document.createElement('div');
+    lab.className = 'w041-rowlab';
+    lab.dataset.row = row[0];
+    lab.textContent = row[1];
+    grid.appendChild(lab);
+    COLS.forEach(col => {
+      const cell = document.createElement('button');
+      cell.type = 'button';
+      cell.className = 'w041-cell';
+      cell.dataset.row = row[0];
+      cell.dataset.col = col[0];
+      cell.setAttribute('aria-pressed', 'false');
+      cell.setAttribute('aria-label', row[1] + ' at ' + col[1]);
+      cell.addEventListener('click', () => {
+        cell.classList.toggle('w041-on');
+        cell.setAttribute('aria-pressed', cell.classList.contains('w041-on') ? 'true' : 'false');
+        clearMarks();
+      });
+      grid.appendChild(cell);
+    });
+  });
+  root.querySelector('.w041-check').addEventListener('click', () => {
+    let okRows = 0, touched = 0;
+    ROWS.forEach(row => {
+      const lab = root.querySelector('.w041-rowlab[data-row="' + row[0] + '"]');
+      lab.classList.remove('w041-rowok', 'w041-rowbad');
+      const on = [...root.querySelectorAll('.w041-cell[data-row="' + row[0] + '"].w041-on')]
+        .map(c => c.dataset.col).sort();
+      touched += on.length;
+      const want = row[2].slice().sort();
+      const same = on.length === want.length && on.every((v, i) => v === want[i]);
+      if (same) { lab.classList.add('w041-rowok'); okRows++; }
+      else lab.classList.add('w041-rowbad');
+    });
+    if (okRows === ROWS.length) { msg.textContent = '✓ All correct — the inspection depth of each tool is filled in.'; msg.className = 'w041-msg iw-msg ok'; }
+    else if (touched === 0) { msg.textContent = 'Nothing filled in yet — click the cells where each tool operates, then check again.'; msg.className = 'w041-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — ' + okRows + ' of ' + ROWS.length + ' rows are right; the red rows have too many or too few cells filled.'; msg.className = 'w041-msg iw-msg bad'; }
+  });
+  root.querySelector('.w041-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w041-cell').forEach(c => {
+      c.classList.remove('w041-on');
+      c.setAttribute('aria-pressed', 'false');
+    });
+    clearMarks();
+  });
+})();
+</script>
+```

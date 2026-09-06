@@ -323,6 +323,25 @@ defence layer carries the weight, which concrete Nginx directive implements
 it, and why would a CDN alone not suffice?
 :::
 
+::: {#exr-03-ddos-sort}
+## The three DDoS types, interactive
+Classify the six attack characteristics below into the three DDoS types of
+@def-ddos: drag each item into the matching box, or click an item and then
+click a box (click a placed item to send it back). Then press **Check**.
+
+{{< include _03-ddos-types.qmd >}}
+:::
+
+::: {#exr-03-mvn-order}
+## The minimum viable network, interactive
+Arrange the four tiers of @sec-03-minimum-viable-network into the order in
+which a request from the Internet passes them, remembering that each tier
+accepts connections only from the tier directly above it. Drag a tier to a
+new position, or click its ▲/▼ buttons to move it. Then press **Check**.
+
+{{< include _03-mvn-order.qmd >}}
+:::
+
 ## Self-check {#sec-03-self-check}
 
 **Q1** *(tests @sec-03-web-services-capacity · basic)*

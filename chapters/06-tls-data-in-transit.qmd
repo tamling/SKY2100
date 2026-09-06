@@ -241,6 +241,26 @@ through an SQL-injection flaw in the web application. Why did the encryption
 not help, and what does this imply for choosing controls?
 :::
 
+::: {#exr-06-tls-handshake-order}
+## The TLS handshake in order, interactive
+The five steps of the TLS handshake of @def-tls and @fig-tls are shown out
+of order. Restore the sequence by dragging a step to its place, by clicking
+one step and then a second to swap them, or with the arrow buttons; then
+press **Check**.
+
+{{< include _06-tls-handshake.qmd >}}
+:::
+
+::: {#exr-06-sort-data-states}
+## The three data states, interactive
+Each card below names data of the Nextcloud service, or a control, belonging
+to one of the three data states of @def-datastates. Drag each card into the
+matching state, or click a card and then a box; click a placed card to send
+it back. Then press **Check**.
+
+{{< include _06-data-states.qmd >}}
+:::
+
 ## Self-check {#sec-06-self-check}
 
 **Q1** *(tests @sec-06-three-data-states · basic)*

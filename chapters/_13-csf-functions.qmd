@@ -1,0 +1,133 @@
+```{=html}
+<style>
+.w131-dd { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w131-dd .w131-buckets { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 0.75rem; }
+.w131-dd .w131-bucket {
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  padding: 6px; min-height: 110px; cursor: pointer;
+}
+.w131-dd .w131-bucket h5 { margin: 0 0 4px; font-size: 0.9rem; text-align: center; font-weight: 700; }
+.w131-dd .w131-bucket.w131-armed { border-color: #d81e2e; }
+.w131-dd .w131-pool {
+  display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+  min-height: 44px; padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.w131-dd .w131-item {
+  display: block; padding: 3px 8px; border-radius: 6px; cursor: grab;
+  user-select: none; border: 1.5px solid #d81e2e; color: var(--bs-body-color, #222);
+  background: var(--bs-body-bg, #fff); font-weight: 600; font-size: 0.8rem;
+  margin: 3px 0; text-align: center;
+}
+.w131-dd .w131-pool .w131-item { margin: 0; }
+.w131-dd .w131-item.w131-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w131-dd .w131-item.w131-right { border-color: #2e7d32; border-width: 2px; }
+.w131-dd .w131-item.w131-wrong { border-color: #d81e2e; border-width: 2px; box-shadow: 0 0 0 1px #d81e2e inset; }
+.w131-dd .w131-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w131-dd button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w131-dd .w131-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w131-dd .w131-msg.ok { color: #2e7d32; }
+.w131-dd .w131-msg.bad { color: #d81e2e; }
+</style>
+<div class="w131-dd iw" id="w131-dd">
+  <div class="w131-pool" aria-label="controls to place"></div>
+  <div class="w131-buckets">
+    <div class="w131-bucket" data-cat="govern"><h5>Govern</h5></div>
+    <div class="w131-bucket" data-cat="identify"><h5>Identify</h5></div>
+    <div class="w131-bucket" data-cat="protect"><h5>Protect</h5></div>
+    <div class="w131-bucket" data-cat="detect"><h5>Detect</h5></div>
+    <div class="w131-bucket" data-cat="respond"><h5>Respond</h5></div>
+    <div class="w131-bucket" data-cat="recover"><h5>Recover</h5></div>
+  </div>
+  <div class="w131-controls">
+    <button type="button" class="w131-check iw-check">Check</button>
+    <button type="button" class="w131-reset iw-reset">Reset</button>
+  </div>
+  <div class="w131-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w131-dd');
+  const pool = root.querySelector('.w131-pool');
+  const buckets = [...root.querySelectorAll('.w131-bucket')];
+  const msg = root.querySelector('.w131-msg');
+  const ITEMS = [
+    { id: 'i0', cat: 'protect',  text: 'MFA and least privilege (S7)' },
+    { id: 'i1', cat: 'detect',   text: 'Monitoring and IDS/IPS (S9)' },
+    { id: 'i2', cat: 'govern',   text: 'Risk register (S12)' },
+    { id: 'i3', cat: 'recover',  text: 'Tested backup restoration and disaster recovery (S11)' },
+    { id: 'i4', cat: 'respond',  text: 'Incident containment and eradication (S12)' },
+    { id: 'i5', cat: 'identify', text: 'Data classification (S6)' },
+    { id: 'i6', cat: 'protect',  text: 'Firewall under default-deny (S4)' },
+    { id: 'i7', cat: 'detect',   text: 'Tamper-evident off-host logs (S10)' }
+  ];
+  let picked = null;
+
+  function makeItem(it) {
+    const c = document.createElement('span');
+    c.className = 'w131-item';
+    c.textContent = it.text;
+    c.dataset.id = it.id;
+    c.dataset.cat = it.cat;
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement !== pool) { pool.appendChild(c); unpick(); clearMarks(); return; }
+      if (picked === c) { unpick(); return; }
+      unpick(); picked = c; c.classList.add('w131-picked');
+      buckets.forEach(b => b.classList.add('w131-armed'));
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', it.id));
+    return c;
+  }
+  function unpick() {
+    if (picked) picked.classList.remove('w131-picked');
+    picked = null;
+    buckets.forEach(b => b.classList.remove('w131-armed'));
+  }
+  function clearMarks() {
+    root.querySelectorAll('.w131-item').forEach(i => i.classList.remove('w131-right', 'w131-wrong'));
+    msg.textContent = ''; msg.className = 'w131-msg iw-msg';
+  }
+  function place(bucket, item) { bucket.appendChild(item); clearMarks(); }
+  buckets.forEach(b => {
+    b.addEventListener('click', () => { if (picked) { place(b, picked); unpick(); } });
+    b.addEventListener('dragover', e => e.preventDefault());
+    b.addEventListener('drop', e => {
+      e.preventDefault();
+      const item = root.querySelector('.w131-item[data-id="' + e.dataTransfer.getData('text/plain') + '"]');
+      if (item) { place(b, item); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const item = root.querySelector('.w131-item[data-id="' + e.dataTransfer.getData('text/plain') + '"]');
+    if (item) { pool.appendChild(item); clearMarks(); }
+  });
+  root.querySelector('.w131-check').addEventListener('click', () => {
+    let right = 0, wrong = 0;
+    const unplaced = pool.querySelectorAll('.w131-item').length;
+    buckets.forEach(b => {
+      b.querySelectorAll('.w131-item').forEach(i => {
+        i.classList.remove('w131-right', 'w131-wrong');
+        if (i.dataset.cat === b.dataset.cat) { i.classList.add('w131-right'); right++; }
+        else { i.classList.add('w131-wrong'); wrong++; }
+      });
+    });
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct — every Function is populated; the defence is complete across the framework.'; msg.className = 'w131-msg iw-msg ok'; }
+    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + unplaced + ' control(s) still without a Function.'; msg.className = 'w131-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — the red controls sit under the wrong Function. Consult the mapping table and retry.'; msg.className = 'w131-msg iw-msg bad'; }
+  });
+  root.querySelector('.w131-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w131-item').forEach(i => pool.appendChild(i));
+    unpick(); clearMarks();
+  });
+  ITEMS.forEach(it => pool.appendChild(makeItem(it)));
+})();
+</script>
+```

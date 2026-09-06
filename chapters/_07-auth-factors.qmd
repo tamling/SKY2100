@@ -1,0 +1,136 @@
+```{=html}
+<style>
+.w071-dd { max-width: 620px; margin: 0 auto; font-size: 0.9rem; }
+.w071-dd .w071-pool {
+  display: flex; flex-direction: column; gap: 6px; min-height: 44px;
+  padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.w071-dd .w071-buckets { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 0.75rem; }
+.w071-dd .w071-bucket {
+  flex: 1 1 180px; min-width: 180px; padding: 8px;
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); cursor: pointer;
+}
+.w071-dd .w071-bucket.w071-armed { border-color: #d81e2e; }
+.w071-dd .w071-btitle { text-align: center; font-weight: 700; margin-bottom: 6px; }
+.w071-dd .w071-slot { display: flex; flex-direction: column; gap: 6px; min-height: 40px; }
+.w071-dd .w071-chip {
+  padding: 4px 10px; border-radius: 6px; cursor: grab; user-select: none;
+  border: 1.5px solid #d81e2e; color: var(--bs-body-color, #222);
+  background: var(--bs-body-bg, #fff); font-weight: 600; text-align: center;
+  font-size: 0.85rem;
+}
+.w071-dd .w071-chip.w071-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w071-dd .w071-chip.w071-right { border: 2px solid #2e7d32; }
+.w071-dd .w071-chip.w071-wrong { border: 2px solid #d81e2e; }
+.w071-dd .w071-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w071-dd button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w071-dd .w071-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w071-dd .w071-msg.ok { color: #2e7d32; }
+.w071-dd .w071-msg.bad { color: #d81e2e; }
+</style>
+<div class="w071-dd iw" id="w071-dd">
+  <div class="w071-pool" aria-label="cards to sort"></div>
+  <div class="w071-buckets">
+    <div class="w071-bucket" data-bucket="knows"><div class="w071-btitle">Something one knows</div><div class="w071-slot"></div></div>
+    <div class="w071-bucket" data-bucket="has"><div class="w071-btitle">Something one has</div><div class="w071-slot"></div></div>
+    <div class="w071-bucket" data-bucket="is"><div class="w071-btitle">Something one is</div><div class="w071-slot"></div></div>
+  </div>
+  <div class="w071-controls">
+    <button type="button" class="w071-check iw-check">Check</button>
+    <button type="button" class="w071-reset iw-reset">Reset</button>
+  </div>
+  <div class="w071-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w071-dd');
+  const pool = root.querySelector('.w071-pool');
+  const buckets = [...root.querySelectorAll('.w071-bucket')];
+  const msg = root.querySelector('.w071-msg');
+  const ITEMS = [{"t": "A hardware token", "a": "has"}, {"t": "A password", "a": "knows"}, {"t": "A fingerprint", "a": "is"}, {"t": "A phone", "a": "has"}, {"t": "A PIN", "a": "knows"}, {"t": "An iris scan", "a": "is"}];
+  let picked = null;
+
+  function chips() { return [...root.querySelectorAll('.w071-chip')]; }
+  function unpick() {
+    if (picked) picked.classList.remove('w071-picked');
+    picked = null;
+    buckets.forEach(b => b.classList.remove('w071-armed'));
+  }
+  function clearMarks() {
+    chips().forEach(c => c.classList.remove('w071-right', 'w071-wrong'));
+    msg.textContent = ''; msg.className = 'w071-msg iw-msg';
+  }
+  function place(bucket, chip) {
+    bucket.querySelector('.w071-slot').appendChild(chip);
+    clearMarks();
+  }
+  function makeChip(item, i) {
+    const c = document.createElement('div');
+    c.className = 'w071-chip';
+    c.textContent = item.t;
+    c.dataset.key = String(i);
+    c.dataset.answer = item.a;
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement === pool) {
+        if (picked === c) { unpick(); return; }
+        unpick(); picked = c; c.classList.add('w071-picked');
+        buckets.forEach(b => b.classList.add('w071-armed'));
+      } else { pool.appendChild(c); unpick(); clearMarks(); }
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.dataset.key));
+    return c;
+  }
+  buckets.forEach(bucket => {
+    bucket.addEventListener('click', () => { if (picked) { place(bucket, picked); unpick(); } });
+    bucket.addEventListener('dragover', e => e.preventDefault());
+    bucket.addEventListener('drop', e => {
+      e.preventDefault(); e.stopPropagation();
+      const key = e.dataTransfer.getData('text/plain');
+      const chip = root.querySelector('.w071-chip[data-key="' + key + '"]');
+      if (chip) { place(bucket, chip); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const key = e.dataTransfer.getData('text/plain');
+    const chip = root.querySelector('.w071-chip[data-key="' + key + '"]');
+    if (chip) { pool.appendChild(chip); unpick(); clearMarks(); }
+  });
+  root.querySelector('.w071-check').addEventListener('click', () => {
+    let right = 0, wrong = 0;
+    chips().forEach(c => {
+      c.classList.remove('w071-right', 'w071-wrong');
+      const b = c.closest('.w071-bucket');
+      if (!b) return;
+      if (b.dataset.bucket === c.dataset.answer) { c.classList.add('w071-right'); right++; }
+      else { c.classList.add('w071-wrong'); wrong++; }
+    });
+    const unplaced = ITEMS.length - right - wrong;
+    if (right === ITEMS.length) {
+      msg.textContent = '\u2713 All correct \u2014 three factors, and a stolen password satisfies only one of them.';
+      msg.className = 'w071-msg iw-msg ok';
+    } else if (wrong === 0) {
+      msg.textContent = 'Keep going \u2014 ' + unplaced + ' card(s) still to place.';
+      msg.className = 'w071-msg iw-msg';
+    } else {
+      msg.textContent = '\u2717 Not yet \u2014 the red cards are in the wrong box. Send them back and try again.';
+      msg.className = 'w071-msg iw-msg bad';
+    }
+  });
+  root.querySelector('.w071-reset').addEventListener('click', () => {
+    chips().sort((a, b) => Number(a.dataset.key) - Number(b.dataset.key))
+           .forEach(c => pool.appendChild(c));
+    unpick(); clearMarks();
+  });
+  ITEMS.forEach((it, i) => pool.appendChild(makeChip(it, i)));
+})();
+</script>
+```

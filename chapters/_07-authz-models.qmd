@@ -1,0 +1,136 @@
+```{=html}
+<style>
+.w072-dd { max-width: 620px; margin: 0 auto; font-size: 0.9rem; }
+.w072-dd .w072-pool {
+  display: flex; flex-direction: column; gap: 6px; min-height: 44px;
+  padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.w072-dd .w072-buckets { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 0.75rem; }
+.w072-dd .w072-bucket {
+  flex: 1 1 180px; min-width: 180px; padding: 8px;
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); cursor: pointer;
+}
+.w072-dd .w072-bucket.w072-armed { border-color: #d81e2e; }
+.w072-dd .w072-btitle { text-align: center; font-weight: 700; margin-bottom: 6px; }
+.w072-dd .w072-slot { display: flex; flex-direction: column; gap: 6px; min-height: 40px; }
+.w072-dd .w072-chip {
+  padding: 4px 10px; border-radius: 6px; cursor: grab; user-select: none;
+  border: 1.5px solid #d81e2e; color: var(--bs-body-color, #222);
+  background: var(--bs-body-bg, #fff); font-weight: 600; text-align: center;
+  font-size: 0.85rem;
+}
+.w072-dd .w072-chip.w072-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w072-dd .w072-chip.w072-right { border: 2px solid #2e7d32; }
+.w072-dd .w072-chip.w072-wrong { border: 2px solid #d81e2e; }
+.w072-dd .w072-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w072-dd button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w072-dd .w072-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w072-dd .w072-msg.ok { color: #2e7d32; }
+.w072-dd .w072-msg.bad { color: #d81e2e; }
+</style>
+<div class="w072-dd iw" id="w072-dd">
+  <div class="w072-pool" aria-label="cards to sort"></div>
+  <div class="w072-buckets">
+    <div class="w072-bucket" data-bucket="rbac"><div class="w072-btitle">RBAC</div><div class="w072-slot"></div></div>
+    <div class="w072-bucket" data-bucket="pbac"><div class="w072-btitle">PBAC</div><div class="w072-slot"></div></div>
+    <div class="w072-bucket" data-bucket="abac"><div class="w072-btitle">ABAC</div><div class="w072-slot"></div></div>
+  </div>
+  <div class="w072-controls">
+    <button type="button" class="w072-check iw-check">Check</button>
+    <button type="button" class="w072-reset iw-reset">Reset</button>
+  </div>
+  <div class="w072-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w072-dd');
+  const pool = root.querySelector('.w072-pool');
+  const buckets = [...root.querySelectorAll('.w072-bucket')];
+  const msg = root.querySelector('.w072-msg');
+  const ITEMS = [{"t": "Decides from attributes of identity, resource and context", "a": "abac"}, {"t": "Decides from the identity’s role", "a": "rbac"}, {"t": "Decides from explicit policies evaluated at access time", "a": "pbac"}, {"t": "Coarse: everyone in a role gets the same access", "a": "rbac"}, {"t": "Fine-grained and context-aware, but complex to design and reason about", "a": "abac"}, {"t": "Central and expressive, but policies must be written and maintained", "a": "pbac"}];
+  let picked = null;
+
+  function chips() { return [...root.querySelectorAll('.w072-chip')]; }
+  function unpick() {
+    if (picked) picked.classList.remove('w072-picked');
+    picked = null;
+    buckets.forEach(b => b.classList.remove('w072-armed'));
+  }
+  function clearMarks() {
+    chips().forEach(c => c.classList.remove('w072-right', 'w072-wrong'));
+    msg.textContent = ''; msg.className = 'w072-msg iw-msg';
+  }
+  function place(bucket, chip) {
+    bucket.querySelector('.w072-slot').appendChild(chip);
+    clearMarks();
+  }
+  function makeChip(item, i) {
+    const c = document.createElement('div');
+    c.className = 'w072-chip';
+    c.textContent = item.t;
+    c.dataset.key = String(i);
+    c.dataset.answer = item.a;
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement === pool) {
+        if (picked === c) { unpick(); return; }
+        unpick(); picked = c; c.classList.add('w072-picked');
+        buckets.forEach(b => b.classList.add('w072-armed'));
+      } else { pool.appendChild(c); unpick(); clearMarks(); }
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.dataset.key));
+    return c;
+  }
+  buckets.forEach(bucket => {
+    bucket.addEventListener('click', () => { if (picked) { place(bucket, picked); unpick(); } });
+    bucket.addEventListener('dragover', e => e.preventDefault());
+    bucket.addEventListener('drop', e => {
+      e.preventDefault(); e.stopPropagation();
+      const key = e.dataTransfer.getData('text/plain');
+      const chip = root.querySelector('.w072-chip[data-key="' + key + '"]');
+      if (chip) { place(bucket, chip); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const key = e.dataTransfer.getData('text/plain');
+    const chip = root.querySelector('.w072-chip[data-key="' + key + '"]');
+    if (chip) { pool.appendChild(chip); unpick(); clearMarks(); }
+  });
+  root.querySelector('.w072-check').addEventListener('click', () => {
+    let right = 0, wrong = 0;
+    chips().forEach(c => {
+      c.classList.remove('w072-right', 'w072-wrong');
+      const b = c.closest('.w072-bucket');
+      if (!b) return;
+      if (b.dataset.bucket === c.dataset.answer) { c.classList.add('w072-right'); right++; }
+      else { c.classList.add('w072-wrong'); wrong++; }
+    });
+    const unplaced = ITEMS.length - right - wrong;
+    if (right === ITEMS.length) {
+      msg.textContent = '\u2713 All correct \u2014 you can tell the three authorisation models apart.';
+      msg.className = 'w072-msg iw-msg ok';
+    } else if (wrong === 0) {
+      msg.textContent = 'Keep going \u2014 ' + unplaced + ' card(s) still to place.';
+      msg.className = 'w072-msg iw-msg';
+    } else {
+      msg.textContent = '\u2717 Not yet \u2014 the red cards are in the wrong box. Send them back and try again.';
+      msg.className = 'w072-msg iw-msg bad';
+    }
+  });
+  root.querySelector('.w072-reset').addEventListener('click', () => {
+    chips().sort((a, b) => Number(a.dataset.key) - Number(b.dataset.key))
+           .forEach(c => pool.appendChild(c));
+    unpick(); clearMarks();
+  });
+  ITEMS.forEach((it, i) => pool.appendChild(makeChip(it, i)));
+})();
+</script>
+```

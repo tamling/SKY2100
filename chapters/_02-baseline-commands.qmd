@@ -1,0 +1,152 @@
+```{=html}
+<style>
+.w022 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w022 .w022-pool {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  min-height: 44px; padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.w022 .w022-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 0.75rem; }
+.w022 .w022-zone {
+  display: flex; align-items: center; gap: 10px; padding: 6px 8px;
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); cursor: pointer;
+}
+.w022 .w022-zone.w022-armed { border-color: #d81e2e; }
+.w022 .w022-zone.w022-right { border: 2px solid #2e7d32; }
+.w022 .w022-zone.w022-wrong { border: 2px solid #d81e2e; }
+.w022 .w022-q { flex: 1 1 auto; }
+.w022 .w022-slot {
+  flex: 0 0 130px; min-height: 30px; display: flex; align-items: center; justify-content: center;
+}
+.w022 .w022-chip {
+  padding: 3px 10px; border-radius: 999px; cursor: grab; user-select: none;
+  border: 1.5px solid var(--bs-border-color, #999); color: var(--bs-body-color, #222);
+  background: var(--bs-body-bg, #fff); font-weight: 600;
+  font-family: var(--bs-font-monospace, monospace); font-size: 0.85em; white-space: nowrap;
+}
+.w022 .w022-chip.w022-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w022 .w022-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w022 button.w022-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w022 .w022-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w022 .w022-msg.ok { color: #2e7d32; }
+.w022 .w022-msg.bad { color: #d81e2e; }
+</style>
+<div class="w022 iw" id="w022">
+  <div class="w022-pool" aria-label="commands to place"></div>
+  <div class="w022-rows">
+    <div class="w022-zone" data-answer="ss">
+      <div class="w022-q">Which ports is this machine listening on?</div>
+      <div class="w022-slot"></div>
+    </div>
+    <div class="w022-zone" data-answer="free">
+      <div class="w022-q">How much RAM is free — is the system swapping?</div>
+      <div class="w022-slot"></div>
+    </div>
+    <div class="w022-zone" data-answer="df">
+      <div class="w022-q">How much free space is left per filesystem?</div>
+      <div class="w022-slot"></div>
+    </div>
+    <div class="w022-zone" data-answer="journalctl">
+      <div class="w022-q">What has a system service logged?</div>
+      <div class="w022-slot"></div>
+    </div>
+    <div class="w022-zone" data-answer="top">
+      <div class="w022-q">Which processes are loading the CPU right now?</div>
+      <div class="w022-slot"></div>
+    </div>
+  </div>
+  <div class="w022-controls">
+    <button type="button" class="w022-btn w022-check iw-check">Check</button>
+    <button type="button" class="w022-btn w022-reset iw-reset">Reset</button>
+  </div>
+  <div class="w022-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w022');
+  const pool = root.querySelector('.w022-pool');
+  const zones = [...root.querySelectorAll('.w022-zone')];
+  const msg = root.querySelector('.w022-msg');
+  const CMDS = [
+    ['df -h', 'df'],
+    ['journalctl', 'journalctl'],
+    ['lscpu', 'lscpu'],
+    ['ss -tulpn', 'ss'],
+    ['top / htop', 'top'],
+    ['du -sh', 'du'],
+    ['free -h', 'free']
+  ];
+  let picked = null;
+
+  function unpick() {
+    if (picked) picked.classList.remove('w022-picked');
+    picked = null;
+    zones.forEach(z => z.classList.remove('w022-armed'));
+  }
+  function clearMarks() {
+    zones.forEach(z => z.classList.remove('w022-right', 'w022-wrong'));
+    msg.textContent = ''; msg.className = 'w022-msg iw-msg';
+  }
+  function place(zone, chip) {
+    const slot = zone.querySelector('.w022-slot');
+    const old = slot.querySelector('.w022-chip');
+    if (old) pool.appendChild(old);
+    slot.appendChild(chip);
+    clearMarks();
+  }
+  function makeChip(label, cmd) {
+    const c = document.createElement('span');
+    c.className = 'w022-chip';
+    c.textContent = label;
+    c.dataset.cmd = cmd;
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement !== pool) { pool.appendChild(c); unpick(); clearMarks(); return; }
+      if (picked === c) { unpick(); return; }
+      unpick(); picked = c; c.classList.add('w022-picked');
+      zones.forEach(z => z.classList.add('w022-armed'));
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', cmd));
+    return c;
+  }
+  zones.forEach(zone => {
+    zone.addEventListener('click', () => { if (picked) { place(zone, picked); unpick(); } });
+    zone.addEventListener('dragover', e => e.preventDefault());
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      const chip = root.querySelector('.w022-chip[data-cmd="' + e.dataTransfer.getData('text/plain') + '"]');
+      if (chip) { place(zone, chip); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const chip = root.querySelector('.w022-chip[data-cmd="' + e.dataTransfer.getData('text/plain') + '"]');
+    if (chip) { pool.appendChild(chip); clearMarks(); }
+  });
+  root.querySelector('.w022-check').addEventListener('click', () => {
+    let right = 0, wrong = 0, empty = 0;
+    zones.forEach(z => {
+      z.classList.remove('w022-right', 'w022-wrong');
+      const chip = z.querySelector('.w022-chip');
+      if (!chip) { empty++; return; }
+      if (chip.dataset.cmd === z.dataset.answer) { z.classList.add('w022-right'); right++; }
+      else { z.classList.add('w022-wrong'); wrong++; }
+    });
+    if (right === zones.length) { msg.textContent = '✓ All correct — the baseline toolbox is in place.'; msg.className = 'w022-msg iw-msg ok'; }
+    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' question(s) still unanswered.'; msg.className = 'w022-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — the red rows have the wrong command (two of the seven commands answer none of these questions).'; msg.className = 'w022-msg iw-msg bad'; }
+  });
+  root.querySelector('.w022-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w022-chip').forEach(c => pool.appendChild(c));
+    unpick(); clearMarks();
+  });
+  CMDS.forEach(t => pool.appendChild(makeChip(t[0], t[1])));
+})();
+</script>
+```

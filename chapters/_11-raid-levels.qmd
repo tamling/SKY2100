@@ -1,0 +1,134 @@
+```{=html}
+<style>
+.w111-dd { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w111-dd .w111-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 0.75rem; }
+.w111-dd .w111-zone {
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  padding: 8px; text-align: center; cursor: pointer; min-height: 96px;
+}
+.w111-dd .w111-zone .w111-desc { font-size: 0.8rem; font-style: italic; opacity: 0.75; }
+.w111-dd .w111-zone.w111-armed { border-color: #d81e2e; }
+.w111-dd .w111-zone.w111-right { border: 2px solid #2e7d32; }
+.w111-dd .w111-zone.w111-wrong { border: 2px solid #d81e2e; }
+.w111-dd .w111-pool {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  min-height: 44px; padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.w111-dd .w111-chip {
+  display: inline-block; padding: 4px 12px; border-radius: 999px; cursor: grab;
+  user-select: none; border: 1.5px solid #d81e2e; color: var(--bs-body-color, #222);
+  background: var(--bs-body-bg, #fff); font-weight: 600;
+}
+.w111-dd .w111-zone .w111-chip { margin-top: 6px; }
+.w111-dd .w111-chip.w111-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w111-dd .w111-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w111-dd button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w111-dd .w111-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w111-dd .w111-msg.ok { color: #2e7d32; }
+.w111-dd .w111-msg.bad { color: #d81e2e; }
+</style>
+<div class="w111-dd iw" id="w111-dd">
+  <div class="w111-grid">
+    <div class="w111-zone" data-answer="raid 1">
+      <div class="w111-desc">mirrors the data across disks —<br>a full copy survives a disk failure</div>
+    </div>
+    <div class="w111-zone" data-answer="raid 5">
+      <div class="w111-desc">distributed data with parity —<br>tolerates <b>one</b> failed disk, uses space<br>more efficiently than mirroring</div>
+    </div>
+    <div class="w111-zone" data-answer="raid 0">
+      <div class="w111-desc">stripes data across disks for speed —<br>no redundancy at all; any one disk<br>failing destroys the whole</div>
+    </div>
+    <div class="w111-zone" data-answer="raid 6">
+      <div class="w111-desc">distributed data with parity —<br>tolerates <b>two</b> failed disks</div>
+    </div>
+  </div>
+  <div class="w111-pool" aria-label="RAID levels to place"></div>
+  <div class="w111-controls">
+    <button type="button" class="w111-check iw-check">Check</button>
+    <button type="button" class="w111-reset iw-reset">Reset</button>
+  </div>
+  <div class="w111-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w111-dd');
+  const pool = root.querySelector('.w111-pool');
+  const zones = [...root.querySelectorAll('.w111-zone')];
+  const msg = root.querySelector('.w111-msg');
+  const TERMS = ['RAID 5', 'RAID 0', 'RAID 6', 'RAID 1'];
+  let picked = null;
+
+  function makeChip(term) {
+    const c = document.createElement('span');
+    c.className = 'w111-chip';
+    c.textContent = term;
+    c.dataset.term = term.toLowerCase();
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement !== pool) { pool.appendChild(c); unpick(); clearMarks(); return; }
+      if (picked === c) { unpick(); return; }
+      unpick(); picked = c; c.classList.add('w111-picked');
+      zones.forEach(z => z.classList.add('w111-armed'));
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', term));
+    return c;
+  }
+  function unpick() {
+    if (picked) picked.classList.remove('w111-picked');
+    picked = null;
+    zones.forEach(z => z.classList.remove('w111-armed'));
+  }
+  function clearMarks() {
+    zones.forEach(z => z.classList.remove('w111-right', 'w111-wrong'));
+    msg.textContent = ''; msg.className = 'w111-msg iw-msg';
+  }
+  function place(zone, chip) {
+    const old = zone.querySelector('.w111-chip');
+    if (old) pool.appendChild(old);
+    zone.appendChild(chip);
+    clearMarks();
+  }
+  zones.forEach(zone => {
+    zone.addEventListener('click', () => { if (picked) { place(zone, picked); unpick(); } });
+    zone.addEventListener('dragover', e => e.preventDefault());
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      const term = e.dataTransfer.getData('text/plain');
+      const chip = root.querySelector('.w111-chip[data-term="' + term.toLowerCase() + '"]');
+      if (chip) { place(zone, chip); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const term = e.dataTransfer.getData('text/plain');
+    const chip = root.querySelector('.w111-chip[data-term="' + term.toLowerCase() + '"]');
+    if (chip) { pool.appendChild(chip); clearMarks(); }
+  });
+  root.querySelector('.w111-check').addEventListener('click', () => {
+    let right = 0, wrong = 0, empty = 0;
+    zones.forEach(z => {
+      z.classList.remove('w111-right', 'w111-wrong');
+      const chip = z.querySelector('.w111-chip');
+      if (!chip) { empty++; return; }
+      if (chip.dataset.term === z.dataset.answer) { z.classList.add('w111-right'); right++; }
+      else { z.classList.add('w111-wrong'); wrong++; }
+    });
+    if (right === zones.length) { msg.textContent = '✓ All correct — the four RAID levels are matched to their properties.'; msg.className = 'w111-msg iw-msg ok'; }
+    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' description(s) still without a level.'; msg.className = 'w111-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — the red boxes hold the wrong level. Re-read the definition and try again.'; msg.className = 'w111-msg iw-msg bad'; }
+  });
+  root.querySelector('.w111-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w111-chip').forEach(c => pool.appendChild(c));
+    unpick(); clearMarks();
+  });
+  TERMS.forEach(t => pool.appendChild(makeChip(t)));
+})();
+</script>
+```

@@ -298,6 +298,26 @@ Why does network-based vulnerability scanning largely fail against
 cloud-native workloads, and what does the Guidance recommend instead?
 :::
 
+::: {#exr-05-vm-or-container}
+## VM or container, interactive
+Each of the eight cards below describes either a virtual machine or a
+container (@def-container, @fig-vmcontainer). Drag each card into the box it
+describes, or click a card and then click a box; click a placed card to send
+it back. Then press **Check**.
+
+{{< include _05-vm-vs-container.qmd >}}
+:::
+
+::: {#exr-05-which-world}
+## Lift-and-shift or cloud-native, interactive
+Sort the six statements into the world they belong to: lift-and-shift or
+cloud-native (@def-migration, @def-immutable). Drag a card into a box, or
+click the card and then the box (click a placed card to send it back), then
+press **Check**.
+
+{{< include _05-two-worlds.qmd >}}
+:::
+
 ## Self-check {#sec-05-self-check}
 
 **Q1** *(tests @sec-05-two-ways-into-the-cloud · basic)*

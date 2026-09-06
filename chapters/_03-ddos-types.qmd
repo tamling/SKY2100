@@ -1,0 +1,142 @@
+```{=html}
+<style>
+.w031 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w031 .w031-pool {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  min-height: 44px; padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.w031 .w031-buckets { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.w031 .w031-bucket {
+  flex: 1 1 180px; min-height: 150px; padding: 8px;
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); cursor: pointer;
+}
+.w031 .w031-bucket.w031-armed { border-color: #d81e2e; }
+.w031 .w031-btitle { text-align: center; font-weight: 700; margin-bottom: 2px; }
+.w031 .w031-bdesc { text-align: center; font-size: 0.8rem; font-style: italic; opacity: 0.75; margin-bottom: 6px; }
+.w031 .w031-drop { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 34px; }
+.w031 .w031-chip {
+  padding: 4px 10px; border-radius: 999px; cursor: grab; user-select: none;
+  border: 1.5px solid var(--bs-border-color, #999); color: var(--bs-body-color, #222);
+  background: var(--bs-body-bg, #fff); font-weight: 600; text-align: center;
+}
+.w031 .w031-chip.w031-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w031 .w031-chip.w031-right { border: 2px solid #2e7d32; }
+.w031 .w031-chip.w031-wrong { border: 2px solid #d81e2e; }
+.w031 .w031-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w031 button.w031-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w031 .w031-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w031 .w031-msg.ok { color: #2e7d32; }
+.w031 .w031-msg.bad { color: #d81e2e; }
+</style>
+<div class="w031 iw" id="w031">
+  <div class="w031-pool" aria-label="attack characteristics to classify"></div>
+  <div class="w031-buckets">
+    <div class="w031-bucket" data-cat="vol">
+      <div class="w031-btitle">Volumetric</div>
+      <div class="w031-bdesc">saturates the<br>network link</div>
+      <div class="w031-drop"></div>
+    </div>
+    <div class="w031-bucket" data-cat="proto">
+      <div class="w031-btitle">Protocol</div>
+      <div class="w031-bdesc">exhausts<br>connection state</div>
+      <div class="w031-drop"></div>
+    </div>
+    <div class="w031-bucket" data-cat="app">
+      <div class="w031-btitle">Application-layer</div>
+      <div class="w031-bdesc">exhausts the<br>application itself</div>
+      <div class="w031-drop"></div>
+    </div>
+  </div>
+  <div class="w031-controls">
+    <button type="button" class="w031-btn w031-check iw-check">Check</button>
+    <button type="button" class="w031-btn w031-reset iw-reset">Reset</button>
+  </div>
+  <div class="w031-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w031');
+  const pool = root.querySelector('.w031-pool');
+  const buckets = [...root.querySelectorAll('.w031-bucket')];
+  const msg = root.querySelector('.w031-msg');
+  const ITEMS = [
+    ['SYN flood', 'proto'],
+    ['flood against a search endpoint', 'app'],
+    ['UDP flood with amplification', 'vol'],
+    ['measured in packets per second', 'proto'],
+    ['hardest to tell apart from real users', 'app'],
+    ['measured in gigabits or terabits per second', 'vol']
+  ];
+  let picked = null;
+
+  function unpick() {
+    if (picked) picked.classList.remove('w031-picked');
+    picked = null;
+    buckets.forEach(b => b.classList.remove('w031-armed'));
+  }
+  function clearMarks() {
+    root.querySelectorAll('.w031-chip').forEach(c => c.classList.remove('w031-right', 'w031-wrong'));
+    msg.textContent = ''; msg.className = 'w031-msg iw-msg';
+  }
+  function place(bucket, chip) {
+    bucket.querySelector('.w031-drop').appendChild(chip);
+    clearMarks();
+  }
+  function makeChip(label, cat, i) {
+    const c = document.createElement('span');
+    c.className = 'w031-chip';
+    c.textContent = label;
+    c.dataset.cat = cat;
+    c.dataset.id = 'w031i' + i;
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement !== pool) { pool.appendChild(c); unpick(); clearMarks(); return; }
+      if (picked === c) { unpick(); return; }
+      unpick(); picked = c; c.classList.add('w031-picked');
+      buckets.forEach(b => b.classList.add('w031-armed'));
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.dataset.id));
+    return c;
+  }
+  buckets.forEach(bucket => {
+    bucket.addEventListener('click', () => { if (picked) { place(bucket, picked); unpick(); } });
+    bucket.addEventListener('dragover', e => e.preventDefault());
+    bucket.addEventListener('drop', e => {
+      e.preventDefault();
+      const chip = root.querySelector('.w031-chip[data-id="' + e.dataTransfer.getData('text/plain') + '"]');
+      if (chip) { place(bucket, chip); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const chip = root.querySelector('.w031-chip[data-id="' + e.dataTransfer.getData('text/plain') + '"]');
+    if (chip) { pool.appendChild(chip); clearMarks(); }
+  });
+  root.querySelector('.w031-check').addEventListener('click', () => {
+    let right = 0, wrong = 0, unplaced = 0;
+    root.querySelectorAll('.w031-chip').forEach(c => {
+      c.classList.remove('w031-right', 'w031-wrong');
+      if (c.parentElement === pool) { unplaced++; return; }
+      const bucket = c.closest('.w031-bucket');
+      if (c.dataset.cat === bucket.dataset.cat) { c.classList.add('w031-right'); right++; }
+      else { c.classList.add('w031-wrong'); wrong++; }
+    });
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct — the three DDoS types are sorted.'; msg.className = 'w031-msg iw-msg ok'; }
+    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + unplaced + ' item(s) still unplaced.'; msg.className = 'w031-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — the red items are in the wrong type.'; msg.className = 'w031-msg iw-msg bad'; }
+  });
+  root.querySelector('.w031-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w031-chip').forEach(c => pool.appendChild(c));
+    unpick(); clearMarks();
+  });
+  ITEMS.forEach((it, i) => pool.appendChild(makeChip(it[0], it[1], i)));
+})();
+</script>
+```

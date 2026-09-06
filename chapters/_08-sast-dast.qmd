@@ -1,0 +1,137 @@
+```{=html}
+<style>
+.w082-sort { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w082-sort .w082-buckets { display: flex; gap: 10px; margin-bottom: 0.75rem; align-items: stretch; }
+.w082-sort .w082-bucket {
+  flex: 1 1 0; min-height: 170px; padding: 6px 8px;
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); cursor: pointer;
+}
+.w082-sort .w082-title { text-align: center; font-weight: 700; color: #d81e2e; margin-bottom: 6px; }
+.w082-sort .w082-bucket.w082-armed { border-color: #d81e2e; }
+.w082-sort .w082-pool {
+  display: flex; flex-direction: column; gap: 6px;
+  min-height: 44px; padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.w082-sort .w082-chip {
+  display: block; margin: 0; padding: 4px 10px; border-radius: 8px;
+  cursor: grab; user-select: none; font-weight: 600; text-align: center;
+  border: 1.5px solid var(--bs-border-color, #999);
+  color: var(--bs-body-color, #222); background: var(--bs-body-bg, #fff);
+}
+.w082-sort .w082-bucket .w082-chip { margin: 6px 0; }
+.w082-sort .w082-chip.w082-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w082-sort .w082-chip.w082-right { border: 2px solid #2e7d32; }
+.w082-sort .w082-chip.w082-wrong { border: 2px solid #d81e2e; }
+.w082-sort .w082-controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.w082-sort button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w082-sort .w082-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w082-sort .w082-msg.ok { color: #2e7d32; }
+.w082-sort .w082-msg.bad { color: #d81e2e; }
+</style>
+<div class="iw w082-sort" id="w082">
+  <div class="w082-buckets">
+    <div class="w082-bucket" data-cat="sast">
+      <div class="w082-title">SAST — static testing</div>
+      <div class="w082-slot"></div>
+    </div>
+    <div class="w082-bucket" data-cat="dast">
+      <div class="w082-title">DAST — dynamic testing</div>
+      <div class="w082-slot"></div>
+    </div>
+  </div>
+  <div class="w082-pool" aria-label="statements to sort"></div>
+  <div class="w082-controls">
+    <button type="button" class="w082-check iw-check">Check</button>
+    <button type="button" class="w082-reset iw-reset">Reset</button>
+  </div>
+  <div class="w082-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w082');
+  const pool = root.querySelector('.w082-pool');
+  const buckets = [...root.querySelectorAll('.w082-bucket')];
+  const msg = root.querySelector('.w082-msg');
+  const ITEMS = [
+    ['Runs during continuous delivery, against the staged application', 'dast'],
+    ['Examines the source code before deployment', 'sast'],
+    ['Sees the behaviour but not the code', 'dast'],
+    ['Scans for hard-coded credentials, keys and tokens before they enter the repository', 'sast'],
+    ['Runs during continuous integration, so that vulnerable code does not merge', 'sast'],
+    ['Probes from outside, emulating real attacks', 'dast']
+  ];
+  let picked = null;
+  function chipByKey(key) { return root.querySelector('.w082-chip[data-key="' + key + '"]'); }
+  function unpick() {
+    if (picked) picked.classList.remove('w082-picked');
+    picked = null;
+    buckets.forEach(b => b.classList.remove('w082-armed'));
+  }
+  function clearMarks() {
+    root.querySelectorAll('.w082-chip').forEach(c => c.classList.remove('w082-right', 'w082-wrong'));
+    msg.textContent = ''; msg.className = 'w082-msg iw-msg';
+  }
+  function place(bucket, chip) { bucket.querySelector('.w082-slot').appendChild(chip); clearMarks(); }
+  function makeChip(text, cat, key) {
+    const c = document.createElement('span');
+    c.className = 'w082-chip';
+    c.textContent = text;
+    c.dataset.cat = cat; c.dataset.key = key;
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement !== pool) { pool.appendChild(c); unpick(); clearMarks(); return; }
+      if (picked === c) { unpick(); return; }
+      unpick(); picked = c; c.classList.add('w082-picked');
+      buckets.forEach(b => b.classList.add('w082-armed'));
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', key));
+    return c;
+  }
+  buckets.forEach(b => {
+    b.addEventListener('click', () => { if (picked) { place(b, picked); unpick(); } });
+    b.addEventListener('dragover', e => e.preventDefault());
+    b.addEventListener('drop', e => {
+      e.preventDefault();
+      const chip = chipByKey(e.dataTransfer.getData('text/plain'));
+      if (chip) { place(b, chip); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const chip = chipByKey(e.dataTransfer.getData('text/plain'));
+    if (chip) { pool.appendChild(chip); clearMarks(); }
+  });
+  root.querySelector('.w082-check').addEventListener('click', () => {
+    root.querySelectorAll('.w082-chip').forEach(c => c.classList.remove('w082-right', 'w082-wrong'));
+    let right = 0, wrong = 0;
+    buckets.forEach(b => b.querySelectorAll('.w082-chip').forEach(c => {
+      if (c.dataset.cat === b.dataset.cat) { c.classList.add('w082-right'); right++; }
+      else { c.classList.add('w082-wrong'); wrong++; }
+    }));
+    const left = pool.querySelectorAll('.w082-chip').length;
+    msg.className = 'w082-msg iw-msg';
+    if (wrong === 0 && left === 0) {
+      msg.textContent = '✓ All correct — static and dynamic testing are cleanly separated.';
+      msg.classList.add('ok');
+    } else if (wrong === 0) {
+      msg.textContent = 'Keep going — ' + left + ' statement(s) still to sort.';
+    } else {
+      msg.textContent = '✗ Not yet — ' + wrong + ' statement(s) sit in the wrong box (marked red).';
+      msg.classList.add('bad');
+    }
+  });
+  root.querySelector('.w082-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w082-chip').forEach(c => pool.appendChild(c));
+    unpick(); clearMarks();
+  });
+  ITEMS.forEach((it, i) => pool.appendChild(makeChip(it[0], it[1], 'k' + i)));
+})();
+</script>
+```
