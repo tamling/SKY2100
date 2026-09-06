@@ -1,0 +1,178 @@
+# Profile your Linux system - the baseline {#sec-lab-02 .unnumbered}
+
+*Exercise 2 · Session 2 lab · Estimated time: 60-90 min*
+
+::: {.callout-note icon=false}
+This is the practical task for [Chapter 2: Data centres, virtualisation and Linux](../chapters/02-data-centres-virtualisation-linux.qmd).
+Work through it in your lab group; you talk your answers through at the
+session after next (the review runs one session behind). **This page
+mirrors the worksheet for reading and reference - the official worksheet
+is the PDF distributed via Canvas.**
+:::
+
+Write your answers in the answer document `SKY2100_Exercise2_Answers.docx`. You cannot detect something *abnormal* until you
+know what *normal* looks like. Today you measure your VM across the four pillars (CPU, memory,
+disk, network) plus its logs, and record a **baseline** you will reuse all semester. These are
+the same instruments that later feed your IDS (Session 9) and your incident timeline (Session 10).
+
+## Measure the four pillars
+
+- [ ] **Install the monitors:** `sudo apt update && sudo apt install -y htop btop`
+
+::: {.callout-note}
+If `btop` is unavailable on your release, use `htop`; if neither installs, `top` is
+always present. Record which one you used in the answer document.
+:::
+
+- [ ] **Run each command, read the output, and record the reading in the baseline table of the answer
+  document (same five rows):**
+  - CPU model & cores - `lscpu`
+  - Total / available RAM - `free -h`
+  - Disk total / free (`/`) - `df -h`
+  - Listening ports (count + which) - `ss -tulpn`
+  - Current load average - `top` (or `htop` / `btop`)
+- [ ] **Read the recent log as well:** `journalctl -xe | tail -n 30` - nothing to record, but you will
+  need this command again in Sessions 9 and 10.
+
+## Cloud transfer: Microsoft Learn
+
+- [ ] **Complete "Describe the core architectural components of Azure"** (Part 2 of the series).
+
+  [learn.microsoft.com/training/modules/describe-core-architectural-components-of-azure](https://learn.microsoft.com/training/modules/describe-core-architectural-components-of-azure/)
+
+- [ ] **Map the concepts.** In the answer document, write one line each connecting the training to the
+  lecture: Region, Availability Zone, Resource group, Subscription, Azure Resource Manager (ARM).
+
+## Azure reflection
+
+- [ ] **Your VM has a fixed CPU/RAM/disk. How does an Azure *region* and *availability zone*
+  change the availability picture compared with your single local machine?**
+- [ ] **`ss -tulpn` shows the ports your VM exposes. In Azure, which construct would limit who can
+  reach those ports, and at which level (host vs. network)?**
+
+::: {.callout-tip title="Aha"}
+The numbers you just wrote down are not interesting on their own. They matter because they are
+what "normal" looks like on your machine, and you can only recognise trouble by comparing against
+them. When Session 9 has your intrusion detection flag a process, or Session 10 asks you to explain a
+spike in a log, the first question is always the same: is this different from the baseline? An unknown
+port in `ss`, a load average far above today's, or free memory near zero all mean something only
+because you measured the quiet state first. Keep this baseline; you will compare against it for the rest
+of the course.
+:::
+
+## Knowledge check
+
+1.  Which command lists the ports your machine is *listening* on?
+    a) ☐ `free -h`
+    b) ☐ `ss -tulpn`
+    c) ☐ `df -h`
+    d) ☐ `lscpu`
+
+    *Hint: The socket-statistics command you ran for the baseline today.*
+
+2.  State the difference between a **Type 1** and a **Type 2** hypervisor, with one
+    example of each.
+
+    *Hint: One runs directly on the hardware, one runs as an app on a host OS.*
+
+3.  In a data centre, **east-west** traffic means…
+    a) ☐ client $\leftrightarrow$ data centre
+    b) ☐ server $\leftrightarrow$ server inside the data centre
+    c) ☐ data centre $\leftrightarrow$ internet
+
+    *Hint: Most data-centre traffic stays server-to-server, inside the building.*
+
+4.  Comer notes that running several VMs on one server adds overhead. Give *two* sources of
+    that overhead.
+
+    *Hint: Each VM carries its own OS - its own scheduler, background processes, memory.*
+
+5.  An **Availability Zone** is best described as…
+    a) ☐ a whole region
+    b) ☐ a physically separate data centre within a region
+    c) ☐ a resource group
+    d) ☐ a subscription
+
+    *Hint: A physically separate data centre inside one region.*
+
+6.  Put the Azure hierarchy in order from *broadest* to *narrowest*: resource, management
+    group, subscription, resource group.
+
+    *Hint: From the top down: management group, then narrower, to the single resource.*
+
+7.  Why is a virtual machine described as "a digital object", and what is *one* security risk
+    that follows from it?
+
+    *Hint: Its entire state is data - which means it can be saved to a file, and copied.*
+
+8.  In `free -h`, which value best indicates memory *pressure*?
+    a) ☐ total
+    b) ☐ available / swap in use
+    c) ☐ buffers
+    d) ☐ shared
+
+    *Hint: Not the 'free' column - the one that counts cache as usable.*
+
+9.  Explain **hot-aisle / cold-aisle** containment in one sentence, and say which CIA property
+    it ultimately protects.
+
+    *Hint: It is about airflow: keep cold intake and hot exhaust apart - which property does overheating threaten?*
+
+10. What is a **hypervisor**, and which CPU feature lets it stay more privileged than the guest
+    operating systems?
+
+    *Hint: It creates and mediates the VMs; CPU rings let it outrank the guests.*
+
+11. Name the three persistent-storage abstractions used in cloud data centres (Comer Ch. 8).
+
+    *Hint: Block, file, and the key-value one.*
+
+12. (Reflection) Which single base-metric command will you rely on most when hunting an incident,
+    and why?
+
+---
+
+**Progress check:** Discuss your answers in the group, then
+talk the teacher through them verbally at the next session only to track progress; nothing is handed
+in, signed or graded.
+
+## Solutions {.unnumbered}
+
+*Work through the lab first, then check here. Model answers are indicative - equivalent reasoning is fine.*
+
+**Note:** Model answers are indicative - accept equivalent reasoning. Multiple-choice
+answers are in **bold**.
+
+### Knowledge check
+
+1.  **`ss -tulpn`**.
+2.  **Type 1** (bare-metal) runs directly on hardware - ESXi, Xen, Hyper-V; **Type 2**
+    (hosted) runs as an app on a host OS - VMware Workstation, VirtualBox.
+3.  **Server $\leftrightarrow$ server inside the data centre.**
+4.  Each VM runs its *own* OS, so each adds a *scheduler* and a set of *background
+    processes*; plus per-VM memory/CPU and the time to boot an OS. (Comer Ch. 6, p. 71-72,
+    verified.)
+5.  **A physically separate data centre within a region.**
+6.  **Management group $\rightarrow$ subscription $\rightarrow$ resource group $\rightarrow$
+    resource.**
+7.  A VM's entire state (memory, disk, devices) is data, so it can be saved as a file/snapshot;
+    risk: it can be *copied or stolen wholesale*, and a snapshot may capture secrets in memory.
+    (Comer Ch. 5, p. 63, verified.)
+8.  **Available memory / swap in use.**
+9.  Racks are arranged so *cold intake* and *hot exhaust* air never mix, improving cooling
+    efficiency; it ultimately protects **Availability** (keeps hardware running). (Comer p. 40,
+    verified.)
+10. A **hypervisor** creates and mediates VMs; CPU **privilege levels (rings)** let it run
+    more privileged than the demoted guest OSes. (Comer p. 59-60, verified.)
+11. **Block, file, and object (key-value) storage.** (Comer Ch. 8, verified.)
+12. Reflection - commonly `journalctl` (the log source for the timeline) or `ss` (attack
+    surface).
+
+### References
+
+Comer Ch. 4 (hot/cold aisles **p. 40**, east-west traffic **p. 44**, leaf-spine
+**p. 47**) & Ch. 5 (approaches **p. 55**, privilege levels **p. 59**, extending
+privilege **p. 60**, levels of trust **p. 60**, VM as digital object **p. 63**, VM
+migration **p. 64**, live migration **p. 65**); Ch. 6 VM overhead **p. 71**; Ch. 8
+storage abstractions - all verified. Jøsang Ch. 3 (syllabus, page numbers not verified). MS Learn:
+*Describe the core architectural components of Azure* (verified, June 2026).

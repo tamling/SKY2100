@@ -1,0 +1,192 @@
+# Set up your team, your lab & your Microsoft Learn profile {#sec-lab-01 .unnumbered}
+
+*Exercise 1 · Session 1 lab · Estimated time: 60-90 min*
+
+::: {.callout-note icon=false}
+This is the practical task for [Chapter 1: Cloud computing and information security](../chapters/01-cloud-information-security.qmd).
+Work through it in your lab group; you talk your answers through at the
+session after next (the review runs one session behind). **This page
+mirrors the worksheet for reading and reference - the official worksheet
+is the PDF distributed via Canvas.**
+:::
+
+Three jobs today: (1) form the
+**team you will keep for the whole semester and the exam**, (2) build the local Ubuntu laboratory
+that is the red thread of this course, and (3) start the Microsoft Learn track that runs alongside it.
+
+::: {.callout-important title="How the labs work (applies all semester)"}
+Work through each lab *in your group* and
+discuss the answers together. At the next session you briefly talk the teacher through your answers -
+*verbally*, just so progress can be tracked (nothing is handed in, signed or graded here). The
+review runs *one session behind*, so you always have the week in between: Session 2 $\rightarrow$
+Exercise 1; Session 3 $\rightarrow$ Exercise 2; … Session $N$ $\rightarrow$ Exercise $N-1$.
+:::
+
+## Form your team (this is also your exam group)
+
+The home exam is done in groups, so the team you form now is the team you will be assessed with.
+
+::: {.callout-note}
+Form a group of **3 to 5 people**. Fewer than 3 makes the workload heavy; more than 5 makes
+coordination hard. You do *not* register the members here - what matters for the labs is your
+group's *progress*, not who is in it. The same group submits the final report, evidence appendix
+and screen recording.
+:::
+
+- [ ] **Pick a short group name/ID** (e.g. `OSL-07`) and use it on every answer document.
+
+::: {.callout-note}
+**The answer documents (read once, apply all term).** Each week you fill in that session's
+**answer document** - a Word file (`SKY2100_ExerciseN_Answers.docx`) that mirrors this sheet:
+every task, table and question here has a box there. Nothing else is collected. Keep one answer
+document per exercise in your group's shared folder. The final home-exam report is built from these
+weekly documents, so filling them in properly as you go *is* the exam preparation.
+:::
+
+## Build the local laboratory
+
+- [ ] **Confirm virtualisation is enabled.** In your OS task manager (Windows: `Ctrl+Shift+Esc`
+  $\rightarrow$ Performance $\rightarrow$ CPU), check that *Virtualization* is **Enabled**;
+  otherwise enable Intel VT-x / AMD-V in BIOS/UEFI.
+- [ ] **Create and boot an Ubuntu VM** in VMware/VirtualBox ($\geq$2 vCPU, $\geq$4 GB RAM,
+  $\geq$25 GB disk). Open a terminal and run `whoami`, `uname -a`, `ip a`.
+
+::: {.callout-warning}
+If the VM will not boot, do not get stuck: note it in the answer document, finish Section 3,
+and ask an SA. You must not fall behind on the lab thread.
+:::
+
+## Cloud transfer: Microsoft Learn
+
+We use the free *Microsoft Learn* "Introduction to Cloud Infrastructure" series as the Azure
+side of the course. (Module names verified August 2026.)
+
+- [ ] **Sign in and start Part 1 - "Describe cloud concepts".**
+
+  [learn.microsoft.com/training/paths/microsoft-azure-fundamentals-describe-cloud-concepts](https://learn.microsoft.com/training/paths/microsoft-azure-fundamentals-describe-cloud-concepts/)
+
+  Work through the first units: cloud computing, deployment models, and the shared-responsibility model.
+  Note in the answer document which units you completed.
+
+## Azure reflection
+
+Answer in your own words - connect the training to today's lecture.
+
+- [ ] **In the shared-responsibility model, name one thing that is the *provider's* job in SaaS but
+  *your* job in IaaS.**
+- [ ] **The Microsoft training and the lecture both define "the cloud". Give the *one* difference
+  you found most useful between how a vendor (Microsoft) frames it and how the course frames it (from a
+  security view).**
+
+::: {.callout-tip title="Aha"}
+The two halves of today differed in who was responsible. You build and maintain the local VM
+yourself. On Azure you look after only your account and your data, while the provider runs the hardware,
+the hypervisor and the platform. That division of labour is the shared-responsibility model, and how
+much is your job depends on the service model: IaaS, PaaS or SaaS.
+:::
+
+## Knowledge check
+
+Write short answers in the space provided. Tick the correct box for multiple-choice items.
+
+1.  Which is **not** one of the five essential cloud characteristics?
+    a) ☐ on-demand self-service
+    b) ☐ broad network access
+    c) ☐ unlimited free storage
+    d) ☐ rapid elasticity
+
+    *Hint: Four are genuine NIST characteristics; one promises something no paid service delivers.*
+
+2.  Name the three CIA properties and give a one-line meaning for each.
+
+    *Hint: One keeps secrets, one prevents undetected tampering, one keeps the service reachable.*
+
+3.  Explain the difference between a **threat**, a **risk** and a **control**, with
+    one example of your own.
+
+    *Hint: One is the potential cause, one is likelihood times impact, one is the measure that lowers it.*
+
+4.  Which service model gives the customer the *most* control of the stack?
+    a) ☐ SaaS
+    b) ☐ PaaS
+    c) ☐ IaaS
+    d) ☐ SecaaS
+
+    *Hint: The model where you manage the operating system and everything above it.*
+
+5.  Match each to on-prem / IaaS / PaaS / SaaS: "I manage only my data and users" =
+    \_\_\_\_\_\_; "I manage the OS upward" = \_\_\_\_\_\_.
+
+    *Hint: The least you manage is 'only data and users'; managing the OS upward is the other extreme.*
+
+6.  In one sentence: why is securing the cloud different from securing an internal server?
+
+    *Hint: The provider now shares the stack with you - think trust boundaries and shared hardware.*
+
+7.  Define **Security as a Service (SecaaS)** and give one example.
+
+    *Hint: Security delivered like any other cloud service: a managed WAF, SIEM or DDoS protection.*
+
+8.  Name the four deployment models and say which one dominates in practice.
+
+    *Hint: Public, private, community - and the blend that dominates in practice.*
+
+9.  The group home exam rewards primarily…
+    a) ☐ presentation polish
+    b) ☐ consistency between report and evidence
+    c) ☐ number of screenshots
+    d) ☐ report length
+
+    *Hint: It is not about polish; the report and the evidence have to agree.*
+
+10. True or false: *undisclosed* AI use is the problem, not AI use itself. Briefly justify.
+
+    *Hint: The declaration targets the undisclosed kind; an LLM cannot produce your lab evidence.*
+
+11. Pick one CIA property and name a *later session* where it is the main focus.
+
+    *Hint: Confidentiality → the TLS and access sessions; Integrity → logs and timeline; Availability → load or backup.*
+
+12. (Reflection) Write one question about cloud security you want answered by the end of the course.
+
+---
+
+**Progress check:** Discuss your answers in the group, then
+talk the teacher through them verbally at the next session only to track progress; nothing is handed
+in, signed or graded.
+
+## Solutions {.unnumbered}
+
+*Work through the lab first, then check here. Model answers are indicative - equivalent reasoning is fine.*
+
+**Note:** Model answers are indicative - accept equivalent reasoning. Multiple-choice
+answers are in **bold**.
+
+### Knowledge check
+
+1.  **Unlimited free storage** is not a characteristic. The five are: on-demand self-service,
+    broad network access, resource pooling, rapid elasticity, measured service.
+2.  **Confidentiality** - disclosed only to the authorised; **Integrity** - not altered
+    without authorisation/detection; **Availability** - reachable when needed.
+3.  **Threat** = a potential cause of an unwanted incident; **Risk** = likelihood
+    $\times$ impact; **Control** = a measure that reduces the risk. E.g. threat = request
+    flood; risk = high for a public service; control = rate limiting / WAF.
+4.  **IaaS** gives the customer the most control of the stack.
+5.  "Only my data and users" = **SaaS**; "OS upward" = **IaaS**.
+6.  Because *control is shared* with the provider: trust boundaries are logical not physical,
+    you share infrastructure (multi-tenancy), and depend on an internet-facing control plane.
+7.  **SecaaS** = security capabilities consumed as a cloud service; e.g. a managed WAF, cloud
+    monitoring/SIEM, or managed DDoS protection.
+8.  **Public, Private, Community, Hybrid**; **Hybrid** dominates in practice.
+9.  **Consistency between report and evidence.**
+10. **True** - the AI declaration penalises *undisclosed* use; an LLM cannot produce your
+    lab evidence.
+11. Any valid pair, e.g. Confidentiality $\rightarrow$ S6-7; Integrity $\rightarrow$ S9-10;
+    Availability $\rightarrow$ S3/S11.
+12. Open reflection - no fixed answer.
+
+### References
+
+CSA Security Guidance v5, **Domain 1: Cloud Computing Concepts & Architectures** (verified);
+Comer Ch. 1-3 (verified); Jøsang Ch. 1 (CIA, risk - syllabus, page numbers not verified);
+Lecture 1.
