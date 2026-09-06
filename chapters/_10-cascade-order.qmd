@@ -1,0 +1,120 @@
+```{=html}
+<style>
+.w101-order { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w101-order .w101-list { list-style: none; margin: 0 0 0.75rem; padding: 0; counter-reset: w101n; }
+.w101-order .w101-item {
+  display: flex; align-items: center; gap: 10px; margin: 6px 0; padding: 6px 10px;
+  border: 1.5px solid var(--bs-border-color, #999); border-radius: 8px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  cursor: grab; user-select: none; font-weight: 600;
+}
+.w101-order .w101-item::before {
+  counter-increment: w101n; content: counter(w101n);
+  font-weight: 700; opacity: 0.55; min-width: 1.2em; text-align: right;
+}
+.w101-order .w101-dragging { opacity: 0.5; }
+.w101-order .w101-item.w101-right { border: 2px solid #2e7d32; }
+.w101-order .w101-item.w101-wrong { border: 2px solid #d81e2e; }
+.w101-order .w101-btns { margin-left: auto; display: flex; gap: 4px; }
+.w101-order button {
+  padding: 2px 8px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w101-order .w101-controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.w101-order .w101-controls button { padding: 5px 14px; }
+.w101-order .w101-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w101-order .w101-msg.ok { color: #2e7d32; }
+.w101-order .w101-msg.bad { color: #d81e2e; }
+</style>
+<div class="iw w101-order" id="w101">
+  <ol class="w101-list"></ol>
+  <div class="w101-controls">
+    <button type="button" class="w101-check iw-check">Check</button>
+    <button type="button" class="w101-reset iw-reset">Reset</button>
+  </div>
+  <div class="w101-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w101');
+  const list = root.querySelector('.w101-list');
+  const msg = root.querySelector('.w101-msg');
+  // [step, correct index], given in scrambled display order
+  const STEPS = [
+    ['The security-relevant subset is filtered into the separate, well-protected audit store', 2],
+    ['A service on the host writes a log line', 0],
+    ['From the audit store, the logs feed the SIEM, which analyses across all environments', 3],
+    ['Each environment (Dev, Test, Prod) forwards the log to the one central repository as soon as it is written', 1]
+  ];
+  function clearMarks() {
+    [...list.children].forEach(li => li.classList.remove('w101-right', 'w101-wrong'));
+    msg.textContent = ''; msg.className = 'w101-msg iw-msg';
+  }
+  function makeItem(text, pos, n) {
+    const li = document.createElement('li');
+    li.className = 'w101-item';
+    li.dataset.pos = pos;
+    li.draggable = true;
+    const label = document.createElement('span');
+    label.className = 'w101-label'; label.textContent = text;
+    const btns = document.createElement('span'); btns.className = 'w101-btns';
+    const up = document.createElement('button');
+    up.type = 'button'; up.textContent = '▲';
+    up.setAttribute('aria-label', 'move step ' + n + ' up');
+    const dn = document.createElement('button');
+    dn.type = 'button'; dn.textContent = '▼';
+    dn.setAttribute('aria-label', 'move step ' + n + ' down');
+    up.addEventListener('click', e => {
+      e.stopPropagation();
+      const p = li.previousElementSibling;
+      if (p) { list.insertBefore(li, p); clearMarks(); }
+    });
+    dn.addEventListener('click', e => {
+      e.stopPropagation();
+      const nx = li.nextElementSibling;
+      if (nx) { list.insertBefore(nx, li); clearMarks(); }
+    });
+    btns.append(up, dn);
+    li.append(label, btns);
+    li.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', String(pos));
+      li.classList.add('w101-dragging');
+    });
+    li.addEventListener('dragend', () => li.classList.remove('w101-dragging'));
+    return li;
+  }
+  list.addEventListener('dragover', e => {
+    e.preventDefault();
+    const dragging = list.querySelector('.w101-dragging');
+    if (!dragging) return;
+    const after = [...list.querySelectorAll('li:not(.w101-dragging)')]
+      .find(li => e.clientY < li.getBoundingClientRect().top + li.offsetHeight / 2);
+    if (after) list.insertBefore(dragging, after); else list.appendChild(dragging);
+    clearMarks();
+  });
+  list.addEventListener('drop', e => e.preventDefault());
+  root.querySelector('.w101-check').addEventListener('click', () => {
+    let right = 0;
+    [...list.children].forEach((li, i) => {
+      li.classList.remove('w101-right', 'w101-wrong');
+      if (+li.dataset.pos === i) { li.classList.add('w101-right'); right++; }
+      else li.classList.add('w101-wrong');
+    });
+    msg.className = 'w101-msg iw-msg';
+    if (right === STEPS.length) {
+      msg.textContent = '✓ Correct — the record leaves the host at once and cascades down to the SIEM.';
+      msg.classList.add('ok');
+    } else {
+      msg.textContent = '✗ Not yet — ' + right + ' of ' + STEPS.length + ' steps are in the right place (marked green).';
+      msg.classList.add('bad');
+    }
+  });
+  STEPS.forEach((s, i) => list.appendChild(makeItem(s[0], s[1], i + 1)));
+  const order0 = [...list.children];
+  root.querySelector('.w101-reset').addEventListener('click', () => {
+    order0.forEach(li => list.appendChild(li));
+    clearMarks();
+  });
+})();
+</script>
+```

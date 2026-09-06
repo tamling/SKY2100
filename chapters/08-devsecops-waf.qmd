@@ -232,6 +232,28 @@ document shows immediately whether the application is affected, and which
 runtime control could block exploitation even if it is?
 :::
 
+::: {#exr-08-devsecops-loop}
+## The DevSecOps loop, interactive
+@fig-devsecops shows development flowing continuously into operations and
+back, with security embedded at every stage (@def-devsecops). Starting from
+**Plan**, which is fixed, arrange the remaining seven stages of the loop in
+order: drag a stage to its place, or use its arrow buttons to move it up and
+down. Then press **Check**.
+
+{{< include _08-devsecops-loop.qmd >}}
+:::
+
+::: {#exr-08-sast-dast-sort}
+## SAST or DAST, interactive
+Static and dynamic testing divide the work of automated security testing
+between them (@sec-08-secure-development-lifecycle). Drag each statement
+into the box of the technique it describes, or click a statement and then
+click a box (click a placed statement to send it back). Then press
+**Check**.
+
+{{< include _08-sast-dast.qmd >}}
+:::
+
 ## Self-check {#sec-08-self-check}
 
 **Q1** *(tests @sec-08-application-security · basic)*

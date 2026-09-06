@@ -226,6 +226,26 @@ Explain how a canary (honey token) produces an alert with essentially no
 false positives, and give one that could be placed in a Nextcloud deployment.
 :::
 
+::: {#exr-09-ids-ips-sort}
+## IDS or IPS, interactive
+@def-ids separates the detection mode of the network from its prevention
+mode, and @fig-idsips shows where each sits. Drag each statement into the
+box of the system it describes, or click a statement and then click a box
+(click a placed statement to send it back). Then press **Check**.
+
+{{< include _09-ids-ips.qmd >}}
+:::
+
+::: {#exr-09-fast-slow-sort}
+## Fast path or slow path, interactive
+Whether monitoring is timely depends on which processing track carries what
+(@sec-09-fast-slow-path). Drag each statement into the box of the path it
+belongs to, or click a statement and then click a box (click a placed
+statement to send it back). Then press **Check**.
+
+{{< include _09-fast-slow.qmd >}}
+:::
+
 ## Self-check {#sec-09-self-check}
 
 **Q1** *(tests @sec-09-monitoring-cloud · basic)*

@@ -134,6 +134,26 @@ Chapter 1, the defence is complete across the framework. Where a Function or a
 Category is thin, that is a gap in the defence rather than in the exercise,
 and finding it now is the purpose of the exercise.
 
+::: {#exr-13-csf-functions}
+## Populating the six Functions, interactive
+@tbl-csf places the course's controls under the six Functions of the NIST
+CSF 2.0. Sort each control below under its Function: drag it onto a box, or
+click the control and then the box, then press **Check**. Click a placed
+control to send it back to the pool.
+
+{{< include _13-csf-functions.qmd >}}
+:::
+
+::: {#exr-13-stack-layers}
+## The hardened stack, interactive
+Six boxes below describe the role a layer of @fig-stack plays in the
+hardened service of @sec-13-hardened-stack. Drag the matching layer onto
+each role (or click a layer, then click a box), then press **Check**. Two
+of the eight layers offered belong to none of the boxes shown.
+
+{{< include _13-stack-layers.qmd >}}
+:::
+
 ## Self-check {#sec-13-self-check}
 
 **Q1** *(tests @sec-13-csf-mapping · basic)*
