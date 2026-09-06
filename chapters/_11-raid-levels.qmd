@@ -31,6 +31,7 @@
 .w111-dd .w111-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w111-dd .w111-msg.ok { color: #2e7d32; }
 .w111-dd .w111-msg.bad { color: #d81e2e; }
+.w111-dd .w111-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
 </style>
 <div class="w111-dd iw" id="w111-dd">
   <div class="w111-grid">
@@ -51,6 +52,8 @@
   <div class="w111-controls">
     <button type="button" class="w111-check iw-check">Check</button>
     <button type="button" class="w111-reset iw-reset">Reset</button>
+    <button type="button" class="w111-solution iw-solution">Show solution</button>
+    <span class="w111-note">(no fun if you click it right away)</span>
   </div>
   <div class="w111-msg iw-msg" role="status"></div>
 </div>
@@ -123,6 +126,16 @@
     if (right === zones.length) { msg.textContent = '✓ All correct — the four RAID levels are matched to their properties.'; msg.className = 'w111-msg iw-msg ok'; }
     else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' description(s) still without a level.'; msg.className = 'w111-msg iw-msg'; }
     else { msg.textContent = '✗ Not yet — the red boxes hold the wrong level. Re-read the definition and try again.'; msg.className = 'w111-msg iw-msg bad'; }
+  });
+  root.querySelector('.w111-solution').addEventListener('click', () => {
+    unpick();
+    zones.forEach(z => {
+      const chip = root.querySelector('.w111-chip[data-term="' + z.dataset.answer + '"]');
+      if (chip) place(z, chip);
+    });
+    zones.forEach(z => z.classList.add('w111-right'));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w111-msg iw-msg ok';
   });
   root.querySelector('.w111-reset').addEventListener('click', () => {
     root.querySelectorAll('.w111-chip').forEach(c => pool.appendChild(c));

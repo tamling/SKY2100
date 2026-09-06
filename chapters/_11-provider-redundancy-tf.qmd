@@ -1,0 +1,127 @@
+```{=html}
+<style>
+.w115-dd { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w115-dd .w115-rows { margin-bottom: 0.75rem; }
+.w115-dd .w115-row {
+  display: flex; align-items: center; gap: 10px;
+  border: 1.5px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  padding: 6px 10px; margin-bottom: 6px;
+}
+.w115-dd .w115-row.w115-right { border-color: #2e7d32; border-width: 2px; }
+.w115-dd .w115-row.w115-wrong { border-color: #d81e2e; border-width: 2px; }
+.w115-dd .w115-text { flex: 1; }
+.w115-dd .w115-tf { display: flex; gap: 4px; }
+.w115-dd .w115-tf button {
+  padding: 2px 10px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+  font-weight: 600;
+}
+.w115-dd .w115-tf button.w115-sel { background: #d81e2e; border-color: #d81e2e; color: #fff; }
+.w115-dd .w115-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w115-dd .w115-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w115-dd .w115-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w115-dd .w115-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w115-dd .w115-msg.ok { color: #2e7d32; }
+.w115-dd .w115-msg.bad { color: #d81e2e; }
+</style>
+<div class="w115-dd iw" id="w115-dd">
+  <div class="w115-rows"></div>
+  <div class="w115-controls">
+    <button type="button" class="w115-check iw-check">Check</button>
+    <button type="button" class="w115-reset iw-reset">Reset</button>
+    <button type="button" class="w115-solution iw-solution">Show solution</button>
+    <span class="w115-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w115-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w115-dd');
+  const rowsBox = root.querySelector('.w115-rows');
+  const msg = root.querySelector('.w115-msg');
+  const STATEMENTS = [
+    { answer: true,  text: 'In Hadoop’s distributed file system each data block is stored in redundant copies, typically three, spread across several nodes.' },
+    { answer: false, text: 'Because a provider’s replicas are geographically separated, they protect the data against ransomware.' },
+    { answer: true,  text: 'Maersk could rebuild its network identity because one directory server had been offline during a power cut while the malware spread.' },
+    { answer: false, text: 'Cloud object storage’s high durability figure makes the customer’s own backup unnecessary.' },
+    { answer: true,  text: 'A backup an attacker can reach and encrypt is no backup.' },
+    { answer: false, text: 'Redundancy that is always connected stops an attack that propagates.' }
+  ];
+  const rows = [];
+
+  function clearMarks() {
+    rows.forEach(r => r.el.classList.remove('w115-right', 'w115-wrong'));
+    msg.textContent = ''; msg.className = 'w115-msg iw-msg';
+  }
+  STATEMENTS.forEach(st => {
+    const row = document.createElement('div');
+    row.className = 'w115-row';
+    const span = document.createElement('span');
+    span.className = 'w115-text';
+    span.textContent = st.text;
+    const tf = document.createElement('span');
+    tf.className = 'w115-tf';
+    const state = { el: row, answer: st.answer, sel: null, btns: {} };
+    [['True', true], ['False', false]].forEach(([label, val]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = label;
+      b.addEventListener('click', () => {
+        state.sel = (state.sel === val) ? null : val;
+        state.btns[true].classList.toggle('w115-sel', state.sel === true);
+        state.btns[false].classList.toggle('w115-sel', state.sel === false);
+        clearMarks();
+      });
+      state.btns[val] = b;
+      tf.appendChild(b);
+    });
+    row.appendChild(span); row.appendChild(tf);
+    rowsBox.appendChild(row);
+    rows.push(state);
+  });
+
+  root.querySelector('.w115-check').addEventListener('click', () => {
+    let right = 0, wrong = 0, open = 0;
+    rows.forEach(r => {
+      r.el.classList.remove('w115-right', 'w115-wrong');
+      if (r.sel === null) { open++; return; }
+      if (r.sel === r.answer) { r.el.classList.add('w115-right'); right++; }
+      else { r.el.classList.add('w115-wrong'); wrong++; }
+    });
+    if (right === rows.length) {
+      msg.textContent = '✓ All correct — provider redundancy survives failures, but replicas copy the damage.';
+      msg.className = 'w115-msg iw-msg ok';
+    } else if (open > 0 && wrong === 0) {
+      msg.textContent = 'Keep going — ' + open + ' statement(s) still unanswered.';
+      msg.className = 'w115-msg iw-msg';
+    } else {
+      msg.textContent = '✗ Not yet — the red statements are marked wrongly. Think about what a replica copies.';
+      msg.className = 'w115-msg iw-msg bad';
+    }
+  });
+  root.querySelector('.w115-solution').addEventListener('click', () => {
+    rows.forEach(r => {
+      r.sel = r.answer;
+      r.btns[true].classList.toggle('w115-sel', r.answer === true);
+      r.btns[false].classList.toggle('w115-sel', r.answer === false);
+      r.el.classList.remove('w115-wrong');
+      r.el.classList.add('w115-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w115-msg iw-msg ok';
+  });
+  root.querySelector('.w115-reset').addEventListener('click', () => {
+    rows.forEach(r => {
+      r.sel = null;
+      r.btns[true].classList.remove('w115-sel');
+      r.btns[false].classList.remove('w115-sel');
+    });
+    clearMarks();
+  });
+})();
+</script>
+```

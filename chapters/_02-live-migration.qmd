@@ -1,0 +1,128 @@
+```{=html}
+<style>
+.w025 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w025 .w025-cap {
+  text-align: center; font-weight: 700; padding: 4px 8px; margin: 0 auto 6px;
+  max-width: 420px; border: 1.5px solid #d81e2e; border-radius: 6px;
+  color: var(--bs-body-color, #222); background: var(--bs-body-bg, #fff);
+}
+.w025 .w025-arrow { text-align: center; color: #d81e2e; font-weight: 700; line-height: 1; margin-bottom: 6px; }
+.w025 .w025-list { display: flex; flex-direction: column; gap: 6px; margin: 0 auto 0.75rem; max-width: 420px; }
+.w025 .w025-item {
+  display: flex; align-items: center; gap: 8px; padding: 5px 8px; cursor: grab;
+  border: 2px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); user-select: none;
+}
+.w025 .w025-item.w025-right { border-color: #2e7d32; }
+.w025 .w025-item.w025-wrong { border-color: #d81e2e; }
+.w025 .w025-label { flex: 1 1 auto; font-weight: 600; }
+.w025 .w025-mini {
+  flex: 0 0 auto; padding: 0 8px; border-radius: 4px; cursor: pointer;
+  border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+}
+.w025 .w025-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w025 button.w025-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w025 .w025-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w025 .w025-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w025 .w025-msg.ok { color: #2e7d32; }
+.w025 .w025-msg.bad { color: #d81e2e; }
+</style>
+<div class="w025 iw" id="w025">
+  <div class="w025-cap">Live migration begins (guest still running)</div>
+  <div class="w025-arrow">▼</div>
+  <div class="w025-list" aria-label="steps to order"></div>
+  <div class="w025-controls">
+    <button type="button" class="w025-btn w025-check iw-check">Check</button>
+    <button type="button" class="w025-btn w025-reset iw-reset">Reset</button>
+    <button type="button" class="w025-btn w025-sol iw-solution">Show solution</button>
+    <span class="w025-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w025-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w025');
+  const list = root.querySelector('.w025-list');
+  const msg = root.querySelector('.w025-msg');
+  // start order deliberately scrambled; data-order gives the correct position
+  const START = [
+    ['the guest is paused briefly', 1],
+    ['the machine continues on the new host, almost no downtime', 3],
+    ['the hypervisor pre-copies the guest’s memory to another physical host', 0],
+    ['the transfer is finalised', 2]
+  ];
+  let dragged = null;
+
+  function clearMarks() {
+    [...list.children].forEach(it => it.classList.remove('w025-right', 'w025-wrong'));
+    msg.textContent = ''; msg.className = 'w025-msg iw-msg';
+  }
+  function makeItem(label, order) {
+    const it = document.createElement('div');
+    it.className = 'w025-item';
+    it.dataset.order = order;
+    it.draggable = true;
+    const lab = document.createElement('span');
+    lab.className = 'w025-label';
+    lab.textContent = label;
+    const up = document.createElement('button');
+    up.type = 'button'; up.className = 'w025-mini'; up.textContent = '▲';
+    up.setAttribute('aria-label', 'move up');
+    const down = document.createElement('button');
+    down.type = 'button'; down.className = 'w025-mini'; down.textContent = '▼';
+    down.setAttribute('aria-label', 'move down');
+    up.addEventListener('click', e => {
+      e.stopPropagation();
+      if (it.previousElementSibling) { list.insertBefore(it, it.previousElementSibling); clearMarks(); }
+    });
+    down.addEventListener('click', e => {
+      e.stopPropagation();
+      if (it.nextElementSibling) { list.insertBefore(it.nextElementSibling, it); clearMarks(); }
+    });
+    it.addEventListener('dragstart', () => { dragged = it; });
+    it.addEventListener('dragend', () => { dragged = null; });
+    it.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (!dragged || dragged === it) return;
+      const r = it.getBoundingClientRect();
+      if (e.clientY < r.top + r.height / 2) list.insertBefore(dragged, it);
+      else list.insertBefore(dragged, it.nextElementSibling);
+      clearMarks();
+    });
+    it.addEventListener('drop', e => e.preventDefault());
+    it.appendChild(lab); it.appendChild(up); it.appendChild(down);
+    return it;
+  }
+  list.addEventListener('dragover', e => e.preventDefault());
+  list.addEventListener('drop', e => e.preventDefault());
+  root.querySelector('.w025-check').addEventListener('click', () => {
+    let right = 0;
+    [...list.children].forEach((it, i) => {
+      it.classList.remove('w025-right', 'w025-wrong');
+      if (Number(it.dataset.order) === i) { it.classList.add('w025-right'); right++; }
+      else it.classList.add('w025-wrong');
+    });
+    if (right === START.length) { msg.textContent = '✓ Correct — the machine moves while it runs, because it is data.'; msg.className = 'w025-msg iw-msg ok'; }
+    else { msg.textContent = '✗ Not yet — ' + right + ' of ' + START.length + ' steps are in the right position (green).'; msg.className = 'w025-msg iw-msg bad'; }
+  });
+  function build() {
+    list.textContent = '';
+    START.forEach(t => list.appendChild(makeItem(t[0], t[1])));
+  }
+  root.querySelector('.w025-reset').addEventListener('click', () => { build(); clearMarks(); });
+  root.querySelector('.w025-sol').addEventListener('click', () => {
+    clearMarks();
+    [...list.children]
+      .sort((a, b) => Number(a.dataset.order) - Number(b.dataset.order))
+      .forEach(it => { list.appendChild(it); it.classList.add('w025-right'); });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w025-msg iw-msg ok';
+  });
+  build();
+})();
+</script>
+```

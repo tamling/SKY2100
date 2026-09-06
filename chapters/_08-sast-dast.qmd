@@ -32,6 +32,7 @@
 .w082-sort .w082-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w082-sort .w082-msg.ok { color: #2e7d32; }
 .w082-sort .w082-msg.bad { color: #d81e2e; }
+.w082-sort .w082-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
 </style>
 <div class="iw w082-sort" id="w082">
   <div class="w082-buckets">
@@ -48,6 +49,8 @@
   <div class="w082-controls">
     <button type="button" class="w082-check iw-check">Check</button>
     <button type="button" class="w082-reset iw-reset">Reset</button>
+    <button type="button" class="w082-solution iw-solution">Show solution</button>
+    <span class="w082-note">(no fun if you click it right away)</span>
   </div>
   <div class="w082-msg iw-msg" role="status"></div>
 </div>
@@ -126,6 +129,16 @@
       msg.textContent = '✗ Not yet — ' + wrong + ' statement(s) sit in the wrong box (marked red).';
       msg.classList.add('bad');
     }
+  });
+  root.querySelector('.w082-solution').addEventListener('click', () => {
+    unpick();
+    root.querySelectorAll('.w082-chip').forEach(c => {
+      const bucket = buckets.find(b => b.dataset.cat === c.dataset.cat);
+      if (bucket) place(bucket, c);
+    });
+    root.querySelectorAll('.w082-chip').forEach(c => c.classList.add('w082-right'));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w082-msg iw-msg ok';
   });
   root.querySelector('.w082-reset').addEventListener('click', () => {
     root.querySelectorAll('.w082-chip').forEach(c => pool.appendChild(c));

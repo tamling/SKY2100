@@ -31,6 +31,7 @@
 .w132-dd .w132-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w132-dd .w132-msg.ok { color: #2e7d32; }
 .w132-dd .w132-msg.bad { color: #d81e2e; }
+.w132-dd .w132-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
 </style>
 <div class="w132-dd iw" id="w132-dd">
   <div class="w132-grid">
@@ -57,6 +58,8 @@
   <div class="w132-controls">
     <button type="button" class="w132-check iw-check">Check</button>
     <button type="button" class="w132-reset iw-reset">Reset</button>
+    <button type="button" class="w132-solution iw-solution">Show solution</button>
+    <span class="w132-note">(no fun if you click it right away)</span>
   </div>
   <div class="w132-msg iw-msg" role="status"></div>
 </div>
@@ -129,6 +132,16 @@
     if (right === zones.length) { msg.textContent = '✓ All correct — six independent layers, each catching what the others miss.'; msg.className = 'w132-msg iw-msg ok'; }
     else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' layer role(s) still unfilled.'; msg.className = 'w132-msg iw-msg'; }
     else { msg.textContent = '✗ Not yet — the red boxes hold the wrong layer (two of the eight terms belong to no box here).'; msg.className = 'w132-msg iw-msg bad'; }
+  });
+  root.querySelector('.w132-solution').addEventListener('click', () => {
+    unpick();
+    zones.forEach(z => {
+      const chip = root.querySelector('.w132-chip[data-term="' + z.dataset.answer + '"]');
+      if (chip) place(z, chip);
+    });
+    zones.forEach(z => z.classList.add('w132-right'));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w132-msg iw-msg ok';
   });
   root.querySelector('.w132-reset').addEventListener('click', () => {
     root.querySelectorAll('.w132-chip').forEach(c => pool.appendChild(c));

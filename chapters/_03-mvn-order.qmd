@@ -29,6 +29,7 @@
 .w032 .w032-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w032 .w032-msg.ok { color: #2e7d32; }
 .w032 .w032-msg.bad { color: #d81e2e; }
+.w032 .w032-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
 </style>
 <div class="w032 iw" id="w032">
   <div class="w032-cap">Internet (clients)</div>
@@ -37,6 +38,8 @@
   <div class="w032-controls">
     <button type="button" class="w032-btn w032-check iw-check">Check</button>
     <button type="button" class="w032-btn w032-reset iw-reset">Reset</button>
+    <button type="button" class="w032-btn w032-solution iw-solution">Show solution</button>
+    <span class="w032-note">(no fun if you click it right away)</span>
   </div>
   <div class="w032-msg iw-msg" role="status"></div>
 </div>
@@ -110,6 +113,14 @@
     list.textContent = '';
     START.forEach(t => list.appendChild(makeItem(t[0], t[1])));
   }
+  root.querySelector('.w032-solution').addEventListener('click', () => {
+    [...list.children].sort((a, b) => Number(a.dataset.order) - Number(b.dataset.order))
+      .forEach(li => list.appendChild(li));
+    clearMarks();
+    [...list.children].forEach(li => li.classList.add('w032-right'));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w032-msg iw-msg ok';
+  });
   root.querySelector('.w032-reset').addEventListener('click', () => { build(); clearMarks(); });
   build();
 })();

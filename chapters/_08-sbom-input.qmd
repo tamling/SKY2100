@@ -1,0 +1,80 @@
+```{=html}
+<style>
+.w085-si { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w085-si .w085-q { margin-bottom: 0.6rem; }
+.w085-si .w085-row { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.w085-si .w085-in {
+  padding: 5px 10px; border-radius: 6px; min-width: 280px; font: inherit;
+  border: 1.5px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+}
+.w085-si .w085-in.w085-right { border: 2px solid #2e7d32; }
+.w085-si .w085-in.w085-wrong { border: 2px solid #d81e2e; }
+.w085-si .w085-controls { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.w085-si .w085-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w085-si .w085-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w085-si .w085-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w085-si .w085-msg.ok { color: #2e7d32; }
+.w085-si .w085-msg.bad { color: #d81e2e; }
+</style>
+<div class="iw w085-si" id="w085">
+  <div class="w085-q">A critical vulnerability is disclosed in a popular open-source
+  library. During the incident, one document answers at once <em>whether and where</em>
+  the library is in use. Its name (or abbreviation):</div>
+  <div class="w085-row">
+    <input type="text" class="w085-in" aria-label="your answer"
+           autocomplete="off" spellcheck="false" placeholder="type the term…">
+  </div>
+  <div class="w085-controls">
+    <button type="button" class="w085-check iw-check">Check</button>
+    <button type="button" class="w085-reset iw-reset">Reset</button>
+    <button type="button" class="w085-solution iw-solution">Show solution</button>
+    <span class="w085-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w085-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w085');
+  const inp = root.querySelector('.w085-in');
+  const msg = root.querySelector('.w085-msg');
+  // accepted if the normalised input contains one of these
+  const ACCEPT = ['sbom', 'billofmaterials'];
+  const CANON = 'software bill of materials (SBOM)';
+  function clearMarks() {
+    inp.classList.remove('w085-right', 'w085-wrong');
+    msg.textContent = ''; msg.className = 'w085-msg iw-msg';
+  }
+  function check() {
+    clearMarks();
+    const norm = inp.value.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (!norm) { msg.textContent = 'Type an answer first.'; return; }
+    if (ACCEPT.some(a => norm.includes(a))) {
+      inp.classList.add('w085-right');
+      msg.textContent = '✓ Correct — that inventory is produced by software composition analysis in the pipeline.';
+      msg.classList.add('ok');
+    } else {
+      inp.classList.add('w085-wrong');
+      msg.textContent = '✗ Not the document the chapter names — try again (it is the countermeasure to supply-chain risk).';
+      msg.classList.add('bad');
+    }
+  }
+  inp.addEventListener('input', clearMarks);
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  root.querySelector('.w085-check').addEventListener('click', check);
+  root.querySelector('.w085-reset').addEventListener('click', () => {
+    inp.value = ''; clearMarks();
+  });
+  root.querySelector('.w085-solution').addEventListener('click', () => {
+    clearMarks();
+    inp.value = CANON;
+    inp.classList.add('w085-right');
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.classList.add('ok');
+  });
+})();
+</script>
+```

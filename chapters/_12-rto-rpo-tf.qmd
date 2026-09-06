@@ -1,0 +1,127 @@
+```{=html}
+<style>
+.w124-dd { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w124-dd .w124-rows { margin-bottom: 0.75rem; }
+.w124-dd .w124-row {
+  display: flex; align-items: center; gap: 10px;
+  border: 1.5px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  padding: 6px 10px; margin-bottom: 6px;
+}
+.w124-dd .w124-row.w124-right { border-color: #2e7d32; border-width: 2px; }
+.w124-dd .w124-row.w124-wrong { border-color: #d81e2e; border-width: 2px; }
+.w124-dd .w124-text { flex: 1; }
+.w124-dd .w124-tf { display: flex; gap: 4px; }
+.w124-dd .w124-tf button {
+  padding: 2px 10px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+  font-weight: 600;
+}
+.w124-dd .w124-tf button.w124-sel { background: #d81e2e; border-color: #d81e2e; color: #fff; }
+.w124-dd .w124-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w124-dd .w124-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w124-dd .w124-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w124-dd .w124-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w124-dd .w124-msg.ok { color: #2e7d32; }
+.w124-dd .w124-msg.bad { color: #d81e2e; }
+</style>
+<div class="w124-dd iw" id="w124-dd">
+  <div class="w124-rows"></div>
+  <div class="w124-controls">
+    <button type="button" class="w124-check iw-check">Check</button>
+    <button type="button" class="w124-reset iw-reset">Reset</button>
+    <button type="button" class="w124-solution iw-solution">Show solution</button>
+    <span class="w124-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w124-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w124-dd');
+  const rowsBox = root.querySelector('.w124-rows');
+  const msg = root.querySelector('.w124-msg');
+  const STATEMENTS = [
+    { answer: true,  text: 'The recovery time objective (RTO) states how quickly a service must be back.' },
+    { answer: true,  text: 'The recovery point objective (RPO) states how much recent data the organisation can afford to lose.' },
+    { answer: false, text: 'How fast a restore must be is set by the RPO.' },
+    { answer: false, text: 'BCM protects the technical service, while the resilience of Session 11 protects the business function it supports.' },
+    { answer: true,  text: 'Continuity planning includes training staff to fall back to a spare system, or to paper, while the main system is down.' },
+    { answer: false, text: 'A cloud incident is a matter for the technical responders alone; management, legal and compliance have no part to play.' }
+  ];
+  const rows = [];
+
+  function clearMarks() {
+    rows.forEach(r => r.el.classList.remove('w124-right', 'w124-wrong'));
+    msg.textContent = ''; msg.className = 'w124-msg iw-msg';
+  }
+  STATEMENTS.forEach(st => {
+    const row = document.createElement('div');
+    row.className = 'w124-row';
+    const span = document.createElement('span');
+    span.className = 'w124-text';
+    span.textContent = st.text;
+    const tf = document.createElement('span');
+    tf.className = 'w124-tf';
+    const state = { el: row, answer: st.answer, sel: null, btns: {} };
+    [['True', true], ['False', false]].forEach(([label, val]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = label;
+      b.addEventListener('click', () => {
+        state.sel = (state.sel === val) ? null : val;
+        state.btns[true].classList.toggle('w124-sel', state.sel === true);
+        state.btns[false].classList.toggle('w124-sel', state.sel === false);
+        clearMarks();
+      });
+      state.btns[val] = b;
+      tf.appendChild(b);
+    });
+    row.appendChild(span); row.appendChild(tf);
+    rowsBox.appendChild(row);
+    rows.push(state);
+  });
+
+  root.querySelector('.w124-check').addEventListener('click', () => {
+    let right = 0, wrong = 0, open = 0;
+    rows.forEach(r => {
+      r.el.classList.remove('w124-right', 'w124-wrong');
+      if (r.sel === null) { open++; return; }
+      if (r.sel === r.answer) { r.el.classList.add('w124-right'); right++; }
+      else { r.el.classList.add('w124-wrong'); wrong++; }
+    });
+    if (right === rows.length) {
+      msg.textContent = '✓ All correct — RTO is about time, RPO about data, and continuity is everybody’s business.';
+      msg.className = 'w124-msg iw-msg ok';
+    } else if (open > 0 && wrong === 0) {
+      msg.textContent = 'Keep going — ' + open + ' statement(s) still unanswered.';
+      msg.className = 'w124-msg iw-msg';
+    } else {
+      msg.textContent = '✗ Not yet — the red statements are marked wrongly. Which objective measures time, which measures data?';
+      msg.className = 'w124-msg iw-msg bad';
+    }
+  });
+  root.querySelector('.w124-solution').addEventListener('click', () => {
+    rows.forEach(r => {
+      r.sel = r.answer;
+      r.btns[true].classList.toggle('w124-sel', r.answer === true);
+      r.btns[false].classList.toggle('w124-sel', r.answer === false);
+      r.el.classList.remove('w124-wrong');
+      r.el.classList.add('w124-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w124-msg iw-msg ok';
+  });
+  root.querySelector('.w124-reset').addEventListener('click', () => {
+    rows.forEach(r => {
+      r.sel = null;
+      r.btns[true].classList.remove('w124-sel');
+      r.btns[false].classList.remove('w124-sel');
+    });
+    clearMarks();
+  });
+})();
+</script>
+```

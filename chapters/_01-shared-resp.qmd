@@ -1,0 +1,151 @@
+```{=html}
+<style>
+.w012 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w012 .w012-pool {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  min-height: 44px; padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.w012 .w012-buckets { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.w012 .w012-bucket {
+  flex: 1 1 220px; min-height: 150px; padding: 8px;
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); cursor: pointer;
+}
+.w012 .w012-bucket.w012-armed { border-color: #d81e2e; }
+.w012 .w012-btitle { text-align: center; font-weight: 700; margin-bottom: 2px; }
+.w012 .w012-bdesc { text-align: center; font-size: 0.8rem; font-style: italic; opacity: 0.75; margin-bottom: 6px; }
+.w012 .w012-drop { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 34px; }
+.w012 .w012-chip {
+  padding: 4px 10px; border-radius: 999px; cursor: grab; user-select: none;
+  border: 1.5px solid var(--bs-border-color, #999); color: var(--bs-body-color, #222);
+  background: var(--bs-body-bg, #fff); font-weight: 600;
+}
+.w012 .w012-chip.w012-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w012 .w012-chip.w012-right { border: 2px solid #2e7d32; }
+.w012 .w012-chip.w012-wrong { border: 2px solid #d81e2e; }
+.w012 .w012-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w012 button.w012-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w012 .w012-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w012 .w012-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w012 .w012-msg.ok { color: #2e7d32; }
+.w012 .w012-msg.bad { color: #d81e2e; }
+</style>
+<div class="w012 iw" id="w012">
+  <div class="w012-pool" aria-label="stack layers to classify"></div>
+  <div class="w012-buckets">
+    <div class="w012-bucket" data-cat="c">
+      <div class="w012-btitle">Customer secures</div>
+      <div class="w012-bdesc">the customer's responsibility<br>in IaaS</div>
+      <div class="w012-drop"></div>
+    </div>
+    <div class="w012-bucket" data-cat="p">
+      <div class="w012-btitle">Provider secures</div>
+      <div class="w012-bdesc">the provider's responsibility<br>in IaaS</div>
+      <div class="w012-drop"></div>
+    </div>
+  </div>
+  <div class="w012-controls">
+    <button type="button" class="w012-btn w012-check iw-check">Check</button>
+    <button type="button" class="w012-btn w012-reset iw-reset">Reset</button>
+    <button type="button" class="w012-btn w012-sol iw-solution">Show solution</button>
+    <span class="w012-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w012-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w012');
+  const pool = root.querySelector('.w012-pool');
+  const buckets = [...root.querySelectorAll('.w012-bucket')];
+  const msg = root.querySelector('.w012-msg');
+  const ITEMS = [
+    ['Operating system', 'c'],
+    ['Networking', 'p'],
+    ['Data', 'c'],
+    ['Virtualisation', 'p'],
+    ['Application', 'c'],
+    ['Servers & storage', 'p'],
+    ['Runtime & middleware', 'c']
+  ];
+  let picked = null;
+
+  function unpick() {
+    if (picked) picked.classList.remove('w012-picked');
+    picked = null;
+    buckets.forEach(b => b.classList.remove('w012-armed'));
+  }
+  function clearMarks() {
+    root.querySelectorAll('.w012-chip').forEach(c => c.classList.remove('w012-right', 'w012-wrong'));
+    msg.textContent = ''; msg.className = 'w012-msg iw-msg';
+  }
+  function place(bucket, chip) {
+    bucket.querySelector('.w012-drop').appendChild(chip);
+    clearMarks();
+  }
+  function makeChip(label, cat, i) {
+    const c = document.createElement('span');
+    c.className = 'w012-chip';
+    c.textContent = label;
+    c.dataset.cat = cat;
+    c.dataset.id = 'w012i' + i;
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement !== pool) { pool.appendChild(c); unpick(); clearMarks(); return; }
+      if (picked === c) { unpick(); return; }
+      unpick(); picked = c; c.classList.add('w012-picked');
+      buckets.forEach(b => b.classList.add('w012-armed'));
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', c.dataset.id));
+    return c;
+  }
+  buckets.forEach(bucket => {
+    bucket.addEventListener('click', () => { if (picked) { place(bucket, picked); unpick(); } });
+    bucket.addEventListener('dragover', e => e.preventDefault());
+    bucket.addEventListener('drop', e => {
+      e.preventDefault();
+      const chip = root.querySelector('.w012-chip[data-id="' + e.dataTransfer.getData('text/plain') + '"]');
+      if (chip) { place(bucket, chip); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const chip = root.querySelector('.w012-chip[data-id="' + e.dataTransfer.getData('text/plain') + '"]');
+    if (chip) { pool.appendChild(chip); clearMarks(); }
+  });
+  root.querySelector('.w012-check').addEventListener('click', () => {
+    let right = 0, wrong = 0, unplaced = 0;
+    root.querySelectorAll('.w012-chip').forEach(c => {
+      c.classList.remove('w012-right', 'w012-wrong');
+      if (c.parentElement === pool) { unplaced++; return; }
+      const bucket = c.closest('.w012-bucket');
+      if (c.dataset.cat === bucket.dataset.cat) { c.classList.add('w012-right'); right++; }
+      else { c.classList.add('w012-wrong'); wrong++; }
+    });
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct — responsibility follows control of each layer.'; msg.className = 'w012-msg iw-msg ok'; }
+    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + unplaced + ' layer(s) still unplaced.'; msg.className = 'w012-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — the red layers sit on the wrong side of the split.'; msg.className = 'w012-msg iw-msg bad'; }
+  });
+  root.querySelector('.w012-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w012-chip').forEach(c => pool.appendChild(c));
+    unpick(); clearMarks();
+  });
+  root.querySelector('.w012-sol').addEventListener('click', () => {
+    unpick(); clearMarks();
+    root.querySelectorAll('.w012-chip').forEach(c => {
+      const bucket = buckets.find(b => b.dataset.cat === c.dataset.cat);
+      bucket.querySelector('.w012-drop').appendChild(c);
+      c.classList.add('w012-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w012-msg iw-msg ok';
+  });
+  ITEMS.forEach((it, i) => pool.appendChild(makeChip(it[0], it[1], i)));
+})();
+</script>
+```

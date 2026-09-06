@@ -1,0 +1,115 @@
+```{=html}
+<style>
+.w084-tf { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w084-tf .w084-row {
+  display: flex; gap: 10px; align-items: center; margin: 6px 0; padding: 6px 10px;
+  border: 1.5px solid var(--bs-border-color, #999); border-radius: 8px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+}
+.w084-tf .w084-row.w084-right { border: 2px solid #2e7d32; }
+.w084-tf .w084-row.w084-wrong { border: 2px solid #d81e2e; }
+.w084-tf .w084-text { flex: 1 1 auto; }
+.w084-tf .w084-btn {
+  padding: 3px 10px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  cursor: pointer; font: inherit;
+}
+.w084-tf .w084-btn.w084-on { border: 2px solid #d81e2e; font-weight: 700; }
+.w084-tf .w084-controls { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 0.75rem; }
+.w084-tf .w084-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w084-tf .w084-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w084-tf .w084-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w084-tf .w084-msg.ok { color: #2e7d32; }
+.w084-tf .w084-msg.bad { color: #d81e2e; }
+</style>
+<div class="iw w084-tf" id="w084">
+  <div class="w084-rows"></div>
+  <div class="w084-controls">
+    <button type="button" class="w084-check iw-check">Check</button>
+    <button type="button" class="w084-reset iw-reset">Reset</button>
+    <button type="button" class="w084-solution iw-solution">Show solution</button>
+    <span class="w084-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w084-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w084');
+  const rowsBox = root.querySelector('.w084-rows');
+  const msg = root.querySelector('.w084-msg');
+  // [statement, isTrue]
+  const ITEMS = [
+    ['A WAF prevents attacks from arriving, but it is not a way to repair a flawed application or to excuse careless development.', true],
+    ['SAST produces false positives and therefore needs tuning.', true],
+    ['A declarative infrastructure-as-code specification lists the steps to perform, one by one.', false],
+    ['An NGFW secures the network broadly; a WAF secures one web application specifically, and they operate at different layers.', true],
+    ['Shifting left means moving security work later in the lifecycle, into production.', false],
+    ['IaC and pipelines are themselves part of the attack surface and need the same access control as the application.', true]
+  ];
+  function clearMarks() {
+    rowsBox.querySelectorAll('.w084-row').forEach(r => r.classList.remove('w084-right', 'w084-wrong'));
+    msg.textContent = ''; msg.className = 'w084-msg iw-msg';
+  }
+  function makeRow(text, ans) {
+    const row = document.createElement('div');
+    row.className = 'w084-row'; row.dataset.ans = String(ans);
+    const t = document.createElement('span');
+    t.className = 'w084-text'; t.textContent = text;
+    row.appendChild(t);
+    ['True', 'False'].forEach(lab => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'w084-btn'; b.textContent = lab;
+      b.dataset.val = lab === 'True' ? 'true' : 'false';
+      b.addEventListener('click', () => {
+        row.dataset.sel = b.dataset.val;
+        row.querySelectorAll('.w084-btn').forEach(x => x.classList.toggle('w084-on', x === b));
+        clearMarks();
+      });
+      row.appendChild(b);
+    });
+    return row;
+  }
+  ITEMS.forEach(it => rowsBox.appendChild(makeRow(it[0], it[1])));
+  const rows = [...rowsBox.querySelectorAll('.w084-row')];
+  root.querySelector('.w084-check').addEventListener('click', () => {
+    clearMarks();
+    let right = 0, wrong = 0, open = 0;
+    rows.forEach(r => {
+      if (!r.dataset.sel) { open++; return; }
+      if (r.dataset.sel === r.dataset.ans) { r.classList.add('w084-right'); right++; }
+      else { r.classList.add('w084-wrong'); wrong++; }
+    });
+    if (right === rows.length) {
+      msg.textContent = '✓ All ' + rows.length + ' statements judged correctly.';
+      msg.classList.add('ok');
+    } else if (wrong === 0) {
+      msg.textContent = 'Keep going — ' + open + ' statement(s) still unanswered.';
+    } else {
+      msg.textContent = '✗ Not yet — ' + right + ' of ' + rows.length + ' correct (wrong rows marked red).';
+      msg.classList.add('bad');
+    }
+  });
+  root.querySelector('.w084-reset').addEventListener('click', () => {
+    rows.forEach(r => {
+      delete r.dataset.sel;
+      r.querySelectorAll('.w084-btn').forEach(b => b.classList.remove('w084-on'));
+    });
+    clearMarks();
+  });
+  root.querySelector('.w084-solution').addEventListener('click', () => {
+    clearMarks();
+    rows.forEach(r => {
+      r.dataset.sel = r.dataset.ans;
+      r.querySelectorAll('.w084-btn').forEach(b =>
+        b.classList.toggle('w084-on', b.dataset.val === r.dataset.ans));
+      r.classList.add('w084-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.classList.add('ok');
+  });
+})();
+</script>
+```

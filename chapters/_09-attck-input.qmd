@@ -1,0 +1,80 @@
+```{=html}
+<style>
+.w095-si { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w095-si .w095-q { margin-bottom: 0.6rem; }
+.w095-si .w095-row { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.w095-si .w095-in {
+  padding: 5px 10px; border-radius: 6px; min-width: 280px; font: inherit;
+  border: 1.5px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+}
+.w095-si .w095-in.w095-right { border: 2px solid #2e7d32; }
+.w095-si .w095-in.w095-wrong { border: 2px solid #d81e2e; }
+.w095-si .w095-controls { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.w095-si .w095-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w095-si .w095-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w095-si .w095-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w095-si .w095-msg.ok { color: #2e7d32; }
+.w095-si .w095-msg.bad { color: #d81e2e; }
+</style>
+<div class="iw w095-si" id="w095">
+  <div class="w095-q">To decide what to look for, the Guidance points to a catalogue
+  of the tactics and techniques attackers use, which connects a given indicator with
+  the stage of an attack it belongs to. Name that framework:</div>
+  <div class="w095-row">
+    <input type="text" class="w095-in" aria-label="your answer"
+           autocomplete="off" spellcheck="false" placeholder="type the name…">
+  </div>
+  <div class="w095-controls">
+    <button type="button" class="w095-check iw-check">Check</button>
+    <button type="button" class="w095-reset iw-reset">Reset</button>
+    <button type="button" class="w095-solution iw-solution">Show solution</button>
+    <span class="w095-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w095-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w095');
+  const inp = root.querySelector('.w095-in');
+  const msg = root.querySelector('.w095-msg');
+  // accepted if the normalised input contains one of these
+  const ACCEPT = ['mitre', 'attck', 'attack'];
+  const CANON = 'MITRE ATT&CK';
+  function clearMarks() {
+    inp.classList.remove('w095-right', 'w095-wrong');
+    msg.textContent = ''; msg.className = 'w095-msg iw-msg';
+  }
+  function check() {
+    clearMarks();
+    const norm = inp.value.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (!norm) { msg.textContent = 'Type an answer first.'; return; }
+    if (ACCEPT.some(a => norm.includes(a))) {
+      inp.classList.add('w095-right');
+      msg.textContent = '✓ Correct — its cloud matrix is on the reading list for this chapter.';
+      msg.classList.add('ok');
+    } else {
+      inp.classList.add('w095-wrong');
+      msg.textContent = '✗ Not the framework the chapter names — try again (it appears in the detection section).';
+      msg.classList.add('bad');
+    }
+  }
+  inp.addEventListener('input', clearMarks);
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  root.querySelector('.w095-check').addEventListener('click', check);
+  root.querySelector('.w095-reset').addEventListener('click', () => {
+    inp.value = ''; clearMarks();
+  });
+  root.querySelector('.w095-solution').addEventListener('click', () => {
+    clearMarks();
+    inp.value = CANON;
+    inp.classList.add('w095-right');
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.classList.add('ok');
+  });
+})();
+</script>
+```

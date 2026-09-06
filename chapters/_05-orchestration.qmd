@@ -1,0 +1,111 @@
+```{=html}
+<style>
+.w056 { max-width: 620px; margin: 0 auto; font-size: 0.9rem; }
+.w056 .w056-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 0.75rem; }
+.w056 .w056-q { display: flex; flex-direction: column; gap: 4px; }
+.w056 .w056-label { font-weight: 600; }
+.w056 .w056-in {
+  max-width: 260px; padding: 5px 10px; border-radius: 6px; font-size: 0.9rem;
+  border: 2px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+}
+.w056 .w056-in.w056-right { border-color: #2e7d32; }
+.w056 .w056-in.w056-wrong { border-color: #d81e2e; }
+.w056 .w056-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w056 .w056-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w056 .w056-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w056 .w056-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w056 .w056-msg.ok { color: #2e7d32; }
+.w056 .w056-msg.bad { color: #d81e2e; }
+</style>
+<div class="w056 iw" id="w056">
+  <div class="w056-list"></div>
+  <div class="w056-controls">
+    <button type="button" class="w056-check iw-check">Check</button>
+    <button type="button" class="w056-reset iw-reset">Reset</button>
+    <button type="button" class="w056-solution iw-solution">Show solution</button>
+    <span class="w056-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w056-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w056');
+  const list = root.querySelector('.w056-list');
+  const msg = root.querySelector('.w056-msg');
+  const QS = [
+    {
+      q: '1. The dominant orchestration system, which schedules containers onto worker nodes and drives the running system toward a declared desired state:',
+      accept: ['kubernetes', 'k8s'],
+      canon: 'Kubernetes'
+    },
+    {
+      q: '2. Kubernetes groups containers into … (one word):',
+      accept: ['pods', 'pod'],
+      canon: 'pods'
+    },
+    {
+      q: '3. The part of Kubernetes that continuously compares reality with the declared state — a management plane, and therefore a prime target — is the … plane:',
+      accept: ['control'],
+      canon: 'control'
+    }
+  ];
+  function norm(s) {
+    return (s || '').toLowerCase().replace(/[-_.,;:!?'"()]/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+  function inputs() { return [...root.querySelectorAll('.w056-in')]; }
+  function clearMarks() {
+    inputs().forEach(i => i.classList.remove('w056-right', 'w056-wrong'));
+    msg.textContent = ''; msg.className = 'w056-msg iw-msg';
+  }
+  QS.forEach((it, i) => {
+    const q = document.createElement('div');
+    q.className = 'w056-q';
+    const lab = document.createElement('label');
+    lab.className = 'w056-label';
+    lab.textContent = it.q;
+    lab.setAttribute('for', 'w056-in-' + i);
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.id = 'w056-in-' + i;
+    inp.className = 'w056-in';
+    inp.dataset.k = String(i);
+    inp.autocomplete = 'off';
+    inp.addEventListener('input', clearMarks);
+    q.appendChild(lab); q.appendChild(inp);
+    list.appendChild(q);
+  });
+  root.querySelector('.w056-check').addEventListener('click', () => {
+    let right = 0, empty = 0;
+    inputs().forEach(inp => {
+      inp.classList.remove('w056-right', 'w056-wrong');
+      const v = norm(inp.value);
+      if (!v) { empty++; return; }
+      const acc = QS[Number(inp.dataset.k)].accept;
+      const hit = acc.some(a => v === a || v.indexOf(a) !== -1);
+      if (hit) { inp.classList.add('w056-right'); right++; }
+      else inp.classList.add('w056-wrong');
+    });
+    if (right === QS.length) { msg.textContent = '✓ All correct — orchestration keeps the moving parts on target.'; msg.className = 'w056-msg iw-msg ok'; }
+    else if (empty > 0 && right + empty === QS.length) { msg.textContent = 'Keep going — ' + empty + ' answer(s) still empty.'; msg.className = 'w056-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — ' + right + ' of ' + QS.length + ' answers are right; the red ones need another look at the chapter.'; msg.className = 'w056-msg iw-msg bad'; }
+  });
+  root.querySelector('.w056-reset').addEventListener('click', () => {
+    inputs().forEach(i => { i.value = ''; });
+    clearMarks();
+  });
+  root.querySelector('.w056-solution').addEventListener('click', () => {
+    inputs().forEach(inp => {
+      inp.value = QS[Number(inp.dataset.k)].canon;
+      inp.classList.remove('w056-wrong');
+      inp.classList.add('w056-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w056-msg iw-msg ok';
+  });
+})();
+</script>
+```

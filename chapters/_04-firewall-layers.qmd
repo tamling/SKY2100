@@ -26,12 +26,15 @@
 .w041 .w041-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w041 .w041-msg.ok { color: #2e7d32; }
 .w041 .w041-msg.bad { color: #d81e2e; }
+.w041 .w041-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
 </style>
 <div class="w041 iw" id="w041">
   <div class="w041-grid"></div>
   <div class="w041-controls">
     <button type="button" class="w041-btn w041-check iw-check">Check</button>
     <button type="button" class="w041-btn w041-reset iw-reset">Reset</button>
+    <button type="button" class="w041-btn w041-solution iw-solution">Show solution</button>
+    <span class="w041-note">(no fun if you click it right away)</span>
   </div>
   <div class="w041-msg iw-msg" role="status"></div>
 </div>
@@ -104,6 +107,20 @@
     if (okRows === ROWS.length) { msg.textContent = '✓ All correct — the inspection depth of each tool is filled in.'; msg.className = 'w041-msg iw-msg ok'; }
     else if (touched === 0) { msg.textContent = 'Nothing filled in yet — click the cells where each tool operates, then check again.'; msg.className = 'w041-msg iw-msg'; }
     else { msg.textContent = '✗ Not yet — ' + okRows + ' of ' + ROWS.length + ' rows are right; the red rows have too many or too few cells filled.'; msg.className = 'w041-msg iw-msg bad'; }
+  });
+  root.querySelector('.w041-solution').addEventListener('click', () => {
+    ROWS.forEach(row => {
+      COLS.forEach(col => {
+        const cell = root.querySelector('.w041-cell[data-row="' + row[0] + '"][data-col="' + col[0] + '"]');
+        const on = row[2].includes(col[0]);
+        cell.classList.toggle('w041-on', on);
+        cell.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+    });
+    clearMarks();
+    root.querySelectorAll('.w041-rowlab').forEach(l => l.classList.add('w041-rowok'));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w041-msg iw-msg ok';
   });
   root.querySelector('.w041-reset').addEventListener('click', () => {
     root.querySelectorAll('.w041-cell').forEach(c => {

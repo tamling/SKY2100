@@ -254,6 +254,43 @@ placed item to send it back to the pool.
 {{< include _11-raid-vs-backup.qmd >}}
 :::
 
+::: {#exr-11-321-numbers}
+## The 3–2–1 rule by numbers, interactive
+@sec-11-backup states the widely taught rule for keeping backups safe.
+Fill the three numbers of the rule into the boxes below and press
+**Check** — each line turns green or red on its own.
+
+{{< include _11-321-rule.qmd >}}
+:::
+
+::: {#exr-11-resilience-terms}
+## Resilience vocabulary, interactive
+Five terms from this chapter, five descriptions. Match each term to its
+description: click a term and then the description it belongs to (or drag
+the term onto it) — a correct pair locks and greys out, a wrong attempt
+flashes red. Press **Check** to see how many pairs you have.
+
+{{< include _11-resilience-terms.qmd >}}
+:::
+
+::: {#exr-11-provider-redundancy-tf}
+## Provider redundancy: true or false?, interactive
+@sec-11-provider-redundancy and the Maersk case show how far the
+redundancy a provider builds in reaches — and where it stops. Mark each
+statement below **True** or **False**, then press **Check**.
+
+{{< include _11-provider-redundancy-tf.qmd >}}
+:::
+
+::: {#exr-11-hot-swap}
+## Name the practice, interactive
+One term from @sec-11-provider-redundancy describes how a data centre's
+storage keeps running while a failed disk is replaced. Type it into the
+box and press **Check** (small spelling variants are accepted).
+
+{{< include _11-hot-swap.qmd >}}
+:::
+
 ## Self-check {#sec-11-self-check}
 
 **Q1** *(tests @sec-11-redundancy-raid · basic)*

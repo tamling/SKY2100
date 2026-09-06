@@ -26,12 +26,15 @@
 .w121-dd .w121-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w121-dd .w121-msg.ok { color: #2e7d32; }
 .w121-dd .w121-msg.bad { color: #d81e2e; }
+.w121-dd .w121-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
 </style>
 <div class="w121-dd iw" id="w121-dd">
   <ol class="w121-list" aria-label="steps to put in order"></ol>
   <div class="w121-controls">
     <button type="button" class="w121-check iw-check">Check</button>
     <button type="button" class="w121-reset iw-reset">Reset</button>
+    <button type="button" class="w121-solution iw-solution">Show solution</button>
+    <span class="w121-note">(no fun if you click it right away)</span>
   </div>
   <div class="w121-msg iw-msg" role="status"></div>
 </div>
@@ -110,6 +113,14 @@
     });
     if (wrong === 0) { msg.textContent = '✓ All correct — the lifecycle runs from preparation to lessons learned, and back.'; msg.className = 'w121-msg iw-msg ok'; }
     else { msg.textContent = '✗ Not yet — ' + wrong + ' step(s) out of place. Think of the four phases and their order.'; msg.className = 'w121-msg iw-msg bad'; }
+  });
+  root.querySelector('.w121-solution').addEventListener('click', () => {
+    [...list.children].sort((a, b) => Number(a.dataset.pos) - Number(b.dataset.pos))
+      .forEach(li => list.appendChild(li));
+    clearMarks();
+    [...list.children].forEach(li => li.classList.add('w121-right'));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w121-msg iw-msg ok';
   });
   root.querySelector('.w121-reset').addEventListener('click', () => {
     build(); clearMarks();

@@ -1,0 +1,115 @@
+```{=html}
+<style>
+.w094-tf { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w094-tf .w094-row {
+  display: flex; gap: 10px; align-items: center; margin: 6px 0; padding: 6px 10px;
+  border: 1.5px solid var(--bs-border-color, #999); border-radius: 8px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+}
+.w094-tf .w094-row.w094-right { border: 2px solid #2e7d32; }
+.w094-tf .w094-row.w094-wrong { border: 2px solid #d81e2e; }
+.w094-tf .w094-text { flex: 1 1 auto; }
+.w094-tf .w094-btn {
+  padding: 3px 10px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  cursor: pointer; font: inherit;
+}
+.w094-tf .w094-btn.w094-on { border: 2px solid #d81e2e; font-weight: 700; }
+.w094-tf .w094-controls { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 0.75rem; }
+.w094-tf .w094-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w094-tf .w094-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w094-tf .w094-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w094-tf .w094-msg.ok { color: #2e7d32; }
+.w094-tf .w094-msg.bad { color: #d81e2e; }
+</style>
+<div class="iw w094-tf" id="w094">
+  <div class="w094-rows"></div>
+  <div class="w094-controls">
+    <button type="button" class="w094-check iw-check">Check</button>
+    <button type="button" class="w094-reset iw-reset">Reset</button>
+    <button type="button" class="w094-solution iw-solution">Show solution</button>
+    <span class="w094-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w094-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w094');
+  const rowsBox = root.querySelector('.w094-rows');
+  const msg = root.querySelector('.w094-msg');
+  // [statement, isTrue]
+  const ITEMS = [
+    ['Most events are normal; the task of monitoring is to turn a great many events into a few meaningful alerts.', true],
+    ['Signature-based detection flags departures from an established baseline; anomaly-based detection matches known attack patterns.', false],
+    ['Any interaction with a canary or honey token indicates an attempted or actual breach, with almost no false positives.', true],
+    ['In a cloud-native application, an instance that disappears is by itself a reliable sign of trouble.', false],
+    ['In the Target 2013 breach, the malware-detection system never generated any alerts about the intrusion.', false],
+    ['Good security analytics can flag an access that is individually authorised but does not fit its usual pattern.', true]
+  ];
+  function clearMarks() {
+    rowsBox.querySelectorAll('.w094-row').forEach(r => r.classList.remove('w094-right', 'w094-wrong'));
+    msg.textContent = ''; msg.className = 'w094-msg iw-msg';
+  }
+  function makeRow(text, ans) {
+    const row = document.createElement('div');
+    row.className = 'w094-row'; row.dataset.ans = String(ans);
+    const t = document.createElement('span');
+    t.className = 'w094-text'; t.textContent = text;
+    row.appendChild(t);
+    ['True', 'False'].forEach(lab => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'w094-btn'; b.textContent = lab;
+      b.dataset.val = lab === 'True' ? 'true' : 'false';
+      b.addEventListener('click', () => {
+        row.dataset.sel = b.dataset.val;
+        row.querySelectorAll('.w094-btn').forEach(x => x.classList.toggle('w094-on', x === b));
+        clearMarks();
+      });
+      row.appendChild(b);
+    });
+    return row;
+  }
+  ITEMS.forEach(it => rowsBox.appendChild(makeRow(it[0], it[1])));
+  const rows = [...rowsBox.querySelectorAll('.w094-row')];
+  root.querySelector('.w094-check').addEventListener('click', () => {
+    clearMarks();
+    let right = 0, wrong = 0, open = 0;
+    rows.forEach(r => {
+      if (!r.dataset.sel) { open++; return; }
+      if (r.dataset.sel === r.dataset.ans) { r.classList.add('w094-right'); right++; }
+      else { r.classList.add('w094-wrong'); wrong++; }
+    });
+    if (right === rows.length) {
+      msg.textContent = '✓ All ' + rows.length + ' statements judged correctly.';
+      msg.classList.add('ok');
+    } else if (wrong === 0) {
+      msg.textContent = 'Keep going — ' + open + ' statement(s) still unanswered.';
+    } else {
+      msg.textContent = '✗ Not yet — ' + right + ' of ' + rows.length + ' correct (wrong rows marked red).';
+      msg.classList.add('bad');
+    }
+  });
+  root.querySelector('.w094-reset').addEventListener('click', () => {
+    rows.forEach(r => {
+      delete r.dataset.sel;
+      r.querySelectorAll('.w094-btn').forEach(b => b.classList.remove('w094-on'));
+    });
+    clearMarks();
+  });
+  root.querySelector('.w094-solution').addEventListener('click', () => {
+    clearMarks();
+    rows.forEach(r => {
+      r.dataset.sel = r.dataset.ans;
+      r.querySelectorAll('.w094-btn').forEach(b =>
+        b.classList.toggle('w094-on', b.dataset.val === r.dataset.ans));
+      r.classList.add('w094-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.classList.add('ok');
+  });
+})();
+</script>
+```

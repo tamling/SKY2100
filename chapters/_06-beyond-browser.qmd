@@ -1,0 +1,111 @@
+```{=html}
+<style>
+.w065 { max-width: 620px; margin: 0 auto; font-size: 0.9rem; }
+.w065 .w065-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 0.75rem; }
+.w065 .w065-q { display: flex; flex-direction: column; gap: 4px; }
+.w065 .w065-label { font-weight: 600; }
+.w065 .w065-in {
+  max-width: 300px; padding: 5px 10px; border-radius: 6px; font-size: 0.9rem;
+  border: 2px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+}
+.w065 .w065-in.w065-right { border-color: #2e7d32; }
+.w065 .w065-in.w065-wrong { border-color: #d81e2e; }
+.w065 .w065-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w065 .w065-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w065 .w065-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w065 .w065-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w065 .w065-msg.ok { color: #2e7d32; }
+.w065 .w065-msg.bad { color: #d81e2e; }
+</style>
+<div class="w065 iw" id="w065">
+  <div class="w065-list"></div>
+  <div class="w065-controls">
+    <button type="button" class="w065-check iw-check">Check</button>
+    <button type="button" class="w065-reset iw-reset">Reset</button>
+    <button type="button" class="w065-solution iw-solution">Show solution</button>
+    <span class="w065-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w065-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w065');
+  const list = root.querySelector('.w065-list');
+  const msg = root.querySelector('.w065-msg');
+  const QS = [
+    {
+      q: '1. Employees work from home and public Wi-Fi. Which control forms an encrypted connection to the organisation’s cloud data centre and routes all of a device’s packets through it?',
+      accept: ['vpn', 'virtual private network'],
+      canon: 'VPN'
+    },
+    {
+      q: '2. A laptop or phone can be lost. Which at-rest control keeps the business data stored on the device confidential?',
+      accept: ['whole disk encryption', 'whole disk', 'full disk encryption', 'full disk', 'disk encryption', 'device encryption'],
+      canon: 'whole-disk encryption'
+    },
+    {
+      q: '3. Comer’s third principle: the security policy for a piece of data travels with the data as it moves between cloud and device — enforcing … security:',
+      accept: ['workflow'],
+      canon: 'workflow'
+    }
+  ];
+  function norm(s) {
+    return (s || '').toLowerCase().replace(/[-_.,;:!?'"()]/g, ' ').replace(/\s+/g, ' ').trim();
+  }
+  function inputs() { return [...root.querySelectorAll('.w065-in')]; }
+  function clearMarks() {
+    inputs().forEach(i => i.classList.remove('w065-right', 'w065-wrong'));
+    msg.textContent = ''; msg.className = 'w065-msg iw-msg';
+  }
+  QS.forEach((it, i) => {
+    const q = document.createElement('div');
+    q.className = 'w065-q';
+    const lab = document.createElement('label');
+    lab.className = 'w065-label';
+    lab.textContent = it.q;
+    lab.setAttribute('for', 'w065-in-' + i);
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.id = 'w065-in-' + i;
+    inp.className = 'w065-in';
+    inp.dataset.k = String(i);
+    inp.autocomplete = 'off';
+    inp.addEventListener('input', clearMarks);
+    q.appendChild(lab); q.appendChild(inp);
+    list.appendChild(q);
+  });
+  root.querySelector('.w065-check').addEventListener('click', () => {
+    let right = 0, empty = 0;
+    inputs().forEach(inp => {
+      inp.classList.remove('w065-right', 'w065-wrong');
+      const v = norm(inp.value);
+      if (!v) { empty++; return; }
+      const acc = QS[Number(inp.dataset.k)].accept;
+      const hit = acc.some(a => v === a || v.indexOf(a) !== -1);
+      if (hit) { inp.classList.add('w065-right'); right++; }
+      else inp.classList.add('w065-wrong');
+    });
+    if (right === QS.length) { msg.textContent = '✓ All correct — confidentiality follows the data across every hop.'; msg.className = 'w065-msg iw-msg ok'; }
+    else if (empty > 0 && right + empty === QS.length) { msg.textContent = 'Keep going — ' + empty + ' answer(s) still empty.'; msg.className = 'w065-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — ' + right + ' of ' + QS.length + ' answers are right; the red ones need another look at the chapter.'; msg.className = 'w065-msg iw-msg bad'; }
+  });
+  root.querySelector('.w065-reset').addEventListener('click', () => {
+    inputs().forEach(i => { i.value = ''; });
+    clearMarks();
+  });
+  root.querySelector('.w065-solution').addEventListener('click', () => {
+    inputs().forEach(inp => {
+      inp.value = QS[Number(inp.dataset.k)].canon;
+      inp.classList.remove('w065-wrong');
+      inp.classList.add('w065-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w065-msg iw-msg ok';
+  });
+})();
+</script>
+```

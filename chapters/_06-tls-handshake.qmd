@@ -27,12 +27,15 @@
 .w061-dd .w061-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w061-dd .w061-msg.ok { color: #2e7d32; }
 .w061-dd .w061-msg.bad { color: #d81e2e; }
+.w061-dd .w061-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
 </style>
 <div class="w061-dd iw" id="w061-dd">
   <div class="w061-list" aria-label="handshake steps to order"></div>
   <div class="w061-controls">
     <button type="button" class="w061-check iw-check">Check</button>
     <button type="button" class="w061-reset iw-reset">Reset</button>
+    <button type="button" class="w061-solution iw-solution">Show solution</button>
+    <span class="w061-note">(no fun if you click it right away)</span>
   </div>
   <div class="w061-msg iw-msg" role="status"></div>
 </div>
@@ -145,6 +148,16 @@
       msg.textContent = '✗ Not yet — ' + right + ' of ' + STEPS.length + ' steps are in the right place (green).';
       msg.className = 'w061-msg iw-msg bad';
     }
+  });
+  root.querySelector('.w061-solution').addEventListener('click', () => {
+    unpick();
+    for (let i = 0; i < STEPS.length; i++) {
+      list.appendChild(list.querySelector('.w061-step[data-step="' + i + '"]'));
+    }
+    moved();
+    rows().forEach(r => r.classList.add('w061-right'));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w061-msg iw-msg ok';
   });
   root.querySelector('.w061-reset').addEventListener('click', () => {
     unpick();

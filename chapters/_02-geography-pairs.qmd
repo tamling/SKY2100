@@ -1,0 +1,136 @@
+```{=html}
+<style>
+.w024 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w024 .w024-cols { display: flex; gap: 10px; margin-bottom: 0.75rem; }
+.w024 .w024-col { flex: 1 1 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.w024 .w024-item {
+  padding: 5px 8px; border: 2px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  cursor: pointer; user-select: none;
+}
+.w024 .w024-term { font-weight: 700; text-align: center; }
+.w024 .w024-def { font-size: 0.84rem; }
+.w024 .w024-item.w024-picked { outline: 3px solid #d81e2e; outline-offset: 1px; }
+.w024 .w024-item.w024-done {
+  border-color: #2e7d32; opacity: 0.55; cursor: default; pointer-events: none;
+}
+.w024 .w024-item.w024-flash { border-color: #d81e2e; }
+.w024 .w024-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w024 button.w024-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w024 .w024-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w024 .w024-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w024 .w024-msg.ok { color: #2e7d32; }
+.w024 .w024-msg.bad { color: #d81e2e; }
+</style>
+<div class="w024 iw" id="w024">
+  <div class="w024-cols">
+    <div class="w024-col w024-terms" aria-label="terms"></div>
+    <div class="w024-col w024-defs" aria-label="descriptions"></div>
+  </div>
+  <div class="w024-controls">
+    <button type="button" class="w024-btn w024-check iw-check">Check</button>
+    <button type="button" class="w024-btn w024-reset iw-reset">Reset</button>
+    <button type="button" class="w024-btn w024-sol iw-solution">Show solution</button>
+    <span class="w024-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w024-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w024');
+  const termsCol = root.querySelector('.w024-terms');
+  const defsCol = root.querySelector('.w024-defs');
+  const msg = root.querySelector('.w024-msg');
+  const PAIRS = [
+    ['Region', 'a geographic area containing one or more data centres'],
+    ['Availability zone', 'a physically separate data centre within a region, with independent power, cooling and network'],
+    ['Region pair', 'two regions linked for replication and disaster recovery'],
+    ['Management group', 'applies policy and access across many subscriptions'],
+    ['Subscription', 'a billing and isolation boundary'],
+    ['Resource group', 'a lifecycle container for related resources']
+  ];
+  const DEF_ORDER = [4, 0, 5, 2, 1, 3]; // fixed scramble of the descriptions
+  let pickedTerm = null, pickedDef = null;
+
+  function clearMsg() { msg.textContent = ''; msg.className = 'w024-msg iw-msg'; }
+  function unpick() {
+    if (pickedTerm) pickedTerm.classList.remove('w024-picked');
+    if (pickedDef) pickedDef.classList.remove('w024-picked');
+    pickedTerm = null; pickedDef = null;
+  }
+  function lockPair(t, d) {
+    t.classList.remove('w024-picked'); d.classList.remove('w024-picked');
+    t.classList.add('w024-done'); d.classList.add('w024-done');
+  }
+  function tryMatch() {
+    if (!pickedTerm || !pickedDef) return;
+    const t = pickedTerm, d = pickedDef;
+    unpick(); clearMsg();
+    if (t.dataset.k === d.dataset.k) { lockPair(t, d); }
+    else {
+      t.classList.add('w024-flash'); d.classList.add('w024-flash');
+      setTimeout(() => { t.classList.remove('w024-flash'); d.classList.remove('w024-flash'); }, 450);
+    }
+  }
+  function makeItem(text, k, isTerm) {
+    const el = document.createElement('div');
+    el.className = 'w024-item ' + (isTerm ? 'w024-term' : 'w024-def');
+    el.textContent = text;
+    el.dataset.k = k;
+    el.addEventListener('click', () => {
+      clearMsg();
+      if (isTerm) {
+        if (pickedTerm === el) { el.classList.remove('w024-picked'); pickedTerm = null; return; }
+        if (pickedTerm) pickedTerm.classList.remove('w024-picked');
+        pickedTerm = el; el.classList.add('w024-picked');
+      } else {
+        if (pickedDef === el) { el.classList.remove('w024-picked'); pickedDef = null; return; }
+        if (pickedDef) pickedDef.classList.remove('w024-picked');
+        pickedDef = el; el.classList.add('w024-picked');
+      }
+      tryMatch();
+    });
+    if (isTerm) {
+      el.draggable = true;
+      el.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', k));
+    } else {
+      el.addEventListener('dragover', e => e.preventDefault());
+      el.addEventListener('drop', e => {
+        e.preventDefault();
+        const t = termsCol.querySelector('.w024-item[data-k="' + e.dataTransfer.getData('text/plain') + '"]');
+        if (t && !t.classList.contains('w024-done') && !el.classList.contains('w024-done')) {
+          unpick(); pickedTerm = t; pickedDef = el; tryMatch();
+        }
+      });
+    }
+    return el;
+  }
+  function build() {
+    termsCol.textContent = ''; defsCol.textContent = '';
+    PAIRS.forEach((p, i) => termsCol.appendChild(makeItem(p[0], String(i), true)));
+    DEF_ORDER.forEach(i => defsCol.appendChild(makeItem(PAIRS[i][1], String(i), false)));
+    unpick(); clearMsg();
+  }
+  root.querySelector('.w024-check').addEventListener('click', () => {
+    const done = termsCol.querySelectorAll('.w024-done').length;
+    if (done === PAIRS.length) { msg.textContent = '✓ All matched — physical geography below, administrative geography above.'; msg.className = 'w024-msg iw-msg ok'; }
+    else { msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched — keep going (a wrong attempt flashes red).'; msg.className = 'w024-msg iw-msg'; }
+  });
+  root.querySelector('.w024-reset').addEventListener('click', build);
+  root.querySelector('.w024-sol').addEventListener('click', () => {
+    unpick(); clearMsg();
+    PAIRS.forEach((p, i) => {
+      const t = termsCol.querySelector('.w024-item[data-k="' + i + '"]');
+      const d = defsCol.querySelector('.w024-item[data-k="' + i + '"]');
+      lockPair(t, d);
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w024-msg iw-msg ok';
+  });
+  build();
+})();
+</script>
+```

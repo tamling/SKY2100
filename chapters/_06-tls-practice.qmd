@@ -1,0 +1,116 @@
+```{=html}
+<style>
+.w064 { max-width: 620px; margin: 0 auto; font-size: 0.9rem; }
+.w064 .w064-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 0.75rem; }
+.w064 .w064-row {
+  display: flex; align-items: center; gap: 10px; padding: 6px 8px;
+  border: 2px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff);
+}
+.w064 .w064-row.w064-right { border-color: #2e7d32; }
+.w064 .w064-row.w064-wrong { border-color: #d81e2e; }
+.w064 .w064-txt { flex: 1 1 auto; }
+.w064 .w064-tf { display: flex; gap: 4px; }
+.w064 .w064-tf button {
+  padding: 2px 10px; border-radius: 6px; font-weight: 700; cursor: pointer;
+  border: 1.5px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+}
+.w064 .w064-tf button.w064-on { background: #d81e2e; border-color: #d81e2e; color: #fff; }
+.w064 .w064-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w064 .w064-controls > button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w064 .w064-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w064 .w064-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w064 .w064-msg.ok { color: #2e7d32; }
+.w064 .w064-msg.bad { color: #d81e2e; }
+</style>
+<div class="w064 iw" id="w064">
+  <div class="w064-list" aria-label="statements to judge"></div>
+  <div class="w064-controls">
+    <button type="button" class="w064-check iw-check">Check</button>
+    <button type="button" class="w064-reset iw-reset">Reset</button>
+    <button type="button" class="w064-solution iw-solution">Show solution</button>
+    <span class="w064-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w064-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w064');
+  const list = root.querySelector('.w064-list');
+  const msg = root.querySelector('.w064-msg');
+  const ITEMS = [
+    ['TLS 1.0 and 1.1 are disabled in a hardened deployment; TLS 1.2 is the minimum.', 't'],
+    ['An expired certificate breaks the service as surely as a misconfiguration.', 't'],
+    ['In the cloud, the private key behind a certificate is best kept in a file beside the application.', 'f'],
+    ['TLS also protects the same data once it sits decrypted on the server.', 'f'],
+    ['A firewall performing deep packet inspection sees only ciphertext inside a TLS connection.', 't'],
+    ['TLS inspection (break-and-inspect) restores inspection at no cost to end-to-end confidentiality.', 'f']
+  ];
+
+  function clearMarks() {
+    root.querySelectorAll('.w064-row').forEach(r => r.classList.remove('w064-right', 'w064-wrong'));
+    msg.textContent = ''; msg.className = 'w064-msg iw-msg';
+  }
+  function select(row, val) {
+    row.dataset.sel = val;
+    [...row.querySelectorAll('.w064-tf button')].forEach(b => {
+      b.classList.toggle('w064-on', b.dataset.val === val);
+      b.setAttribute('aria-pressed', b.dataset.val === val ? 'true' : 'false');
+    });
+  }
+  ITEMS.forEach(it => {
+    const row = document.createElement('div');
+    row.className = 'w064-row';
+    row.dataset.a = it[1];
+    row.dataset.sel = '';
+    const txt = document.createElement('span');
+    txt.className = 'w064-txt';
+    txt.textContent = it[0];
+    const tf = document.createElement('span');
+    tf.className = 'w064-tf';
+    [['t', 'True'], ['f', 'False']].forEach(v => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.val = v[0];
+      b.textContent = v[1];
+      b.setAttribute('aria-pressed', 'false');
+      b.addEventListener('click', () => {
+        select(row, row.dataset.sel === v[0] ? '' : v[0]);
+        clearMarks();
+      });
+      tf.appendChild(b);
+    });
+    row.appendChild(txt); row.appendChild(tf);
+    list.appendChild(row);
+  });
+  root.querySelector('.w064-check').addEventListener('click', () => {
+    let right = 0, unanswered = 0;
+    root.querySelectorAll('.w064-row').forEach(r => {
+      r.classList.remove('w064-right', 'w064-wrong');
+      if (!r.dataset.sel) { unanswered++; return; }
+      if (r.dataset.sel === r.dataset.a) { r.classList.add('w064-right'); right++; }
+      else r.classList.add('w064-wrong');
+    });
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct — encrypting the channel is necessary, not sufficient.'; msg.className = 'w064-msg iw-msg ok'; }
+    else if (unanswered > 0 && right + unanswered === ITEMS.length) { msg.textContent = 'Keep going — ' + unanswered + ' statement(s) still unanswered.'; msg.className = 'w064-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — ' + right + ' of ' + ITEMS.length + ' statements are right; rethink the red ones.'; msg.className = 'w064-msg iw-msg bad'; }
+  });
+  root.querySelector('.w064-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w064-row').forEach(r => select(r, ''));
+    clearMarks();
+  });
+  root.querySelector('.w064-solution').addEventListener('click', () => {
+    root.querySelectorAll('.w064-row').forEach(r => {
+      select(r, r.dataset.a);
+      r.classList.remove('w064-wrong'); r.classList.add('w064-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w064-msg iw-msg ok';
+  });
+})();
+</script>
+```

@@ -1,0 +1,153 @@
+```{=html}
+<style>
+.w053 { max-width: 620px; margin: 0 auto; font-size: 0.9rem; }
+.w053 .w053-cols { display: flex; gap: 10px; margin-bottom: 0.75rem; }
+.w053 .w053-col { flex: 1 1 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.w053 .w053-item {
+  position: relative; padding: 5px 8px; border-radius: 6px; cursor: pointer;
+  user-select: none; font-size: 0.85rem;
+  border: 1.5px solid var(--bs-border-color, #999);
+  color: var(--bs-body-color, #222); background: var(--bs-body-bg, #fff);
+}
+.w053 .w053-item.w053-term { font-weight: 700; text-align: center; border-color: #d81e2e; }
+.w053 .w053-item.w053-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w053 .w053-item.w053-done { border: 2px solid #2e7d32; opacity: 0.55; cursor: default; }
+.w053 .w053-item.w053-flash { border: 2px solid #d81e2e; background: rgba(216, 30, 46, 0.15); }
+.w053 .w053-badge {
+  position: absolute; top: -9px; right: -6px; background: #2e7d32; color: #fff;
+  border-radius: 999px; font-size: 0.7rem; font-weight: 700; padding: 0 6px;
+}
+.w053 .w053-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w053 .w053-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w053 .w053-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w053 .w053-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w053 .w053-msg.ok { color: #2e7d32; }
+.w053 .w053-msg.bad { color: #d81e2e; }
+</style>
+<div class="w053 iw" id="w053">
+  <div class="w053-cols">
+    <div class="w053-col w053-terms" aria-label="terms"></div>
+    <div class="w053-col w053-defs" aria-label="descriptions"></div>
+  </div>
+  <div class="w053-controls">
+    <button type="button" class="w053-check iw-check">Check</button>
+    <button type="button" class="w053-reset iw-reset">Reset</button>
+    <button type="button" class="w053-solution iw-solution">Show solution</button>
+    <span class="w053-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w053-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w053');
+  const termCol = root.querySelector('.w053-terms');
+  const defCol = root.querySelector('.w053-defs');
+  const msg = root.querySelector('.w053-msg');
+  const PAIRS = [
+    ['Kernel', 'The single program running in the processor’s privileged mode — the only gateway to a resource'],
+    ['System call', 'How a program asks for a resource: it traps into the privileged mode'],
+    ['User space', 'Everything that is not the kernel: the shell, Nginx, Nextcloud'],
+    ['Namespaces', 'Give a process an isolated view of one class of resource — processes, network, filesystem root, user IDs'],
+    ['Control groups (cgroups)', 'Cap how much CPU, memory and I/O a process may consume'],
+    ['Loadable module', 'Extends the monolithic kernel at run time']
+  ];
+  const RIGHT = [3, 0, 5, 2, 4, 1]; // fixed scrambled order of definitions (none aligned)
+  let picked = null;
+
+  function items() { return [...root.querySelectorAll('.w053-item')]; }
+  function unpick() {
+    if (picked) picked.classList.remove('w053-picked');
+    picked = null;
+  }
+  function clearMsg() { msg.textContent = ''; msg.className = 'w053-msg iw-msg'; }
+  function badge(el) {
+    const b = document.createElement('span');
+    b.className = 'w053-badge';
+    b.textContent = String(Number(el.dataset.k) + 1);
+    el.appendChild(b);
+  }
+  function lock(a, b) {
+    [a, b].forEach(el => { el.classList.add('w053-done'); el.draggable = false; badge(el); });
+  }
+  function attempt(a, b) {
+    unpick(); clearMsg();
+    if (a.dataset.k === b.dataset.k) { lock(a, b); return; }
+    [a, b].forEach(el => {
+      el.classList.add('w053-flash');
+      setTimeout(() => el.classList.remove('w053-flash'), 650);
+    });
+  }
+  function sideOf(el) { return el.classList.contains('w053-term') ? 't' : 'd'; }
+  function makeItem(text, k, isTerm) {
+    const el = document.createElement('div');
+    el.className = 'w053-item' + (isTerm ? ' w053-term' : ' w053-def');
+    el.textContent = text;
+    el.dataset.k = String(k);
+    el.draggable = true;
+    el.addEventListener('click', () => {
+      if (el.classList.contains('w053-done')) return;
+      if (picked === el) { unpick(); return; }
+      if (picked && sideOf(picked) !== sideOf(el)) { attempt(picked, el); return; }
+      unpick(); picked = el; el.classList.add('w053-picked');
+    });
+    el.addEventListener('dragstart', e => {
+      if (el.classList.contains('w053-done')) { e.preventDefault(); return; }
+      unpick();
+      e.dataTransfer.setData('text/plain', sideOf(el) + ':' + el.dataset.k);
+    });
+    el.addEventListener('dragover', e => e.preventDefault());
+    el.addEventListener('drop', e => {
+      e.preventDefault(); e.stopPropagation();
+      if (el.classList.contains('w053-done')) return;
+      const [s, k] = (e.dataTransfer.getData('text/plain') || '').split(':');
+      if (!s || s === sideOf(el)) return;
+      const other = root.querySelector('.w053-item.w053-' + (s === 't' ? 'term' : 'def') + '[data-k="' + k + '"]');
+      if (other && !other.classList.contains('w053-done')) attempt(other, el);
+    });
+    return el;
+  }
+  function matchedCount() {
+    return root.querySelectorAll('.w053-term.w053-done').length;
+  }
+  root.querySelector('.w053-check').addEventListener('click', () => {
+    unpick();
+    const n = matchedCount();
+    if (n === PAIRS.length) {
+      msg.textContent = '✓ All ' + PAIRS.length + ' pairs matched — the container is an ordinary process, wrapped by the kernel.';
+      msg.className = 'w053-msg iw-msg ok';
+    } else {
+      msg.textContent = n + ' of ' + PAIRS.length + ' pairs matched — keep going (a wrong attempt flashes red).';
+      msg.className = 'w053-msg iw-msg';
+    }
+  });
+  function resetAll() {
+    unpick();
+    items().forEach(el => {
+      el.classList.remove('w053-done', 'w053-flash');
+      el.draggable = true;
+      const b = el.querySelector('.w053-badge');
+      if (b) b.remove();
+    });
+    RIGHT.forEach(k => defCol.appendChild(defCol.querySelector('.w053-def[data-k="' + k + '"]')));
+    clearMsg();
+  }
+  root.querySelector('.w053-reset').addEventListener('click', resetAll);
+  root.querySelector('.w053-solution').addEventListener('click', () => {
+    resetAll();
+    PAIRS.forEach((p, k) => {
+      const t = termCol.querySelector('.w053-term[data-k="' + k + '"]');
+      const d = defCol.querySelector('.w053-def[data-k="' + k + '"]');
+      defCol.appendChild(d);
+      lock(t, d);
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w053-msg iw-msg ok';
+  });
+  PAIRS.forEach((p, k) => termCol.appendChild(makeItem(p[0], k, true)));
+  RIGHT.forEach(k => defCol.appendChild(makeItem(PAIRS[k][1], k, false)));
+})();
+</script>
+```

@@ -1,0 +1,130 @@
+```{=html}
+<style>
+.w054 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w054 .w054-grid {
+  display: grid; grid-template-columns: minmax(96px, 1.2fr) repeat(4, 1fr);
+  gap: 6px; margin-bottom: 0.75rem; align-items: stretch;
+}
+.w054 .w054-head { text-align: center; font-weight: 700; align-self: end; line-height: 1.2; font-size: 0.8rem; }
+.w054 .w054-rowlab {
+  display: flex; align-items: center; padding: 4px 6px; font-weight: 600;
+  border: 2px solid transparent; border-radius: 6px;
+}
+.w054 .w054-rowlab.w054-rowok { border-color: #2e7d32; color: #2e7d32; }
+.w054 .w054-rowlab.w054-rowbad { border-color: #d81e2e; color: #d81e2e; }
+.w054 button.w054-cell {
+  min-height: 38px; border-radius: 6px; cursor: pointer;
+  border: 1.5px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); padding: 0;
+}
+.w054 button.w054-cell.w054-on { background: #d81e2e; border-color: #d81e2e; }
+.w054 .w054-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w054 button.w054-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w054 .w054-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w054 .w054-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w054 .w054-msg.ok { color: #2e7d32; }
+.w054 .w054-msg.bad { color: #d81e2e; }
+</style>
+<div class="w054 iw" id="w054">
+  <div class="w054-grid"></div>
+  <div class="w054-controls">
+    <button type="button" class="w054-btn w054-check iw-check">Check</button>
+    <button type="button" class="w054-btn w054-reset iw-reset">Reset</button>
+    <button type="button" class="w054-btn w054-solution iw-solution">Show solution</button>
+    <span class="w054-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w054-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w054');
+  const grid = root.querySelector('.w054-grid');
+  const msg = root.querySelector('.w054-msg');
+  const COLS = [
+    ['mono', 'Monolithic'],
+    ['hyb', 'Hybrid'],
+    ['nat', 'Runs Linux containers on its own kernel'],
+    ['posix', 'UNIX/POSIX interface']
+  ];
+  const ROWS = [
+    ['linux', 'Linux', ['mono', 'nat', 'posix']],
+    ['nt', 'Windows (NT)', ['hyb']],
+    ['xnu', 'macOS (XNU)', ['hyb', 'posix']]
+  ];
+
+  function clearMarks() {
+    root.querySelectorAll('.w054-rowlab').forEach(l => l.classList.remove('w054-rowok', 'w054-rowbad'));
+    msg.textContent = ''; msg.className = 'w054-msg iw-msg';
+  }
+  function setCell(cell, on) {
+    cell.classList.toggle('w054-on', on);
+    cell.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+  const corner = document.createElement('div');
+  grid.appendChild(corner);
+  COLS.forEach(col => {
+    const h = document.createElement('div');
+    h.className = 'w054-head';
+    h.textContent = col[1];
+    grid.appendChild(h);
+  });
+  ROWS.forEach(row => {
+    const lab = document.createElement('div');
+    lab.className = 'w054-rowlab';
+    lab.dataset.row = row[0];
+    lab.textContent = row[1];
+    grid.appendChild(lab);
+    COLS.forEach(col => {
+      const cell = document.createElement('button');
+      cell.type = 'button';
+      cell.className = 'w054-cell';
+      cell.dataset.row = row[0];
+      cell.dataset.col = col[0];
+      cell.setAttribute('aria-pressed', 'false');
+      cell.setAttribute('aria-label', row[1] + ': ' + col[1]);
+      cell.addEventListener('click', () => {
+        setCell(cell, !cell.classList.contains('w054-on'));
+        clearMarks();
+      });
+      grid.appendChild(cell);
+    });
+  });
+  root.querySelector('.w054-check').addEventListener('click', () => {
+    let okRows = 0, touched = 0;
+    ROWS.forEach(row => {
+      const lab = root.querySelector('.w054-rowlab[data-row="' + row[0] + '"]');
+      lab.classList.remove('w054-rowok', 'w054-rowbad');
+      const on = [...root.querySelectorAll('.w054-cell[data-row="' + row[0] + '"].w054-on')]
+        .map(c => c.dataset.col).sort();
+      touched += on.length;
+      const want = row[2].slice().sort();
+      const same = on.length === want.length && on.every((v, i) => v === want[i]);
+      if (same) { lab.classList.add('w054-rowok'); okRows++; }
+      else lab.classList.add('w054-rowbad');
+    });
+    if (okRows === ROWS.length) { msg.textContent = '✓ All correct — three kernels, one shape, but only one of them runs Linux containers itself.'; msg.className = 'w054-msg iw-msg ok'; }
+    else if (touched === 0) { msg.textContent = 'Nothing filled in yet — click the cells that hold for each kernel, then check again.'; msg.className = 'w054-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — ' + okRows + ' of ' + ROWS.length + ' rows are right; the red rows have too many or too few cells filled.'; msg.className = 'w054-msg iw-msg bad'; }
+  });
+  root.querySelector('.w054-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w054-cell').forEach(c => setCell(c, false));
+    clearMarks();
+  });
+  root.querySelector('.w054-solution').addEventListener('click', () => {
+    ROWS.forEach(row => {
+      COLS.forEach(col => {
+        const cell = root.querySelector('.w054-cell[data-row="' + row[0] + '"][data-col="' + col[0] + '"]');
+        setCell(cell, row[2].indexOf(col[0]) !== -1);
+      });
+      const lab = root.querySelector('.w054-rowlab[data-row="' + row[0] + '"]');
+      lab.classList.remove('w054-rowbad'); lab.classList.add('w054-rowok');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w054-msg iw-msg ok';
+  });
+})();
+</script>
+```

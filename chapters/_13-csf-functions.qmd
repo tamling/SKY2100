@@ -32,6 +32,7 @@
 .w131-dd .w131-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w131-dd .w131-msg.ok { color: #2e7d32; }
 .w131-dd .w131-msg.bad { color: #d81e2e; }
+.w131-dd .w131-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
 </style>
 <div class="w131-dd iw" id="w131-dd">
   <div class="w131-pool" aria-label="controls to place"></div>
@@ -46,6 +47,8 @@
   <div class="w131-controls">
     <button type="button" class="w131-check iw-check">Check</button>
     <button type="button" class="w131-reset iw-reset">Reset</button>
+    <button type="button" class="w131-solution iw-solution">Show solution</button>
+    <span class="w131-note">(no fun if you click it right away)</span>
   </div>
   <div class="w131-msg iw-msg" role="status"></div>
 </div>
@@ -122,6 +125,16 @@
     if (right === ITEMS.length) { msg.textContent = '✓ All correct — every Function is populated; the defence is complete across the framework.'; msg.className = 'w131-msg iw-msg ok'; }
     else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + unplaced + ' control(s) still without a Function.'; msg.className = 'w131-msg iw-msg'; }
     else { msg.textContent = '✗ Not yet — the red controls sit under the wrong Function. Consult the mapping table and retry.'; msg.className = 'w131-msg iw-msg bad'; }
+  });
+  root.querySelector('.w131-solution').addEventListener('click', () => {
+    unpick();
+    root.querySelectorAll('.w131-item').forEach(c => {
+      const bucket = buckets.find(b => b.dataset.cat === c.dataset.cat);
+      if (bucket) place(bucket, c);
+    });
+    root.querySelectorAll('.w131-item').forEach(c => c.classList.add('w131-right'));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w131-msg iw-msg ok';
   });
   root.querySelector('.w131-reset').addEventListener('click', () => {
     root.querySelectorAll('.w131-item').forEach(i => pool.appendChild(i));

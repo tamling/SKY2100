@@ -1,0 +1,131 @@
+```{=html}
+<style>
+.w086-order { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w086-order .w086-list { list-style: none; margin: 0 0 0.75rem; padding: 0; counter-reset: w086n; }
+.w086-order .w086-item {
+  display: flex; align-items: center; gap: 10px; margin: 6px 0; padding: 6px 10px;
+  border: 1.5px solid var(--bs-border-color, #999); border-radius: 8px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  cursor: grab; user-select: none; font-weight: 600;
+}
+.w086-order .w086-item::before {
+  counter-increment: w086n; content: counter(w086n);
+  font-weight: 700; opacity: 0.55; min-width: 1.2em; text-align: right;
+}
+.w086-order .w086-dragging { opacity: 0.5; }
+.w086-order .w086-item.w086-right { border: 2px solid #2e7d32; }
+.w086-order .w086-item.w086-wrong { border: 2px solid #d81e2e; }
+.w086-order .w086-btns { margin-left: auto; display: flex; gap: 4px; }
+.w086-order button {
+  padding: 2px 8px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w086-order .w086-controls { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.w086-order .w086-controls button { padding: 5px 14px; }
+.w086-order .w086-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w086-order .w086-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w086-order .w086-msg.ok { color: #2e7d32; }
+.w086-order .w086-msg.bad { color: #d81e2e; }
+</style>
+<div class="iw w086-order" id="w086">
+  <ol class="w086-list"></ol>
+  <div class="w086-controls">
+    <button type="button" class="w086-check iw-check">Check</button>
+    <button type="button" class="w086-reset iw-reset">Reset</button>
+    <button type="button" class="w086-solution iw-solution">Show solution</button>
+    <span class="w086-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w086-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w086');
+  const list = root.querySelector('.w086-list');
+  const msg = root.querySelector('.w086-msg');
+  // [stage, correct index], given in scrambled display order
+  const STEPS = [
+    ['Secure deployment', 2],
+    ['Runtime defence and monitoring of the application in production', 3],
+    ['Secure design and architecture (with threat modelling)', 0],
+    ['Secure build, integration and testing', 1]
+  ];
+  function clearMarks() {
+    [...list.children].forEach(li => li.classList.remove('w086-right', 'w086-wrong'));
+    msg.textContent = ''; msg.className = 'w086-msg iw-msg';
+  }
+  function makeItem(text, pos, n) {
+    const li = document.createElement('li');
+    li.className = 'w086-item';
+    li.dataset.pos = pos;
+    li.draggable = true;
+    const label = document.createElement('span');
+    label.className = 'w086-label'; label.textContent = text;
+    const btns = document.createElement('span'); btns.className = 'w086-btns';
+    const up = document.createElement('button');
+    up.type = 'button'; up.textContent = '▲';
+    up.setAttribute('aria-label', 'move stage ' + n + ' up');
+    const dn = document.createElement('button');
+    dn.type = 'button'; dn.textContent = '▼';
+    dn.setAttribute('aria-label', 'move stage ' + n + ' down');
+    up.addEventListener('click', e => {
+      e.stopPropagation();
+      const p = li.previousElementSibling;
+      if (p) { list.insertBefore(li, p); clearMarks(); }
+    });
+    dn.addEventListener('click', e => {
+      e.stopPropagation();
+      const nx = li.nextElementSibling;
+      if (nx) { list.insertBefore(nx, li); clearMarks(); }
+    });
+    btns.append(up, dn);
+    li.append(label, btns);
+    li.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', String(pos));
+      li.classList.add('w086-dragging');
+    });
+    li.addEventListener('dragend', () => li.classList.remove('w086-dragging'));
+    return li;
+  }
+  list.addEventListener('dragover', e => {
+    e.preventDefault();
+    const dragging = list.querySelector('.w086-dragging');
+    if (!dragging) return;
+    const after = [...list.querySelectorAll('li:not(.w086-dragging)')]
+      .find(li => e.clientY < li.getBoundingClientRect().top + li.offsetHeight / 2);
+    if (after) list.insertBefore(dragging, after); else list.appendChild(dragging);
+    clearMarks();
+  });
+  list.addEventListener('drop', e => e.preventDefault());
+  root.querySelector('.w086-check').addEventListener('click', () => {
+    let right = 0;
+    [...list.children].forEach((li, i) => {
+      li.classList.remove('w086-right', 'w086-wrong');
+      if (+li.dataset.pos === i) { li.classList.add('w086-right'); right++; }
+      else li.classList.add('w086-wrong');
+    });
+    msg.className = 'w086-msg iw-msg';
+    if (right === STEPS.length) {
+      msg.textContent = '✓ Correct — security runs from design all the way to the running application.';
+      msg.classList.add('ok');
+    } else {
+      msg.textContent = '✗ Not yet — ' + right + ' of ' + STEPS.length + ' stages are in the right place (marked green).';
+      msg.classList.add('bad');
+    }
+  });
+  STEPS.forEach((s, i) => list.appendChild(makeItem(s[0], s[1], i + 1)));
+  const order0 = [...list.children];
+  root.querySelector('.w086-reset').addEventListener('click', () => {
+    order0.forEach(li => list.appendChild(li));
+    clearMarks();
+  });
+  root.querySelector('.w086-solution').addEventListener('click', () => {
+    clearMarks();
+    [...list.children]
+      .sort((a, b) => +a.dataset.pos - +b.dataset.pos)
+      .forEach(li => { list.appendChild(li); li.classList.add('w086-right'); });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w086-msg iw-msg ok';
+  });
+})();
+</script>
+```

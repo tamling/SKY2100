@@ -1,0 +1,152 @@
+```{=html}
+<style>
+.w125-dd { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w125-dd .w125-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 0.75rem; }
+.w125-dd .w125-zone {
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  padding: 8px; text-align: center; cursor: pointer; min-height: 110px;
+}
+.w125-dd .w125-zone .w125-desc { font-size: 0.8rem; font-style: italic; opacity: 0.75; }
+.w125-dd .w125-zone.w125-armed { border-color: #d81e2e; }
+.w125-dd .w125-zone.w125-right { border: 2px solid #2e7d32; }
+.w125-dd .w125-zone.w125-wrong { border: 2px solid #d81e2e; }
+.w125-dd .w125-pool {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  min-height: 44px; padding: 8px; border-radius: 6px;
+  border: 1px solid var(--bs-border-color, #ccc); margin-bottom: 0.75rem;
+}
+.w125-dd .w125-chip {
+  display: inline-block; padding: 4px 12px; border-radius: 999px; cursor: grab;
+  user-select: none; border: 1.5px solid #d81e2e; color: var(--bs-body-color, #222);
+  background: var(--bs-body-bg, #fff); font-weight: 600;
+}
+.w125-dd .w125-zone .w125-chip { margin-top: 6px; }
+.w125-dd .w125-chip.w125-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w125-dd .w125-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w125-dd button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w125-dd .w125-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w125-dd .w125-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w125-dd .w125-msg.ok { color: #2e7d32; }
+.w125-dd .w125-msg.bad { color: #d81e2e; }
+</style>
+<div class="w125-dd iw" id="w125-dd">
+  <div class="w125-grid">
+    <div class="w125-zone" data-answer="nis2">
+      <div class="w125-desc">EU directive raising cybersecurity and incident-reporting obligations across essential and important sectors</div>
+    </div>
+    <div class="w125-zone" data-answer="dora">
+      <div class="w125-desc">imposes operational-resilience and third-party-risk requirements on the financial sector</div>
+    </div>
+    <div class="w125-zone" data-answer="iso 22301">
+      <div class="w125-desc">the international standard for business continuity management</div>
+    </div>
+  </div>
+  <div class="w125-pool" aria-label="instruments to place"></div>
+  <div class="w125-controls">
+    <button type="button" class="w125-check iw-check">Check</button>
+    <button type="button" class="w125-reset iw-reset">Reset</button>
+    <button type="button" class="w125-solution iw-solution">Show solution</button>
+    <span class="w125-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w125-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w125-dd');
+  const pool = root.querySelector('.w125-pool');
+  const zones = [...root.querySelectorAll('.w125-zone')];
+  const msg = root.querySelector('.w125-msg');
+  const TERMS = ['NIST SP 800-61', 'DORA', 'ISO 22301', 'CSA Security Guidance', 'NIS2'];
+  let picked = null;
+
+  function makeChip(term) {
+    const c = document.createElement('span');
+    c.className = 'w125-chip';
+    c.textContent = term;
+    c.dataset.term = term.toLowerCase();
+    c.draggable = true;
+    c.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.parentElement !== pool) { pool.appendChild(c); unpick(); clearMarks(); return; }
+      if (picked === c) { unpick(); return; }
+      unpick(); picked = c; c.classList.add('w125-picked');
+      zones.forEach(z => z.classList.add('w125-armed'));
+    });
+    c.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', term));
+    return c;
+  }
+  function unpick() {
+    if (picked) picked.classList.remove('w125-picked');
+    picked = null;
+    zones.forEach(z => z.classList.remove('w125-armed'));
+  }
+  function clearMarks() {
+    zones.forEach(z => z.classList.remove('w125-right', 'w125-wrong'));
+    msg.textContent = ''; msg.className = 'w125-msg iw-msg';
+  }
+  function place(zone, chip) {
+    const old = zone.querySelector('.w125-chip');
+    if (old) pool.appendChild(old);
+    zone.appendChild(chip);
+    clearMarks();
+  }
+  zones.forEach(zone => {
+    zone.addEventListener('click', () => { if (picked) { place(zone, picked); unpick(); } });
+    zone.addEventListener('dragover', e => e.preventDefault());
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      const term = e.dataTransfer.getData('text/plain');
+      const chip = root.querySelector('.w125-chip[data-term="' + term.toLowerCase() + '"]');
+      if (chip) { place(zone, chip); unpick(); }
+    });
+  });
+  pool.addEventListener('dragover', e => e.preventDefault());
+  pool.addEventListener('drop', e => {
+    e.preventDefault();
+    const term = e.dataTransfer.getData('text/plain');
+    const chip = root.querySelector('.w125-chip[data-term="' + term.toLowerCase() + '"]');
+    if (chip) { pool.appendChild(chip); clearMarks(); }
+  });
+  root.querySelector('.w125-check').addEventListener('click', () => {
+    let right = 0, wrong = 0, empty = 0;
+    zones.forEach(z => {
+      z.classList.remove('w125-right', 'w125-wrong');
+      const chip = z.querySelector('.w125-chip');
+      if (!chip) { empty++; return; }
+      if (chip.dataset.term === z.dataset.answer) { z.classList.add('w125-right'); right++; }
+      else { z.classList.add('w125-wrong'); wrong++; }
+    });
+    if (right === zones.length) {
+      msg.textContent = '✓ All correct — the European frame is in place (two of the five names were distractors).';
+      msg.className = 'w125-msg iw-msg ok';
+    } else if (empty > 0 && wrong === 0) {
+      msg.textContent = 'Keep going — ' + empty + ' description(s) still without an instrument.';
+      msg.className = 'w125-msg iw-msg';
+    } else {
+      msg.textContent = '✗ Not yet — the red boxes hold the wrong name (two of the five are distractors from this chapter).';
+      msg.className = 'w125-msg iw-msg bad';
+    }
+  });
+  root.querySelector('.w125-solution').addEventListener('click', () => {
+    unpick();
+    root.querySelectorAll('.w125-chip').forEach(c => pool.appendChild(c));
+    zones.forEach(z => {
+      const chip = root.querySelector('.w125-chip[data-term="' + z.dataset.answer + '"]');
+      if (chip) z.appendChild(chip);
+      z.classList.remove('w125-wrong');
+      z.classList.add('w125-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w125-msg iw-msg ok';
+  });
+  root.querySelector('.w125-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w125-chip').forEach(c => pool.appendChild(c));
+    unpick(); clearMarks();
+  });
+})();
+</script>
+```

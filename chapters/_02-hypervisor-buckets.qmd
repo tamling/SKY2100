@@ -32,6 +32,7 @@
 .w021 .w021-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w021 .w021-msg.ok { color: #2e7d32; }
 .w021 .w021-msg.bad { color: #d81e2e; }
+.w021 .w021-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
 </style>
 <div class="w021 iw" id="w021">
   <div class="w021-pool" aria-label="items to classify"></div>
@@ -50,6 +51,8 @@
   <div class="w021-controls">
     <button type="button" class="w021-btn w021-check iw-check">Check</button>
     <button type="button" class="w021-btn w021-reset iw-reset">Reset</button>
+    <button type="button" class="w021-btn w021-solution iw-solution">Show solution</button>
+    <span class="w021-note">(no fun if you click it right away)</span>
   </div>
   <div class="w021-msg iw-msg" role="status"></div>
 </div>
@@ -127,6 +130,16 @@
     if (right === ITEMS.length) { msg.textContent = '✓ All correct — both hypervisor types sorted.'; msg.className = 'w021-msg iw-msg ok'; }
     else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + unplaced + ' item(s) still unplaced.'; msg.className = 'w021-msg iw-msg'; }
     else { msg.textContent = '✗ Not yet — the red items are in the wrong box.'; msg.className = 'w021-msg iw-msg bad'; }
+  });
+  root.querySelector('.w021-solution').addEventListener('click', () => {
+    unpick();
+    root.querySelectorAll('.w021-chip').forEach(c => {
+      const bucket = buckets.find(b => b.dataset.cat === c.dataset.cat);
+      if (bucket) place(bucket, c);
+    });
+    root.querySelectorAll('.w021-chip').forEach(c => c.classList.add('w021-right'));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w021-msg iw-msg ok';
   });
   root.querySelector('.w021-reset').addEventListener('click', () => {
     root.querySelectorAll('.w021-chip').forEach(c => pool.appendChild(c));

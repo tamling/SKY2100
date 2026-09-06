@@ -1,0 +1,116 @@
+```{=html}
+<style>
+.w055 { max-width: 620px; margin: 0 auto; font-size: 0.9rem; }
+.w055 .w055-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 0.75rem; }
+.w055 .w055-row {
+  display: flex; align-items: center; gap: 10px; padding: 6px 8px;
+  border: 2px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff);
+}
+.w055 .w055-row.w055-right { border-color: #2e7d32; }
+.w055 .w055-row.w055-wrong { border-color: #d81e2e; }
+.w055 .w055-txt { flex: 1 1 auto; }
+.w055 .w055-tf { display: flex; gap: 4px; }
+.w055 .w055-tf button {
+  padding: 2px 10px; border-radius: 6px; font-weight: 700; cursor: pointer;
+  border: 1.5px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+}
+.w055 .w055-tf button.w055-on { background: #d81e2e; border-color: #d81e2e; color: #fff; }
+.w055 .w055-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w055 .w055-controls > button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w055 .w055-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w055 .w055-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w055 .w055-msg.ok { color: #2e7d32; }
+.w055 .w055-msg.bad { color: #d81e2e; }
+</style>
+<div class="w055 iw" id="w055">
+  <div class="w055-list" aria-label="statements to judge"></div>
+  <div class="w055-controls">
+    <button type="button" class="w055-check iw-check">Check</button>
+    <button type="button" class="w055-reset iw-reset">Reset</button>
+    <button type="button" class="w055-solution iw-solution">Show solution</button>
+    <span class="w055-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w055-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w055');
+  const list = root.querySelector('.w055-list');
+  const msg = root.querySelector('.w055-msg');
+  const ITEMS = [
+    ['In an autoscaling group, a monitoring agent may safely identify a workload by its fixed IP address.', 'f'],
+    ['A new instance registers itself with the monitoring system when it starts, and its log entries carry the identity of the workload.', 't'],
+    ['Network-based vulnerability scanning often fails because internal networks are closed by default and each security group admits only the connections its workload needs.', 't'],
+    ['The Guidance recommends checking each VM or container image at build time, so that only images known to be good ever run.', 't'],
+    ['Containers should run as root, so that the runtime has all the privileges it might need.', 'f'],
+    ['A large, full-featured container image is preferable to a minimal one, because it gives defenders more tools inside.', 'f']
+  ];
+
+  function clearMarks() {
+    root.querySelectorAll('.w055-row').forEach(r => r.classList.remove('w055-right', 'w055-wrong'));
+    msg.textContent = ''; msg.className = 'w055-msg iw-msg';
+  }
+  function select(row, val) {
+    row.dataset.sel = val;
+    [...row.querySelectorAll('.w055-tf button')].forEach(b => {
+      b.classList.toggle('w055-on', b.dataset.val === val);
+      b.setAttribute('aria-pressed', b.dataset.val === val ? 'true' : 'false');
+    });
+  }
+  ITEMS.forEach((it, i) => {
+    const row = document.createElement('div');
+    row.className = 'w055-row';
+    row.dataset.a = it[1];
+    row.dataset.sel = '';
+    const txt = document.createElement('span');
+    txt.className = 'w055-txt';
+    txt.textContent = it[0];
+    const tf = document.createElement('span');
+    tf.className = 'w055-tf';
+    [['t', 'True'], ['f', 'False']].forEach(v => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.dataset.val = v[0];
+      b.textContent = v[1];
+      b.setAttribute('aria-pressed', 'false');
+      b.addEventListener('click', () => {
+        select(row, row.dataset.sel === v[0] ? '' : v[0]);
+        clearMarks();
+      });
+      tf.appendChild(b);
+    });
+    row.appendChild(txt); row.appendChild(tf);
+    list.appendChild(row);
+  });
+  root.querySelector('.w055-check').addEventListener('click', () => {
+    let right = 0, unanswered = 0;
+    root.querySelectorAll('.w055-row').forEach(r => {
+      r.classList.remove('w055-right', 'w055-wrong');
+      if (!r.dataset.sel) { unanswered++; return; }
+      if (r.dataset.sel === r.dataset.a) { r.classList.add('w055-right'); right++; }
+      else r.classList.add('w055-wrong');
+    });
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct — traditional controls adjusted for a moving environment.'; msg.className = 'w055-msg iw-msg ok'; }
+    else if (unanswered > 0 && right + unanswered === ITEMS.length) { msg.textContent = 'Keep going — ' + unanswered + ' statement(s) still unanswered.'; msg.className = 'w055-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — ' + right + ' of ' + ITEMS.length + ' statements are right; rethink the red ones.'; msg.className = 'w055-msg iw-msg bad'; }
+  });
+  root.querySelector('.w055-reset').addEventListener('click', () => {
+    root.querySelectorAll('.w055-row').forEach(r => select(r, ''));
+    clearMarks();
+  });
+  root.querySelector('.w055-solution').addEventListener('click', () => {
+    root.querySelectorAll('.w055-row').forEach(r => {
+      select(r, r.dataset.a);
+      r.classList.remove('w055-wrong'); r.classList.add('w055-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w055-msg iw-msg ok';
+  });
+})();
+</script>
+```

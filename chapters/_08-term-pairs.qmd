@@ -1,0 +1,117 @@
+```{=html}
+<style>
+.w083-pairs { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w083-pairs .w083-cols { display: flex; gap: 10px; margin-bottom: 0.75rem; align-items: stretch; }
+.w083-pairs .w083-col { display: flex; flex-direction: column; gap: 6px; }
+.w083-pairs .w083-terms { flex: 0 0 36%; }
+.w083-pairs .w083-defs { flex: 1 1 0; }
+.w083-pairs .w083-card {
+  padding: 6px 10px; border-radius: 8px; text-align: left; font: inherit;
+  border: 1.5px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  cursor: pointer; user-select: none; flex: 1 1 auto;
+}
+.w083-pairs .w083-terms .w083-card { font-weight: 600; }
+.w083-pairs .w083-card.w083-sel { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w083-pairs .w083-card.w083-done { opacity: 0.5; cursor: default; border-style: dashed; }
+.w083-pairs .w083-card.w083-right { border: 2px solid #2e7d32; border-style: solid; }
+.w083-pairs .w083-card.w083-flash { border: 2px solid #d81e2e; }
+.w083-pairs .w083-controls { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; }
+.w083-pairs .w083-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w083-pairs .w083-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w083-pairs .w083-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w083-pairs .w083-msg.ok { color: #2e7d32; }
+.w083-pairs .w083-msg.bad { color: #d81e2e; }
+</style>
+<div class="iw w083-pairs" id="w083">
+  <div class="w083-cols">
+    <div class="w083-col w083-terms" aria-label="terms"></div>
+    <div class="w083-col w083-defs" aria-label="descriptions"></div>
+  </div>
+  <div class="w083-controls">
+    <button type="button" class="w083-check iw-check">Check</button>
+    <button type="button" class="w083-reset iw-reset">Reset</button>
+    <button type="button" class="w083-solution iw-solution">Show solution</button>
+    <span class="w083-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w083-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w083');
+  const termsCol = root.querySelector('.w083-terms');
+  const defsCol = root.querySelector('.w083-defs');
+  const msg = root.querySelector('.w083-msg');
+  const PAIRS = [
+    ['Threat modelling', 'A structured process to identify, assess and remediate threats before the system is built'],
+    ['Canary deployment', 'Sends the new version to a small fraction of users first and observes before rolling on'],
+    ['Blue/green deployment', 'Keeps two environments so that a release can be switched over, and back, instantly'],
+    ['Infrastructure as code', 'A machine-readable specification that provisions the environment automatically, replacing hand-configuration'],
+    ['Supply-chain risk', 'A vulnerability in a dependency one did not write is still a vulnerability in one’s application']
+  ];
+  const DEF_ORDER = [2, 4, 0, 3, 1]; // scrambled display order of descriptions
+  let sel = null, matched = 0;
+  function clearMsg() { msg.textContent = ''; msg.className = 'w083-msg iw-msg'; }
+  function unselect() { if (sel) sel.classList.remove('w083-sel'); sel = null; }
+  function make(text, k, kind) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'w083-card';
+    b.textContent = text; b.dataset.k = k; b.dataset.kind = kind;
+    b.addEventListener('click', () => {
+      if (b.classList.contains('w083-done')) return;
+      clearMsg();
+      if (sel === b) { unselect(); return; }
+      if (sel && sel.dataset.kind !== kind) {
+        const a = sel; unselect();
+        if (a.dataset.k === b.dataset.k) {
+          a.classList.add('w083-done'); b.classList.add('w083-done'); matched++;
+        } else {
+          [a, b].forEach(c => { c.classList.add('w083-flash');
+            setTimeout(() => c.classList.remove('w083-flash'), 600); });
+        }
+        return;
+      }
+      unselect(); sel = b; b.classList.add('w083-sel');
+    });
+    return b;
+  }
+  PAIRS.forEach((p, i) => termsCol.appendChild(make(p[0], i, 'term')));
+  DEF_ORDER.forEach(i => defsCol.appendChild(make(PAIRS[i][1], i, 'def')));
+  const defs0 = [...defsCol.children];
+  function resetAll() {
+    unselect(); matched = 0;
+    root.querySelectorAll('.w083-card').forEach(c =>
+      c.classList.remove('w083-done', 'w083-right', 'w083-flash'));
+    defs0.forEach(c => defsCol.appendChild(c));
+    clearMsg();
+  }
+  root.querySelector('.w083-check').addEventListener('click', () => {
+    clearMsg();
+    if (matched === PAIRS.length) {
+      root.querySelectorAll('.w083-done').forEach(c => c.classList.add('w083-right'));
+      msg.textContent = '✓ All pairs matched — the vocabulary of the pipeline is in place.';
+      msg.classList.add('ok');
+    } else if (matched === 0) {
+      msg.textContent = 'No pairs matched yet — click a term, then the description that fits it.';
+    } else {
+      msg.textContent = 'Keep going — ' + matched + ' of ' + PAIRS.length + ' pairs matched (a wrong attempt flashes red).';
+    }
+  });
+  root.querySelector('.w083-reset').addEventListener('click', resetAll);
+  root.querySelector('.w083-solution').addEventListener('click', () => {
+    resetAll();
+    PAIRS.forEach((p, i) => {
+      const d = defs0.find(c => +c.dataset.k === i);
+      defsCol.appendChild(d);
+    });
+    root.querySelectorAll('.w083-card').forEach(c => c.classList.add('w083-done', 'w083-right'));
+    matched = PAIRS.length;
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.classList.add('ok');
+  });
+})();
+</script>
+```

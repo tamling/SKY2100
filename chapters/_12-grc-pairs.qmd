@@ -1,0 +1,155 @@
+```{=html}
+<style>
+.w123-dd { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w123-dd .w123-cols { display: grid; grid-template-columns: 190px 1fr; gap: 10px; margin-bottom: 0.75rem; }
+.w123-dd .w123-terms { display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
+.w123-dd .w123-term {
+  padding: 4px 10px; border-radius: 999px; cursor: pointer; user-select: none;
+  border: 1.5px solid #d81e2e; color: var(--bs-body-color, #222);
+  background: var(--bs-body-bg, #fff); font-weight: 600; text-align: center;
+  font-size: 0.85rem;
+}
+.w123-dd .w123-term.w123-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w123-dd .w123-defs { display: flex; flex-direction: column; gap: 8px; }
+.w123-dd .w123-def {
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  padding: 6px 8px; cursor: pointer; font-size: 0.85rem;
+}
+.w123-dd .w123-def.w123-picked { border-color: #d81e2e; border-style: solid; }
+.w123-dd .w123-def .w123-term { display: inline-block; margin-bottom: 4px; }
+.w123-dd .w123-done { border-color: #2e7d32 !important; border-style: solid !important; opacity: 0.55; cursor: default; }
+.w123-dd .w123-bad { border-color: #d81e2e !important; border-style: solid !important; box-shadow: 0 0 0 2px #d81e2e inset; }
+.w123-dd .w123-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w123-dd .w123-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w123-dd .w123-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w123-dd .w123-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w123-dd .w123-msg.ok { color: #2e7d32; }
+.w123-dd .w123-msg.bad { color: #d81e2e; }
+</style>
+<div class="w123-dd iw" id="w123-dd">
+  <div class="w123-cols">
+    <div class="w123-terms" aria-label="terms"></div>
+    <div class="w123-defs" aria-label="descriptions"></div>
+  </div>
+  <div class="w123-controls">
+    <button type="button" class="w123-check iw-check">Check</button>
+    <button type="button" class="w123-reset iw-reset">Reset</button>
+    <button type="button" class="w123-solution iw-solution">Show solution</button>
+    <span class="w123-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w123-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w123-dd');
+  const termsCol = root.querySelector('.w123-terms');
+  const defsCol = root.querySelector('.w123-defs');
+  const msg = root.querySelector('.w123-msg');
+  const PAIRS = [
+    { id: 'p0', term: 'Risk register',          def: 'a repository of identified risks, their severity, and the actions taken to manage each' },
+    { id: 'p1', term: 'Cloud register',         def: 'lists the providers and deployments the organisation depends on' },
+    { id: 'p2', term: 'Contract',               def: 'fixes the legal division of responsibility and thereby makes the shared-responsibility model binding' },
+    { id: 'p3', term: 'Compliance inheritance', def: 'the customer inherits a compliant provider’s control set for the infrastructure layer' },
+    { id: 'p4', term: 'Side channel',           def: 'leaks information between tenants sharing physical hardware through indirect signals' },
+    { id: 'p5', term: 'Back door',              def: 'a hidden means of access left in software or hardware' }
+  ];
+  const DEF_ORDER = ['p2', 'p4', 'p0', 'p5', 'p3', 'p1']; // fixed shuffled display order
+  let picked = null;
+  const termEls = {}, defEls = {};
+
+  function clearPick() {
+    if (picked) picked.el.classList.remove('w123-picked');
+    picked = null;
+  }
+  function clearMsg() { msg.textContent = ''; msg.className = 'w123-msg iw-msg'; }
+  function flashBad(a, b) {
+    [a, b].forEach(el => el.classList.add('w123-bad'));
+    setTimeout(() => [a, b].forEach(el => el.classList.remove('w123-bad')), 600);
+  }
+  function lock(id) {
+    const t = termEls[id], d = defEls[id];
+    d.insertBefore(t, d.firstChild);
+    t.classList.add('w123-done');
+    d.classList.add('w123-done');
+  }
+  function attempt(termEl, defEl) {
+    clearPick(); clearMsg();
+    if (termEl.dataset.id === defEl.dataset.id) { lock(termEl.dataset.id); }
+    else { flashBad(termEl, defEl); }
+  }
+  function pick(kind, el) {
+    if (el.classList.contains('w123-done')) return;
+    if (picked && picked.el === el) { clearPick(); return; }
+    if (picked && picked.kind !== kind) {
+      const t = kind === 'term' ? el : picked.el;
+      const d = kind === 'def' ? el : picked.el;
+      attempt(t, d);
+      return;
+    }
+    clearPick();
+    picked = { kind: kind, el: el };
+    el.classList.add('w123-picked');
+  }
+  PAIRS.forEach(p => {
+    const t = document.createElement('span');
+    t.className = 'w123-term';
+    t.textContent = p.term;
+    t.dataset.id = p.id;
+    t.draggable = true;
+    t.addEventListener('click', e => { e.stopPropagation(); pick('term', t); });
+    t.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', p.id));
+    termEls[p.id] = t;
+  });
+  DEF_ORDER.forEach(id => {
+    const p = PAIRS.find(x => x.id === id);
+    const d = document.createElement('div');
+    d.className = 'w123-def';
+    d.textContent = p.def;
+    d.dataset.id = p.id;
+    d.addEventListener('click', () => pick('def', d));
+    d.addEventListener('dragover', e => e.preventDefault());
+    d.addEventListener('drop', e => {
+      e.preventDefault();
+      if (d.classList.contains('w123-done')) return;
+      const t = termEls[e.dataTransfer.getData('text/plain')];
+      if (t && !t.classList.contains('w123-done')) attempt(t, d);
+    });
+    defEls[p.id] = d;
+    defsCol.appendChild(d);
+  });
+  PAIRS.forEach(p => termsCol.appendChild(termEls[p.id]));
+
+  root.querySelector('.w123-check').addEventListener('click', () => {
+    const done = root.querySelectorAll('.w123-def.w123-done').length;
+    if (done === PAIRS.length) {
+      msg.textContent = '✓ All ' + PAIRS.length + ' pairs matched — the GRC toolbox is sorted.';
+      msg.className = 'w123-msg iw-msg ok';
+    } else if (done === 0) {
+      msg.textContent = 'No pairs matched yet — click a term, then its description (a wrong pair flashes red).';
+      msg.className = 'w123-msg iw-msg';
+    } else {
+      msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched — keep going.';
+      msg.className = 'w123-msg iw-msg';
+    }
+  });
+  root.querySelector('.w123-solution').addEventListener('click', () => {
+    clearPick();
+    PAIRS.forEach(p => lock(p.id));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w123-msg iw-msg ok';
+  });
+  root.querySelector('.w123-reset').addEventListener('click', () => {
+    clearPick(); clearMsg();
+    PAIRS.forEach(p => {
+      termEls[p.id].classList.remove('w123-done');
+      defEls[p.id].classList.remove('w123-done');
+      termsCol.appendChild(termEls[p.id]);
+    });
+  });
+})();
+</script>
+```

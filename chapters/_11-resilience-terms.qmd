@@ -1,0 +1,153 @@
+```{=html}
+<style>
+.w114-dd { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w114-dd .w114-cols { display: grid; grid-template-columns: 170px 1fr; gap: 10px; margin-bottom: 0.75rem; }
+.w114-dd .w114-terms { display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
+.w114-dd .w114-term {
+  padding: 4px 10px; border-radius: 999px; cursor: pointer; user-select: none;
+  border: 1.5px solid #d81e2e; color: var(--bs-body-color, #222);
+  background: var(--bs-body-bg, #fff); font-weight: 600; text-align: center;
+}
+.w114-dd .w114-term.w114-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w114-dd .w114-defs { display: flex; flex-direction: column; gap: 8px; }
+.w114-dd .w114-def {
+  border: 2px dashed var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  padding: 6px 8px; cursor: pointer; font-size: 0.85rem;
+}
+.w114-dd .w114-def.w114-picked { border-color: #d81e2e; border-style: solid; }
+.w114-dd .w114-def .w114-term { display: inline-block; margin-bottom: 4px; }
+.w114-dd .w114-done { border-color: #2e7d32 !important; border-style: solid !important; opacity: 0.55; cursor: default; }
+.w114-dd .w114-bad { border-color: #d81e2e !important; border-style: solid !important; box-shadow: 0 0 0 2px #d81e2e inset; }
+.w114-dd .w114-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w114-dd .w114-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w114-dd .w114-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w114-dd .w114-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w114-dd .w114-msg.ok { color: #2e7d32; }
+.w114-dd .w114-msg.bad { color: #d81e2e; }
+</style>
+<div class="w114-dd iw" id="w114-dd">
+  <div class="w114-cols">
+    <div class="w114-terms" aria-label="terms"></div>
+    <div class="w114-defs" aria-label="descriptions"></div>
+  </div>
+  <div class="w114-controls">
+    <button type="button" class="w114-check iw-check">Check</button>
+    <button type="button" class="w114-reset iw-reset">Reset</button>
+    <button type="button" class="w114-solution iw-solution">Show solution</button>
+    <span class="w114-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w114-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w114-dd');
+  const termsCol = root.querySelector('.w114-terms');
+  const defsCol = root.querySelector('.w114-defs');
+  const msg = root.querySelector('.w114-msg');
+  const PAIRS = [
+    { id: 'p0', term: 'Blast radius',      def: 'how much one failure takes down — the design goal at every level is to keep it small' },
+    { id: 'p1', term: 'Snapshot',          def: 'the Session 2 rollback point that must not be mistaken for the backup' },
+    { id: 'p2', term: 'Durability',        def: 'a figure cloud object storage achieves by keeping several geographically separated replicas of every object' },
+    { id: 'p3', term: 'Restoration test',  def: 'the regularly scheduled exercise without which a backup is not known to work' },
+    { id: 'p4', term: 'Immutable image',   def: 'lets a system survive the loss of an instance by replacing it' }
+  ];
+  const DEF_ORDER = ['p3', 'p1', 'p4', 'p0', 'p2']; // fixed shuffled display order
+  let picked = null; // {kind: 'term'|'def', el}
+  const termEls = {}, defEls = {};
+
+  function clearPick() {
+    if (picked) picked.el.classList.remove('w114-picked');
+    picked = null;
+  }
+  function clearMsg() { msg.textContent = ''; msg.className = 'w114-msg iw-msg'; }
+  function flashBad(a, b) {
+    [a, b].forEach(el => el.classList.add('w114-bad'));
+    setTimeout(() => [a, b].forEach(el => el.classList.remove('w114-bad')), 600);
+  }
+  function lock(id) {
+    const t = termEls[id], d = defEls[id];
+    d.insertBefore(t, d.firstChild);
+    t.classList.add('w114-done');
+    d.classList.add('w114-done');
+  }
+  function attempt(termEl, defEl) {
+    clearPick(); clearMsg();
+    if (termEl.dataset.id === defEl.dataset.id) { lock(termEl.dataset.id); }
+    else { flashBad(termEl, defEl); }
+  }
+  function pick(kind, el) {
+    if (el.classList.contains('w114-done')) return;
+    if (picked && picked.el === el) { clearPick(); return; }
+    if (picked && picked.kind !== kind) {
+      const t = kind === 'term' ? el : picked.el;
+      const d = kind === 'def' ? el : picked.el;
+      attempt(t, d);
+      return;
+    }
+    clearPick();
+    picked = { kind: kind, el: el };
+    el.classList.add('w114-picked');
+  }
+  PAIRS.forEach(p => {
+    const t = document.createElement('span');
+    t.className = 'w114-term';
+    t.textContent = p.term;
+    t.dataset.id = p.id;
+    t.draggable = true;
+    t.addEventListener('click', e => { e.stopPropagation(); pick('term', t); });
+    t.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', p.id));
+    termEls[p.id] = t;
+  });
+  DEF_ORDER.forEach(id => {
+    const p = PAIRS.find(x => x.id === id);
+    const d = document.createElement('div');
+    d.className = 'w114-def';
+    d.textContent = p.def;
+    d.dataset.id = p.id;
+    d.addEventListener('click', () => pick('def', d));
+    d.addEventListener('dragover', e => e.preventDefault());
+    d.addEventListener('drop', e => {
+      e.preventDefault();
+      if (d.classList.contains('w114-done')) return;
+      const t = termEls[e.dataTransfer.getData('text/plain')];
+      if (t && !t.classList.contains('w114-done')) attempt(t, d);
+    });
+    defEls[p.id] = d;
+    defsCol.appendChild(d);
+  });
+  PAIRS.forEach(p => termsCol.appendChild(termEls[p.id]));
+
+  root.querySelector('.w114-check').addEventListener('click', () => {
+    const done = root.querySelectorAll('.w114-def.w114-done').length;
+    if (done === PAIRS.length) {
+      msg.textContent = '✓ All ' + PAIRS.length + ' pairs matched — the resilience vocabulary is in place.';
+      msg.className = 'w114-msg iw-msg ok';
+    } else if (done === 0) {
+      msg.textContent = 'No pairs matched yet — click a term, then the description it belongs to (a wrong pair flashes red).';
+      msg.className = 'w114-msg iw-msg';
+    } else {
+      msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched — keep going.';
+      msg.className = 'w114-msg iw-msg';
+    }
+  });
+  root.querySelector('.w114-solution').addEventListener('click', () => {
+    clearPick();
+    PAIRS.forEach(p => lock(p.id));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w114-msg iw-msg ok';
+  });
+  root.querySelector('.w114-reset').addEventListener('click', () => {
+    clearPick(); clearMsg();
+    PAIRS.forEach(p => {
+      termEls[p.id].classList.remove('w114-done');
+      defEls[p.id].classList.remove('w114-done');
+      termsCol.appendChild(termEls[p.id]);
+    });
+  });
+})();
+</script>
+```

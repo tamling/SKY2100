@@ -1,0 +1,93 @@
+```{=html}
+<style>
+.w116-dd { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w116-dd .w116-q {
+  border: 1.5px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  padding: 10px; margin-bottom: 0.75rem;
+}
+.w116-dd .w116-inputrow { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+.w116-dd input.w116-in {
+  flex: 1; min-width: 200px; padding: 5px 8px; border-radius: 6px;
+  border: 1.5px solid #d81e2e; background: var(--bs-body-bg, #fff);
+  color: var(--bs-body-color, #222); font-weight: 600;
+}
+.w116-dd input.w116-in.w116-right { border-color: #2e7d32; border-width: 2px; }
+.w116-dd input.w116-in.w116-wrong { border-color: #d81e2e; border-width: 2px; box-shadow: 0 0 0 1px #d81e2e inset; }
+.w116-dd .w116-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w116-dd .w116-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w116-dd .w116-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w116-dd .w116-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w116-dd .w116-msg.ok { color: #2e7d32; }
+.w116-dd .w116-msg.bad { color: #d81e2e; }
+</style>
+<div class="w116-dd iw" id="w116-dd">
+  <div class="w116-q">
+    In the data centre, a failed disk in the RAID array is replaced while the
+    array continues to operate, so the storage system never stops serving.
+    What is this practice called?
+    <div class="w116-inputrow">
+      <input type="text" class="w116-in" aria-label="your answer" autocomplete="off" spellcheck="false" placeholder="type the term…">
+    </div>
+  </div>
+  <div class="w116-controls">
+    <button type="button" class="w116-check iw-check">Check</button>
+    <button type="button" class="w116-reset iw-reset">Reset</button>
+    <button type="button" class="w116-solution iw-solution">Show solution</button>
+    <span class="w116-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w116-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w116-dd');
+  const input = root.querySelector('.w116-in');
+  const msg = root.querySelector('.w116-msg');
+  // accepted if the normalised answer contains any of these
+  const ACCEPT = ['hotswap', 'hotswapping'];
+  const SOLUTION = 'hot swapping';
+
+  function norm(s) { return s.toLowerCase().replace(/[^a-z0-9]/g, ''); }
+  function clearMarks() {
+    input.classList.remove('w116-right', 'w116-wrong');
+    msg.textContent = ''; msg.className = 'w116-msg iw-msg';
+  }
+  input.addEventListener('input', clearMarks);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+
+  function check() {
+    input.classList.remove('w116-right', 'w116-wrong');
+    const v = norm(input.value);
+    if (v === '') {
+      msg.textContent = 'Type an answer first — it is a two-word term from this chapter.';
+      msg.className = 'w116-msg iw-msg';
+      return;
+    }
+    if (ACCEPT.some(a => v.includes(a))) {
+      input.classList.add('w116-right');
+      msg.textContent = '✓ Correct — that is the term Comer uses for replacing a disk in a running array.';
+      msg.className = 'w116-msg iw-msg ok';
+    } else {
+      input.classList.add('w116-wrong');
+      msg.textContent = '✗ Not the term — re-read the section on the redundancy the provider builds in.';
+      msg.className = 'w116-msg iw-msg bad';
+    }
+  }
+  root.querySelector('.w116-check').addEventListener('click', check);
+  root.querySelector('.w116-solution').addEventListener('click', () => {
+    input.value = SOLUTION;
+    input.classList.remove('w116-wrong');
+    input.classList.add('w116-right');
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w116-msg iw-msg ok';
+  });
+  root.querySelector('.w116-reset').addEventListener('click', () => {
+    input.value = '';
+    clearMarks();
+  });
+})();
+</script>
+```

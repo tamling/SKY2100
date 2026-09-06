@@ -1,0 +1,98 @@
+```{=html}
+<style>
+.w113-dd { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w113-dd .w113-rows { margin-bottom: 0.75rem; }
+.w113-dd .w113-row {
+  display: flex; align-items: center; gap: 10px; justify-content: flex-start;
+  border: 1.5px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  padding: 8px 10px; margin-bottom: 6px;
+}
+.w113-dd .w113-row.w113-right { border-color: #2e7d32; border-width: 2px; }
+.w113-dd .w113-row.w113-wrong { border-color: #d81e2e; border-width: 2px; }
+.w113-dd .w113-row input {
+  width: 4.5em; padding: 4px 6px; border-radius: 6px; text-align: center;
+  border: 1.5px solid #d81e2e; font-weight: 700;
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+}
+.w113-dd .w113-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w113-dd .w113-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w113-dd .w113-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w113-dd .w113-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w113-dd .w113-msg.ok { color: #2e7d32; }
+.w113-dd .w113-msg.bad { color: #d81e2e; }
+</style>
+<div class="w113-dd iw" id="w113-dd">
+  <div class="w113-rows">
+    <div class="w113-row" data-answer="3">
+      <input type="number" inputmode="numeric" min="0" max="99" aria-label="number of copies">
+      <span>copies of important data …</span>
+    </div>
+    <div class="w113-row" data-answer="2">
+      <input type="number" inputmode="numeric" min="0" max="99" aria-label="number of kinds of media">
+      <span>… on this many different kinds of media …</span>
+    </div>
+    <div class="w113-row" data-answer="1">
+      <input type="number" inputmode="numeric" min="0" max="99" aria-label="number of off-site copies">
+      <span>… with this many copies off-site (or in a separate account or region)</span>
+    </div>
+  </div>
+  <div class="w113-controls">
+    <button type="button" class="w113-check iw-check">Check</button>
+    <button type="button" class="w113-reset iw-reset">Reset</button>
+    <button type="button" class="w113-solution iw-solution">Show solution</button>
+    <span class="w113-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w113-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w113-dd');
+  const rows = [...root.querySelectorAll('.w113-row')];
+  const msg = root.querySelector('.w113-msg');
+
+  function clearMarks() {
+    rows.forEach(r => r.classList.remove('w113-right', 'w113-wrong'));
+    msg.textContent = ''; msg.className = 'w113-msg iw-msg';
+  }
+  rows.forEach(r => r.querySelector('input').addEventListener('input', clearMarks));
+
+  root.querySelector('.w113-check').addEventListener('click', () => {
+    let right = 0, empty = 0;
+    rows.forEach(r => {
+      r.classList.remove('w113-right', 'w113-wrong');
+      const v = r.querySelector('input').value.trim();
+      if (v === '') { empty++; return; }
+      if (parseInt(v, 10) === parseInt(r.dataset.answer, 10)) { r.classList.add('w113-right'); right++; }
+      else { r.classList.add('w113-wrong'); }
+    });
+    if (right === rows.length) {
+      msg.textContent = '✓ All correct — that is the rule, and the off-site copy is the one ransomware cannot reach.';
+      msg.className = 'w113-msg iw-msg ok';
+    } else if (empty > 0 && right + empty === rows.length) {
+      msg.textContent = 'Keep going — ' + empty + ' number(s) still missing.';
+      msg.className = 'w113-msg iw-msg';
+    } else {
+      msg.textContent = '✗ Not yet — the red lines hold the wrong number. The rule’s name is a hint.';
+      msg.className = 'w113-msg iw-msg bad';
+    }
+  });
+  root.querySelector('.w113-solution').addEventListener('click', () => {
+    rows.forEach(r => {
+      r.querySelector('input').value = r.dataset.answer;
+      r.classList.remove('w113-wrong');
+      r.classList.add('w113-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w113-msg iw-msg ok';
+  });
+  root.querySelector('.w113-reset').addEventListener('click', () => {
+    rows.forEach(r => { r.querySelector('input').value = ''; });
+    clearMarks();
+  });
+})();
+</script>
+```

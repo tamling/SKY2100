@@ -411,6 +411,34 @@ questions. Then press **Check**.
 {{< include _02-baseline-commands.qmd >}}
 :::
 
+::: {#exr-02-traffic-truefalse}
+## Traffic and topology, true or false
+Judge each statement about north–south and east–west traffic and the
+leaf–spine design of @sec-02-traffic-geography (compare @fig-nsew): click
+**True** or **False** on every row, then press **Check**.
+
+{{< include _02-traffic-truefalse.qmd >}}
+:::
+
+::: {#exr-02-geography-pairs}
+## Physical and administrative geography, matched
+Match each term of @def-regions and of the Azure management hierarchy to
+its description: click a term and then its description (or drag the term
+onto it). A correct pair locks and greys out; a wrong attempt flashes red.
+Then press **Check**.
+
+{{< include _02-geography-pairs.qmd >}}
+:::
+
+::: {#exr-02-live-migration-order}
+## Live migration, step by step
+Arrange the four steps of live migration (@exm-migration) into the order in
+which the hypervisor performs them. Drag a step to a new position, or click
+its ▲/▼ buttons to move it. Then press **Check**.
+
+{{< include _02-live-migration.qmd >}}
+:::
+
 ## Self-check {#sec-02-self-check}
 
 **Q1** *(tests @sec-02-traffic-geography · basic)*

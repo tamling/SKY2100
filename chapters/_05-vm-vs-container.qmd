@@ -32,6 +32,7 @@
 .w051-dd .w051-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w051-dd .w051-msg.ok { color: #2e7d32; }
 .w051-dd .w051-msg.bad { color: #d81e2e; }
+.w051-dd .w051-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
 </style>
 <div class="w051-dd iw" id="w051-dd">
   <div class="w051-pool" aria-label="cards to sort"></div>
@@ -42,6 +43,8 @@
   <div class="w051-controls">
     <button type="button" class="w051-check iw-check">Check</button>
     <button type="button" class="w051-reset iw-reset">Reset</button>
+    <button type="button" class="w051-solution iw-solution">Show solution</button>
+    <span class="w051-note">(no fun if you click it right away)</span>
   </div>
   <div class="w051-msg iw-msg" role="status"></div>
 </div>
@@ -123,6 +126,16 @@
       msg.textContent = '\u2717 Not yet \u2014 the red cards are in the wrong box. Send them back and try again.';
       msg.className = 'w051-msg iw-msg bad';
     }
+  });
+  root.querySelector('.w051-solution').addEventListener('click', () => {
+    unpick();
+    chips().forEach(c => {
+      const bucket = buckets.find(b => b.dataset.bucket === c.dataset.answer);
+      if (bucket) place(bucket, c);
+    });
+    chips().forEach(c => c.classList.add('w051-right'));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w051-msg iw-msg ok';
   });
   root.querySelector('.w051-reset').addEventListener('click', () => {
     chips().sort((a, b) => Number(a.dataset.key) - Number(b.dataset.key))

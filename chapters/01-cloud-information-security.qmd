@@ -362,6 +362,45 @@ then press **Check**.
 {{< include _cia-widget.qmd >}}
 :::
 
+::: {#exr-01-shared-resp-sort}
+## Shared responsibility in IaaS, interactive
+Sort the seven layers of @tbl-sharedresp into the side that secures them
+when the service model is IaaS, as in the laboratory of
+@exm-nextcloud-servicemodels. Drag each layer into the matching box, or
+click a layer and then click a box (click a placed layer to send it back).
+Then press **Check**.
+
+{{< include _01-shared-resp.qmd >}}
+:::
+
+::: {#exr-01-characteristics-pairs}
+## The five essential characteristics, matched
+Match each of NIST's five essential characteristics of cloud computing
+(@sec-01-definition-cloud-computing, @def-cloud) to its description: click a
+characteristic and then its description (or drag the characteristic onto
+it). A correct pair locks and greys out; a wrong attempt flashes red. Then
+press **Check**.
+
+{{< include _01-characteristics-pairs.qmd >}}
+:::
+
+::: {#exr-01-strava-truefalse}
+## The Strava case and the cloud factors, true or false
+Judge each statement about the Strava heat map (@exm-strava) and Comer's
+six factors of @sec-01-why-cloud-security: click **True** or **False** on
+every row, then press **Check**.
+
+{{< include _01-strava-truefalse.qmd >}}
+:::
+
+::: {#exr-01-trc-vocabulary}
+## Threat, risk, control — the vocabulary
+Complete each sentence of @def-trc with the missing term of this chapter's
+vocabulary — one word per field. Then press **Check**.
+
+{{< include _01-trc-input.qmd >}}
+:::
+
 ## Self-check {#sec-01-self-check}
 
 **Q1** *(tests @sec-01-definition-cloud-computing · basic)*

@@ -1,0 +1,153 @@
+```{=html}
+<style>
+.w063 { max-width: 620px; margin: 0 auto; font-size: 0.9rem; }
+.w063 .w063-cols { display: flex; gap: 10px; margin-bottom: 0.75rem; }
+.w063 .w063-col { flex: 1 1 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.w063 .w063-item {
+  position: relative; padding: 5px 8px; border-radius: 6px; cursor: pointer;
+  user-select: none; font-size: 0.85rem;
+  border: 1.5px solid var(--bs-border-color, #999);
+  color: var(--bs-body-color, #222); background: var(--bs-body-bg, #fff);
+}
+.w063 .w063-item.w063-term { font-weight: 700; text-align: center; border-color: #d81e2e; }
+.w063 .w063-item.w063-picked { outline: 3px solid #d81e2e; outline-offset: 2px; }
+.w063 .w063-item.w063-done { border: 2px solid #2e7d32; opacity: 0.55; cursor: default; }
+.w063 .w063-item.w063-flash { border: 2px solid #d81e2e; background: rgba(216, 30, 46, 0.15); }
+.w063 .w063-badge {
+  position: absolute; top: -9px; right: -6px; background: #2e7d32; color: #fff;
+  border-radius: 999px; font-size: 0.7rem; font-weight: 700; padding: 0 6px;
+}
+.w063 .w063-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w063 .w063-controls button {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w063 .w063-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w063 .w063-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w063 .w063-msg.ok { color: #2e7d32; }
+.w063 .w063-msg.bad { color: #d81e2e; }
+</style>
+<div class="w063 iw" id="w063">
+  <div class="w063-cols">
+    <div class="w063-col w063-terms" aria-label="terms"></div>
+    <div class="w063-col w063-defs" aria-label="descriptions"></div>
+  </div>
+  <div class="w063-controls">
+    <button type="button" class="w063-check iw-check">Check</button>
+    <button type="button" class="w063-reset iw-reset">Reset</button>
+    <button type="button" class="w063-solution iw-solution">Show solution</button>
+    <span class="w063-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w063-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w063');
+  const termCol = root.querySelector('.w063-terms');
+  const defCol = root.querySelector('.w063-defs');
+  const msg = root.querySelector('.w063-msg');
+  const PAIRS = [
+    ['Symmetric encryption', 'One shared secret key both encrypts and decrypts — fast, suits bulk data'],
+    ['Asymmetric encryption', 'Each party has a key pair; what one key locks only the other unlocks'],
+    ['Digital certificate', 'Binds a public key to an identity (a domain name), signed by an authority both parties trust'],
+    ['PKI', 'The system of authorities, certificates and trust relationships at Internet scale'],
+    ['Tokenisation', 'Replaces a sensitive value with an unrelated random token; the mapping is kept in a secure store'],
+    ['Ciphertext', 'What an eavesdropper sees: unreadable without the right key']
+  ];
+  const RIGHT = [4, 1, 5, 0, 2, 3]; // fixed scrambled order of definitions (none aligned)
+  let picked = null;
+
+  function items() { return [...root.querySelectorAll('.w063-item')]; }
+  function unpick() {
+    if (picked) picked.classList.remove('w063-picked');
+    picked = null;
+  }
+  function clearMsg() { msg.textContent = ''; msg.className = 'w063-msg iw-msg'; }
+  function badge(el) {
+    const b = document.createElement('span');
+    b.className = 'w063-badge';
+    b.textContent = String(Number(el.dataset.k) + 1);
+    el.appendChild(b);
+  }
+  function lock(a, b) {
+    [a, b].forEach(el => { el.classList.add('w063-done'); el.draggable = false; badge(el); });
+  }
+  function attempt(a, b) {
+    unpick(); clearMsg();
+    if (a.dataset.k === b.dataset.k) { lock(a, b); return; }
+    [a, b].forEach(el => {
+      el.classList.add('w063-flash');
+      setTimeout(() => el.classList.remove('w063-flash'), 650);
+    });
+  }
+  function sideOf(el) { return el.classList.contains('w063-term') ? 't' : 'd'; }
+  function makeItem(text, k, isTerm) {
+    const el = document.createElement('div');
+    el.className = 'w063-item' + (isTerm ? ' w063-term' : ' w063-def');
+    el.textContent = text;
+    el.dataset.k = String(k);
+    el.draggable = true;
+    el.addEventListener('click', () => {
+      if (el.classList.contains('w063-done')) return;
+      if (picked === el) { unpick(); return; }
+      if (picked && sideOf(picked) !== sideOf(el)) { attempt(picked, el); return; }
+      unpick(); picked = el; el.classList.add('w063-picked');
+    });
+    el.addEventListener('dragstart', e => {
+      if (el.classList.contains('w063-done')) { e.preventDefault(); return; }
+      unpick();
+      e.dataTransfer.setData('text/plain', sideOf(el) + ':' + el.dataset.k);
+    });
+    el.addEventListener('dragover', e => e.preventDefault());
+    el.addEventListener('drop', e => {
+      e.preventDefault(); e.stopPropagation();
+      if (el.classList.contains('w063-done')) return;
+      const [s, k] = (e.dataTransfer.getData('text/plain') || '').split(':');
+      if (!s || s === sideOf(el)) return;
+      const other = root.querySelector('.w063-item.w063-' + (s === 't' ? 'term' : 'def') + '[data-k="' + k + '"]');
+      if (other && !other.classList.contains('w063-done')) attempt(other, el);
+    });
+    return el;
+  }
+  function matchedCount() {
+    return root.querySelectorAll('.w063-term.w063-done').length;
+  }
+  root.querySelector('.w063-check').addEventListener('click', () => {
+    unpick();
+    const n = matchedCount();
+    if (n === PAIRS.length) {
+      msg.textContent = '✓ All ' + PAIRS.length + ' pairs matched — the vocabulary TLS is built from.';
+      msg.className = 'w063-msg iw-msg ok';
+    } else {
+      msg.textContent = n + ' of ' + PAIRS.length + ' pairs matched — keep going (a wrong attempt flashes red).';
+      msg.className = 'w063-msg iw-msg';
+    }
+  });
+  function resetAll() {
+    unpick();
+    items().forEach(el => {
+      el.classList.remove('w063-done', 'w063-flash');
+      el.draggable = true;
+      const b = el.querySelector('.w063-badge');
+      if (b) b.remove();
+    });
+    RIGHT.forEach(k => defCol.appendChild(defCol.querySelector('.w063-def[data-k="' + k + '"]')));
+    clearMsg();
+  }
+  root.querySelector('.w063-reset').addEventListener('click', resetAll);
+  root.querySelector('.w063-solution').addEventListener('click', () => {
+    resetAll();
+    PAIRS.forEach((p, k) => {
+      const t = termCol.querySelector('.w063-term[data-k="' + k + '"]');
+      const d = defCol.querySelector('.w063-def[data-k="' + k + '"]');
+      defCol.appendChild(d);
+      lock(t, d);
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w063-msg iw-msg ok';
+  });
+  PAIRS.forEach((p, k) => termCol.appendChild(makeItem(p[0], k, true)));
+  RIGHT.forEach(k => defCol.appendChild(makeItem(PAIRS[k][1], k, false)));
+})();
+</script>
+```

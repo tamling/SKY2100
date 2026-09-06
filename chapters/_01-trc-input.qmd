@@ -1,0 +1,105 @@
+```{=html}
+<style>
+.w015 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w015 .w015-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 0.75rem; }
+.w015 .w015-row {
+  display: flex; align-items: center; gap: 10px; padding: 6px 8px;
+  border: 1px solid var(--bs-border-color, #ccc); border-radius: 6px;
+  background: var(--bs-body-bg, #fff);
+}
+.w015 .w015-q { flex: 1 1 auto; }
+.w015 .w015-in {
+  flex: 0 0 130px; padding: 3px 8px; border-radius: 6px;
+  border: 2px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222);
+  font-weight: 600; min-width: 0;
+}
+.w015 .w015-in.w015-right { border-color: #2e7d32; }
+.w015 .w015-in.w015-wrong { border-color: #d81e2e; }
+.w015 .w015-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w015 button.w015-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w015 .w015-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w015 .w015-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w015 .w015-msg.ok { color: #2e7d32; }
+.w015 .w015-msg.bad { color: #d81e2e; }
+</style>
+<div class="w015 iw" id="w015">
+  <div class="w015-rows" aria-label="fill in the missing term"></div>
+  <div class="w015-controls">
+    <button type="button" class="w015-btn w015-check iw-check">Check</button>
+    <button type="button" class="w015-btn w015-reset iw-reset">Reset</button>
+    <button type="button" class="w015-btn w015-sol iw-solution">Show solution</button>
+    <span class="w015-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w015-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w015');
+  const rowsBox = root.querySelector('.w015-rows');
+  const msg = root.querySelector('.w015-msg');
+  // [question, accepted answers (normalised), canonical answer to show]
+  const QUESTIONS = [
+    ['A potential cause of an incident — something that could happen to the detriment of confidentiality, integrity or availability — is called a …',
+      ['threat'], 'threat'],
+    ['The weight of such a cause, expressed as likelihood × impact, is called the …',
+      ['risk'], 'risk'],
+    ['A measure that reduces it, by making the cause less likely, its impact smaller, or both, is called a …',
+      ['control'], 'control'],
+    ['Risk is expressed as likelihood × …',
+      ['impact'], 'impact']
+  ];
+  function norm(s) {
+    s = s.toLowerCase().trim().replace(/[.!]+$/, '').trim();
+    s = s.replace(/^(a|an|the)\s+/, '');
+    return s;
+  }
+  function clearMarks() {
+    rowsBox.querySelectorAll('.w015-in').forEach(i => i.classList.remove('w015-right', 'w015-wrong'));
+    msg.textContent = ''; msg.className = 'w015-msg iw-msg';
+  }
+  QUESTIONS.forEach((q, i) => {
+    const row = document.createElement('div');
+    row.className = 'w015-row';
+    const lab = document.createElement('label');
+    lab.className = 'w015-q'; lab.textContent = q[0]; lab.htmlFor = 'w015-in' + i;
+    const inp = document.createElement('input');
+    inp.className = 'w015-in'; inp.type = 'text'; inp.id = 'w015-in' + i;
+    inp.autocomplete = 'off'; inp.spellcheck = false;
+    inp.dataset.k = i;
+    inp.addEventListener('input', clearMarks);
+    row.appendChild(lab); row.appendChild(inp);
+    rowsBox.appendChild(row);
+  });
+  root.querySelector('.w015-check').addEventListener('click', () => {
+    let right = 0, wrong = 0, empty = 0;
+    rowsBox.querySelectorAll('.w015-in').forEach(inp => {
+      inp.classList.remove('w015-right', 'w015-wrong');
+      const v = norm(inp.value);
+      if (!v) { empty++; return; }
+      if (QUESTIONS[Number(inp.dataset.k)][1].indexOf(v) !== -1) { inp.classList.add('w015-right'); right++; }
+      else { inp.classList.add('w015-wrong'); wrong++; }
+    });
+    if (right === QUESTIONS.length) { msg.textContent = '✓ All correct — name the threat, weigh the risk, choose the control.'; msg.className = 'w015-msg iw-msg ok'; }
+    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' field(s) still empty.'; msg.className = 'w015-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — the red fields hold the wrong term.'; msg.className = 'w015-msg iw-msg bad'; }
+  });
+  root.querySelector('.w015-reset').addEventListener('click', () => {
+    rowsBox.querySelectorAll('.w015-in').forEach(i => { i.value = ''; });
+    clearMarks();
+  });
+  root.querySelector('.w015-sol').addEventListener('click', () => {
+    clearMarks();
+    rowsBox.querySelectorAll('.w015-in').forEach(inp => {
+      inp.value = QUESTIONS[Number(inp.dataset.k)][2];
+      inp.classList.add('w015-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w015-msg iw-msg ok';
+  });
+})();
+</script>
+```

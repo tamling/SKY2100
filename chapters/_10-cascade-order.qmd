@@ -25,12 +25,15 @@
 .w101-order .w101-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w101-order .w101-msg.ok { color: #2e7d32; }
 .w101-order .w101-msg.bad { color: #d81e2e; }
+.w101-order .w101-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
 </style>
 <div class="iw w101-order" id="w101">
   <ol class="w101-list"></ol>
   <div class="w101-controls">
     <button type="button" class="w101-check iw-check">Check</button>
     <button type="button" class="w101-reset iw-reset">Reset</button>
+    <button type="button" class="w101-solution iw-solution">Show solution</button>
+    <span class="w101-note">(no fun if you click it right away)</span>
   </div>
   <div class="w101-msg iw-msg" role="status"></div>
 </div>
@@ -111,6 +114,14 @@
   });
   STEPS.forEach((s, i) => list.appendChild(makeItem(s[0], s[1], i + 1)));
   const order0 = [...list.children];
+  root.querySelector('.w101-solution').addEventListener('click', () => {
+    [...list.children].sort((a, b) => Number(a.dataset.pos) - Number(b.dataset.pos))
+      .forEach(li => list.appendChild(li));
+    clearMarks();
+    [...list.children].forEach(li => li.classList.add('w101-right'));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w101-msg iw-msg ok';
+  });
   root.querySelector('.w101-reset').addEventListener('click', () => {
     order0.forEach(li => list.appendChild(li));
     clearMarks();

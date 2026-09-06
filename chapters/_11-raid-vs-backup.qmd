@@ -32,6 +32,7 @@
 .w112-dd .w112-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w112-dd .w112-msg.ok { color: #2e7d32; }
 .w112-dd .w112-msg.bad { color: #d81e2e; }
+.w112-dd .w112-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
 </style>
 <div class="w112-dd iw" id="w112-dd">
   <div class="w112-pool" aria-label="situations to classify"></div>
@@ -42,6 +43,8 @@
   <div class="w112-controls">
     <button type="button" class="w112-check iw-check">Check</button>
     <button type="button" class="w112-reset iw-reset">Reset</button>
+    <button type="button" class="w112-solution iw-solution">Show solution</button>
+    <span class="w112-note">(no fun if you click it right away)</span>
   </div>
   <div class="w112-msg iw-msg" role="status"></div>
 </div>
@@ -116,6 +119,16 @@
     if (right === ITEMS.length) { msg.textContent = '✓ All correct — RAID buys uptime through hardware failure, backup recovers from everything else.'; msg.className = 'w112-msg iw-msg ok'; }
     else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + unplaced + ' situation(s) still unsorted.'; msg.className = 'w112-msg iw-msg'; }
     else { msg.textContent = '✗ Not yet — the red items sit in the wrong box. Remember: a mirror copies the damage exactly.'; msg.className = 'w112-msg iw-msg bad'; }
+  });
+  root.querySelector('.w112-solution').addEventListener('click', () => {
+    unpick();
+    root.querySelectorAll('.w112-item').forEach(c => {
+      const bucket = buckets.find(b => b.dataset.cat === c.dataset.cat);
+      if (bucket) place(bucket, c);
+    });
+    root.querySelectorAll('.w112-item').forEach(c => c.classList.add('w112-right'));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w112-msg iw-msg ok';
   });
   root.querySelector('.w112-reset').addEventListener('click', () => {
     root.querySelectorAll('.w112-item').forEach(i => pool.appendChild(i));

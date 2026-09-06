@@ -32,6 +32,7 @@
 .w102-sort .w102-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
 .w102-sort .w102-msg.ok { color: #2e7d32; }
 .w102-sort .w102-msg.bad { color: #d81e2e; }
+.w102-sort .w102-note { font-size: 0.78rem; font-style: italic; opacity: 0.7; }
 </style>
 <div class="iw w102-sort" id="w102">
   <div class="w102-buckets">
@@ -48,6 +49,8 @@
   <div class="w102-controls">
     <button type="button" class="w102-check iw-check">Check</button>
     <button type="button" class="w102-reset iw-reset">Reset</button>
+    <button type="button" class="w102-solution iw-solution">Show solution</button>
+    <span class="w102-note">(no fun if you click it right away)</span>
   </div>
   <div class="w102-msg iw-msg" role="status"></div>
 </div>
@@ -126,6 +129,16 @@
       msg.textContent = '✗ Not yet — ' + wrong + ' statement(s) sit in the wrong box (marked red).';
       msg.classList.add('bad');
     }
+  });
+  root.querySelector('.w102-solution').addEventListener('click', () => {
+    unpick();
+    root.querySelectorAll('.w102-chip').forEach(c => {
+      const bucket = buckets.find(b => b.dataset.cat === c.dataset.cat);
+      if (bucket) place(bucket, c);
+    });
+    root.querySelectorAll('.w102-chip').forEach(c => c.classList.add('w102-right'));
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w102-msg iw-msg ok';
   });
   root.querySelector('.w102-reset').addEventListener('click', () => {
     root.querySelectorAll('.w102-chip').forEach(c => pool.appendChild(c));

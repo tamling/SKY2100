@@ -1,0 +1,107 @@
+```{=html}
+<style>
+.w023 { max-width: 620px; margin: 0 auto; font-size: 0.92rem; }
+.w023 .w023-rows { display: flex; flex-direction: column; gap: 6px; margin-bottom: 0.75rem; }
+.w023 .w023-row {
+  display: flex; align-items: center; gap: 8px; padding: 5px 8px;
+  border: 2px solid var(--bs-border-color, #999); border-radius: 6px;
+  background: var(--bs-body-bg, #fff);
+}
+.w023 .w023-row.w023-right { border-color: #2e7d32; }
+.w023 .w023-row.w023-wrong { border-color: #d81e2e; }
+.w023 .w023-st { flex: 1 1 auto; }
+.w023 .w023-tf {
+  flex: 0 0 auto; padding: 2px 10px; border-radius: 999px; cursor: pointer;
+  border: 1.5px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); font-weight: 600;
+}
+.w023 .w023-tf.w023-sel { border-color: #d81e2e; outline: 2px solid #d81e2e; outline-offset: 1px; }
+.w023 .w023-controls { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.w023 button.w023-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid var(--bs-border-color, #999);
+  background: var(--bs-body-bg, #fff); color: var(--bs-body-color, #222); cursor: pointer;
+}
+.w023 .w023-note { font-size: 0.78rem; opacity: 0.7; font-style: italic; }
+.w023 .w023-msg { font-weight: 700; min-height: 1.4em; text-align: center; margin-top: 0.5rem; }
+.w023 .w023-msg.ok { color: #2e7d32; }
+.w023 .w023-msg.bad { color: #d81e2e; }
+</style>
+<div class="w023 iw" id="w023">
+  <div class="w023-rows" aria-label="statements to judge"></div>
+  <div class="w023-controls">
+    <button type="button" class="w023-btn w023-check iw-check">Check</button>
+    <button type="button" class="w023-btn w023-reset iw-reset">Reset</button>
+    <button type="button" class="w023-btn w023-sol iw-solution">Show solution</button>
+    <span class="w023-note">(no fun if you click it right away)</span>
+  </div>
+  <div class="w023-msg iw-msg" role="status"></div>
+</div>
+<script>
+(function () {
+  const root = document.getElementById('w023');
+  const rowsBox = root.querySelector('.w023-rows');
+  const msg = root.querySelector('.w023-msg');
+  const STATEMENTS = [
+    ['East–west traffic dominates in the cloud.', 't'],
+    ['North–south traffic runs between servers inside the data centre.', 'f'],
+    ['In a leaf–spine design, every leaf (top-of-rack) switch connects to every spine switch.', 't'],
+    ['A tree-shaped network forces east–west traffic through the links near the root, which carry the combined load of everything beneath them.', 't'],
+    ['Lateral movement is easy to see from outside the data centre, because most cloud traffic crosses its boundary.', 'f'],
+    ['Link aggregation bonds several physical links into one logical link.', 't']
+  ];
+  function clearMarks() {
+    [...rowsBox.children].forEach(r => r.classList.remove('w023-right', 'w023-wrong'));
+    msg.textContent = ''; msg.className = 'w023-msg iw-msg';
+  }
+  function makeRow(text, answer) {
+    const row = document.createElement('div');
+    row.className = 'w023-row';
+    row.dataset.a = answer;
+    const st = document.createElement('div');
+    st.className = 'w023-st'; st.textContent = text;
+    row.appendChild(st);
+    ['t', 'f'].forEach(v => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'w023-tf'; b.dataset.v = v;
+      b.textContent = v === 't' ? 'True' : 'False';
+      b.addEventListener('click', () => {
+        row.querySelectorAll('.w023-tf').forEach(x => x.classList.remove('w023-sel'));
+        b.classList.add('w023-sel');
+        clearMarks();
+      });
+      row.appendChild(b);
+    });
+    return row;
+  }
+  root.querySelector('.w023-check').addEventListener('click', () => {
+    let right = 0, wrong = 0, open = 0;
+    [...rowsBox.children].forEach(row => {
+      row.classList.remove('w023-right', 'w023-wrong');
+      const sel = row.querySelector('.w023-tf.w023-sel');
+      if (!sel) { open++; return; }
+      if (sel.dataset.v === row.dataset.a) { row.classList.add('w023-right'); right++; }
+      else { row.classList.add('w023-wrong'); wrong++; }
+    });
+    if (right === STATEMENTS.length) { msg.textContent = '✓ All correct — and where east–west dominates, lateral movement hides.'; msg.className = 'w023-msg iw-msg ok'; }
+    else if (open > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + open + ' statement(s) not yet judged.'; msg.className = 'w023-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — the red statements are judged wrongly' + (open ? ', and ' + open + ' still open' : '') + '.'; msg.className = 'w023-msg iw-msg bad'; }
+  });
+  root.querySelector('.w023-reset').addEventListener('click', () => {
+    rowsBox.querySelectorAll('.w023-tf').forEach(b => b.classList.remove('w023-sel'));
+    clearMarks();
+  });
+  root.querySelector('.w023-sol').addEventListener('click', () => {
+    [...rowsBox.children].forEach(row => {
+      row.classList.remove('w023-right', 'w023-wrong');
+      row.querySelectorAll('.w023-tf').forEach(b => {
+        b.classList.toggle('w023-sel', b.dataset.v === row.dataset.a);
+      });
+      row.classList.add('w023-right');
+    });
+    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.className = 'w023-msg iw-msg ok';
+  });
+  STATEMENTS.forEach(s => rowsBox.appendChild(makeRow(s[0], s[1])));
+})();
+</script>
+```
