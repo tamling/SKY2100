@@ -40,16 +40,16 @@
 <div class="w111-dd iw" id="w111-dd">
   <div class="w111-grid">
     <div class="w111-zone" data-answer="raid 1">
-      <div class="w111-desc">mirrors the data across disks —<br>a full copy survives a disk failure</div>
+      <div class="w111-desc">mirrors the data across disks -<br>a full copy survives a disk failure</div>
     </div>
     <div class="w111-zone" data-answer="raid 5">
-      <div class="w111-desc">distributed data with parity —<br>tolerates <b>one</b> failed disk, uses space<br>more efficiently than mirroring</div>
+      <div class="w111-desc">distributed data with parity -<br>tolerates <b>one</b> failed disk, uses space<br>more efficiently than mirroring</div>
     </div>
     <div class="w111-zone" data-answer="raid 0">
-      <div class="w111-desc">stripes data across disks for speed —<br>no redundancy at all; any one disk<br>failing destroys the whole</div>
+      <div class="w111-desc">stripes data across disks for speed -<br>no redundancy at all; any one disk<br>failing destroys the whole</div>
     </div>
     <div class="w111-zone" data-answer="raid 6">
-      <div class="w111-desc">distributed data with parity —<br>tolerates <b>two</b> failed disks</div>
+      <div class="w111-desc">distributed data with parity -<br>tolerates <b>two</b> failed disks</div>
     </div>
   </div>
   <div class="w111-pool" aria-label="RAID levels to place"></div>
@@ -62,9 +62,9 @@
   <div class="w111-msg iw-msg" role="status"></div>
   <div class="w111-expl iw-expl" hidden>
     RAID 0 only <em>stripes</em> data for speed, so any one disk failing destroys the
-    whole — it is the trap among the levels. RAID 1 <em>mirrors</em> a full copy,
+    whole - it is the trap among the levels. RAID 1 <em>mirrors</em> a full copy,
     while RAID 5 and RAID 6 distribute data with <em>parity</em>, tolerating one and
-    two failed disks respectively — see <a href="#def-raid">the definition of RAID</a>
+    two failed disks respectively - see <a href="#def-raid">the definition of RAID</a>
     and <a href="#sec-11-redundancy-raid">the section on redundancy and RAID</a>.
   </div>
 </div>
@@ -134,9 +134,9 @@
       if (chip.dataset.term === z.dataset.answer) { z.classList.add('w111-right'); right++; }
       else { z.classList.add('w111-wrong'); wrong++; }
     });
-    if (right === zones.length) { msg.textContent = '✓ All correct — the four RAID levels are matched to their properties.'; msg.className = 'w111-msg iw-msg ok'; }
-    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' description(s) still without a level.'; msg.className = 'w111-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — the red boxes hold the wrong level. Re-read the definition and try again.'; msg.className = 'w111-msg iw-msg bad'; }
+    if (right === zones.length) { msg.textContent = '✓ All correct - the four RAID levels are matched to their properties.'; msg.className = 'w111-msg iw-msg ok'; }
+    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going - ' + empty + ' description(s) still without a level.'; msg.className = 'w111-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - the red boxes hold the wrong level. Re-read the definition and try again.'; msg.className = 'w111-msg iw-msg bad'; }
   });
   root.querySelector('.w111-solution').addEventListener('click', () => {
     unpick();
@@ -146,7 +146,7 @@
     });
     zones.forEach(z => z.classList.add('w111-right'));
     root.querySelector('.w111-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w111-msg iw-msg ok';
   });
   root.querySelector('.w111-reset').addEventListener('click', () => {

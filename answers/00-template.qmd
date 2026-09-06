@@ -1,21 +1,21 @@
-# Answer key — Chapter NN: Name {.unnumbered}
+# Answer key - Chapter NN: Name {.unnumbered}
 
 <!-- Source-only: this directory is excluded from the render in _quarto.yml
      ("!answers/"). Never link these files from a chapter. Numbering must
      match the chapter's Self-check section 1:1. -->
 
-**Q1** *(tests @sec-NN-some-section · basic)* — **Correct: b.**
+**Q1** *(tests @sec-NN-some-section · basic)* - **Correct: b.**
 One sentence on why b is right and where the chapter says so.
 
-**Q2** *(tests @sec-NN-some-section · basic)* — **Accepted answers:**
+**Q2** *(tests @sec-NN-some-section · basic)* - **Accepted answers:**
 "…", "…" (any phrasing that names X and Y).
 
-**Q3** *(tests @sec-NN-other-section · applied)* — **Correct: d.**
+**Q3** *(tests @sec-NN-other-section · applied)* - **Correct: d.**
 Why the distractors are wrong, briefly.
 
-**Q4** *(tests @sec-NN-other-section · basic)* — ⚠️ flagged in the chapter:
+**Q4** *(tests @sec-NN-other-section · basic)* - ⚠️ flagged in the chapter:
 needs knowledge not in the script; resolve before export.
 
-**Q5 — applied scenario** *(tests @sec-NN-practice-box · applied)* —
+**Q5 - applied scenario** *(tests @sec-NN-practice-box · applied)* -
 **Model answer:** the key steps a full answer must contain, plus grading
 notes (what earns partial credit).

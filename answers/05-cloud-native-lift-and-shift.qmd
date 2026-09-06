@@ -1,21 +1,21 @@
-# Answer key — Chapter 05: Cloud-native versus lift-and-shift {.unnumbered}
+# Answer key - Chapter 05: Cloud-native versus lift-and-shift {.unnumbered}
 
 <!-- Source-only: this directory is excluded from the render in _quarto.yml
      ("!answers/"). Never link these files from a chapter. Numbering must
      match the chapter's Self-check section 1:1. -->
 
-**Q1** *(tests @sec-05-two-ways-into-the-cloud · basic)* — **Correct: b.**
+**Q1** *(tests @sec-05-two-ways-into-the-cloud · basic)* - **Correct: b.**
 The chapter says "Refactoring adjusts the application to use some cloud
 services"; (a) is rehosting/lift-and-shift, (c) is re-architecting or
 rebuilding, and (d) is not one of the Guidance's three strategies.
 
-**Q2** *(tests @sec-05-containers · basic)* — **Correct: b.**
+**Q2** *(tests @sec-05-containers · basic)* - **Correct: b.**
 A container "virtualises the operating system", using namespaces to give
 each container its own view of processes, files and network while sharing
 one kernel; (a) is what a virtual machine does, (c) and (d) are not
 described in the chapter.
 
-**Q3** *(tests @sec-05-the-kernel · basic)* — **Accepted answers:**
+**Q3** *(tests @sec-05-the-kernel · basic)* - **Accepted answers:**
 "the image holds libraries and binaries but no kernel, so a Linux container
 needs a Linux kernel, and NT/XNU have no built-in idea of Linux containers;
 Docker Desktop runs a small Linux VM in the background (WSL 2 on Windows,
@@ -23,28 +23,28 @@ the virtualisation framework on macOS) and the containers run on that
 kernel", any phrasing naming both halves: no kernel in the image /
 isolation enforced by the Linux kernel, and the hidden Linux VM.
 
-**Q4** *(tests @sec-05-the-kernel · basic)* — **Correct: c.**
+**Q4** *(tests @sec-05-the-kernel · basic)* - **Correct: c.**
 "A container is therefore an ordinary Linux process wrapped in a set of
 namespaces and a cgroup"; namespaces isolate the view of resources and
 cgroups cap consumption. (a) belongs to VMs, (b) to virtual networks
 (Session 4), and (d) are general kernel features, not the container
 mechanisms.
 
-**Q5** *(tests @sec-05-ephemeral-immutable · basic)* — **Accepted answers:**
+**Q5** *(tests @sec-05-ephemeral-immutable · basic)* - **Accepted answers:**
 "a running instance is never modified in place; to change or fix it a new
 image is built and the instance replaced rather than patched",
 "replace, don't repair: rebuild the image and roll out fresh instances,
 retiring the compromised one" (any phrasing with both the never-modified-
 in-place definition and replace-rather-than-patch/repair as the response).
 
-**Q6** *(tests @sec-05-why-containers-orchestration · basic)* — **Correct: b.**
+**Q6** *(tests @sec-05-why-containers-orchestration · basic)* - **Correct: b.**
 "The need to scale on demand is therefore the reason why containers rather
 than VMs became the unit of cloud-native deployment; the thinner wall is
 the price." (a) inverts the chapter (VMs are the stronger boundary), (c) is
 false, and (d) contradicts the need for orchestration the same section
 introduces.
 
-**Q7 — applied scenario** *(tests @sec-05-ephemeral-immutable · applied)* —
+**Q7 - applied scenario** *(tests @sec-05-ephemeral-immutable · applied)* -
 **Model answer:** the deployment is cloud-native/immutable
 (container built from an image), so the running instance is not patched at
 all; the correct control, as in @exm-patch-two-worlds, is to update the
@@ -52,10 +52,10 @@ image, rebuild, and replace every running container, retiring the
 vulnerable ones. Patching in place is the lift-and-shift move from
 Session 2 and would make the running container diverge from its image.
 Justification by the three reasons (CSA, 2024, p. 180): (i) limited
-exposure — short-lived, replaced instances give an attacker little time;
-(ii) consistency — every instance comes from the same tested image, so
+exposure - short-lived, replaced instances give an attacker little time;
+(ii) consistency - every instance comes from the same tested image, so
 hand-patching would reintroduce drift between instances; (iii) easier
-verification — one rebuilt image is tested once, whereas a hand-patched
+verification - one rebuilt image is tested once, whereas a hand-patched
 container must be assessed on its own again and again. Grading notes: full
 credit requires naming the world, the rebuild-and-replace control, and all
 three reasons applied to the scenario (not merely listed); partial credit

@@ -50,7 +50,7 @@
     failure takes down as little as possible; <em>durability</em> is what object
     storage achieves through geographically separated replicas, and an immutable
     image lets a system survive an instance by replacing it. The snapshot is only a
-    rollback point, and a backup that has never been restored is not known to work —
+    rollback point, and a backup that has never been restored is not known to work -
     see <a href="#sec-11-availability-revisited">the section on availability
     revisited</a> and <a href="#sec-11-backup">the section on backup</a>.
   </div>
@@ -62,7 +62,7 @@
   const defsCol = root.querySelector('.w114-defs');
   const msg = root.querySelector('.w114-msg');
   const PAIRS = [
-    { id: 'p0', term: 'Blast radius',      def: 'how much one failure takes down — the design goal at every level is to keep it small' },
+    { id: 'p0', term: 'Blast radius',      def: 'how much one failure takes down - the design goal at every level is to keep it small' },
     { id: 'p1', term: 'Snapshot',          def: 'the Session 2 rollback point that must not be mistaken for the backup' },
     { id: 'p2', term: 'Durability',        def: 'a figure cloud object storage achieves by keeping several geographically separated replicas of every object' },
     { id: 'p3', term: 'Restoration test',  def: 'the regularly scheduled exercise without which a backup is not known to work' },
@@ -137,13 +137,13 @@
   root.querySelector('.w114-check').addEventListener('click', () => {
     const done = root.querySelectorAll('.w114-def.w114-done').length;
     if (done === PAIRS.length) {
-      msg.textContent = '✓ All ' + PAIRS.length + ' pairs matched — the resilience vocabulary is in place.';
+      msg.textContent = '✓ All ' + PAIRS.length + ' pairs matched - the resilience vocabulary is in place.';
       msg.className = 'w114-msg iw-msg ok';
     } else if (done === 0) {
-      msg.textContent = 'No pairs matched yet — click a term, then the description it belongs to (a wrong pair flashes red).';
+      msg.textContent = 'No pairs matched yet - click a term, then the description it belongs to (a wrong pair flashes red).';
       msg.className = 'w114-msg iw-msg';
     } else {
-      msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched — keep going.';
+      msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched - keep going.';
       msg.className = 'w114-msg iw-msg';
     }
   });
@@ -151,7 +151,7 @@
     clearPick();
     PAIRS.forEach(p => lock(p.id));
     root.querySelector('.w114-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w114-msg iw-msg ok';
   });
   root.querySelector('.w114-reset').addEventListener('click', () => {

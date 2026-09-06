@@ -78,7 +78,7 @@ show why demand exceeded capacity; they show only that it did. Distinguishing
 stress from attack requires the logs and the methods of later sessions.
 :::
 
-![The wall. Response time holds flat while demand is below capacity and then bends sharply upward; the shape is the same whether the load is real customers or an attacker.](figures/fig-wall.svg){#fig-wall fig-alt="Diagram — a graph of response time against load: the curve stays nearly flat in a region labelled 'graceful', then bends sharply upward past a dashed vertical line labelled 'capacity', into a region labelled 'the wall'."}
+![The wall. Response time holds flat while demand is below capacity and then bends sharply upward; the shape is the same whether the load is real customers or an attacker.](figures/fig-wall.svg){#fig-wall fig-alt="Diagram - a graph of response time against load: the curve stays nearly flat in a region labelled 'graceful', then bends sharply upward past a dashed vertical line labelled 'capacity', into a region labelled 'the wall'."}
 
 ## Scaling out: load balancing and elasticity {#sec-03-scaling-out}
 
@@ -91,7 +91,7 @@ more resilient than scaling *up* to one ever-larger machine, and shared
 buildings made the model affordable (Comer, 2021, pp. 10–11). Load
 balancing is therefore one of the ideas the cloud is built on.
 
-![Scaling out. A load balancer spreads client requests across a cluster of identical servers, adding capacity, tolerating the failure of any one server, and letting the platform add or remove servers with demand.](figures/fig-loadbalancer.svg){#fig-loadbalancer fig-alt="Diagram — clients connect to a load balancer, which fans out to three identical servers."}
+![Scaling out. A load balancer spreads client requests across a cluster of identical servers, adding capacity, tolerating the failure of any one server, and letting the platform add or remove servers with demand.](figures/fig-loadbalancer.svg){#fig-loadbalancer fig-alt="Diagram - clients connect to a load balancer, which fans out to three identical servers."}
 
 A load balancer provides three things at once. It provides capacity, since
 more servers share the work. It provides resilience, since one server can
@@ -415,12 +415,12 @@ b. Apache is required as a reverse proxy in front of Nginx
 c. The load-testing tool `ab` ships with Apache's utilities
 d. The access log format is defined by the Apache project
 
-**Q7 — applied scenario** *(tests @sec-03-defending-in-layers · applied)*
+**Q7 - applied scenario** *(tests @sec-03-defending-in-layers · applied)*
 Building on @exr-03-application-layer-flood: your Nextcloud VM's search
 endpoint, whose wall you have measured with `ab`, starts receiving a steady
 stream of plausible-looking queries and response times climb towards the
 wall. Describe the layered response you would take on the customer's side of
 the split: name two concrete server-side controls from this chapter (one of
 them the Nginx directive), explain what each does against this specific
-attack type, and state which evidence — from the load-measurement tools —
+attack type, and state which evidence - from the load-measurement tools -
 you would use to verify that the controls worked.

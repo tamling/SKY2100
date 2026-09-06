@@ -39,7 +39,7 @@
     <span class="w085-note">(no fun if you click it right away)</span>
   </div>
   <div class="w085-msg iw-msg" role="status"></div>
-  <div class="w085-expl iw-expl" hidden>The software bill of materials is the inventory of every component and dependency, produced by software composition analysis in the image pipeline; when a library flaw is disclosed it answers the one question that matters during an incident, whether and where the library is in use — see <a href="#sec-08-application-security">the section on application security in the cloud</a>.</div>
+  <div class="w085-expl iw-expl" hidden>The software bill of materials is the inventory of every component and dependency, produced by software composition analysis in the image pipeline; when a library flaw is disclosed it answers the one question that matters during an incident, whether and where the library is in use - see <a href="#sec-08-application-security">the section on application security in the cloud</a>.</div>
 </div>
 <script>
 (function () {
@@ -59,11 +59,11 @@
     if (!norm) { msg.textContent = 'Type an answer first.'; return; }
     if (ACCEPT.some(a => norm.includes(a))) {
       inp.classList.add('w085-right');
-      msg.textContent = '✓ Correct — that inventory is produced by software composition analysis in the pipeline.';
+      msg.textContent = '✓ Correct - that inventory is produced by software composition analysis in the pipeline.';
       msg.classList.add('ok');
     } else {
       inp.classList.add('w085-wrong');
-      msg.textContent = '✗ Not the document the chapter names — try again (it is the countermeasure to supply-chain risk).';
+      msg.textContent = '✗ Not the document the chapter names - try again (it is the countermeasure to supply-chain risk).';
       msg.classList.add('bad');
     }
   }
@@ -79,7 +79,7 @@
     inp.value = CANON;
     inp.classList.add('w085-right');
     root.querySelector('.w085-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.classList.add('ok');
   });
 })();

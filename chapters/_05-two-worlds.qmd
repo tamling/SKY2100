@@ -59,7 +59,7 @@
   const buckets = [...root.querySelectorAll('.w052-bucket')];
   const msg = root.querySelector('.w052-msg');
   const expl = root.querySelector('.w052-expl');
-  const ITEMS = [{"t": "Moves the application with as little change as possible", "a": "ls"}, {"t": "Ephemeral, immutable workloads — instances are replaced, not repaired", "a": "cn"}, {"t": "Long-running instances, maintained by hand and patched in place", "a": "ls"}, {"t": "Rebuilds the application around interchangeable instances and managed services", "a": "cn"}, {"t": "Fast and low-risk to perform: nothing changes, so nothing breaks", "a": "ls"}, {"t": "The only path on which security can be designed in from the start", "a": "cn"}];
+  const ITEMS = [{"t": "Moves the application with as little change as possible", "a": "ls"}, {"t": "Ephemeral, immutable workloads - instances are replaced, not repaired", "a": "cn"}, {"t": "Long-running instances, maintained by hand and patched in place", "a": "ls"}, {"t": "Rebuilds the application around interchangeable instances and managed services", "a": "cn"}, {"t": "Fast and low-risk to perform: nothing changes, so nothing breaks", "a": "ls"}, {"t": "The only path on which security can be designed in from the start", "a": "cn"}];
   let picked = null;
 
   function chips() { return [...root.querySelectorAll('.w052-chip')]; }
@@ -139,7 +139,7 @@
       if (bucket) place(bucket, c);
     });
     chips().forEach(c => c.classList.add('w052-right'));
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w052-msg iw-msg ok';
     expl.hidden = false;
   });

@@ -122,8 +122,8 @@
   }
   root.querySelector('.w013-check').addEventListener('click', () => {
     const done = termsCol.querySelectorAll('.w013-done').length;
-    if (done === PAIRS.length) { msg.textContent = '✓ All five characteristics matched — this is cloud computing, not hosting.'; msg.className = 'w013-msg iw-msg ok'; }
-    else { msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched — keep going (a wrong attempt flashes red).'; msg.className = 'w013-msg iw-msg'; }
+    if (done === PAIRS.length) { msg.textContent = '✓ All five characteristics matched - this is cloud computing, not hosting.'; msg.className = 'w013-msg iw-msg ok'; }
+    else { msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched - keep going (a wrong attempt flashes red).'; msg.className = 'w013-msg iw-msg'; }
   });
   root.querySelector('.w013-reset').addEventListener('click', () => { build(); root.querySelector('.w013-expl').hidden = true; });
   root.querySelector('.w013-sol').addEventListener('click', () => {
@@ -133,7 +133,7 @@
       const d = defsCol.querySelector('.w013-item[data-k="' + i + '"]');
       lockPair(t, d);
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w013-msg iw-msg ok';
     root.querySelector('.w013-expl').hidden = false;
   });

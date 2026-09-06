@@ -1,57 +1,57 @@
-# Answer key — Chapter 03: Web services, load and denial of service {.unnumbered}
+# Answer key - Chapter 03: Web services, load and denial of service {.unnumbered}
 
 <!-- Source-only: this directory is excluded from the render in _quarto.yml
      ("!answers/"). Never link these files from a chapter. Numbering must
      match the chapter's Self-check section 1:1. -->
 
-**Q1** *(tests @sec-03-web-services-capacity · basic)* — **Correct: b.**
+**Q1** *(tests @sec-03-web-services-capacity · basic)* - **Correct: b.**
 @def-capacity states that capacity is "established by measurement rather
 than estimation", and @sec-03-measuring-load pushes the service until it
 strains; hardware specs, SLAs and worker counts do not reveal where a
 specific service's wall stands.
 
-**Q2** *(tests @sec-03-denial-of-service · basic)* — **Correct: b.**
+**Q2** *(tests @sec-03-denial-of-service · basic)* - **Correct: b.**
 Protocol attacks exhaust connection state in servers or firewalls, the
 classic case being the SYN flood, measured in packets per second
 (@sec-03-denial-of-service). Volumetric attacks saturate the link,
 application-layer attacks exhaust the application, and amplification is a
 volumetric technique, not one of the three types.
 
-**Q3** *(tests @sec-03-scaling-out · basic)* — **Correct: b.**
+**Q3** *(tests @sec-03-scaling-out · basic)* - **Correct: b.**
 The chapter: a cluster of identical servers behind a load balancer, and
 scaling out with many commodity machines proved cheaper and more resilient
 than scaling up (@sec-03-scaling-out). Option a inverts the claim, c
 contradicts the balancer's resilience role, and d contradicts the
 interchangeable instances that enable autoscaling.
 
-**Q4** *(tests @sec-03-sla · basic)* — **Accepted answers:**
+**Q4** *(tests @sec-03-sla · basic)* - **Accepted answers:**
 "Chaining multiplies the availabilities, and a product of percentages below
 100 % is lower than any factor", "every request needs all components, so
 their availabilities multiply and the combined SLA drops below each single
 component" (any phrasing naming multiplication of availabilities /
 every-component-needed, per @sec-03-sla and @exm-compositesla).
 
-**Q5** *(tests @sec-03-minimum-viable-network · basic)* — **Accepted
+**Q5** *(tests @sec-03-minimum-viable-network · basic)* - **Accepted
 answers:** "Each tier accepts connections only from the tier directly above
 it, and only on the ports that tier uses; everything not explicitly
 permitted is dropped", "only the tier above, on its ports; the rest is
 dropped (default-deny)" (must name the tier-above rule and the drop of
 everything else).
 
-**Q6** *(tests @sec-03-laboratory · basic)* — **Correct: c.**
+**Q6** *(tests @sec-03-laboratory · basic)* - **Correct: c.**
 The chapter states that the load-testing tool `ab` ships with Apache's
 utilities, which is why `apache2-utils` is installed even to test Nginx
 (@sec-03-laboratory). The other options invent dependencies the chapter
 does not make.
 
-**Q7 — applied scenario** *(tests @sec-03-defending-in-layers · applied)* —
+**Q7 - applied scenario** *(tests @sec-03-defending-in-layers · applied)* -
 **Model answer:** This is an application-layer flood, so the customer's own
 configuration carries the weight (@sec-03-defending-in-layers). Two
 server-side controls: (1) rate limiting with the Nginx `limit_req`
-directive — caps requests per client and so blunts the flood at the point
-where the cost arises; (2) caching — serves repeated content cheaply and
+directive - caps requests per client and so blunts the flood at the point
+where the cost arises; (2) caching - serves repeated content cheaply and
 raises the effective capacity of the expensive search path (timeouts and
-connection limits also acceptable — they stop slow or stuck clients from
+connection limits also acceptable - they stop slow or stuck clients from
 hoarding state). Verification with the measurement tools of
 @sec-03-measuring-load: re-run `ab` against the endpoint and compare the
 failed-request count and requests-per-second/time-per-request figures before
@@ -66,26 +66,26 @@ this question).
 
 ## Sketch answers to the chapter exercises
 
-(1) *(@exr-03-load-security-bridge — The load–security bridge)*
+(1) *(@exr-03-load-security-bridge - The load–security bridge)*
 A denial-of-service attack is demand engineered to exceed capacity;
 capacity depends on hardware, configuration and content, so only a controlled
 load test reveals where a specific service's wall stands.
 
-(2) *(@exr-03-apachebench-command — Reading an ApacheBench command)*
+(2) *(@exr-03-apachebench-command - Reading an ApacheBench command)*
 Send 2000 requests, 100 concurrently, to the local server; observe requests
 per second, time per request, and the share of failed requests.
 
-(3) *(@exr-03-three-ddos-types — The three DDoS types)*
+(3) *(@exr-03-three-ddos-types - The three DDoS types)*
 Volumetric (UDP flood/amplification), protocol (SYN flood), application-layer
 (flooding a search endpoint); the application layer is hardest to tell apart
 because each request resembles a real user, so only patterns in the logs
 reveal it.
 
-(4) *(@exr-03-composite-sla — Computing a composite SLA)*
+(4) *(@exr-03-composite-sla - Computing a composite SLA)*
 $0.9995 \times 0.9995 \times 0.995 \approx 0.9940$ = 99.40 %; about
 $0.60\,\% \times 8760 \approx 53$ hours per year.
 
-(5) *(@exr-03-application-layer-flood — An application-layer flood)*
+(5) *(@exr-03-application-layer-flood - An application-layer flood)*
 The application layer: `limit_req` caps requests per client; a CDN absorbs
 volume but forwards plausible dynamic queries, so the expensive endpoint
 still burns, and the rate limit (plus caching) must sit where the cost

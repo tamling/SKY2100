@@ -42,7 +42,7 @@
     <span class="w105-note">(no fun if you click it right away)</span>
   </div>
   <div class="w105-msg iw-msg" role="status"></div>
-  <div class="w105-expl iw-expl" hidden>Aggregation moves the record off the host into a central repository, the SIEM correlates it across environments, retention balances investigation needs, compliance and cost, and chain of custody keeps the result usable as evidence — see <a href="#def-logagg">the definition of log aggregation and SIEM</a> and <a href="#sec-10-logs-as-evidence">the section on logs as evidence</a>.</div>
+  <div class="w105-expl iw-expl" hidden>Aggregation moves the record off the host into a central repository, the SIEM correlates it across environments, retention balances investigation needs, compliance and cost, and chain of custody keeps the result usable as evidence - see <a href="#def-logagg">the definition of log aggregation and SIEM</a> and <a href="#sec-10-logs-as-evidence">the section on logs as evidence</a>.</div>
 </div>
 <script>
 (function () {
@@ -98,12 +98,12 @@
     clearMsg();
     if (matched === PAIRS.length) {
       root.querySelectorAll('.w105-done').forEach(c => c.classList.add('w105-right'));
-      msg.textContent = '✓ All pairs matched — the logging vocabulary is in place.';
+      msg.textContent = '✓ All pairs matched - the logging vocabulary is in place.';
       msg.classList.add('ok');
     } else if (matched === 0) {
-      msg.textContent = 'No pairs matched yet — click a term, then the description that fits it.';
+      msg.textContent = 'No pairs matched yet - click a term, then the description that fits it.';
     } else {
-      msg.textContent = 'Keep going — ' + matched + ' of ' + PAIRS.length + ' pairs matched (a wrong attempt flashes red).';
+      msg.textContent = 'Keep going - ' + matched + ' of ' + PAIRS.length + ' pairs matched (a wrong attempt flashes red).';
     }
   });
   root.querySelector('.w105-reset').addEventListener('click', resetAll);
@@ -116,7 +116,7 @@
     root.querySelectorAll('.w105-card').forEach(c => c.classList.add('w105-done', 'w105-right'));
     matched = PAIRS.length;
     root.querySelector('.w105-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.classList.add('ok');
   });
 })();

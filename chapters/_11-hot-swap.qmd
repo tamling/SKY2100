@@ -47,7 +47,7 @@
   <div class="w116-expl iw-expl" hidden>
     Replacing a failed disk while the RAID array continues to run is called
     <em>hot swapping</em> (Comer, 2021, pp. 103–104): the array's redundancy carries
-    the service through the failure, so the storage system never stops serving — see
+    the service through the failure, so the storage system never stops serving - see
     <a href="#sec-11-provider-redundancy">the section on the redundancy the provider
     builds in</a>.
   </div>
@@ -73,17 +73,17 @@
     input.classList.remove('w116-right', 'w116-wrong');
     const v = norm(input.value);
     if (v === '') {
-      msg.textContent = 'Type an answer first — it is a two-word term from this chapter.';
+      msg.textContent = 'Type an answer first - it is a two-word term from this chapter.';
       msg.className = 'w116-msg iw-msg';
       return;
     }
     if (ACCEPT.some(a => v.includes(a))) {
       input.classList.add('w116-right');
-      msg.textContent = '✓ Correct — that is the term Comer uses for replacing a disk in a running array.';
+      msg.textContent = '✓ Correct - that is the term Comer uses for replacing a disk in a running array.';
       msg.className = 'w116-msg iw-msg ok';
     } else {
       input.classList.add('w116-wrong');
-      msg.textContent = '✗ Not the term — re-read the section on the redundancy the provider builds in.';
+      msg.textContent = '✗ Not the term - re-read the section on the redundancy the provider builds in.';
       msg.className = 'w116-msg iw-msg bad';
     }
   }
@@ -93,7 +93,7 @@
     input.classList.remove('w116-wrong');
     input.classList.add('w116-right');
     root.querySelector('.w116-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w116-msg iw-msg ok';
   });
   root.querySelector('.w116-reset').addEventListener('click', () => {

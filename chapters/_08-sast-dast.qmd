@@ -41,11 +41,11 @@
 <div class="iw w082-sort" id="w082">
   <div class="w082-buckets">
     <div class="w082-bucket" data-cat="sast">
-      <div class="w082-title">SAST — static testing</div>
+      <div class="w082-title">SAST - static testing</div>
       <div class="w082-slot"></div>
     </div>
     <div class="w082-bucket" data-cat="dast">
-      <div class="w082-title">DAST — dynamic testing</div>
+      <div class="w082-title">DAST - dynamic testing</div>
       <div class="w082-slot"></div>
     </div>
   </div>
@@ -57,7 +57,7 @@
     <span class="w082-note">(no fun if you click it right away)</span>
   </div>
   <div class="w082-msg iw-msg" role="status"></div>
-  <div class="w082-expl iw-expl" hidden>SAST examines the source code before deployment, so it runs during continuous integration; DAST probes the running application from outside, so it runs during continuous delivery against the staged application. One sees the code but not its behaviour, the other the behaviour but not the code — see <a href="#sec-08-secure-development-lifecycle">the section on the secure development lifecycle</a>.</div>
+  <div class="w082-expl iw-expl" hidden>SAST examines the source code before deployment, so it runs during continuous integration; DAST probes the running application from outside, so it runs during continuous delivery against the staged application. One sees the code but not its behaviour, the other the behaviour but not the code - see <a href="#sec-08-secure-development-lifecycle">the section on the secure development lifecycle</a>.</div>
 </div>
 <script>
 (function () {
@@ -126,12 +126,12 @@
     const left = pool.querySelectorAll('.w082-chip').length;
     msg.className = 'w082-msg iw-msg';
     if (wrong === 0 && left === 0) {
-      msg.textContent = '✓ All correct — static and dynamic testing are cleanly separated.';
+      msg.textContent = '✓ All correct - static and dynamic testing are cleanly separated.';
       msg.classList.add('ok');
     } else if (wrong === 0) {
-      msg.textContent = 'Keep going — ' + left + ' statement(s) still to sort.';
+      msg.textContent = 'Keep going - ' + left + ' statement(s) still to sort.';
     } else {
-      msg.textContent = '✗ Not yet — ' + wrong + ' statement(s) sit in the wrong box (marked red).';
+      msg.textContent = '✗ Not yet - ' + wrong + ' statement(s) sit in the wrong box (marked red).';
       msg.classList.add('bad');
     }
   });
@@ -143,7 +143,7 @@
     });
     root.querySelectorAll('.w082-chip').forEach(c => c.classList.add('w082-right'));
     root.querySelector('.w082-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w082-msg iw-msg ok';
   });
   root.querySelector('.w082-reset').addEventListener('click', () => {

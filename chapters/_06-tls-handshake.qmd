@@ -147,10 +147,10 @@
       else { r.classList.add('w061-wrong'); }
     });
     if (right === STEPS.length) {
-      msg.textContent = '✓ Correct — slow handshake, fast conversation.';
+      msg.textContent = '✓ Correct - slow handshake, fast conversation.';
       msg.className = 'w061-msg iw-msg ok';
     } else {
-      msg.textContent = '✗ Not yet — ' + right + ' of ' + STEPS.length + ' steps are in the right place (green).';
+      msg.textContent = '✗ Not yet - ' + right + ' of ' + STEPS.length + ' steps are in the right place (green).';
       msg.className = 'w061-msg iw-msg bad';
     }
   });
@@ -161,7 +161,7 @@
     }
     moved();
     rows().forEach(r => r.classList.add('w061-right'));
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w061-msg iw-msg ok';
     expl.hidden = false;
   });

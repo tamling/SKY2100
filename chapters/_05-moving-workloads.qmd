@@ -100,9 +100,9 @@
       if (r.dataset.sel === r.dataset.a) { r.classList.add('w055-right'); right++; }
       else r.classList.add('w055-wrong');
     });
-    if (right === ITEMS.length) { msg.textContent = '✓ All correct — traditional controls adjusted for a moving environment.'; msg.className = 'w055-msg iw-msg ok'; }
-    else if (unanswered > 0 && right + unanswered === ITEMS.length) { msg.textContent = 'Keep going — ' + unanswered + ' statement(s) still unanswered.'; msg.className = 'w055-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — ' + right + ' of ' + ITEMS.length + ' statements are right; rethink the red ones.'; msg.className = 'w055-msg iw-msg bad'; }
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct - traditional controls adjusted for a moving environment.'; msg.className = 'w055-msg iw-msg ok'; }
+    else if (unanswered > 0 && right + unanswered === ITEMS.length) { msg.textContent = 'Keep going - ' + unanswered + ' statement(s) still unanswered.'; msg.className = 'w055-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - ' + right + ' of ' + ITEMS.length + ' statements are right; rethink the red ones.'; msg.className = 'w055-msg iw-msg bad'; }
   });
   root.querySelector('.w055-reset').addEventListener('click', () => {
     root.querySelectorAll('.w055-row').forEach(r => select(r, ''));
@@ -114,7 +114,7 @@
       select(r, r.dataset.a);
       r.classList.remove('w055-wrong'); r.classList.add('w055-right');
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w055-msg iw-msg ok';
     expl.hidden = false;
   });

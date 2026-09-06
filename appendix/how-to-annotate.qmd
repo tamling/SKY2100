@@ -18,12 +18,12 @@ work.
 
 Annotations are graded on substance, not volume. Three kinds count:
 
-- **Question** — a genuine question about the passage that a fellow student
+- **Question** - a genuine question about the passage that a fellow student
   could learn from seeing answered. "I don't get this" does not count;
   "does X also hold when Y, given what @sec- says about Z?" does.
-- **Correction** — a factual, technical, or editorial error in the text,
+- **Correction** - a factual, technical, or editorial error in the text,
   with a short justification and, where relevant, a source.
-- **Practice example** — a concrete, worked example, counter-example, or
+- **Practice example** - a concrete, worked example, counter-example, or
   real-world case that illustrates the passage, described precisely enough
   that it could be merged into the script.
 
@@ -33,7 +33,7 @@ thread first).
 
 ## Per-chapter quota
 
-> **Placeholder — to be confirmed with the course setup:** *N* substantive
+> **Placeholder - to be confirmed with the course setup:** *N* substantive
 > annotations per student per chapter (planned: 2), counted per the rules
 > above. Annotations on any chapter count; spreading them across chapters
 > is encouraged but not required.
@@ -44,7 +44,7 @@ thread first).
    lead. Substantive ones are turned into an edit: corrections are applied,
    good questions become clarified text or an FAQ box, practice examples
    become worked examples or exercise scenarios.
-2. Merged contributions are **credited in `CHANGELOG.md`** — one line per
+2. Merged contributions are **credited in `CHANGELOG.md`** - one line per
    merged contribution, naming the contributor (or their chosen handle) and
    the chapter/section changed.
 3. Larger contributions (a full worked example, a new exercise scenario, a

@@ -57,7 +57,7 @@
     <span class="w102-note">(no fun if you click it right away)</span>
   </div>
   <div class="w102-msg iw-msg" role="status"></div>
-  <div class="w102-expl iw-expl" hidden>A log is a relatively complete, persistently stored record, often delivered in batches and therefore delayed; an event records a change, becomes available within seconds, and is not retained unless explicitly saved. Events give timely notice, logs the depth to investigate — see <a href="#sec-10-logs-events">the section on logs, events and the content of a log line</a>.</div>
+  <div class="w102-expl iw-expl" hidden>A log is a relatively complete, persistently stored record, often delivered in batches and therefore delayed; an event records a change, becomes available within seconds, and is not retained unless explicitly saved. Events give timely notice, logs the depth to investigate - see <a href="#sec-10-logs-events">the section on logs, events and the content of a log line</a>.</div>
 </div>
 <script>
 (function () {
@@ -126,12 +126,12 @@
     const left = pool.querySelectorAll('.w102-chip').length;
     msg.className = 'w102-msg iw-msg';
     if (wrong === 0 && left === 0) {
-      msg.textContent = '✓ All correct — logs and events are cleanly separated.';
+      msg.textContent = '✓ All correct - logs and events are cleanly separated.';
       msg.classList.add('ok');
     } else if (wrong === 0) {
-      msg.textContent = 'Keep going — ' + left + ' statement(s) still to sort.';
+      msg.textContent = 'Keep going - ' + left + ' statement(s) still to sort.';
     } else {
-      msg.textContent = '✗ Not yet — ' + wrong + ' statement(s) sit in the wrong box (marked red).';
+      msg.textContent = '✗ Not yet - ' + wrong + ' statement(s) sit in the wrong box (marked red).';
       msg.classList.add('bad');
     }
   });
@@ -143,7 +143,7 @@
     });
     root.querySelectorAll('.w102-chip').forEach(c => c.classList.add('w102-right'));
     root.querySelector('.w102-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w102-msg iw-msg ok';
   });
   root.querySelector('.w102-reset').addEventListener('click', () => {

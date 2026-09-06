@@ -100,9 +100,9 @@
       if (r.dataset.sel === r.dataset.a) { r.classList.add('w074-right'); right++; }
       else r.classList.add('w074-wrong');
     });
-    if (right === ITEMS.length) { msg.textContent = '✓ All correct — PAM is least privilege applied to the administrators themselves.'; msg.className = 'w074-msg iw-msg ok'; }
-    else if (unanswered > 0 && right + unanswered === ITEMS.length) { msg.textContent = 'Keep going — ' + unanswered + ' statement(s) still unanswered.'; msg.className = 'w074-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — ' + right + ' of ' + ITEMS.length + ' statements are right; rethink the red ones.'; msg.className = 'w074-msg iw-msg bad'; }
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct - PAM is least privilege applied to the administrators themselves.'; msg.className = 'w074-msg iw-msg ok'; }
+    else if (unanswered > 0 && right + unanswered === ITEMS.length) { msg.textContent = 'Keep going - ' + unanswered + ' statement(s) still unanswered.'; msg.className = 'w074-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - ' + right + ' of ' + ITEMS.length + ' statements are right; rethink the red ones.'; msg.className = 'w074-msg iw-msg bad'; }
   });
   root.querySelector('.w074-reset').addEventListener('click', () => {
     root.querySelectorAll('.w074-row').forEach(r => select(r, ''));
@@ -114,7 +114,7 @@
       select(r, r.dataset.a);
       r.classList.remove('w074-wrong'); r.classList.add('w074-right');
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w074-msg iw-msg ok';
     expl.hidden = false;
   });

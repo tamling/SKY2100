@@ -65,7 +65,7 @@
   </div>
   <div class="w031-msg iw-msg" role="status"></div>
   <div class="w031-expl iw-expl" hidden>
-    Volumetric attacks saturate the network link — UDP floods with amplification, measured in gigabits or terabits per second. Protocol attacks exhaust connection state — the SYN flood, measured in packets per second. Application-layer attacks exhaust the application itself — a flood against a search endpoint — and are hardest to tell apart from real users. See <a href="#def-ddos">the definition of DoS and DDoS</a> in <a href="#sec-03-denial-of-service">the section on denial of service</a>.
+    Volumetric attacks saturate the network link - UDP floods with amplification, measured in gigabits or terabits per second. Protocol attacks exhaust connection state - the SYN flood, measured in packets per second. Application-layer attacks exhaust the application itself - a flood against a search endpoint - and are hardest to tell apart from real users. See <a href="#def-ddos">the definition of DoS and DDoS</a> in <a href="#sec-03-denial-of-service">the section on denial of service</a>.
   </div>
 </div>
 <script>
@@ -138,9 +138,9 @@
       if (c.dataset.cat === bucket.dataset.cat) { c.classList.add('w031-right'); right++; }
       else { c.classList.add('w031-wrong'); wrong++; }
     });
-    if (right === ITEMS.length) { msg.textContent = '✓ All correct — the three DDoS types are sorted.'; msg.className = 'w031-msg iw-msg ok'; }
-    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + unplaced + ' item(s) still unplaced.'; msg.className = 'w031-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — the red items are in the wrong type.'; msg.className = 'w031-msg iw-msg bad'; }
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct - the three DDoS types are sorted.'; msg.className = 'w031-msg iw-msg ok'; }
+    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going - ' + unplaced + ' item(s) still unplaced.'; msg.className = 'w031-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - the red items are in the wrong type.'; msg.className = 'w031-msg iw-msg bad'; }
   });
   root.querySelector('.w031-solution').addEventListener('click', () => {
     unpick();
@@ -149,7 +149,7 @@
       if (bucket) place(bucket, c);
     });
     root.querySelectorAll('.w031-chip').forEach(c => c.classList.add('w031-right'));
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w031-msg iw-msg ok';
     root.querySelector('.w031-expl').hidden = false;
   });

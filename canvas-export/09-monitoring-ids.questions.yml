@@ -1,4 +1,4 @@
-quiz_title: "Chapter 09 — Self-check"
+quiz_title: "Chapter 09 - Self-check"
 chapter: 09-monitoring-ids
 
 questions:
@@ -65,7 +65,7 @@ questions:
     type: mcq
     section: sec-09-detection
     difficulty: basic
-    text: "Why does the simple monitoring loop — poll every instance, alert if one fails to respond — not fit cloud-native applications?"
+    text: "Why does the simple monitoring loop - poll every instance, alert if one fails to respond - not fit cloud-native applications?"
     options:
       - "Cloud providers forbid polling because it consumes API quota"
       - "Cloud-native instances start and stop all the time under the orchestrator's control, so a disappearing instance is not by itself a sign of trouble"

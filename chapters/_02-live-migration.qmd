@@ -47,7 +47,7 @@
   </div>
   <div class="w025-msg iw-msg" role="status"></div>
   <div class="w025-expl iw-expl" hidden>
-    Because a VM’s entire state — memory, disk, devices — is data, the hypervisor first pre-copies the guest’s memory to another physical host while the guest keeps running, then pauses the guest briefly, finalises the transfer, and the machine continues on the new host with almost no downtime. See <a href="#exm-migration">the snapshot and live-migration example</a>.
+    Because a VM’s entire state - memory, disk, devices - is data, the hypervisor first pre-copies the guest’s memory to another physical host while the guest keeps running, then pauses the guest briefly, finalises the transfer, and the machine continues on the new host with almost no downtime. See <a href="#exm-migration">the snapshot and live-migration example</a>.
   </div>
 </div>
 <script>
@@ -113,8 +113,8 @@
       if (Number(it.dataset.order) === i) { it.classList.add('w025-right'); right++; }
       else it.classList.add('w025-wrong');
     });
-    if (right === START.length) { msg.textContent = '✓ Correct — the machine moves while it runs, because it is data.'; msg.className = 'w025-msg iw-msg ok'; }
-    else { msg.textContent = '✗ Not yet — ' + right + ' of ' + START.length + ' steps are in the right position (green).'; msg.className = 'w025-msg iw-msg bad'; }
+    if (right === START.length) { msg.textContent = '✓ Correct - the machine moves while it runs, because it is data.'; msg.className = 'w025-msg iw-msg ok'; }
+    else { msg.textContent = '✗ Not yet - ' + right + ' of ' + START.length + ' steps are in the right position (green).'; msg.className = 'w025-msg iw-msg bad'; }
   });
   function build() {
     list.textContent = '';
@@ -126,7 +126,7 @@
     [...list.children]
       .sort((a, b) => Number(a.dataset.order) - Number(b.dataset.order))
       .forEach(it => { list.appendChild(it); it.classList.add('w025-right'); });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w025-msg iw-msg ok';
     root.querySelector('.w025-expl').hidden = false;
   });

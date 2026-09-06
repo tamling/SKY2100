@@ -47,7 +47,7 @@
   </div>
   <div class="w032-msg iw-msg" role="status"></div>
   <div class="w032-expl iw-expl" hidden>
-    In a minimum viable network each tier accepts connections only from the tier directly above it: the Internet reaches only the load balancer, on HTTPS; the web tier answers only the balancer; the application tier only the web tier; and the database only the application tier — so the only path to the database runs through the application. See <a href="#sec-03-minimum-viable-network">the section on the minimum viable network</a>.
+    In a minimum viable network each tier accepts connections only from the tier directly above it: the Internet reaches only the load balancer, on HTTPS; the web tier answers only the balancer; the application tier only the web tier; and the database only the application tier - so the only path to the database runs through the application. See <a href="#sec-03-minimum-viable-network">the section on the minimum viable network</a>.
   </div>
 </div>
 <script>
@@ -113,8 +113,8 @@
       if (Number(it.dataset.order) === i) { it.classList.add('w032-right'); right++; }
       else it.classList.add('w032-wrong');
     });
-    if (right === START.length) { msg.textContent = '✓ Correct — each tier accepts connections only from the tier directly above it.'; msg.className = 'w032-msg iw-msg ok'; }
-    else { msg.textContent = '✗ Not yet — ' + right + ' of ' + START.length + ' tiers are in the right position (green).'; msg.className = 'w032-msg iw-msg bad'; }
+    if (right === START.length) { msg.textContent = '✓ Correct - each tier accepts connections only from the tier directly above it.'; msg.className = 'w032-msg iw-msg ok'; }
+    else { msg.textContent = '✗ Not yet - ' + right + ' of ' + START.length + ' tiers are in the right position (green).'; msg.className = 'w032-msg iw-msg bad'; }
   });
   function build() {
     list.textContent = '';
@@ -125,7 +125,7 @@
       .forEach(li => list.appendChild(li));
     clearMarks();
     [...list.children].forEach(li => li.classList.add('w032-right'));
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w032-msg iw-msg ok';
     root.querySelector('.w032-expl').hidden = false;
   });

@@ -1,27 +1,27 @@
-# Answer key — Chapter 13: The integrated case {.unnumbered}
+# Answer key - Chapter 13: The integrated case {.unnumbered}
 
 <!-- Source-only: this directory is excluded from the render in _quarto.yml
      ("!answers/"). Never link these files from a chapter. Numbering must
      match the chapter's Self-check section 1:1. -->
 
-**Q1** *(tests @sec-13-csf-mapping · basic)* — **Correct: b.**
+**Q1** *(tests @sec-13-csf-mapping · basic)* - **Correct: b.**
 @sec-13-csf-mapping names the six Functions: Govern, Identify, Protect,
 Detect, Respond and Recover. Option a mixes in incident-response phases,
 option c course layers, option d the CIA triad and GRC terms.
 
-**Q2** *(tests @sec-13-csf-mapping · basic)* — **Correct: a.**
+**Q2** *(tests @sec-13-csf-mapping · basic)* - **Correct: a.**
 The chapter says Govern is drawn at the centre because it sets the strategy
 and policy on which the other five depend; it is Respond and Recover (not
 Govern) that stand ready for the incident.
 
-**Q3** *(tests @sec-13-hardened-stack · basic)* — **Correct: c.**
+**Q3** *(tests @sec-13-hardened-stack · basic)* - **Correct: c.**
 "These layers are independent by design, and that is what makes them one
 system rather than a list": the firewall catches what the WAF would not, MFA
 catches the stolen password, monitoring catches what all of them let
-through — defence in depth as structure. Option b states the opposite of
+through - defence in depth as structure. Option b states the opposite of
 independence.
 
-**Q4** *(tests @sec-13-csf-mapping · basic)* — **Accepted answers:**
+**Q4** *(tests @sec-13-csf-mapping · basic)* - **Accepted answers:**
 "defensible does not mean the service cannot be attacked; it means the
 protection is complete across the framework at the level of Categories, and
 for each Category the control, the threat it meets and the reason it
@@ -29,7 +29,7 @@ belongs can be named" (any phrasing with both halves: not
 attack-proof; completeness across Categories with a nameable
 control–threat–reason for each).
 
-**Q5** *(tests @sec-13-argument · basic)* — **Accepted answers:**
+**Q5** *(tests @sec-13-argument · basic)* - **Accepted answers:**
 "because a cloud-native application is a complex distributed system and the
 system keeps changing, the position must be argued again as it changes",
 "security lives inside complexity; only a position argued anew as the
@@ -37,26 +37,26 @@ system changes, never a permanent yes" (any phrasing that ties the answer
 to the complexity of distributed systems and/or to the system changing, so
 the argument must be remade).
 
-**Q6** *(tests @sec-13-csf-mapping · basic)* — **Correct: b.**
+**Q6** *(tests @sec-13-csf-mapping · basic)* - **Correct: b.**
 The chapter: "An empty Category is a real gap, because a service with no
 entry under Detect is blind and one with nothing under Recover cannot come
 back." Option c inverts the closing exercise's point that a thin Function
 is a gap in the defence rather than in the exercise.
 
-**Q7 — applied scenario** *(tests @sec-13-closing-exercise · applied)* —
+**Q7 - applied scenario** *(tests @sec-13-closing-exercise · applied)* -
 **Model answer:** The argument fails the chapter's test of completeness:
 defensible means every Function (and Category) is populated, not that one
-Function is strong — the Functions are independent layers, and each catches
+Function is strong - the Functions are independent layers, and each catches
 what the others miss. Concretely, nothing under Govern means the
 organisation cannot answer for its security (no risk register,
 no shared-responsibility mapping, no regulatory frame), and nothing under
 Recover means the service cannot come back after an incident. Populating
 Govern: the risk register / shared-responsibility model / NIS2-DORA-ISO
-22301 frame (S12) — threat: unmanaged, unaccepted risk and unmet
+22301 frame (S12) - threat: unmanaged, unaccepted risk and unmet
 obligations; risk: the organisation cannot prioritise or answer to
 regulators; control: the register aligning mitigation with risk appetite.
 Populating Recover: tested backup restoration and disaster recovery /
-business continuity (S11, S12) — threat: data loss or destruction that
+business continuity (S11, S12) - threat: data loss or destruction that
 prevention did not stop; risk: permanent loss of the service and its data;
 control: off-site, tested backups and a rehearsed recovery plan. Grading
 notes: full credit needs (i) the completeness-at-Category-level rebuttal,

@@ -83,9 +83,9 @@ could have been noticed earlier, which data was missing when it was needed,
 and whether the process itself has to change (CSA, 2024, pp. 255,
 269–270), and the answers go back into preparation.
 
-![The NIST incident response lifecycle. A cycle rather than a line: each incident's lessons feed back into preparation for the next.](figures/fig-irloop.svg){#fig-irloop fig-alt="Diagram — four boxes arranged in a circle (Preparation, Detection & Analysis, Containment/Eradication & Recovery, Post-Incident Analysis) with arrows leading from each to the next and from Post-Incident Analysis back to Preparation, forming a loop."}
+![The NIST incident response lifecycle. A cycle rather than a line: each incident's lessons feed back into preparation for the next.](figures/fig-irloop.svg){#fig-irloop fig-alt="Diagram - four boxes arranged in a circle (Preparation, Detection & Analysis, Containment/Eradication & Recovery, Post-Incident Analysis) with arrows leading from each to the next and from Post-Incident Analysis back to Preparation, forming a loop."}
 
-![The four phases with their cloud-specific work. Almost every action draws on a control built in an earlier session: preparation on Sessions 2, 9 and 11; the timeline on Session 10; containment on Sessions 5 and 7.](figures/fig-irphases.svg){#fig-irphases fig-alt="Diagram — the four lifecycle phases in a left-to-right row, each with its cloud-specific actions listed beneath: Preparation (baseline, monitoring, tested backups, named team); Detection & Analysis (validate alert, scope, build the attack timeline from logs); Containment, Eradication & Recovery (isolate IAM & workloads, rotate creds, delete stale images, restore clean); Post-Incident Analysis (what to detect sooner; feed lessons back to preparation)."}
+![The four phases with their cloud-specific work. Almost every action draws on a control built in an earlier session: preparation on Sessions 2, 9 and 11; the timeline on Session 10; containment on Sessions 5 and 7.](figures/fig-irphases.svg){#fig-irphases fig-alt="Diagram - the four lifecycle phases in a left-to-right row, each with its cloud-specific actions listed beneath: Preparation (baseline, monitoring, tested backups, named team); Detection & Analysis (validate alert, scope, build the attack timeline from logs); Containment, Eradication & Recovery (isolate IAM & workloads, rotate creds, delete stale images, restore clean); Post-Incident Analysis (what to detect sooner; feed lessons back to preparation)."}
 
 ::: {#exm-ir-trc}
 ## An incident on the red thread
@@ -281,7 +281,7 @@ the pool.
 @sec-12-risk-audit-compliance names the non-technical tools of governance,
 risk and compliance, and Comer adds the risks a register exists to record.
 Match each term to its description: click a term and then its description
-(or drag the term onto it) — a correct pair locks and greys out, a wrong
+(or drag the term onto it) - a correct pair locks and greys out, a wrong
 attempt flashes red. Press **Check** to see how many pairs you have.
 
 {{< include _12-grc-pairs.qmd >}}
@@ -291,7 +291,7 @@ attempt flashes red. Press **Check** to see how many pairs you have.
 ## Continuity targets: true or false?, interactive
 @sec-12-business-continuity sets the two targets that quantify business
 continuity. Mark each statement below **True** or **False**, then press
-**Check** — each statement is judged on its own.
+**Check** - each statement is judged on its own.
 
 {{< include _12-rto-rpo-tf.qmd >}}
 :::
@@ -352,7 +352,7 @@ b. They are structural risks that no firewall or password stops, so the register
 c. They only occur in on-premises data centres, so cloud tenants can ignore them
 d. They are examples of compliance inheritance from the provider
 
-**Q7 — applied scenario** *(tests @sec-12-ir-lifecycle · applied)*
+**Q7 - applied scenario** *(tests @sec-12-ir-lifecycle · applied)*
 Building on @exr-12-rebuild-vs-patch: the timeline for the Nextcloud
 incident of @exm-ir-trc shows that the attacker held an administrator
 credential for two days and pushed at least one change to a container image.

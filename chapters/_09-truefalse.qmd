@@ -38,7 +38,7 @@
     <span class="w094-note">(no fun if you click it right away)</span>
   </div>
   <div class="w094-msg iw-msg" role="status"></div>
-  <div class="w094-expl iw-expl" hidden>Signature-based detection matches known attack patterns while anomaly-based detection flags departures from the established baseline; cloud-native instances start and stop under the orchestrator’s control, so a disappearing instance is not by itself trouble; and Target’s system did generate alerts — nobody acted on them in time — see <a href="#sec-09-detection">the section on detection</a>.</div>
+  <div class="w094-expl iw-expl" hidden>Signature-based detection matches known attack patterns while anomaly-based detection flags departures from the established baseline; cloud-native instances start and stop under the orchestrator’s control, so a disappearing instance is not by itself trouble; and Target’s system did generate alerts - nobody acted on them in time - see <a href="#sec-09-detection">the section on detection</a>.</div>
 </div>
 <script>
 (function () {
@@ -91,9 +91,9 @@
       msg.textContent = '✓ All ' + rows.length + ' statements judged correctly.';
       msg.classList.add('ok');
     } else if (wrong === 0) {
-      msg.textContent = 'Keep going — ' + open + ' statement(s) still unanswered.';
+      msg.textContent = 'Keep going - ' + open + ' statement(s) still unanswered.';
     } else {
-      msg.textContent = '✗ Not yet — ' + right + ' of ' + rows.length + ' correct (wrong rows marked red).';
+      msg.textContent = '✗ Not yet - ' + right + ' of ' + rows.length + ' correct (wrong rows marked red).';
       msg.classList.add('bad');
     }
   });
@@ -114,7 +114,7 @@
       r.classList.add('w094-right');
     });
     root.querySelector('.w094-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.classList.add('ok');
   });
 })();

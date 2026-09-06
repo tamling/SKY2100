@@ -42,11 +42,11 @@
   </div>
   <div class="w115-msg iw-msg" role="status"></div>
   <div class="w115-expl iw-expl" hidden>
-    Provider redundancy — RAID beneath the storage, HDFS's three block copies,
-    geographically separated replicas — makes any single hardware failure survivable,
+    Provider redundancy - RAID beneath the storage, HDFS's three block copies,
+    geographically separated replicas - makes any single hardware failure survivable,
     but deletion, corruption and ransomware reach through all of it, because replicas
     copy the damage exactly; that is why Maersk was saved by the one offline copy and
-    why the customer's own backup remains the customer's responsibility — see
+    why the customer's own backup remains the customer's responsibility - see
     <a href="#sec-11-provider-redundancy">the section on the redundancy the provider
     builds in</a>.
   </div>
@@ -106,13 +106,13 @@
       else { r.el.classList.add('w115-wrong'); wrong++; }
     });
     if (right === rows.length) {
-      msg.textContent = '✓ All correct — provider redundancy survives failures, but replicas copy the damage.';
+      msg.textContent = '✓ All correct - provider redundancy survives failures, but replicas copy the damage.';
       msg.className = 'w115-msg iw-msg ok';
     } else if (open > 0 && wrong === 0) {
-      msg.textContent = 'Keep going — ' + open + ' statement(s) still unanswered.';
+      msg.textContent = 'Keep going - ' + open + ' statement(s) still unanswered.';
       msg.className = 'w115-msg iw-msg';
     } else {
-      msg.textContent = '✗ Not yet — the red statements are marked wrongly. Think about what a replica copies.';
+      msg.textContent = '✗ Not yet - the red statements are marked wrongly. Think about what a replica copies.';
       msg.className = 'w115-msg iw-msg bad';
     }
   });
@@ -125,7 +125,7 @@
       r.el.classList.add('w115-right');
     });
     root.querySelector('.w115-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w115-msg iw-msg ok';
   });
   root.querySelector('.w115-reset').addEventListener('click', () => {

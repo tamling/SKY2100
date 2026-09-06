@@ -1,7 +1,7 @@
-# Template — questions file for chapters/NN-name.qmd.
+# Template - questions file for chapters/NN-name.qmd.
 # Copy to NN-name.questions.yml. Content must match the chapter's
 # Self-check section and answers/NN-name.qmd exactly (same numbering).
-quiz_title: "Chapter NN — Self-check"
+quiz_title: "Chapter NN - Self-check"
 chapter: NN-name
 
 questions:

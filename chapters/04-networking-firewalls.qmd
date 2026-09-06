@@ -96,7 +96,7 @@ unintended place.
 
 ## The firewall {#sec-04-the-firewall}
 
-![A firewall under default-deny. Only traffic an explicit rule permits (here, the web ports) reaches the service; the final catch-all rule drops the rest, so anything unforeseen fails closed.](figures/fig-firewall.svg){#fig-firewall fig-alt="Diagram — incoming traffic flows into a firewall box holding a rule list; an arrow labelled 'allowed :80, :443' continues to the service, while a downward arrow labelled 'everything else: dropped' shows non-matching traffic being discarded."}
+![A firewall under default-deny. Only traffic an explicit rule permits (here, the web ports) reaches the service; the final catch-all rule drops the rest, so anything unforeseen fails closed.](figures/fig-firewall.svg){#fig-firewall fig-alt="Diagram - incoming traffic flows into a firewall box holding a rule list; an arrow labelled 'allowed :80, :443' continues to the service, while a downward arrow labelled 'everything else: dropped' shows non-matching traffic being discarded."}
 
 ::: {#def-firewall}
 ## Firewall, default-deny
@@ -204,7 +204,7 @@ firewall does not operate. {#tbl-firewalls}
 @fig-fwlayers shows the same comparison as a grid of layers; a
 filled cell means the tool operates there.
 
-![Which layers each tool operates at (filled = yes). Packet-filter and stateful firewalls act at Layers 3–4 (addresses, ports); an NGFW reaches up through Layer 7 with deep packet inspection; a WAF operates only at Layer 7, on the content of one web application.](figures/fig-fwlayers.svg){#fig-fwlayers fig-alt="Diagram — a grid with columns L3 Network (IP), L4 Transport (ports) and L7 Application (HTTP), and rows packet filter, stateful, NGFW and WAF; cells are filled where the tool operates: packet filter and stateful at L3–L4 only, NGFW at all three, WAF at L7 only."}
+![Which layers each tool operates at (filled = yes). Packet-filter and stateful firewalls act at Layers 3–4 (addresses, ports); an NGFW reaches up through Layer 7 with deep packet inspection; a WAF operates only at Layer 7, on the content of one web application.](figures/fig-fwlayers.svg){#fig-fwlayers fig-alt="Diagram - a grid with columns L3 Network (IP), L4 Transport (ports) and L7 Application (HTTP), and rows packet filter, stateful, NGFW and WAF; cells are filled where the tool operates: packet filter and stateful at L3–L4 only, NGFW at all three, WAF at L7 only."}
 
 One idea links the WAF to the intrusion prevention of Session 9. A WAF runs
 either in *detection* mode, where it logs matching requests and lets
@@ -240,7 +240,7 @@ centre. The tiered minimum viable network of Session 3 is one instance. A
 the only entry point for administration, is another, and segmenting the
 network into tiers that may speak only to their neighbours is a third.
 
-![Defence in depth. Independent layers around the asset, so that the failure of any one does not expose everything behind it. Each later session adds a ring.](figures/fig-depth.svg){#fig-depth fig-alt="Diagram — four concentric rings around a central box labelled 'data'; from the inside out the rings are labelled identity, application / WAF, host firewall and network segmentation."}
+![Defence in depth. Independent layers around the asset, so that the failure of any one does not expose everything behind it. Each later session adds a ring.](figures/fig-depth.svg){#fig-depth fig-alt="Diagram - four concentric rings around a central box labelled 'data'; from the inside out the rings are labelled identity, application / WAF, host firewall and network segmentation."}
 
 ::: {#def-zerotrust}
 ## Zero Trust
@@ -353,7 +353,7 @@ control for an SSH port left open to the whole Internet, and give the
 ::: {#exr-04-firewall-layers}
 ## Firewalls by inspection depth, interactive
 Rebuild the grid of @fig-fwlayers (compare @tbl-firewalls) from memory:
-for each tool, click the cells of the layers at which it operates — click a
+for each tool, click the cells of the layers at which it operates - click a
 cell again to clear it. A row is right only when exactly the correct cells
 are filled. Then press **Check**.
 
@@ -444,7 +444,7 @@ b. Nobody and nothing is trusted merely for its position on the network; every u
 c. All requests from outside the network are denied permanently, while internal traffic flows freely
 d. Trust is granted once at login and retained for the lifetime of the session
 
-**Q7 — applied scenario** *(tests @sec-04-the-firewall · applied)*
+**Q7 - applied scenario** *(tests @sec-04-the-firewall · applied)*
 Building on @exr-04-ssh-brute-force-trc: your team's VM runs Nginx on
 port 80 and SSH on port 22, and a colleague has additionally opened the
 database port 5432 "temporarily, for testing" and left it open. The VM sits

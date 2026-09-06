@@ -246,7 +246,7 @@ Management and single sign-on, and Privileged Access Management,
 pp. 237–239); Tanenbaum and Bos, *Modern Operating Systems*, §9.3
 (Protection Domains and the access control matrix, and their UNIX/Linux
 realisation in UID/GID, pp. 602–604). Optional deepening: Jøsang,
-Chapter 8 (User Authentication, pp. 165–190) and Chapter 9 (IAM—Identity
+Chapter 8 (User Authentication, pp. 165–190) and Chapter 9 (IAM-Identity
 and Access Management, pp. 191–214). The Microsoft Learn module is *Describe Azure identity*
 (Microsoft Entra ID, MFA and conditional access); students enable MFA on their
 own account.
@@ -409,7 +409,7 @@ d. The firewall's default-deny rule applied to the management network
 In one or two sentences: what is just-in-time (JIT) access, and which hazard
 does it address?
 
-**Q8 — applied scenario** *(tests @sec-07-exercises · applied)*
+**Q8 - applied scenario** *(tests @sec-07-exercises · applied)*
 Building on @exr-07-shared-admin: the team decides to keep the single shared
 Nextcloud administrator account, but to store its password in a company
 password manager that itself requires MFA. A colleague argues this now

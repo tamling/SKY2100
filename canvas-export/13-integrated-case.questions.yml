@@ -1,4 +1,4 @@
-quiz_title: "Chapter 13 — Self-check"
+quiz_title: "Chapter 13 - Self-check"
 chapter: 13-integrated-case
 
 questions:
@@ -104,10 +104,10 @@ questions:
       for its security (no risk register, shared-responsibility mapping or
       regulatory frame); nothing under Recover means the service cannot come
       back after an incident. Govern is populated by the risk register and
-      the NIS2/DORA/ISO 22301 frame (S12) — threat: unmanaged risk and
+      the NIS2/DORA/ISO 22301 frame (S12) - threat: unmanaged risk and
       unmet obligations; risk: no prioritisation, no answerability; control:
       the register aligned with risk appetite. Recover is populated by
       tested backup restoration, disaster recovery and business continuity
-      (S11, S12) — threat: loss prevention did not stop; risk: permanent
+      (S11, S12) - threat: loss prevention did not stop; risk: permanent
       loss of service and data; control: off-site, tested backups and a
       rehearsed recovery plan.

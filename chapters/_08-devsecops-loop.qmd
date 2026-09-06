@@ -44,7 +44,7 @@
     <span class="w081-note">(no fun if you click it right away)</span>
   </div>
   <div class="w081-msg iw-msg" role="status"></div>
-  <div class="w081-expl iw-expl" hidden>Plan, Code, Build and Test are the development half of the loop; Release, Deploy, Operate and Monitor the operations half, with Monitor flowing back into Plan. DevSecOps embeds automated security at every stage rather than as a gate at the end — see <a href="#def-devsecops">the definition of CI/CD and DevSecOps</a>.</div>
+  <div class="w081-expl iw-expl" hidden>Plan, Code, Build and Test are the development half of the loop; Release, Deploy, Operate and Monitor the operations half, with Monitor flowing back into Plan. DevSecOps embeds automated security at every stage rather than as a gate at the end - see <a href="#def-devsecops">the definition of CI/CD and DevSecOps</a>.</div>
 </div>
 <script>
 (function () {
@@ -113,10 +113,10 @@
     });
     msg.className = 'w081-msg iw-msg';
     if (right === STAGES.length) {
-      msg.textContent = '✓ Correct — development flows into operations and the loop closes back at Plan.';
+      msg.textContent = '✓ Correct - development flows into operations and the loop closes back at Plan.';
       msg.classList.add('ok');
     } else {
-      msg.textContent = '✗ Not yet — ' + right + ' of ' + STAGES.length + ' movable stages are in the right place (marked green).';
+      msg.textContent = '✗ Not yet - ' + right + ' of ' + STAGES.length + ' movable stages are in the right place (marked green).';
       msg.classList.add('bad');
     }
   });
@@ -130,7 +130,7 @@
       if (!li.classList.contains('w081-locked')) li.classList.add('w081-right');
     });
     root.querySelector('.w081-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w081-msg iw-msg ok';
   });
   root.querySelector('.w081-reset').addEventListener('click', () => {

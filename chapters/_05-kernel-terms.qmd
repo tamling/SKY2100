@@ -52,10 +52,10 @@
   const msg = root.querySelector('.w053-msg');
   const expl = root.querySelector('.w053-expl');
   const PAIRS = [
-    ['Kernel', 'The single program running in the processor’s privileged mode — the only gateway to a resource'],
+    ['Kernel', 'The single program running in the processor’s privileged mode - the only gateway to a resource'],
     ['System call', 'How a program asks for a resource: it traps into the privileged mode'],
     ['User space', 'Everything that is not the kernel: the shell, Nginx, Nextcloud'],
-    ['Namespaces', 'Give a process an isolated view of one class of resource — processes, network, filesystem root, user IDs'],
+    ['Namespaces', 'Give a process an isolated view of one class of resource - processes, network, filesystem root, user IDs'],
     ['Control groups (cgroups)', 'Cap how much CPU, memory and I/O a process may consume'],
     ['Loadable module', 'Extends the monolithic kernel at run time']
   ];
@@ -121,10 +121,10 @@
     unpick();
     const n = matchedCount();
     if (n === PAIRS.length) {
-      msg.textContent = '✓ All ' + PAIRS.length + ' pairs matched — the container is an ordinary process, wrapped by the kernel.';
+      msg.textContent = '✓ All ' + PAIRS.length + ' pairs matched - the container is an ordinary process, wrapped by the kernel.';
       msg.className = 'w053-msg iw-msg ok';
     } else {
-      msg.textContent = n + ' of ' + PAIRS.length + ' pairs matched — keep going (a wrong attempt flashes red).';
+      msg.textContent = n + ' of ' + PAIRS.length + ' pairs matched - keep going (a wrong attempt flashes red).';
       msg.className = 'w053-msg iw-msg';
     }
   });
@@ -149,7 +149,7 @@
       defCol.appendChild(d);
       lock(t, d);
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w053-msg iw-msg ok';
     expl.hidden = false;
   });

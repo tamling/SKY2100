@@ -138,7 +138,7 @@ availability in Session 3 (load and denial of service) and Session 11
 (resilience, RAID and backup). For this reason the first question in any
 scenario is which of the three properties is at stake.
 
-![The CIA triad. Every control in this course protects at least one of the three properties; the recurring analytical question is which.](figures/fig-cia.svg){#fig-cia fig-alt="Diagram — a triangle with 'information' at its centre and one labelled box at each corner: Confidentiality (disclosed only to the authorised), Integrity (not altered undetectably) and Availability (reachable when needed)."}
+![The CIA triad. Every control in this course protects at least one of the three properties; the recurring analytical question is which.](figures/fig-cia.svg){#fig-cia fig-alt="Diagram - a triangle with 'information' at its centre and one labelled box at each corner: Confidentiality (disclosed only to the authorised), Integrity (not altered undetectably) and Availability (reachable when needed)."}
 
 ::: {#exm-nextcloud-cia}
 ## One file, three properties
@@ -394,9 +394,9 @@ every row, then press **Check**.
 :::
 
 ::: {#exr-01-trc-vocabulary}
-## Threat, risk, control — the vocabulary
+## Threat, risk, control - the vocabulary
 Complete each sentence of @def-trc with the missing term of this chapter's
-vocabulary — one word per field. Then press **Check**.
+vocabulary - one word per field. Then press **Check**.
 
 {{< include _01-trc-input.qmd >}}
 :::
@@ -449,11 +449,11 @@ b. A credential failure: user passwords were stolen and abused
 c. A governance failure: a publication decision was made without reasoning about what could be inferred
 d. A cryptographic failure: the published data was too weakly encrypted
 
-**Q7 — applied scenario** *(tests @sec-01-service-models · applied)*
+**Q7 - applied scenario** *(tests @sec-01-service-models · applied)*
 Building on @exr-01-saas-reduces-risk: a small firm currently runs Nextcloud
 on an IaaS virtual machine and is offered a hosted SaaS file-sharing product
 instead. Management claims the move would make security "entirely the
 provider's problem". Using the shared-responsibility model, name two security
 tasks that would genuinely move to the provider, one responsibility that
-stays with the firm in either model, and explain — with reference to the
-Strava case — why management's claim is wrong.
+stays with the firm in either model, and explain - with reference to the
+Strava case - why management's claim is wrong.

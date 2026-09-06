@@ -51,8 +51,8 @@
     providers and deployments the organisation depends on, and contracts make the
     shared-responsibility model legally binding. Compliance inheritance covers only
     the infrastructure layer, while side channels and back doors are the structural
-    risks no firewall or password stops — exactly what a register exists to record
-    and accept knowingly — see <a href="#def-riskregister">the definition of the risk
+    risks no firewall or password stops - exactly what a register exists to record
+    and accept knowingly - see <a href="#def-riskregister">the definition of the risk
     register</a> and <a href="#sec-12-risk-audit-compliance">the section on risk,
     audit and compliance</a>.
   </div>
@@ -140,13 +140,13 @@
   root.querySelector('.w123-check').addEventListener('click', () => {
     const done = root.querySelectorAll('.w123-def.w123-done').length;
     if (done === PAIRS.length) {
-      msg.textContent = '✓ All ' + PAIRS.length + ' pairs matched — the GRC toolbox is sorted.';
+      msg.textContent = '✓ All ' + PAIRS.length + ' pairs matched - the GRC toolbox is sorted.';
       msg.className = 'w123-msg iw-msg ok';
     } else if (done === 0) {
-      msg.textContent = 'No pairs matched yet — click a term, then its description (a wrong pair flashes red).';
+      msg.textContent = 'No pairs matched yet - click a term, then its description (a wrong pair flashes red).';
       msg.className = 'w123-msg iw-msg';
     } else {
-      msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched — keep going.';
+      msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched - keep going.';
       msg.className = 'w123-msg iw-msg';
     }
   });
@@ -154,7 +154,7 @@
     clearPick();
     PAIRS.forEach(p => lock(p.id));
     root.querySelector('.w123-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w123-msg iw-msg ok';
   });
   root.querySelector('.w123-reset').addEventListener('click', () => {

@@ -53,9 +53,9 @@
   <div class="w113-msg iw-msg" role="status"></div>
   <div class="w113-expl iw-expl" hidden>
     The 3–2–1 rule: <b>three</b> copies of important data, on <b>two</b> different
-    kinds of media, with <b>one</b> copy off-site — in the cloud, in a separate
+    kinds of media, with <b>one</b> copy off-site - in the cloud, in a separate
     account or region. The off-site copy matters because a backup an attacker can
-    reach and encrypt is no backup — see <a href="#sec-11-backup">the section on
+    reach and encrypt is no backup - see <a href="#sec-11-backup">the section on
     backup</a>.
   </div>
 </div>
@@ -81,13 +81,13 @@
       else { r.classList.add('w113-wrong'); }
     });
     if (right === rows.length) {
-      msg.textContent = '✓ All correct — that is the rule, and the off-site copy is the one ransomware cannot reach.';
+      msg.textContent = '✓ All correct - that is the rule, and the off-site copy is the one ransomware cannot reach.';
       msg.className = 'w113-msg iw-msg ok';
     } else if (empty > 0 && right + empty === rows.length) {
-      msg.textContent = 'Keep going — ' + empty + ' number(s) still missing.';
+      msg.textContent = 'Keep going - ' + empty + ' number(s) still missing.';
       msg.className = 'w113-msg iw-msg';
     } else {
-      msg.textContent = '✗ Not yet — the red lines hold the wrong number. The rule’s name is a hint.';
+      msg.textContent = '✗ Not yet - the red lines hold the wrong number. The rule’s name is a hint.';
       msg.className = 'w113-msg iw-msg bad';
     }
   });
@@ -98,7 +98,7 @@
       r.classList.add('w113-right');
     });
     root.querySelector('.w113-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w113-msg iw-msg ok';
   });
   root.querySelector('.w113-reset').addEventListener('click', () => {

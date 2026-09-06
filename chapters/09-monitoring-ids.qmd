@@ -88,7 +88,7 @@ critical path. Prevention stops more but risks more, so the two are used
 together: an IPS blocks the clearly malicious, and an IDS surfaces the merely
 suspicious for a human to judge.
 
-![IDS versus IPS. An IDS observes a copy of the traffic and alerts; an IPS sits in the path and can block. Detection is safe but passive; prevention acts but can break legitimate traffic.](figures/fig-idsips.svg){#fig-idsips fig-alt="Diagram — two side-by-side panels. Left ('IDS — detection'): traffic flows directly to the service while a dashed line taps a copy down to an IDS box labelled 'alert only'. Right ('IPS — prevention'): traffic passes through an IPS box sitting inline before reaching the service, labelled 'blocks in line'."}
+![IDS versus IPS. An IDS observes a copy of the traffic and alerts; an IPS sits in the path and can block. Detection is safe but passive; prevention acts but can break legitimate traffic.](figures/fig-idsips.svg){#fig-idsips fig-alt="Diagram - two side-by-side panels. Left ('IDS - detection'): traffic flows directly to the service while a dashed line taps a copy down to an IDS box labelled 'alert only'. Right ('IPS - prevention'): traffic passes through an IPS box sitting inline before reaching the service, labelled 'blocks in line'."}
 
 The pattern the Guidance recommends is *cascade-and-filter*: a sequence
 of detection mechanisms applied to the incoming streams, each narrowing the
@@ -322,15 +322,15 @@ Name two of the key indicators or detectors the Guidance says to watch
 closely on the management plane and identity systems.
 
 **Q6** *(tests @sec-09-detection · basic)*
-Why does the simple monitoring loop — poll every instance, alert if one
-fails to respond — not fit cloud-native applications?
+Why does the simple monitoring loop - poll every instance, alert if one
+fails to respond - not fit cloud-native applications?
 
 a. Cloud providers forbid polling because it consumes API quota
 b. Cloud-native instances start and stop all the time under the orchestrator's control, so a disappearing instance is not by itself a sign of trouble
 c. The loop is too fast: thirty seconds is shorter than the fast path requires
 d. Cloud-native applications run a known number of instances in known places, so polling is redundant
 
-**Q7 — applied scenario** *(tests @sec-09-exercises · applied)*
+**Q7 - applied scenario** *(tests @sec-09-exercises · applied)*
 Building on @exr-09-canary-token: the Nextcloud team's analysts are drowning
 in alerts, most of them false positives, and worry they would miss a real
 intrusion. Propose a design that adds one canary to the deployment and

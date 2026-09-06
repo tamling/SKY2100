@@ -40,7 +40,7 @@
     <span class="w086-note">(no fun if you click it right away)</span>
   </div>
   <div class="w086-msg iw-msg" role="status"></div>
-  <div class="w086-expl iw-expl" hidden>The SSDLC integrates security into every stage of building software, in this order: secure design and architecture, secure build, integration and testing, secure deployment, and runtime defence and monitoring in production; moving the work toward the start is called shifting left — see <a href="#def-ssdlc">the definition of the secure development lifecycle</a>.</div>
+  <div class="w086-expl iw-expl" hidden>The SSDLC integrates security into every stage of building software, in this order: secure design and architecture, secure build, integration and testing, secure deployment, and runtime defence and monitoring in production; moving the work toward the start is called shifting left - see <a href="#def-ssdlc">the definition of the secure development lifecycle</a>.</div>
 </div>
 <script>
 (function () {
@@ -110,10 +110,10 @@
     });
     msg.className = 'w086-msg iw-msg';
     if (right === STEPS.length) {
-      msg.textContent = '✓ Correct — security runs from design all the way to the running application.';
+      msg.textContent = '✓ Correct - security runs from design all the way to the running application.';
       msg.classList.add('ok');
     } else {
-      msg.textContent = '✗ Not yet — ' + right + ' of ' + STEPS.length + ' stages are in the right place (marked green).';
+      msg.textContent = '✗ Not yet - ' + right + ' of ' + STEPS.length + ' stages are in the right place (marked green).';
       msg.classList.add('bad');
     }
   });
@@ -130,7 +130,7 @@
       .sort((a, b) => +a.dataset.pos - +b.dataset.pos)
       .forEach(li => { list.appendChild(li); li.classList.add('w086-right'); });
     root.querySelector('.w086-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w086-msg iw-msg ok';
   });
 })();

@@ -105,7 +105,7 @@ automated to minimise human error and measured for continuous improvement
 (CSA, 2024, p. 244). In contrast to a security team that reviews at the end,
 DevSecOps places the check where the change is made.
 
-![The DevSecOps loop. Development (plan, code, build, test) flows continuously into operations (release, deploy, operate, monitor) and back; DevSecOps embeds automated security at every stage rather than as a gate at the end, with SAST as the code is built and DAST against the deployed application.](figures/fig-devsecops.svg){#fig-devsecops fig-alt="Diagram — eight stages (Plan, Code, Build, Test, Release, Deploy, Operate, Monitor) arranged in a circle with clockwise arrows forming a continuous loop; a circle labelled 'Security at every stage' sits at the centre, with 'SAST' marked beside the Build stage and 'DAST' beside the Test stage."}
+![The DevSecOps loop. Development (plan, code, build, test) flows continuously into operations (release, deploy, operate, monitor) and back; DevSecOps embeds automated security at every stage rather than as a gate at the end, with SAST as the code is built and DAST against the deployed application.](figures/fig-devsecops.svg){#fig-devsecops fig-alt="Diagram - eight stages (Plan, Code, Build, Test, Release, Deploy, Operate, Monitor) arranged in a circle with clockwise arrows forming a continuous loop; a circle labelled 'Security at every stage' sits at the centre, with 'SAST' marked beside the Build stage and 'DAST' beside the Test stage."}
 
 What lets a pipeline build the same tested definition every time is that
 the infrastructure itself is written down as text. *Infrastructure as
@@ -340,7 +340,7 @@ b. It replaces the NGFW, since both inspect traffic
 c. It operates at the network layer, blocking ports and source addresses
 d. It prevents attacks from arriving at the application, but is not a way to repair a flawed application or to excuse careless development
 
-**Q7 — applied scenario** *(tests @sec-08-exercises · applied)*
+**Q7 - applied scenario** *(tests @sec-08-exercises · applied)*
 Building on @exr-08-disclosed-library-flaw: a critical vulnerability is
 disclosed in an open-source library, and the SBOM shows that a third-party
 Nextcloud plugin in production embeds it. No patch exists yet. Describe, in

@@ -66,7 +66,7 @@
   </div>
   <div class="cia-msg iw-msg" role="status"></div>
   <div class="cia-expl iw-expl" hidden>
-    Confidentiality means information is disclosed only to authorised parties, integrity that it is not altered without authorisation — or at least not without detection — and availability that information and services are reachable when needed. Redundancy, authentication and non-repudiation are controls and related course concepts, not the three protection goals — see <a href="#def-cia">the definition of the CIA triad</a> in <a href="#sec-01-cia-triad">the section on security defined</a>.
+    Confidentiality means information is disclosed only to authorised parties, integrity that it is not altered without authorisation - or at least not without detection - and availability that information and services are reachable when needed. Redundancy, authentication and non-repudiation are controls and related course concepts, not the three protection goals - see <a href="#def-cia">the definition of the CIA triad</a> in <a href="#sec-01-cia-triad">the section on security defined</a>.
   </div>
 </div>
 <script>
@@ -136,9 +136,9 @@
       if (chip.dataset.term === z.dataset.answer) { z.classList.add('cia-right'); right++; }
       else { z.classList.add('cia-wrong'); wrong++; }
     });
-    if (right === 3) { msg.textContent = '✓ All correct — the CIA triad is in place.'; msg.className = 'cia-msg iw-msg ok'; }
-    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' corner(s) still empty.'; msg.className = 'cia-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — the red corners are wrong (three of the six terms are distractors).'; msg.className = 'cia-msg iw-msg bad'; }
+    if (right === 3) { msg.textContent = '✓ All correct - the CIA triad is in place.'; msg.className = 'cia-msg iw-msg ok'; }
+    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going - ' + empty + ' corner(s) still empty.'; msg.className = 'cia-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - the red corners are wrong (three of the six terms are distractors).'; msg.className = 'cia-msg iw-msg bad'; }
   });
   root.querySelector('.cia-solution').addEventListener('click', () => {
     unpick();
@@ -147,7 +147,7 @@
       if (chip) place(z, chip);
     });
     zones.forEach(z => z.classList.add('cia-right'));
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'cia-msg iw-msg ok';
     root.querySelector('.cia-expl').hidden = false;
   });

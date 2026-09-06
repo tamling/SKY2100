@@ -55,8 +55,8 @@
     RAID buys <em>uptime</em> through hardware failure: it keeps the service running
     when a disk fails, even while the disk is swapped. But a mirror or parity array
     copies a deletion, corruption or ransomware encryption instantly and exactly to
-    every disk, so returning to an earlier state — or surviving the loss of the whole
-    site — needs the separate point-in-time copy a backup provides — see
+    every disk, so returning to an earlier state - or surviving the loss of the whole
+    site - needs the separate point-in-time copy a backup provides - see
     <a href="#sec-11-backup">the section on backup</a> and
     <a href="#tbl-raidbackup">the RAID-versus-backup table</a>.
   </div>
@@ -129,9 +129,9 @@
         else { i.classList.add('w112-wrong'); wrong++; }
       });
     });
-    if (right === ITEMS.length) { msg.textContent = '✓ All correct — RAID buys uptime through hardware failure, backup recovers from everything else.'; msg.className = 'w112-msg iw-msg ok'; }
-    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + unplaced + ' situation(s) still unsorted.'; msg.className = 'w112-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — the red items sit in the wrong box. Remember: a mirror copies the damage exactly.'; msg.className = 'w112-msg iw-msg bad'; }
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct - RAID buys uptime through hardware failure, backup recovers from everything else.'; msg.className = 'w112-msg iw-msg ok'; }
+    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going - ' + unplaced + ' situation(s) still unsorted.'; msg.className = 'w112-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - the red items sit in the wrong box. Remember: a mirror copies the damage exactly.'; msg.className = 'w112-msg iw-msg bad'; }
   });
   root.querySelector('.w112-solution').addEventListener('click', () => {
     unpick();
@@ -141,7 +141,7 @@
     });
     root.querySelectorAll('.w112-item').forEach(c => c.classList.add('w112-right'));
     root.querySelector('.w112-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w112-msg iw-msg ok';
   });
   root.querySelector('.w112-reset').addEventListener('click', () => {

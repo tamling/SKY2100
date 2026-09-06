@@ -27,7 +27,7 @@
 <div class="iw w103-num" id="w103">
   <div class="w103-q">A breach of the Nextcloud VM is discovered and forensics begins
   with the Azure Activity Log, which is enabled by default. For how many days is it
-  retained — and after which any management-plane action not routed elsewhere is gone?</div>
+  retained - and after which any management-plane action not routed elsewhere is gone?</div>
   <div class="w103-row">
     <input type="number" class="w103-in" aria-label="number of days"
            step="any" placeholder="…"> <span>days</span>
@@ -39,7 +39,7 @@
     <span class="w103-note">(no fun if you click it right away)</span>
   </div>
   <div class="w103-msg iw-msg" role="status"></div>
-  <div class="w103-expl iw-expl" hidden>The Azure Activity Log is enabled by default but retained for only ninety days, and an intrusion may be discovered months after it began — which is why security-relevant logs are routed to Log Analytics or longer-term storage rather than left to expire — see <a href="#sec-10-logs-events">the section on logs, events and the content of a log line</a>.</div>
+  <div class="w103-expl iw-expl" hidden>The Azure Activity Log is enabled by default but retained for only ninety days, and an intrusion may be discovered months after it began - which is why security-relevant logs are routed to Log Analytics or longer-term storage rather than left to expire - see <a href="#sec-10-logs-events">the section on logs, events and the content of a log line</a>.</div>
 </div>
 <script>
 (function () {
@@ -57,11 +57,11 @@
     if (inp.value.trim() === '' || isNaN(v)) { msg.textContent = 'Enter a number of days first.'; return; }
     if (Math.abs(v - ANSWER) < TOL) {
       inp.classList.add('w103-right');
-      msg.textContent = '✓ Correct — which is why an intrusion discovered months later needs the logs routed to longer-term storage.';
+      msg.textContent = '✓ Correct - which is why an intrusion discovered months later needs the logs routed to longer-term storage.';
       msg.classList.add('ok');
     } else {
       inp.classList.add('w103-wrong');
-      msg.textContent = '✗ Not the default retention the chapter gives — try again.';
+      msg.textContent = '✗ Not the default retention the chapter gives - try again.';
       msg.classList.add('bad');
     }
   }
@@ -77,7 +77,7 @@
     inp.value = String(ANSWER);
     inp.classList.add('w103-right');
     root.querySelector('.w103-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.classList.add('ok');
   });
 })();

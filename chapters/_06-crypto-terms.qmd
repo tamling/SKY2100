@@ -52,7 +52,7 @@
   const msg = root.querySelector('.w063-msg');
   const expl = root.querySelector('.w063-expl');
   const PAIRS = [
-    ['Symmetric encryption', 'One shared secret key both encrypts and decrypts — fast, suits bulk data'],
+    ['Symmetric encryption', 'One shared secret key both encrypts and decrypts - fast, suits bulk data'],
     ['Asymmetric encryption', 'Each party has a key pair; what one key locks only the other unlocks'],
     ['Digital certificate', 'Binds a public key to an identity (a domain name), signed by an authority both parties trust'],
     ['PKI', 'The system of authorities, certificates and trust relationships at Internet scale'],
@@ -121,10 +121,10 @@
     unpick();
     const n = matchedCount();
     if (n === PAIRS.length) {
-      msg.textContent = '✓ All ' + PAIRS.length + ' pairs matched — the vocabulary TLS is built from.';
+      msg.textContent = '✓ All ' + PAIRS.length + ' pairs matched - the vocabulary TLS is built from.';
       msg.className = 'w063-msg iw-msg ok';
     } else {
-      msg.textContent = n + ' of ' + PAIRS.length + ' pairs matched — keep going (a wrong attempt flashes red).';
+      msg.textContent = n + ' of ' + PAIRS.length + ' pairs matched - keep going (a wrong attempt flashes red).';
       msg.className = 'w063-msg iw-msg';
     }
   });
@@ -149,7 +149,7 @@
       defCol.appendChild(d);
       lock(t, d);
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w063-msg iw-msg ok';
     expl.hidden = false;
   });

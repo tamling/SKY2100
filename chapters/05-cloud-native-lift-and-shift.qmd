@@ -67,7 +67,7 @@ Cloud-native systems use containers because packaged processes are cheap to
 start, stop and replicate, and VMs remain the stronger isolation boundary
 beneath them.
 
-![A VM carries a whole guest operating system on virtualised hardware; a container is a packaged process sharing the host kernel: lighter, but with a thinner isolation wall.](figures/fig-vmcontainer.svg){#fig-vmcontainer fig-alt="Diagram — two stacks side by side: the VM stack layers Hardware, Hypervisor, and two boxes each holding a Guest OS plus App; the container stack layers Hardware, Host OS (shared kernel), Container engine, and three App boxes on top."}
+![A VM carries a whole guest operating system on virtualised hardware; a container is a packaged process sharing the host kernel: lighter, but with a thinner isolation wall.](figures/fig-vmcontainer.svg){#fig-vmcontainer fig-alt="Diagram - two stacks side by side: the VM stack layers Hardware, Hypervisor, and two boxes each holding a Guest OS plus App; the container stack layers Hardware, Host OS (shared kernel), Container engine, and three App boxes on top."}
 
 ## The kernel {#sec-05-the-kernel}
 
@@ -99,7 +99,7 @@ driver framework on top. It presents a UNIX/POSIX interface, which is why
 its shell resembles Linux's, but its kernel has no built-in idea of Linux
 containers.
 
-![Three kernels, one shape. All three enforce the same user/kernel split, reached only through system calls, but differ inside: Linux is *monolithic* (one privileged program), whereas Windows (NT) and macOS (XNU) are *hybrid*, layering an outer service layer over a small core. A Linux container's isolation is enforced by the Linux kernel, which is why it requires one.](figures/fig-kernels.svg){#fig-kernels fig-alt="Diagram — three columns for Linux, Windows and macOS, each stacked as user space (apps, containers), a dashed system-call boundary, the kernel, and hardware; the Linux kernel is one undivided monolithic block (scheduler, memory, filesystems, network, drivers — one space), while Windows NT and macOS XNU are hybrid, each layering an outer part (Executive + subsystems; BSD (Unix) layer) over a small core (microkernel core; Mach microkernel)."}
+![Three kernels, one shape. All three enforce the same user/kernel split, reached only through system calls, but differ inside: Linux is *monolithic* (one privileged program), whereas Windows (NT) and macOS (XNU) are *hybrid*, layering an outer service layer over a small core. A Linux container's isolation is enforced by the Linux kernel, which is why it requires one.](figures/fig-kernels.svg){#fig-kernels fig-alt="Diagram - three columns for Linux, Windows and macOS, each stacked as user space (apps, containers), a dashed system-call boundary, the kernel, and hardware; the Linux kernel is one undivided monolithic block (scheduler, memory, filesystems, network, drivers - one space), while Windows NT and macOS XNU are hybrid, each layering an outer part (Executive + subsystems; BSD (Unix) layer) over a small core (microkernel core; Mach microkernel)."}
 
 A Linux container therefore needs a Linux kernel, because the image holds
 libraries and binaries but no kernel. `docker run` on a Windows or
@@ -400,7 +400,7 @@ b. A container starts within a second and costs megabytes, so a service can add 
 c. Virtual machines cannot run Linux workloads in the cloud
 d. Containers remove the need for an orchestration system such as Kubernetes
 
-**Q7 — applied scenario** *(tests @sec-05-ephemeral-immutable · applied)*
+**Q7 - applied scenario** *(tests @sec-05-ephemeral-immutable · applied)*
 Building on @exr-05-vulnerable-dependency: your Nextcloud runs as a Docker
 container built from an image, and a critical vulnerability is published for
 a library inside that image. A teammate proposes logging into the running

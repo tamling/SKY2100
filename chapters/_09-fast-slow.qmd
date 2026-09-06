@@ -57,7 +57,7 @@
     <span class="w092-note">(no fun if you click it right away)</span>
   </div>
   <div class="w092-msg iw-msg" role="status"></div>
-  <div class="w092-expl iw-expl" hidden>The fast path carries events, analysed and turned into alerts almost at once, and is necessary for high-risk activity, especially on the management plane; the slow path carries logs, which may arrive up to fifteen minutes late — acceptable for investigation and forensics — see <a href="#sec-09-fast-slow-path">the section on fast path and slow path</a>.</div>
+  <div class="w092-expl iw-expl" hidden>The fast path carries events, analysed and turned into alerts almost at once, and is necessary for high-risk activity, especially on the management plane; the slow path carries logs, which may arrive up to fifteen minutes late - acceptable for investigation and forensics - see <a href="#sec-09-fast-slow-path">the section on fast path and slow path</a>.</div>
 </div>
 <script>
 (function () {
@@ -126,12 +126,12 @@
     const left = pool.querySelectorAll('.w092-chip').length;
     msg.className = 'w092-msg iw-msg';
     if (wrong === 0 && left === 0) {
-      msg.textContent = '✓ All correct — timely alerting and deep analysis are on the right tracks.';
+      msg.textContent = '✓ All correct - timely alerting and deep analysis are on the right tracks.';
       msg.classList.add('ok');
     } else if (wrong === 0) {
-      msg.textContent = 'Keep going — ' + left + ' statement(s) still to sort.';
+      msg.textContent = 'Keep going - ' + left + ' statement(s) still to sort.';
     } else {
-      msg.textContent = '✗ Not yet — ' + wrong + ' statement(s) sit in the wrong box (marked red).';
+      msg.textContent = '✗ Not yet - ' + wrong + ' statement(s) sit in the wrong box (marked red).';
       msg.classList.add('bad');
     }
   });
@@ -143,7 +143,7 @@
     });
     root.querySelectorAll('.w092-chip').forEach(c => c.classList.add('w092-right'));
     root.querySelector('.w092-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w092-msg iw-msg ok';
   });
   root.querySelector('.w092-reset').addEventListener('click', () => {

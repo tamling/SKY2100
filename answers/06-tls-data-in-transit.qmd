@@ -1,36 +1,36 @@
-# Answer key — Chapter 06: TLS and data in transit {.unnumbered}
+# Answer key - Chapter 06: TLS and data in transit {.unnumbered}
 
 <!-- Source-only: this directory is excluded from the render in _quarto.yml
      ("!answers/"). Never link these files from a chapter. Numbering must
      match the chapter's Self-check section 1:1. -->
 
-**Q1** *(tests @sec-06-three-data-states · basic)* — **Correct: c.**
+**Q1** *(tests @sec-06-three-data-states · basic)* - **Correct: c.**
 The chapter says data in use is "the hardest state to protect" because the
 program working on the data must be able to read it; (a), (b) and (d)
 describe real exposures of the other states but not the chapter's reason
 for the hardest one.
 
-**Q2** *(tests @sec-06-two-crypto-families · basic)* — **Correct: c.**
+**Q2** *(tests @sec-06-two-crypto-families · basic)* - **Correct: c.**
 "TLS therefore uses asymmetric encryption once, at the start, to agree on a
 fresh symmetric key, and then uses that key for the data: slow handshake,
 fast conversation." (a) and (b) each invert one family's strength, and (d)
 has no basis in the chapter.
 
-**Q3** *(tests @sec-06-two-crypto-families · basic)* — **Accepted answers:**
+**Q3** *(tests @sec-06-two-crypto-families · basic)* - **Accepted answers:**
 "a certificate binds a public key to an identity (a domain name), and a
 certificate authority both parties trust vouches for it by its signature",
 "public key ↔ domain name, signed by a trusted CA within the PKI" (any
 phrasing naming the public key, the identity/domain, and the CA's
 signature).
 
-**Q4** *(tests @sec-06-tls · basic)* — **Correct: a.**
+**Q4** *(tests @sec-06-tls · basic)* - **Correct: a.**
 The chapter lists confidentiality (eavesdroppers see only ciphertext),
 integrity (tampering is detected) and server authentication (the client is
 talking to the certified server); availability and non-repudiation are not
 among TLS's properties here, and it is the server, not the client, that is
 authenticated.
 
-**Q5** *(tests @sec-06-tls · basic)* — **Accepted answers:**
+**Q5** *(tests @sec-06-tls · basic)* - **Accepted answers:**
 "decrypting traffic at a gateway, examining it and re-encrypting it onward;
 it restores inspection but breaks end-to-end confidentiality at one trusted
 point, with a concentration risk", "TLS termination / break-and-inspect at
@@ -38,24 +38,24 @@ a gateway; the trade-off is end-to-end confidentiality" (any phrasing with
 decrypt–inspect–re-encrypt and the loss of end-to-end confidentiality at a
 trusted point).
 
-**Q6** *(tests @sec-06-vpns-data-on-move · basic)* — **Correct: b.**
+**Q6** *(tests @sec-06-vpns-data-on-move · basic)* - **Correct: b.**
 "A VPN thus protects the whole connection where TLS protects one
 application's": the tunnel carries all of a device's packets to the
 organisation's cloud data centre. (a) confuses the VPN with whole-disk
 encryption, (c) inverts TLS's server authentication, and (d) is not stated
 anywhere in the chapter.
 
-**Q7 — applied scenario** *(tests @sec-06-tls · applied)* —
+**Q7 - applied scenario** *(tests @sec-06-tls · applied)* -
 **Model answer:** what HTTPS protects: the confidentiality and integrity of
-the file and credentials *in motion*, plus server authentication — the
+the file and credentials *in motion*, plus server authentication - the
 interceptor on the network path now sees only ciphertext (@exm-tls-trc).
 What it does not cover (any three, each with its control/session): (i) the
-same file at rest on the server's disk — storage encryption and backups,
-Session 11; (ii) the file in use / who may open it at all — access control,
+same file at rest on the server's disk - storage encryption and backups,
+Session 11; (ii) the file in use / who may open it at all - access control,
 Session 7; (iii) an application flaw such as SQL injection that makes the
-server hand over decrypted data — application security, Session 8, and the
+server hand over decrypted data - application security, Session 8, and the
 limitations section: encryption is bypassed, not broken; (iv) old protocol
-versions left enabled — enforce TLS 1.2 minimum and disable 1.0/1.1,
+versions left enabled - enforce TLS 1.2 minimum and disable 1.0/1.1,
 because a downgrade undoes the protection; (v) an expired certificate
 breaking the service; (vi) private keys stored in a file beside the
 application instead of a managed key store (Azure Key Vault, AWS KMS).

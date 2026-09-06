@@ -61,7 +61,7 @@
     the monitoring and the tamper-evident off-host logs, Respond the containment and
     eradication, and Recover the tested backup restoration and disaster recovery.
     Every Function populated is what makes the protection complete rather than merely
-    long — see <a href="#sec-13-csf-mapping">the section on mapping to the NIST
+    long - see <a href="#sec-13-csf-mapping">the section on mapping to the NIST
     Cybersecurity Framework</a> and <a href="#tbl-csf">the mapping table</a>.
   </div>
 </div>
@@ -135,9 +135,9 @@
         else { i.classList.add('w131-wrong'); wrong++; }
       });
     });
-    if (right === ITEMS.length) { msg.textContent = '✓ All correct — every Function is populated; the defence is complete across the framework.'; msg.className = 'w131-msg iw-msg ok'; }
-    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + unplaced + ' control(s) still without a Function.'; msg.className = 'w131-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — the red controls sit under the wrong Function. Consult the mapping table and retry.'; msg.className = 'w131-msg iw-msg bad'; }
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct - every Function is populated; the defence is complete across the framework.'; msg.className = 'w131-msg iw-msg ok'; }
+    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going - ' + unplaced + ' control(s) still without a Function.'; msg.className = 'w131-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - the red controls sit under the wrong Function. Consult the mapping table and retry.'; msg.className = 'w131-msg iw-msg bad'; }
   });
   root.querySelector('.w131-solution').addEventListener('click', () => {
     unpick();
@@ -147,7 +147,7 @@
     });
     root.querySelectorAll('.w131-item').forEach(c => c.classList.add('w131-right'));
     root.querySelector('.w131-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w131-msg iw-msg ok';
   });
   root.querySelector('.w131-reset').addEventListener('click', () => {

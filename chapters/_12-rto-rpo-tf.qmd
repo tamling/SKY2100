@@ -45,8 +45,8 @@
     The RTO states how quickly a service must be back (time), the RPO how much recent
     data the organisation can afford to lose (data); together they set how often
     backups are taken and how fast a restore must be. It is BCM that protects the
-    business function, while Session 11's resilience protects the technical service —
-    and a cloud incident gives management, legal and compliance a part to play too —
+    business function, while Session 11's resilience protects the technical service -
+    and a cloud incident gives management, legal and compliance a part to play too -
     see <a href="#sec-12-business-continuity">the section on resilience and business
     continuity</a>.
   </div>
@@ -106,13 +106,13 @@
       else { r.el.classList.add('w124-wrong'); wrong++; }
     });
     if (right === rows.length) {
-      msg.textContent = '✓ All correct — RTO is about time, RPO about data, and continuity is everybody’s business.';
+      msg.textContent = '✓ All correct - RTO is about time, RPO about data, and continuity is everybody’s business.';
       msg.className = 'w124-msg iw-msg ok';
     } else if (open > 0 && wrong === 0) {
-      msg.textContent = 'Keep going — ' + open + ' statement(s) still unanswered.';
+      msg.textContent = 'Keep going - ' + open + ' statement(s) still unanswered.';
       msg.className = 'w124-msg iw-msg';
     } else {
-      msg.textContent = '✗ Not yet — the red statements are marked wrongly. Which objective measures time, which measures data?';
+      msg.textContent = '✗ Not yet - the red statements are marked wrongly. Which objective measures time, which measures data?';
       msg.className = 'w124-msg iw-msg bad';
     }
   });
@@ -125,7 +125,7 @@
       r.el.classList.add('w124-right');
     });
     root.querySelector('.w124-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w124-msg iw-msg ok';
   });
   root.querySelector('.w124-reset').addEventListener('click', () => {

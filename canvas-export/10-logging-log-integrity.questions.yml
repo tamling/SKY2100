@@ -1,4 +1,4 @@
-quiz_title: "Chapter 10 — Self-check"
+quiz_title: "Chapter 10 - Self-check"
 chapter: 10-logging-log-integrity
 
 questions:
@@ -84,10 +84,10 @@ questions:
       still on the VM prove nothing. Justify each point with a concept from
       this chapter.
     sample_answer: >
-      The team relies on the copies in the central, append-only log store —
+      The team relies on the copies in the central, append-only log store -
       the Nginx access log, the system journal, Nextcloud's access and audit
       logs and the firewall's records, forwarded off-host as they were
-      written — plus the management plane logs (on Azure, the Activity Log),
+      written - plus the management plane logs (on Azure, the Activity Log),
       which the attacker on the VM never controlled. Those copies are beyond
       doubt because they left the host in real time, the store is append-only
       or write-once, and access to it is restricted under least privilege:

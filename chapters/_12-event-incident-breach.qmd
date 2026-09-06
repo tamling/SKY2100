@@ -58,7 +58,7 @@
     confidentiality, integrity or availability and demands a response; a
     <em>breach</em> is a successful penetration or circumvention of controls leading
     to unauthorised access or extraction of data, and may trigger legal obligations
-    to notify — see <a href="#def-incident">the definition of event, incident and
+    to notify - see <a href="#def-incident">the definition of event, incident and
     breach</a> in <a href="#sec-12-events-incidents-breaches">the section on events,
     incidents and breaches</a>.
   </div>
@@ -131,9 +131,9 @@
         else { i.classList.add('w122-wrong'); wrong++; }
       });
     });
-    if (right === ITEMS.length) { msg.textContent = '✓ All correct — logged, handled, or notified: the classification sets the response.'; msg.className = 'w122-msg iw-msg ok'; }
-    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + unplaced + ' occurrence(s) still unsorted.'; msg.className = 'w122-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — the red items are on the wrong level of the scale. Re-read the three definitions and retry.'; msg.className = 'w122-msg iw-msg bad'; }
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct - logged, handled, or notified: the classification sets the response.'; msg.className = 'w122-msg iw-msg ok'; }
+    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going - ' + unplaced + ' occurrence(s) still unsorted.'; msg.className = 'w122-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - the red items are on the wrong level of the scale. Re-read the three definitions and retry.'; msg.className = 'w122-msg iw-msg bad'; }
   });
   root.querySelector('.w122-solution').addEventListener('click', () => {
     unpick();
@@ -143,7 +143,7 @@
     });
     root.querySelectorAll('.w122-item').forEach(c => c.classList.add('w122-right'));
     root.querySelector('.w122-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w122-msg iw-msg ok';
   });
   root.querySelector('.w122-reset').addEventListener('click', () => {

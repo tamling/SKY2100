@@ -50,7 +50,7 @@
   const msg = root.querySelector('.w015-msg');
   // [question, accepted answers (normalised), canonical answer to show]
   const QUESTIONS = [
-    ['A potential cause of an incident — something that could happen to the detriment of confidentiality, integrity or availability — is called a …',
+    ['A potential cause of an incident - something that could happen to the detriment of confidentiality, integrity or availability - is called a …',
       ['threat'], 'threat'],
     ['The weight of such a cause, expressed as likelihood × impact, is called the …',
       ['risk'], 'risk'],
@@ -90,9 +90,9 @@
       if (QUESTIONS[Number(inp.dataset.k)][1].indexOf(v) !== -1) { inp.classList.add('w015-right'); right++; }
       else { inp.classList.add('w015-wrong'); wrong++; }
     });
-    if (right === QUESTIONS.length) { msg.textContent = '✓ All correct — name the threat, weigh the risk, choose the control.'; msg.className = 'w015-msg iw-msg ok'; }
-    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' field(s) still empty.'; msg.className = 'w015-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — the red fields hold the wrong term.'; msg.className = 'w015-msg iw-msg bad'; }
+    if (right === QUESTIONS.length) { msg.textContent = '✓ All correct - name the threat, weigh the risk, choose the control.'; msg.className = 'w015-msg iw-msg ok'; }
+    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going - ' + empty + ' field(s) still empty.'; msg.className = 'w015-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - the red fields hold the wrong term.'; msg.className = 'w015-msg iw-msg bad'; }
   });
   root.querySelector('.w015-reset').addEventListener('click', () => {
     rowsBox.querySelectorAll('.w015-in').forEach(i => { i.value = ''; });
@@ -105,7 +105,7 @@
       inp.value = QUESTIONS[Number(inp.dataset.k)][2];
       inp.classList.add('w015-right');
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w015-msg iw-msg ok';
     root.querySelector('.w015-expl').hidden = false;
   });

@@ -104,7 +104,7 @@ matters for security on to a separate, well-protected audit environment,
 where it is kept for the long term, and from there the logs feed a SIEM that
 analyses across all environments.
 
-![Cascading log architecture. Each environment forwards to a central repository; the security-relevant subset is filtered into a retained audit store and fed to the SIEM, the same cascade-and-filter as in Session 9, now applied to storage and cost.](figures/fig-cascade.svg){#fig-cascade fig-alt="Diagram — three boxes (Dev, Test, Prod) each send arrows into a 'central log repository'; an arrow labelled 'filter' leads from it to a 'security / audit store', which in turn feeds a SIEM box."}
+![Cascading log architecture. Each environment forwards to a central repository; the security-relevant subset is filtered into a retained audit store and fed to the SIEM, the same cascade-and-filter as in Session 9, now applied to storage and cost.](figures/fig-cascade.svg){#fig-cascade fig-alt="Diagram - three boxes (Dev, Test, Prod) each send arrows into a 'central log repository'; an arrow labelled 'filter' leads from it to a 'security / audit store', which in turn feeds a SIEM box."}
 
 Two design points from Session 9 carry over. Cascade-and-filter applies
 here as cost control (CSA, 2024, pp. 133–135): pertinent alerts and
@@ -345,7 +345,7 @@ b. Encrypt logs on the host; rotate them daily; compress old logs to save space
 c. Keep logs on the host but take a weekly backup; grant all administrators access so tampering is noticed
 d. Delete logs after ninety days; batch-transfer them monthly; store them alongside the application data
 
-**Q7 — applied scenario** *(tests @sec-10-exercises · applied)*
+**Q7 - applied scenario** *(tests @sec-10-exercises · applied)*
 Building on @exr-10-chain-of-custody: months after an intrusion into the
 Nextcloud VM is discovered, a regulator asks the team to prove what the
 attacker did and when. The attacker had full control of the VM for weeks.

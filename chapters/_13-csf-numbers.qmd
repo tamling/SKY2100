@@ -37,11 +37,11 @@
     </div>
     <div class="w133-row" data-answer="22">
       <input type="number" inputmode="numeric" min="0" max="999" aria-label="number of Categories">
-      <span>Categories — the level at which completeness is tested</span>
+      <span>Categories - the level at which completeness is tested</span>
     </div>
     <div class="w133-row" data-answer="106">
       <input type="number" inputmode="numeric" min="0" max="999" aria-label="number of Subcategories">
-      <span>Subcategories — the specific, testable outcomes</span>
+      <span>Subcategories - the specific, testable outcomes</span>
     </div>
   </div>
   <div class="w133-controls">
@@ -53,10 +53,10 @@
   <div class="w133-msg iw-msg" role="status"></div>
   <div class="w133-expl iw-expl" hidden>
     CSF 2.0 has three levels: <b>6</b> Functions at the top (Govern, Identify,
-    Protect, Detect, Respond, Recover — Govern at the centre), which divide into
+    Protect, Detect, Respond, Recover - Govern at the centre), which divide into
     <b>22</b> Categories, the level at which completeness is tested, which divide
     again into <b>106</b> Subcategories, the specific, testable outcomes an
-    organisation achieves — see <a href="#sec-13-csf-mapping">the section on mapping
+    organisation achieves - see <a href="#sec-13-csf-mapping">the section on mapping
     to the NIST Cybersecurity Framework</a>.
   </div>
 </div>
@@ -82,13 +82,13 @@
       else { r.classList.add('w133-wrong'); }
     });
     if (right === rows.length) {
-      msg.textContent = '✓ All correct — that is the three-level structure of CSF 2.0.';
+      msg.textContent = '✓ All correct - that is the three-level structure of CSF 2.0.';
       msg.className = 'w133-msg iw-msg ok';
     } else if (empty > 0 && right + empty === rows.length) {
-      msg.textContent = 'Keep going — ' + empty + ' number(s) still missing.';
+      msg.textContent = 'Keep going - ' + empty + ' number(s) still missing.';
       msg.className = 'w133-msg iw-msg';
     } else {
-      msg.textContent = '✗ Not yet — the red lines hold the wrong number. The chapter states all three.';
+      msg.textContent = '✗ Not yet - the red lines hold the wrong number. The chapter states all three.';
       msg.className = 'w133-msg iw-msg bad';
     }
   });
@@ -99,7 +99,7 @@
       r.classList.add('w133-right');
     });
     root.querySelector('.w133-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w133-msg iw-msg ok';
   });
   root.querySelector('.w133-reset').addEventListener('click', () => {

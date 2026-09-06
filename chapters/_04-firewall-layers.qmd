@@ -111,9 +111,9 @@
       if (same) { lab.classList.add('w041-rowok'); okRows++; }
       else lab.classList.add('w041-rowbad');
     });
-    if (okRows === ROWS.length) { msg.textContent = '✓ All correct — the inspection depth of each tool is filled in.'; msg.className = 'w041-msg iw-msg ok'; }
-    else if (touched === 0) { msg.textContent = 'Nothing filled in yet — click the cells where each tool operates, then check again.'; msg.className = 'w041-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — ' + okRows + ' of ' + ROWS.length + ' rows are right; the red rows have too many or too few cells filled.'; msg.className = 'w041-msg iw-msg bad'; }
+    if (okRows === ROWS.length) { msg.textContent = '✓ All correct - the inspection depth of each tool is filled in.'; msg.className = 'w041-msg iw-msg ok'; }
+    else if (touched === 0) { msg.textContent = 'Nothing filled in yet - click the cells where each tool operates, then check again.'; msg.className = 'w041-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - ' + okRows + ' of ' + ROWS.length + ' rows are right; the red rows have too many or too few cells filled.'; msg.className = 'w041-msg iw-msg bad'; }
   });
   root.querySelector('.w041-solution').addEventListener('click', () => {
     ROWS.forEach(row => {
@@ -126,7 +126,7 @@
     });
     clearMarks();
     root.querySelectorAll('.w041-rowlab').forEach(l => l.classList.add('w041-rowok'));
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w041-msg iw-msg ok';
     root.querySelector('.w041-expl').hidden = false;
   });

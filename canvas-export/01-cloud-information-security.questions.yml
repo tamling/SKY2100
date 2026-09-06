@@ -1,7 +1,7 @@
 # Questions file for chapters/01-cloud-information-security.qmd.
 # Content matches the chapter's Self-check section and
 # answers/01-cloud-information-security.qmd exactly (same numbering).
-quiz_title: "Chapter 01 — Self-check"
+quiz_title: "Chapter 01 - Self-check"
 chapter: 01-cloud-information-security
 
 questions:
@@ -102,12 +102,12 @@ questions:
       would make security "entirely the provider's problem". Using the
       shared-responsibility model, name two security tasks that would
       genuinely move to the provider, one responsibility that stays with the
-      firm in either model, and explain — with reference to the Strava case —
+      firm in either model, and explain - with reference to the Strava case -
       why management's claim is wrong.
     sample_answer: >
       Tasks that move to the provider (any two): OS patching, web-server/TLS
       configuration, server hardening, firewall management, hardware and
-      hypervisor security. Responsibility that stays: the data row — deciding
+      hypervisor security. Responsibility that stays: the data row - deciding
       who may access which data and what shared or published data reveals.
       The claim is wrong because the data row never leaves the customer's
       column in the shared-responsibility table, and the Strava case shows a

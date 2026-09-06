@@ -38,7 +38,7 @@
     <span class="w104-note">(no fun if you click it right away)</span>
   </div>
   <div class="w104-msg iw-msg" role="status"></div>
-  <div class="w104-expl iw-expl" hidden>Log integrity is the integrity property of the CIA triad applied to the audit record: a copy that left the compromised host as it was written is beyond the attacker’s reach, so centralised collection is itself an integrity control — while Azure Resource Logs must first be enabled by a diagnostic setting — see <a href="#def-logintegrity">the definition of log integrity</a>.</div>
+  <div class="w104-expl iw-expl" hidden>Log integrity is the integrity property of the CIA triad applied to the audit record: a copy that left the compromised host as it was written is beyond the attacker’s reach, so centralised collection is itself an integrity control - while Azure Resource Logs must first be enabled by a diagnostic setting - see <a href="#def-logintegrity">the definition of log integrity</a>.</div>
 </div>
 <script>
 (function () {
@@ -91,9 +91,9 @@
       msg.textContent = '✓ All ' + rows.length + ' statements judged correctly.';
       msg.classList.add('ok');
     } else if (wrong === 0) {
-      msg.textContent = 'Keep going — ' + open + ' statement(s) still unanswered.';
+      msg.textContent = 'Keep going - ' + open + ' statement(s) still unanswered.';
     } else {
-      msg.textContent = '✗ Not yet — ' + right + ' of ' + rows.length + ' correct (wrong rows marked red).';
+      msg.textContent = '✗ Not yet - ' + right + ' of ' + rows.length + ' correct (wrong rows marked red).';
       msg.classList.add('bad');
     }
   });
@@ -114,7 +114,7 @@
       r.classList.add('w104-right');
     });
     root.querySelector('.w104-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.classList.add('ok');
   });
 })();

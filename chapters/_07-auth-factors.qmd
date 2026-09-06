@@ -140,7 +140,7 @@
       if (bucket) place(bucket, c);
     });
     chips().forEach(c => c.classList.add('w071-right'));
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w071-msg iw-msg ok';
     expl.hidden = false;
   });

@@ -47,7 +47,7 @@
     monitoring and tested backups exist <em>before</em> anything happens; the alert
     is validated and scoped before the timeline is built from the logs; isolation
     comes before credential rotation and the clean restore; and the lessons feed back
-    into preparation, closing the cycle — see
+    into preparation, closing the cycle - see
     <a href="#def-irlifecycle">the definition of the incident response lifecycle</a>
     and <a href="#sec-12-ir-lifecycle">the section on the lifecycle</a>.
   </div>
@@ -59,7 +59,7 @@
   const msg = root.querySelector('.w121-msg');
   // pos = correct position (1-based); INITIAL = fixed scrambled starting order.
   const STEPS = [
-    { pos: 1, text: 'Build the team, the plans, the network baseline, the monitoring and the tested backups — before anything happens' },
+    { pos: 1, text: 'Build the team, the plans, the network baseline, the monitoring and the tested backups - before anything happens' },
     { pos: 2, text: 'Validate the alert, estimate the scope and assign an incident manager' },
     { pos: 3, text: 'Build a timeline of the attack from the off-host logs' },
     { pos: 4, text: 'Isolate the affected identities and workloads; revoke sessions' },
@@ -125,8 +125,8 @@
       if (Number(li.dataset.pos) === i + 1) { li.classList.add('w121-right'); }
       else { li.classList.add('w121-wrong'); wrong++; }
     });
-    if (wrong === 0) { msg.textContent = '✓ All correct — the lifecycle runs from preparation to lessons learned, and back.'; msg.className = 'w121-msg iw-msg ok'; }
-    else { msg.textContent = '✗ Not yet — ' + wrong + ' step(s) out of place. Think of the four phases and their order.'; msg.className = 'w121-msg iw-msg bad'; }
+    if (wrong === 0) { msg.textContent = '✓ All correct - the lifecycle runs from preparation to lessons learned, and back.'; msg.className = 'w121-msg iw-msg ok'; }
+    else { msg.textContent = '✗ Not yet - ' + wrong + ' step(s) out of place. Think of the four phases and their order.'; msg.className = 'w121-msg iw-msg bad'; }
   });
   root.querySelector('.w121-solution').addEventListener('click', () => {
     [...list.children].sort((a, b) => Number(a.dataset.pos) - Number(b.dataset.pos))
@@ -134,7 +134,7 @@
     clearMarks();
     [...list.children].forEach(li => li.classList.add('w121-right'));
     root.querySelector('.w121-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w121-msg iw-msg ok';
   });
   root.querySelector('.w121-reset').addEventListener('click', () => {

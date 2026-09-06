@@ -123,8 +123,8 @@
   }
   root.querySelector('.w034-check').addEventListener('click', () => {
     const done = termsCol.querySelectorAll('.w034-done').length;
-    if (done === PAIRS.length) { msg.textContent = '✓ All matched — the layers split by who operates them.'; msg.className = 'w034-msg iw-msg ok'; }
-    else { msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched — keep going (a wrong attempt flashes red).'; msg.className = 'w034-msg iw-msg'; }
+    if (done === PAIRS.length) { msg.textContent = '✓ All matched - the layers split by who operates them.'; msg.className = 'w034-msg iw-msg ok'; }
+    else { msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched - keep going (a wrong attempt flashes red).'; msg.className = 'w034-msg iw-msg'; }
   });
   root.querySelector('.w034-reset').addEventListener('click', () => { build(); root.querySelector('.w034-expl').hidden = true; });
   root.querySelector('.w034-sol').addEventListener('click', () => {
@@ -134,7 +134,7 @@
       const d = defsCol.querySelector('.w034-item[data-k="' + i + '"]');
       lockPair(t, d);
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w034-msg iw-msg ok';
     root.querySelector('.w034-expl').hidden = false;
   });

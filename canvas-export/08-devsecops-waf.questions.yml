@@ -1,4 +1,4 @@
-quiz_title: "Chapter 08 — Self-check"
+quiz_title: "Chapter 08 - Self-check"
 chapter: 08-devsecops-waf
 
 questions:
@@ -91,9 +91,9 @@ questions:
       control that limits exploitation now, inspecting HTTP requests and
       blocking those matching the attack pattern even though the flaw is
       present (runtime-defence phase of the SSDLC). Following days: the
-      patched version goes through the DevSecOps pipeline — composition
+      patched version goes through the DevSecOps pipeline - composition
       analysis confirms the new dependency, SAST in CI, DAST against the
-      staged application in CD — and because the infrastructure is immutable
+      staged application in CD - and because the infrastructure is immutable
       and defined as code, the environment is rebuilt fresh from the tested
       definition, so what was tested is exactly what runs. Grading: full
       credit needs SBOM for locating exposure, WAF as interim shield, the

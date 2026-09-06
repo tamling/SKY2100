@@ -110,9 +110,9 @@
       if (same) { lab.classList.add('w054-rowok'); okRows++; }
       else lab.classList.add('w054-rowbad');
     });
-    if (okRows === ROWS.length) { msg.textContent = '✓ All correct — three kernels, one shape, but only one of them runs Linux containers itself.'; msg.className = 'w054-msg iw-msg ok'; }
-    else if (touched === 0) { msg.textContent = 'Nothing filled in yet — click the cells that hold for each kernel, then check again.'; msg.className = 'w054-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — ' + okRows + ' of ' + ROWS.length + ' rows are right; the red rows have too many or too few cells filled.'; msg.className = 'w054-msg iw-msg bad'; }
+    if (okRows === ROWS.length) { msg.textContent = '✓ All correct - three kernels, one shape, but only one of them runs Linux containers itself.'; msg.className = 'w054-msg iw-msg ok'; }
+    else if (touched === 0) { msg.textContent = 'Nothing filled in yet - click the cells that hold for each kernel, then check again.'; msg.className = 'w054-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - ' + okRows + ' of ' + ROWS.length + ' rows are right; the red rows have too many or too few cells filled.'; msg.className = 'w054-msg iw-msg bad'; }
   });
   root.querySelector('.w054-reset').addEventListener('click', () => {
     root.querySelectorAll('.w054-cell').forEach(c => setCell(c, false));
@@ -128,7 +128,7 @@
       const lab = root.querySelector('.w054-rowlab[data-row="' + row[0] + '"]');
       lab.classList.remove('w054-rowbad'); lab.classList.add('w054-rowok');
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w054-msg iw-msg ok';
     expl.hidden = false;
   });

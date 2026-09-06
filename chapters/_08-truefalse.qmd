@@ -38,7 +38,7 @@
     <span class="w084-note">(no fun if you click it right away)</span>
   </div>
   <div class="w084-msg iw-msg" role="status"></div>
-  <div class="w084-expl iw-expl" hidden>The Guidance treats the WAF as a control that prevents attacks from arriving, never as a repair for a flawed application; a declarative specification states the desired end state while the imperative one lists the steps; and shifting left moves security work earlier, toward design — see <a href="#def-waf">the definition of the web application firewall</a> and <a href="#sec-08-devsecops-pipeline">the section on DevSecOps</a>.</div>
+  <div class="w084-expl iw-expl" hidden>The Guidance treats the WAF as a control that prevents attacks from arriving, never as a repair for a flawed application; a declarative specification states the desired end state while the imperative one lists the steps; and shifting left moves security work earlier, toward design - see <a href="#def-waf">the definition of the web application firewall</a> and <a href="#sec-08-devsecops-pipeline">the section on DevSecOps</a>.</div>
 </div>
 <script>
 (function () {
@@ -91,9 +91,9 @@
       msg.textContent = '✓ All ' + rows.length + ' statements judged correctly.';
       msg.classList.add('ok');
     } else if (wrong === 0) {
-      msg.textContent = 'Keep going — ' + open + ' statement(s) still unanswered.';
+      msg.textContent = 'Keep going - ' + open + ' statement(s) still unanswered.';
     } else {
-      msg.textContent = '✗ Not yet — ' + right + ' of ' + rows.length + ' correct (wrong rows marked red).';
+      msg.textContent = '✗ Not yet - ' + right + ' of ' + rows.length + ' correct (wrong rows marked red).';
       msg.classList.add('bad');
     }
   });
@@ -114,7 +114,7 @@
       r.classList.add('w084-right');
     });
     root.querySelector('.w084-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.classList.add('ok');
   });
 })();

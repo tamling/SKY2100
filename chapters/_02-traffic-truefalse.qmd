@@ -89,9 +89,9 @@
       if (sel.dataset.v === row.dataset.a) { row.classList.add('w023-right'); right++; }
       else { row.classList.add('w023-wrong'); wrong++; }
     });
-    if (right === STATEMENTS.length) { msg.textContent = '✓ All correct — and where east–west dominates, lateral movement hides.'; msg.className = 'w023-msg iw-msg ok'; }
-    else if (open > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + open + ' statement(s) not yet judged.'; msg.className = 'w023-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — the red statements are judged wrongly' + (open ? ', and ' + open + ' still open' : '') + '.'; msg.className = 'w023-msg iw-msg bad'; }
+    if (right === STATEMENTS.length) { msg.textContent = '✓ All correct - and where east–west dominates, lateral movement hides.'; msg.className = 'w023-msg iw-msg ok'; }
+    else if (open > 0 && wrong === 0) { msg.textContent = 'Keep going - ' + open + ' statement(s) not yet judged.'; msg.className = 'w023-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - the red statements are judged wrongly' + (open ? ', and ' + open + ' still open' : '') + '.'; msg.className = 'w023-msg iw-msg bad'; }
   });
   root.querySelector('.w023-reset').addEventListener('click', () => {
     rowsBox.querySelectorAll('.w023-tf').forEach(b => b.classList.remove('w023-sel'));
@@ -106,7 +106,7 @@
       });
       row.classList.add('w023-right');
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w023-msg iw-msg ok';
     root.querySelector('.w023-expl').hidden = false;
   });

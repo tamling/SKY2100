@@ -48,7 +48,7 @@
       <div class="w022-slot"></div>
     </div>
     <div class="w022-zone" data-answer="free">
-      <div class="w022-q">How much RAM is free — is the system swapping?</div>
+      <div class="w022-q">How much RAM is free - is the system swapping?</div>
       <div class="w022-slot"></div>
     </div>
     <div class="w022-zone" data-answer="df">
@@ -148,9 +148,9 @@
       if (chip.dataset.cmd === z.dataset.answer) { z.classList.add('w022-right'); right++; }
       else { z.classList.add('w022-wrong'); wrong++; }
     });
-    if (right === zones.length) { msg.textContent = '✓ All correct — the baseline toolbox is in place.'; msg.className = 'w022-msg iw-msg ok'; }
-    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' question(s) still unanswered.'; msg.className = 'w022-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — the red rows have the wrong command (two of the seven commands answer none of these questions).'; msg.className = 'w022-msg iw-msg bad'; }
+    if (right === zones.length) { msg.textContent = '✓ All correct - the baseline toolbox is in place.'; msg.className = 'w022-msg iw-msg ok'; }
+    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going - ' + empty + ' question(s) still unanswered.'; msg.className = 'w022-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - the red rows have the wrong command (two of the seven commands answer none of these questions).'; msg.className = 'w022-msg iw-msg bad'; }
   });
   root.querySelector('.w022-solution').addEventListener('click', () => {
     unpick();
@@ -159,7 +159,7 @@
       if (chip) place(z, chip);
     });
     zones.forEach(z => z.classList.add('w022-right'));
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w022-msg iw-msg ok';
     root.querySelector('.w022-expl').hidden = false;
   });

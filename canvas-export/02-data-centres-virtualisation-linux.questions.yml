@@ -1,7 +1,7 @@
 # Questions file for chapters/02-data-centres-virtualisation-linux.qmd.
 # Content matches the chapter's Self-check section and
 # answers/02-data-centres-virtualisation-linux.qmd exactly (same numbering).
-quiz_title: "Chapter 02 — Self-check"
+quiz_title: "Chapter 02 - Self-check"
 chapter: 02-data-centres-virtualisation-linux
 
 questions:
@@ -93,13 +93,13 @@ questions:
       unusually fast and that the machine is listening on a port that was not
       in your recorded baseline. For each of the two observations, name the
       command that revealed it, state why the recorded baseline is what makes
-      the observation meaningful, and formulate — in the vocabulary of the
-      threat–risk–control chain — the question you would ask next for each.
+      the observation meaningful, and formulate - in the vocabulary of the
+      threat–risk–control chain - the question you would ask next for each.
     sample_answer: >
       Disk filling fast: df -h (du -sh for a directory); possible log
       flooding or data staged for exfiltration. Unexpected listening port:
       ss -tulpn; a service nobody started. The baseline matters because
-      before something abnormal can be recognised, normal must be known —
+      before something abnormal can be recognised, normal must be known -
       only comparison against recorded healthy values shows these as
       deviations. TRC question per observation: what threat could explain the
       deviation, how likely is it and what impact would it have, and which

@@ -59,7 +59,7 @@
   const buckets = [...root.querySelectorAll('.w051-bucket')];
   const msg = root.querySelector('.w051-msg');
   const expl = root.querySelector('.w051-expl');
-  const ITEMS = [{"t": "Virtualises the operating system", "a": "ct"}, {"t": "Carries a whole guest operating system on emulated devices", "a": "vm"}, {"t": "Starts within a second and costs megabytes", "a": "ct"}, {"t": "Its wall is the hypervisor’s hardware-enforced boundary", "a": "vm"}, {"t": "An ordinary Linux process wrapped in namespaces and a cgroup", "a": "ct"}, {"t": "Takes minutes to boot and gigabytes of memory", "a": "vm"}, {"t": "An escape into the shared kernel endangers every neighbour on the host at once", "a": "ct"}, {"t": "The stronger boundary — a workload that needs a hard wall still gets its own", "a": "vm"}];
+  const ITEMS = [{"t": "Virtualises the operating system", "a": "ct"}, {"t": "Carries a whole guest operating system on emulated devices", "a": "vm"}, {"t": "Starts within a second and costs megabytes", "a": "ct"}, {"t": "Its wall is the hypervisor’s hardware-enforced boundary", "a": "vm"}, {"t": "An ordinary Linux process wrapped in namespaces and a cgroup", "a": "ct"}, {"t": "Takes minutes to boot and gigabytes of memory", "a": "vm"}, {"t": "An escape into the shared kernel endangers every neighbour on the host at once", "a": "ct"}, {"t": "The stronger boundary - a workload that needs a hard wall still gets its own", "a": "vm"}];
   let picked = null;
 
   function chips() { return [...root.querySelectorAll('.w051-chip')]; }
@@ -139,7 +139,7 @@
       if (bucket) place(bucket, c);
     });
     chips().forEach(c => c.classList.add('w051-right'));
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w051-msg iw-msg ok';
     expl.hidden = false;
   });

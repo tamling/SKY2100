@@ -1,4 +1,4 @@
-quiz_title: "Chapter 11 — Self-check"
+quiz_title: "Chapter 11 - Self-check"
 chapter: 11-resilience-raid-backup
 
 questions:
@@ -107,7 +107,7 @@ questions:
       attacker who can reach the account can destroy it too; it must not be
       mistaken for the backup. The decisive control is a regular backup of
       Nextcloud's data and configuration that is off-site (separate account
-      or region — a backup the attacker can reach and encrypt is no backup,
+      or region - a backup the attacker can reach and encrypt is no backup,
       the same logic as off-host logs in Session 10), immutable (so
       ransomware cannot encrypt or delete it), and tested by restoring on a
       schedule (a backup that has never been restored is not known to work).

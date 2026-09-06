@@ -1,20 +1,20 @@
-# Answer key — Chapter 04: Networking and firewall controls {.unnumbered}
+# Answer key - Chapter 04: Networking and firewall controls {.unnumbered}
 
 <!-- Source-only: this directory is excluded from the render in _quarto.yml
      ("!answers/"). Never link these files from a chapter. Numbering must
      match the chapter's Self-check section 1:1. -->
 
-**Q1** *(tests @sec-04-addresses-ports-attack-surface · basic)* — **Correct: b.**
+**Q1** *(tests @sec-04-addresses-ports-attack-surface · basic)* - **Correct: b.**
 The chapter states that the pair *(address, port)* "names one service on one
 machine"; an IP address alone identifies only the machine (a), and virtual
 networks (c) and rules (d) are different concepts from the same chapter.
 
-**Q2** *(tests @sec-04-cloud-networks-software · basic)* — **Correct: a.**
+**Q2** *(tests @sec-04-cloud-networks-software · basic)* - **Correct: a.**
 The chapter says security groups are stateful and attach to resources,
 whereas NACLs work lower in the stack, are typically stateless and apply to
 subnets (CSA, 2024, p. 156); the other options invert or merge the two.
 
-**Q3** *(tests @sec-04-cloud-networks-software · basic)* — **Accepted answers:**
+**Q3** *(tests @sec-04-cloud-networks-software · basic)* - **Accepted answers:**
 "AWS starts from deny-all, so even resources in the same security group
 cannot talk until a rule permits it; Azure's NSG default rules allow traffic
 freely within the virtual network while denying inbound from the Internet",
@@ -23,29 +23,29 @@ by default" (any phrasing capturing both defaults plus the point that
 assuming the wrong default leaves a service reachable from an unintended
 place).
 
-**Q4** *(tests @sec-04-the-firewall · basic)* — **Correct: c.**
+**Q4** *(tests @sec-04-the-firewall · basic)* - **Correct: c.**
 Default-deny means the final catch-all rule blocks everything not explicitly
 permitted (@def-firewall); (a) is default-allow, (b) is no policy at all,
 and (d) is wrong because the laboratory firewalls are stateful, so replies
 return without a separate rule.
 
-**Q5** *(tests @sec-04-firewall-types-ngfw-waf · basic)* — **Accepted answers:**
+**Q5** *(tests @sec-04-firewall-types-ngfw-waf · basic)* - **Accepted answers:**
 any two of: "deep packet inspection / looking inside the payload",
 "identifying the application in a flow", "rules by user identity rather
 than only by address", "integrated intrusion prevention (IPS)",
 "consulting threat-intelligence feeds of known-bad addresses and domains".
 
-**Q6** *(tests @sec-04-defence-in-depth-zero-trust · basic)* — **Correct: b.**
+**Q6** *(tests @sec-04-defence-in-depth-zero-trust · basic)* - **Correct: b.**
 This is @def-zerotrust almost verbatim; (a) is the traditional
 castle-and-moat perimeter the Guidance rejects, (c) is not a described
 strategy, and (d) contradicts "nobody is trusted for having logged in once".
 
-**Q7 — applied scenario** *(tests @sec-04-the-firewall · applied)* —
+**Q7 - applied scenario** *(tests @sec-04-the-firewall · applied)* -
 **Model answer:** the answer must identify (i) the forgotten database
-port 5432 — the chapter's second common mistake ("opening a database port
+port 5432 - the chapter's second common mistake ("opening a database port
 for testing and forgetting it"); (ii) SSH open to the whole Internet instead
-of only the administrator's address — the first mistake and the risk of
-@exm-ssh-trc; and (iii) the Azure default — the third mistake ("assuming
+of only the administrator's address - the first mistake and the risk of
+@exm-ssh-trc; and (iii) the Azure default - the third mistake ("assuming
 closed when the default is open"): the NSG's built-in rules allow east–west
 traffic within the virtual network, so other VNet resources may reach the VM
 even without added allow rules. The command sequence:

@@ -9,13 +9,13 @@ printed page numbers in the document's footer. The weekly Microsoft Learn
 module is a graded companion, not a substitute for the reading.
 
 **Core texts.**
-*CSA* — Cloud Security Alliance (2024), *Security Guidance for
+*CSA* - Cloud Security Alliance (2024), *Security Guidance for
 Critical Areas of Focus in Cloud Computing v5*.
-*Comer* — D. E. Comer (2021), *The Cloud Computing Book: The Future
+*Comer* - D. E. Comer (2021), *The Cloud Computing Book: The Future
 of Computing Explained*, Chapman & Hall/CRC.
-*Jøsang* — A. Jøsang (2024), *Cybersecurity: Technology and
+*Jøsang* - A. Jøsang (2024), *Cybersecurity: Technology and
 Governance*, Springer, ISBN 978-3-031-68483-8.
-*Tanenbaum and Bos* — A. S. Tanenbaum and H. Bos (2015), *Modern
+*Tanenbaum and Bos* - A. S. Tanenbaum and H. Bos (2015), *Modern
 Operating Systems*, 4th edition, Pearson; drawn on for operating-systems
 foundations in Sessions 2 and 7.
 
@@ -33,4 +33,4 @@ foundations in Sessions 2 and 7.
 | 10 | Logging and log integrity | CSA D6 §6.1.1 (pp. 125–126), §6.2 (pp. 127–133), §6.3 (pp. 133–135); CSA D11 §11.1.1 (pp. 254–256), §11.3.4 (pp. 265–267); Jøsang Ch. 16 (pp. 337–354). | Azure Monitor & Log Analytics |
 | 11 | Resilience, RAID and backup | CSA D11 §11.6 (pp. 270–273), §11.1.1 (p. 255); Comer §8.7 (pp. 103–104) and §11.15 (pp. 156–157). | Describe Azure storage |
 | 12 | Incident response, BCM, risk and compliance | CSA D11 §11.1–11.5 (pp. 254–270); CSA D3 §3.1–3.3 (pp. 56–81); Comer §17.11–17.12 (pp. 242–243). | Describe Azure governance |
-| 13 | The integrated case | No new domains; Comer Ch. 18 (pp. 247–249); NIST Cybersecurity Framework 2.0. | — |
+| 13 | The integrated case | No new domains; Comer Ch. 18 (pp. 247–249); NIST Cybersecurity Framework 2.0. | - |

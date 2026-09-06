@@ -1,47 +1,47 @@
-# Answer key — Chapter 10: Logging and log integrity {.unnumbered}
+# Answer key - Chapter 10: Logging and log integrity {.unnumbered}
 
 <!-- Source-only: this directory is excluded from the render in _quarto.yml
      ("!answers/"). Never link these files from a chapter. Numbering must
      match the chapter's Self-check section 1:1. -->
 
-**Q1** *(tests @sec-10-logs-events · basic)* — **Correct: b.**
+**Q1** *(tests @sec-10-logs-events · basic)* - **Correct: b.**
 This is the Guidance's separation as the chapter gives it (CSA, 2024,
 p. 125): logs are complete, detailed, persistent but batched and delayed;
 events record a change, arrive within seconds and are not retained unless
-saved — which is why events can trigger real-time alerts; a and d reverse
+saved - which is why events can trigger real-time alerts; a and d reverse
 the two, c denies the separation.
 
-**Q2** *(tests @sec-10-logs-events · basic)* — **Correct: c.**
+**Q2** *(tests @sec-10-logs-events · basic)* - **Correct: c.**
 Resource Logs are not collected by default; a diagnostic setting must first
 be enabled or an agent installed, "and this gap commonly leaves exactly the
 logs one wants missing when they are needed"; a describes the Activity
 Log's retention, b and d are invented.
 
-**Q3** *(tests @sec-10-log-sources · basic)* — **Accepted answers:**
+**Q3** *(tests @sec-10-log-sources · basic)* - **Accepted answers:**
 "to know what each source captures and to make sure the security-relevant
 sources are actually recorded"; "because an event that was never logged
 cannot be investigated" (any phrasing with both halves: know the sources,
 ensure they are recorded, since unlogged events cannot be investigated).
 
-**Q4** *(tests @sec-10-logs-events · basic)* — **Accepted answers:**
+**Q4** *(tests @sec-10-logs-events · basic)* - **Accepted answers:**
 "who (source address or caller), what (the request or operation), when (the
 timestamp) and the outcome (200, 403 or Succeeded)" (any phrasing naming
 who, what, when and outcome/result).
 
-**Q5** *(tests @sec-10-central-collection · basic)* — **Correct: b.**
+**Q5** *(tests @sec-10-central-collection · basic)* - **Correct: b.**
 The cascading log architecture (CSA, 2024, p. 134): each environment sends
 to one central store, the security-relevant subset is filtered into a
 separate, well-protected audit environment kept long-term, and from there
 the logs feed the SIEM; a, c and d contradict the cascade.
 
-**Q6** *(tests @sec-10-log-integrity · basic)* — **Correct: a.**
+**Q6** *(tests @sec-10-log-integrity · basic)* - **Correct: a.**
 These are the chapter's three measures: off-host shipping as logs are
 produced, append-only/write-once storage, and restricted access under the
 least-privilege rules of Session 7; b, c and d each leave the record under
 the attacker's control or delay its escape from the host (a safeguard under
 the attacker's control is no safeguard).
 
-**Q7 — applied scenario** *(tests @sec-10-exercises · applied)* —
+**Q7 - applied scenario** *(tests @sec-10-exercises · applied)* -
 **Model answer:** The team relies on the copies in the central,
 append-only log store: the Nginx access log, the system journal, Nextcloud's
 access and audit logs and the firewall's records, all forwarded off-host
@@ -51,7 +51,7 @@ controlled. Those copies are beyond doubt because (1) they left the host in
 real time, before the attacker could act on them, (2) the store is
 append-only or write-once, so even someone with access could add but not
 edit or delete, and (3) access to the store is restricted under least
-privilege — together this is log integrity (@def-logintegrity), and the
+privilege - together this is log integrity (@def-logintegrity), and the
 documented preservation of the evidence is the chain of custody that lets
 the timeline stand before a regulator. The copies still on the VM prove
 nothing because the attacker had full control of the host for weeks and
@@ -64,31 +64,31 @@ for three of these four elements.
 
 ## Sketch answers to the chapter exercises
 
-(1) *(@exr-10-two-roles-of-logs — The two roles of logs)*
+(1) *(@exr-10-two-roles-of-logs - The two roles of logs)*
 Operational: understanding the system and reconstructing behaviour, for
 example the Nginx access log or the system journal. Evidential: the timeline
 and proof of who did what during an incident, for example Nextcloud's audit
 log and the management plane logs.
 
-(2) *(@exr-10-ephemeral-hosts — Central collection for ephemeral hosts)*
+(2) *(@exr-10-ephemeral-hosts - Central collection for ephemeral hosts)*
 Ephemeral instances disappear with
 demand, taking locally stored logs with them; forwarding logs to a central
 store as they are written preserves them beyond the life of the host.
 
-(3) *(@exr-10-log-integrity-cia — Log integrity and the CIA triad)*
+(3) *(@exr-10-log-integrity-cia - Log integrity and the CIA triad)*
 Log integrity is the integrity property of CIA applied to the audit
 record, the assurance that it has not been altered or deleted. Logs kept only
 on the host fail it because an attacker who controls the host can edit or
 wipe them, destroying the record of their own actions.
 
-(4) *(@exr-10-protecting-log-integrity — Protecting log integrity)*
+(4) *(@exr-10-protecting-log-integrity - Protecting log integrity)*
 Ship logs off-host
 as they are produced; store them append-only or write-once; restrict who may
 access the log store (least privilege). Central collection is an integrity
 control because logs that left the host immediately are beyond the reach of
 the host's attacker.
 
-(5) *(@exr-10-chain-of-custody — Chain of custody)*
+(5) *(@exr-10-chain-of-custody - Chain of custody)*
 Chain of custody is the documented preservation of
 evidence so that its integrity can be demonstrated later (to management,
 regulators or a court); off-host, append-only logs provide a trustworthy,

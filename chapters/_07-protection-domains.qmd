@@ -43,11 +43,11 @@
       <div class="w076-slot"></div>
     </div>
     <div class="w076-zone" data-answer="access control matrix">
-      <div class="w076-desc">every domain a row, every object a column —<br>the most general statement of who may do what to what</div>
+      <div class="w076-desc">every domain a row, every object a column -<br>the most general statement of who may do what to what</div>
       <div class="w076-slot"></div>
     </div>
     <div class="w076-zone" data-answer="uid and gid">
-      <div class="w076-desc">received at login and inherited by every process —<br>the pair that defines a Linux process’s domain</div>
+      <div class="w076-desc">received at login and inherited by every process -<br>the pair that defines a Linux process’s domain</div>
       <div class="w076-slot"></div>
     </div>
     <div class="w076-zone" data-answer="system call">
@@ -136,9 +136,9 @@
       if (chip.dataset.term === z.dataset.answer) { z.classList.add('w076-right'); right++; }
       else { z.classList.add('w076-wrong'); wrong++; }
     });
-    if (right === zones.length) { msg.textContent = '✓ All correct — the matrix behind every authorisation scheme.'; msg.className = 'w076-msg iw-msg ok'; }
-    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' box(es) still empty (three of the seven terms are distractors).'; msg.className = 'w076-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — the red boxes are wrong (three of the seven terms are distractors).'; msg.className = 'w076-msg iw-msg bad'; }
+    if (right === zones.length) { msg.textContent = '✓ All correct - the matrix behind every authorisation scheme.'; msg.className = 'w076-msg iw-msg ok'; }
+    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going - ' + empty + ' box(es) still empty (three of the seven terms are distractors).'; msg.className = 'w076-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - the red boxes are wrong (three of the seven terms are distractors).'; msg.className = 'w076-msg iw-msg bad'; }
   });
   function resetAll() {
     root.querySelectorAll('.w076-chip').forEach(c => pool.appendChild(c));
@@ -153,7 +153,7 @@
       if (chip) z.querySelector('.w076-slot').appendChild(chip);
       z.classList.add('w076-right');
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w076-msg iw-msg ok';
     expl.hidden = false;
   });

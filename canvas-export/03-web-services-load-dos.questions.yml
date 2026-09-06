@@ -1,7 +1,7 @@
 # Questions file for chapters/03-web-services-load-dos.qmd.
 # Content matches the chapter's Self-check section and
 # answers/03-web-services-load-dos.qmd exactly (same numbering).
-quiz_title: "Chapter 03 — Self-check"
+quiz_title: "Chapter 03 - Self-check"
 chapter: 03-web-services-load-dos
 
 questions:
@@ -95,7 +95,7 @@ questions:
       take on the customer's side of the split: name two concrete server-side
       controls from this chapter (one of them the Nginx directive), explain
       what each does against this specific attack type, and state which
-      evidence — from the load-measurement tools — you would use to verify
+      evidence - from the load-measurement tools - you would use to verify
       that the controls worked.
     sample_answer: >
       Application-layer flood, so the customer's own configuration carries

@@ -123,8 +123,8 @@
   }
   root.querySelector('.w024-check').addEventListener('click', () => {
     const done = termsCol.querySelectorAll('.w024-done').length;
-    if (done === PAIRS.length) { msg.textContent = '✓ All matched — physical geography below, administrative geography above.'; msg.className = 'w024-msg iw-msg ok'; }
-    else { msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched — keep going (a wrong attempt flashes red).'; msg.className = 'w024-msg iw-msg'; }
+    if (done === PAIRS.length) { msg.textContent = '✓ All matched - physical geography below, administrative geography above.'; msg.className = 'w024-msg iw-msg ok'; }
+    else { msg.textContent = done + ' of ' + PAIRS.length + ' pairs matched - keep going (a wrong attempt flashes red).'; msg.className = 'w024-msg iw-msg'; }
   });
   root.querySelector('.w024-reset').addEventListener('click', () => { build(); root.querySelector('.w024-expl').hidden = true; });
   root.querySelector('.w024-sol').addEventListener('click', () => {
@@ -134,7 +134,7 @@
       const d = defsCol.querySelector('.w024-item[data-k="' + i + '"]');
       lockPair(t, d);
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w024-msg iw-msg ok';
     root.querySelector('.w024-expl').hidden = false;
   });

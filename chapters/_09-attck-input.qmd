@@ -39,7 +39,7 @@
     <span class="w095-note">(no fun if you click it right away)</span>
   </div>
   <div class="w095-msg iw-msg" role="status"></div>
-  <div class="w095-expl iw-expl" hidden>MITRE ATT&amp;CK catalogues the tactics and techniques attackers use and connects a given indicator with the stage of an attack it belongs to, which is how the Guidance decides what detection should look for — see <a href="#sec-09-detection">the section on detection</a>.</div>
+  <div class="w095-expl iw-expl" hidden>MITRE ATT&amp;CK catalogues the tactics and techniques attackers use and connects a given indicator with the stage of an attack it belongs to, which is how the Guidance decides what detection should look for - see <a href="#sec-09-detection">the section on detection</a>.</div>
 </div>
 <script>
 (function () {
@@ -59,11 +59,11 @@
     if (!norm) { msg.textContent = 'Type an answer first.'; return; }
     if (ACCEPT.some(a => norm.includes(a))) {
       inp.classList.add('w095-right');
-      msg.textContent = '✓ Correct — its cloud matrix is on the reading list for this chapter.';
+      msg.textContent = '✓ Correct - its cloud matrix is on the reading list for this chapter.';
       msg.classList.add('ok');
     } else {
       inp.classList.add('w095-wrong');
-      msg.textContent = '✗ Not the framework the chapter names — try again (it appears in the detection section).';
+      msg.textContent = '✗ Not the framework the chapter names - try again (it appears in the detection section).';
       msg.classList.add('bad');
     }
   }
@@ -79,7 +79,7 @@
     inp.value = CANON;
     inp.classList.add('w095-right');
     root.querySelector('.w095-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.classList.add('ok');
   });
 })();

@@ -40,7 +40,7 @@
   </div>
   <div class="w043-msg iw-msg" role="status"></div>
   <div class="w043-expl iw-expl" hidden>
-    A web server listens on port 80 for plain HTTP and on 443 for HTTPS, SSH listens on 22, and <code>ss -tulpn</code> lists every port the machine listens on — each of which is a door and part of the attack surface, to be justified line by line. See <a href="#sec-04-addresses-ports-attack-surface">the section on addresses, ports and the attack surface</a> and <a href="#def-attacksurface">the definition of the attack surface</a>.
+    A web server listens on port 80 for plain HTTP and on 443 for HTTPS, SSH listens on 22, and <code>ss -tulpn</code> lists every port the machine listens on - each of which is a door and part of the attack surface, to be justified line by line. See <a href="#sec-04-addresses-ports-attack-surface">the section on addresses, ports and the attack surface</a> and <a href="#def-attacksurface">the definition of the attack surface</a>.
   </div>
 </div>
 <script>
@@ -89,9 +89,9 @@
       if (QUESTIONS[Number(inp.dataset.k)][1](v)) { inp.classList.add('w043-right'); right++; }
       else { inp.classList.add('w043-wrong'); wrong++; }
     });
-    if (right === QUESTIONS.length) { msg.textContent = '✓ All correct — every listening port is a door, and these are the named ones.'; msg.className = 'w043-msg iw-msg ok'; }
-    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' field(s) still empty.'; msg.className = 'w043-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — the red fields hold the wrong answer.'; msg.className = 'w043-msg iw-msg bad'; }
+    if (right === QUESTIONS.length) { msg.textContent = '✓ All correct - every listening port is a door, and these are the named ones.'; msg.className = 'w043-msg iw-msg ok'; }
+    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going - ' + empty + ' field(s) still empty.'; msg.className = 'w043-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - the red fields hold the wrong answer.'; msg.className = 'w043-msg iw-msg bad'; }
   });
   root.querySelector('.w043-reset').addEventListener('click', () => {
     rowsBox.querySelectorAll('.w043-in').forEach(i => { i.value = ''; });
@@ -104,7 +104,7 @@
       inp.value = QUESTIONS[Number(inp.dataset.k)][2];
       inp.classList.add('w043-right');
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w043-msg iw-msg ok';
     root.querySelector('.w043-expl').hidden = false;
   });

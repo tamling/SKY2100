@@ -1,57 +1,57 @@
-# Answer key — Chapter 08: DevSecOps, WAF and secure applications {.unnumbered}
+# Answer key - Chapter 08: DevSecOps, WAF and secure applications {.unnumbered}
 
 <!-- Source-only: this directory is excluded from the render in _quarto.yml
      ("!answers/"). Never link these files from a chapter. Numbering must
      match the chapter's Self-check section 1:1. -->
 
-**Q1** *(tests @sec-08-application-security · basic)* — **Correct: b.**
+**Q1** *(tests @sec-08-application-security · basic)* - **Correct: b.**
 The chapter states the SBOM "answers the one question that matters during an
 incident: whether and where the library is in use"; the Log4Shell callout
-illustrates the same point — a, c and d are questions the SBOM does not
+illustrates the same point - a, c and d are questions the SBOM does not
 address.
 
-**Q2** *(tests @sec-08-secure-development-lifecycle · basic)* — **Correct: c.**
+**Q2** *(tests @sec-08-secure-development-lifecycle · basic)* - **Correct: c.**
 STRIDE sorts threats into Spoofing, Tampering, Repudiation, Information
 disclosure, Denial of service and Elevation of privilege, turning the
 open-ended threat question of Session 1 into a checklist; a describes canary
 deployment, b describes part of SAST, d is invented.
 
-**Q3** *(tests @sec-08-devsecops-pipeline · basic)* — **Accepted answers:**
+**Q3** *(tests @sec-08-devsecops-pipeline · basic)* - **Accepted answers:**
 "canary deployment sends the new version to a small fraction of users first
 and observes before rolling on"; "blue/green deployment keeps two
 environments so that a release can be switched over, and back, instantly"
 (any phrasing with small-fraction-first for canary and two switchable
 environments for blue/green).
 
-**Q4** *(tests @sec-08-devsecops-pipeline · basic)* — **Correct: a.**
+**Q4** *(tests @sec-08-devsecops-pipeline · basic)* - **Correct: a.**
 The chapter places SAST in continuous integration (so vulnerable code does
 not merge) and DAST in continuous delivery against the staged application
 (CSA, 2024, pp. 243–245); c reverses them, b and d misplace both.
 
-**Q5** *(tests @sec-08-devsecops-pipeline · basic)* — **Accepted answers:**
+**Q5** *(tests @sec-08-devsecops-pipeline · basic)* - **Accepted answers:**
 "an imperative specification lists the steps to perform; a declarative one
 states the desired end state and lets the tooling reach it" (any phrasing
 that pairs steps-to-perform with desired-end-state; a bonus is noting the
 Kubernetes work-towards-a-goal comparison).
 
-**Q6** *(tests @sec-08-waf · basic)* — **Correct: d.**
+**Q6** *(tests @sec-08-waf · basic)* - **Correct: d.**
 The Guidance treats the WAF as a control that prevents attacks from
 arriving, not a repair for flawed applications or an excuse for careless
 development (CSA, 2024, p. 247); a is the excuse the Guidance rejects, b
 confuses the Session 4 distinction (NGFW broad, WAF one application), and c
 describes a network firewall, not a Layer 7 control.
 
-**Q7 — applied scenario** *(tests @sec-08-exercises · applied)* —
+**Q7 - applied scenario** *(tests @sec-08-exercises · applied)* -
 **Model answer:** First hours: the SBOM has already answered where the
 library is in use, so no time is lost searching (the Log4Shell lesson);
 the WAF in front of Nextcloud is the runtime control that limits
-exploitation now — it inspects incoming HTTP requests and blocks those
+exploitation now - it inspects incoming HTTP requests and blocks those
 matching the attack pattern even though the flaw is present (@def-waf,
 runtime-defence phase of the SSDLC). Following days: when the patched
 library or plugin version appears, the change goes through the DevSecOps
-pipeline — dependency scanning/software composition analysis confirms the
+pipeline - dependency scanning/software composition analysis confirms the
 new version, SAST runs in CI, DAST probes the staged application in CD
-(@def-devsecops) — and because the infrastructure is immutable and defined
+(@def-devsecops) - and because the infrastructure is immutable and defined
 as code, the environment is rebuilt fresh from the tested definition, so
 what was tested is exactly what runs, with no drift. **Grading notes:**
 full credit requires (1) SBOM for locating the exposure, (2) WAF as the
@@ -63,32 +63,32 @@ earns the last point.
 
 ## Sketch answers to the chapter exercises
 
-(1) *(@exr-08-shifting-left — Shifting left)*
+(1) *(@exr-08-shifting-left - Shifting left)*
 Shifting left moves security work earlier in the lifecycle (design and
 build rather than production); a flaw caught in design is fixed by changing a
 plan, while the same flaw in production may mean an incident, an emergency
 patch and lost data.
 
-(2) *(@exr-08-sast-vs-dast — SAST vs DAST)*
+(2) *(@exr-08-sast-vs-dast - SAST vs DAST)*
 SAST examines source code before deployment to find
 flaws; DAST probes the running application from outside afterwards. Each has a
 blind spot, SAST seeing code but not behaviour and DAST behaviour but not
 code, so they are combined, as symmetric and asymmetric encryption are in
 Session 6.
 
-(3) *(@exr-08-devsecops-adds — What DevSecOps adds)*
+(3) *(@exr-08-devsecops-adds - What DevSecOps adds)*
 DevSecOps embeds automated security checks (SAST in CI, DAST in
 CD) into every change rather than an occasional gate; because immutable
 infrastructure builds every environment fresh from one tested definition,
 there is no drift between what was tested and what runs.
 
-(4) *(@exr-08-ngfw-vs-waf — NGFW vs WAF, revisited)*
+(4) *(@exr-08-ngfw-vs-waf - NGFW vs WAF, revisited)*
 An NGFW secures
 the network broadly with application awareness; a WAF secures one web
 application by inspecting HTTP requests; the WAF blocks the SQL-injection
 attempt.
 
-(5) *(@exr-08-disclosed-library-flaw — A disclosed library flaw)*
+(5) *(@exr-08-disclosed-library-flaw - A disclosed library flaw)*
 A software bill of materials (SBOM) shows whether and where the
 library is used; a web application firewall could block exploitation of the
 flaw at runtime even if the vulnerable library is present.

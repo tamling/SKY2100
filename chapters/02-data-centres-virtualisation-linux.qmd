@@ -65,7 +65,7 @@ internal, that movement is invisible from outside. This *lateral
 movement*, an attacker moving from one internal system to the next, and the
 segmentation that limits it are the subject of Session 4.
 
-![Two directions of traffic. North–south crosses the data-centre boundary; east–west stays inside it and is where lateral movement takes place (Session 4).](figures/fig-nsew.svg){#fig-nsew fig-alt="Diagram — a data-centre box containing two servers: a 'north–south' arrow connects the Internet (clients) to the data centre, and an 'east–west' arrow connects the two servers inside it."}
+![Two directions of traffic. North–south crosses the data-centre boundary; east–west stays inside it and is where lateral movement takes place (Session 4).](figures/fig-nsew.svg){#fig-nsew fig-alt="Diagram - a data-centre box containing two servers: a 'north–south' arrow connects the Internet (clients) to the data centre, and an 'east–west' arrow connects the two servers inside it."}
 
 Providers also replicate capacity across the globe, so that a single failure
 or disaster does not take a customer down.
@@ -485,11 +485,11 @@ b. Many customers use the same physical hardware, the resource pooling of the cl
 c. A provider operates data centres in more than one country
 d. An organisation deliberately uses more than one cloud provider
 
-**Q7 — applied scenario** *(tests @sec-02-linux-four-pillars · applied)*
+**Q7 - applied scenario** *(tests @sec-02-linux-four-pillars · applied)*
 Building on @exr-02-which-command: during a morning check of the laboratory
 VM you notice that the disk is filling unusually fast and that the machine is
 listening on a port that was not in your recorded baseline. For each of the
 two observations, name the command that revealed it, state why the recorded
-baseline is what makes the observation meaningful, and formulate — in the
-vocabulary of the threat–risk–control chain — the question you would ask
+baseline is what makes the observation meaningful, and formulate - in the
+vocabulary of the threat–risk–control chain - the question you would ask
 next for each.

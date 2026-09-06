@@ -120,10 +120,10 @@
     unpick();
     const n = matchedCount();
     if (n === PAIRS.length) {
-      msg.textContent = '✓ All ' + PAIRS.length + ' pairs matched — the vocabulary of the new perimeter.';
+      msg.textContent = '✓ All ' + PAIRS.length + ' pairs matched - the vocabulary of the new perimeter.';
       msg.className = 'w073-msg iw-msg ok';
     } else {
-      msg.textContent = n + ' of ' + PAIRS.length + ' pairs matched — keep going (a wrong attempt flashes red).';
+      msg.textContent = n + ' of ' + PAIRS.length + ' pairs matched - keep going (a wrong attempt flashes red).';
       msg.className = 'w073-msg iw-msg';
     }
   });
@@ -148,7 +148,7 @@
       defCol.appendChild(d);
       lock(t, d);
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w073-msg iw-msg ok';
     expl.hidden = false;
   });

@@ -1,29 +1,29 @@
-# Answer key — Chapter 09: Security monitoring and IDS {.unnumbered}
+# Answer key - Chapter 09: Security monitoring and IDS {.unnumbered}
 
 <!-- Source-only: this directory is excluded from the render in _quarto.yml
      ("!answers/"). Never link these files from a chapter. Numbering must
      match the chapter's Self-check section 1:1. -->
 
-**Q1** *(tests @sec-09-monitoring-cloud · basic)* — **Correct: b.**
+**Q1** *(tests @sec-09-monitoring-cloud · basic)* - **Correct: b.**
 The chapter states that attacks on cloud systems are often scripted, so data
 can be stolen or exposed within seconds or minutes of the first break-in
 (CSA, 2024, p. 262), which is why detection works in real time where
 possible; a, c and d are invented mechanisms.
 
-**Q2** *(tests @sec-09-events-alerts-telemetry · basic)* — **Correct: c.**
+**Q2** *(tests @sec-09-events-alerts-telemetry · basic)* - **Correct: c.**
 Target's malware-detection system generated alerts, but nobody acted on
-them in time — the callout's stated lesson is that an alert nobody responds
+them in time - the callout's stated lesson is that an alert nobody responds
 to is no better than no alert, which is why the response process of
 Session 12 exists; a, b and d are not the point the chapter draws.
 
-**Q3** *(tests @sec-09-detection · basic)* — **Correct: b.**
+**Q3** *(tests @sec-09-detection · basic)* - **Correct: b.**
 @def-ids and the following paragraph: the IDS is passive and out-of-band,
 observing a copy and alerting; the IPS is inline and can block, but a false
 positive then blocks a real user; a reverses them, c is false (either may
 use signature or anomaly), d is false (both are increasingly cloud
 services).
 
-**Q4** *(tests @sec-09-detection · basic)* — **Accepted answers:**
+**Q4** *(tests @sec-09-detection · basic)* - **Accepted answers:**
 "a sequence of detection mechanisms applied to incoming streams, each
 narrowing the data further, from broadly suspicious to confirmed threat";
 "it turns many events into few alerts and it manages cost, since most raw
@@ -31,30 +31,30 @@ logs stay cheaply where they are and only pertinent alerts and selected
 logs go to the security team" (any phrasing naming the successive narrowing
 and both purposes: detection quality and cost).
 
-**Q5** *(tests @sec-09-detection · basic)* — **Accepted answers:** any two
+**Q5** *(tests @sec-09-detection · basic)* - **Accepted answers:** any two
 of: "unauthorised API calls", "management console logins without MFA",
 "any IAM policy change", "any use of the root account", "unusual IAM or
 network security activity, especially in unused regions".
 
-**Q6** *(tests @sec-09-detection · basic)* — **Correct: b.**
+**Q6** *(tests @sec-09-detection · basic)* - **Correct: b.**
 Comer's point: a cloud-native application starts and stops instances all
 the time and the orchestrator decides where each runs, so a monitor must
-not alarm every time an instance disappears because the scale was reduced —
+not alarm every time an instance disappears because the scale was reduced -
 the moving-target problem of Session 5; d describes the traditional case,
 a and c are invented.
 
-**Q7 — applied scenario** *(tests @sec-09-exercises · applied)* —
+**Q7 - applied scenario** *(tests @sec-09-exercises · applied)* -
 **Model answer:** The canary: a decoy credential or resource no legitimate
 process should touch, e.g. a fake `admin_passwords.txt` file or an unused
 decoy user account in Nextcloud. Why near-zero false positives: since no
 legitimate process ever touches it, any interaction indicates an attempted
-or actual breach (CSA, 2024, p. 142) — which directly answers the analysts'
+or actual breach (CSA, 2024, p. 142) - which directly answers the analysts'
 false-positive problem. Path: the fast path, because a triggered canary is
 high-risk activity where a fifteen-minute slow-path delay is too long;
 events on the fast path are analysed and turned into alerts almost at once.
 Same path: another key indicator such as management console logins without
 MFA, any IAM policy change, use of the root account, or impossible-travel
-logins — all management-plane/identity activity the Guidance names for
+logins - all management-plane/identity activity the Guidance names for
 close, timely watching. **Grading notes:** full credit requires (1) a
 plausible Nextcloud canary, (2) the no-legitimate-access argument for
 near-zero false positives, (3) fast path with the timeliness justification,
@@ -63,32 +63,32 @@ placing the canary on the slow path loses the timeliness point.
 
 ## Sketch answers to the chapter exercises
 
-(1) *(@exr-09-event-vs-alert — Event vs alert)*
+(1) *(@exr-09-event-vs-alert - Event vs alert)*
 An event is anything that happens and can be recorded, mostly normal; an
 alert is a message that demands attention, raised when events match a rule.
 Because there are vastly more events than incidents, the value of monitoring
 lies in filtering the many events down to the few meaningful alerts.
 
-(2) *(@exr-09-telemetry-sources — The two key telemetry sources)*
+(2) *(@exr-09-telemetry-sources - The two key telemetry sources)*
 Management plane logs (who accessed the infrastructure, what they did,
 when) and service/application logs (authentication attempts, API access,
 network traffic, service events). The management plane controls everything,
 so losing it is the worst case; it must be watched so that an attacker there
 is seen immediately.
 
-(3) *(@exr-09-signature-vs-anomaly — Signature vs anomaly detection)*
+(3) *(@exr-09-signature-vs-anomaly - Signature vs anomaly detection)*
 Signature-based detection matches known attack
 patterns; anomaly-based detection flags departures from normal. Anomaly
 detection relies on the baseline, because abnormal is only defined against a
 recorded picture of normal.
 
-(4) *(@exr-09-fast-vs-slow — Fast path vs slow path)*
+(4) *(@exr-09-fast-vs-slow - Fast path vs slow path)*
 The fast path analyses events in near real
 time for high-risk activity; the slow path handles logs with delay for
 forensics. A suspicious management-plane action belongs on the fast path,
 because a delay of minutes is too long for the highest-value target.
 
-(5) *(@exr-09-canary-token — The canary token)*
+(5) *(@exr-09-canary-token - The canary token)*
 A canary is a decoy no legitimate process should touch, so any access is
 almost certainly malicious; for example a fake `admin_passwords.txt` or an
 unused decoy user account in Nextcloud, whose every access raises a definite

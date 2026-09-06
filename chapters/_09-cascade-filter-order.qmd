@@ -40,7 +40,7 @@
     <span class="w096-note">(no fun if you click it right away)</span>
   </div>
   <div class="w096-msg iw-msg" role="status"></div>
-  <div class="w096-expl iw-expl" hidden>Cascade-and-filter applies a sequence of detection mechanisms to the incoming streams, each narrowing the data further: a first filter flags the broadly suspicious, later filters narrow toward known attack patterns, and a final filter triggers an alert or a response action if a threat is confirmed — see <a href="#sec-09-detection">the section on detection</a>.</div>
+  <div class="w096-expl iw-expl" hidden>Cascade-and-filter applies a sequence of detection mechanisms to the incoming streams, each narrowing the data further: a first filter flags the broadly suspicious, later filters narrow toward known attack patterns, and a final filter triggers an alert or a response action if a threat is confirmed - see <a href="#sec-09-detection">the section on detection</a>.</div>
 </div>
 <script>
 (function () {
@@ -110,10 +110,10 @@
     });
     msg.className = 'w096-msg iw-msg';
     if (right === STEPS.length) {
-      msg.textContent = '✓ Correct — each stage narrows the data further, from raw streams to a confirmed alert.';
+      msg.textContent = '✓ Correct - each stage narrows the data further, from raw streams to a confirmed alert.';
       msg.classList.add('ok');
     } else {
-      msg.textContent = '✗ Not yet — ' + right + ' of ' + STEPS.length + ' steps are in the right place (marked green).';
+      msg.textContent = '✗ Not yet - ' + right + ' of ' + STEPS.length + ' steps are in the right place (marked green).';
       msg.classList.add('bad');
     }
   });
@@ -130,7 +130,7 @@
       .sort((a, b) => +a.dataset.pos - +b.dataset.pos)
       .forEach(li => { list.appendChild(li); li.classList.add('w096-right'); });
     root.querySelector('.w096-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w096-msg iw-msg ok';
   });
 })();

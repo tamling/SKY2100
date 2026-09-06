@@ -62,7 +62,7 @@
   </div>
   <div class="w033-msg iw-msg" role="status"></div>
   <div class="w033-expl iw-expl" hidden>
-    Every request needs all three components, so the combined availability is the product 0.9999 × 0.999 × 0.999 ≈ 99.79 %, and the missing 0.21 % of 8760 h is about 18.4 h of expected downtime per year — every chained component spends availability, and only deliberate redundancy buys it back. See <a href="#exm-compositesla">the composite-SLA example</a> in <a href="#sec-03-sla">the section on availability as a number</a>.
+    Every request needs all three components, so the combined availability is the product 0.9999 × 0.999 × 0.999 ≈ 99.79 %, and the missing 0.21 % of 8760 h is about 18.4 h of expected downtime per year - every chained component spends availability, and only deliberate redundancy buys it back. See <a href="#exm-compositesla">the composite-SLA example</a> in <a href="#sec-03-sla">the section on availability as a number</a>.
   </div>
 </div>
 <script>
@@ -91,9 +91,9 @@
       if (isFinite(v) && Math.abs(v - a.value) <= a.tol) { inp.classList.add('w033-right'); right++; }
       else { inp.classList.add('w033-wrong'); wrong++; }
     });
-    if (right === ANSWERS.length) { msg.textContent = '✓ Correct — every chained component spends availability.'; msg.className = 'w033-msg iw-msg ok'; }
-    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' field(s) still empty (multiply the availabilities first).'; msg.className = 'w033-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — the red value is off; the combined availability is the product of the three.'; msg.className = 'w033-msg iw-msg bad'; }
+    if (right === ANSWERS.length) { msg.textContent = '✓ Correct - every chained component spends availability.'; msg.className = 'w033-msg iw-msg ok'; }
+    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going - ' + empty + ' field(s) still empty (multiply the availabilities first).'; msg.className = 'w033-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - the red value is off; the combined availability is the product of the three.'; msg.className = 'w033-msg iw-msg bad'; }
   });
   root.querySelector('.w033-reset').addEventListener('click', () => {
     inputs.forEach(i => { i.value = ''; });
@@ -106,7 +106,7 @@
       inp.value = ANSWERS[Number(inp.dataset.k)].show;
       inp.classList.add('w033-right');
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w033-msg iw-msg ok';
     root.querySelector('.w033-expl').hidden = false;
   });

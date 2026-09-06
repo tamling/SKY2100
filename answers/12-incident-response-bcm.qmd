@@ -1,20 +1,20 @@
-# Answer key — Chapter 12: Incident response, BCM, risk and compliance {.unnumbered}
+# Answer key - Chapter 12: Incident response, BCM, risk and compliance {.unnumbered}
 
 <!-- Source-only: this directory is excluded from the render in _quarto.yml
      ("!answers/"). Never link these files from a chapter. Numbering must
      match the chapter's Self-check section 1:1. -->
 
-**Q1** *(tests @sec-12-events-incidents-breaches · basic)* — **Correct: b.**
+**Q1** *(tests @sec-12-events-incidents-breaches · basic)* - **Correct: b.**
 @def-incident states it verbatim: all incidents are events; not all events
 are incidents; and only some incidents become breaches. Option d describes
 an event, not a breach.
 
-**Q2** *(tests @sec-12-ir-lifecycle · basic)* — **Correct: c.**
+**Q2** *(tests @sec-12-ir-lifecycle · basic)* - **Correct: c.**
 @def-irlifecycle gives the order Preparation; Detection & Analysis;
 Containment, Eradication & Recovery; Post-Incident Analysis. Option d mixes
 in NIST CSF-style function names that are not the SP 800-61 phases.
 
-**Q3** *(tests @sec-12-ir-lifecycle · basic)* — **Accepted answers:**
+**Q3** *(tests @sec-12-ir-lifecycle · basic)* - **Accepted answers:**
 "a blocked user may still hold a valid session token", "federated identity
 separates authentication from authorisation, so the relying party must act
 too" (any phrasing that says federated identity separates authentication
@@ -22,12 +22,12 @@ from authorisation, so a blocked user may still hold a valid session token
 and containment may require actions on both the identity provider and the
 relying party).
 
-**Q4** *(tests @sec-12-business-continuity · basic)* — **Correct: b.**
+**Q4** *(tests @sec-12-business-continuity · basic)* - **Correct: b.**
 The RPO states how much recent data the organisation can afford to lose;
 the RTO (option a) states how quickly the service must be back. Risk
 appetite and blast radius are concepts from other parts of the course.
 
-**Q5** *(tests @sec-12-risk-audit-compliance · basic)* — **Accepted answers:**
+**Q5** *(tests @sec-12-risk-audit-compliance · basic)* - **Accepted answers:**
 "the customer inherits the provider's control set for the infrastructure
 layer, but the compliance of what the customer builds on top remains the
 customer's own task", "inheriting the provider's compliance for its layers
@@ -35,12 +35,12 @@ while remaining responsible for your own software" (any phrasing with both
 halves: inheritance for the provider-operated layer, continued own
 responsibility for what is built on top).
 
-**Q6** *(tests @sec-12-risk-audit-compliance · basic)* — **Correct: b.**
+**Q6** *(tests @sec-12-risk-audit-compliance · basic)* - **Correct: b.**
 Comer (2021, p. 242): side channels and back doors are structural risks
 stopped by neither a firewall nor a password, so they are exactly the risks
 a register exists to record and to accept knowingly.
 
-**Q7 — applied scenario** *(tests @sec-12-ir-lifecycle · applied)* —
+**Q7 - applied scenario** *(tests @sec-12-ir-lifecycle · applied)* -
 **Model answer:** Containment: disable the account *and* revoke its
 sessions (federated identity means a valid token may outlive the block),
 and isolate the affected workload; IAM and the management plane are the top

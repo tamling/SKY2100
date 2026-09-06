@@ -129,13 +129,13 @@
     });
     const unplaced = ITEMS.length - right - wrong;
     if (right === ITEMS.length) {
-      msg.textContent = '✓ All correct — name the threat first, then choose the control that meets it.';
+      msg.textContent = '✓ All correct - name the threat first, then choose the control that meets it.';
       msg.className = 'w066-msg iw-msg ok';
     } else if (wrong === 0) {
-      msg.textContent = 'Keep going — ' + unplaced + ' card(s) still to place.';
+      msg.textContent = 'Keep going - ' + unplaced + ' card(s) still to place.';
       msg.className = 'w066-msg iw-msg';
     } else {
-      msg.textContent = '✗ Not yet — the red cards are in the wrong box. Send them back and try again.';
+      msg.textContent = '✗ Not yet - the red cards are in the wrong box. Send them back and try again.';
       msg.className = 'w066-msg iw-msg bad';
     }
   });
@@ -152,7 +152,7 @@
       bucket.querySelector('.w066-slot').appendChild(c);
     });
     chips().forEach(c => { c.classList.remove('w066-wrong'); c.classList.add('w066-right'); });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w066-msg iw-msg ok';
     expl.hidden = false;
   });

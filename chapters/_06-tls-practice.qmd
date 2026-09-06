@@ -100,9 +100,9 @@
       if (r.dataset.sel === r.dataset.a) { r.classList.add('w064-right'); right++; }
       else r.classList.add('w064-wrong');
     });
-    if (right === ITEMS.length) { msg.textContent = '✓ All correct — encrypting the channel is necessary, not sufficient.'; msg.className = 'w064-msg iw-msg ok'; }
-    else if (unanswered > 0 && right + unanswered === ITEMS.length) { msg.textContent = 'Keep going — ' + unanswered + ' statement(s) still unanswered.'; msg.className = 'w064-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — ' + right + ' of ' + ITEMS.length + ' statements are right; rethink the red ones.'; msg.className = 'w064-msg iw-msg bad'; }
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct - encrypting the channel is necessary, not sufficient.'; msg.className = 'w064-msg iw-msg ok'; }
+    else if (unanswered > 0 && right + unanswered === ITEMS.length) { msg.textContent = 'Keep going - ' + unanswered + ' statement(s) still unanswered.'; msg.className = 'w064-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - ' + right + ' of ' + ITEMS.length + ' statements are right; rethink the red ones.'; msg.className = 'w064-msg iw-msg bad'; }
   });
   root.querySelector('.w064-reset').addEventListener('click', () => {
     root.querySelectorAll('.w064-row').forEach(r => select(r, ''));
@@ -114,7 +114,7 @@
       select(r, r.dataset.a);
       r.classList.remove('w064-wrong'); r.classList.add('w064-right');
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w064-msg iw-msg ok';
     expl.hidden = false;
   });

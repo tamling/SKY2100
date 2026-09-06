@@ -1,49 +1,49 @@
-# Answer key — Chapter 02: Data centres, virtualisation and Linux {.unnumbered}
+# Answer key - Chapter 02: Data centres, virtualisation and Linux {.unnumbered}
 
 <!-- Source-only: this directory is excluded from the render in _quarto.yml
      ("!answers/"). Never link these files from a chapter. Numbering must
      match the chapter's Self-check section 1:1. -->
 
-**Q1** *(tests @sec-02-traffic-geography · basic)* — **Correct: b.**
+**Q1** *(tests @sec-02-traffic-geography · basic)* - **Correct: b.**
 The chapter explains that east–west traffic dominates and that a tree forces
 it through root links of fixed capacity; leaf–spine connects every leaf to
 every spine so any server reaches any other over an equal-cost path
 (@sec-02-traffic-geography). Options a and c describe other data-centre
 concerns (they do not motivate leaf–spine), and d contradicts multi-tenancy.
 
-**Q2** *(tests @sec-02-popek-goldberg · basic)* — **Correct: a.**
+**Q2** *(tests @sec-02-popek-goldberg · basic)* - **Correct: a.**
 Popek and Goldberg: a machine is cleanly virtualisable only if the sensitive
 instructions are a subset of the privileged ones, so every state-revealing or
 state-disturbing instruction traps and can be emulated. Option b is the slow
 interpreter the criterion avoids, c is para-virtualisation (which sidesteps
 the criterion), d is not part of the criterion.
 
-**Q3** *(tests @sec-02-virtualisation · basic)* — **Correct: c.**
+**Q3** *(tests @sec-02-virtualisation · basic)* - **Correct: c.**
 Full virtualisation is named as the cloud default: the guest runs unmodified,
 almost all instructions execute directly, only privileged operations trap
 (@sec-02-virtualisation). Emulation interprets everything (slow),
 para-virtualisation modifies the guest, and containers virtualise the OS,
 not the hardware.
 
-**Q4** *(tests @sec-02-linux-four-pillars · basic)* — **Accepted answers:**
-"CPU, memory, disk, network — plus logs", "CPU, memory, disk and network;
+**Q4** *(tests @sec-02-linux-four-pillars · basic)* - **Accepted answers:**
+"CPU, memory, disk, network - plus logs", "CPU, memory, disk and network;
 logs complement them" (any phrasing naming all four pillars; the fifth
 source is logs / `journalctl`).
 
-**Q5** *(tests @sec-02-popek-goldberg · basic)* — **Accepted answers:**
+**Q5** *(tests @sec-02-popek-goldberg · basic)* - **Accepted answers:**
 "Code breaks out of its guest VM into the hypervisor, so every guest above
 it is exposed", "an attacker escapes the virtual machine into the hypervisor
 and can reach the other tenants' guests" (must name breaking out of the
 guest into the hypervisor and the exposure of the other guests; the mild
 counterpart is the noisy neighbour).
 
-**Q6** *(tests @sec-02-distributed-system · basic)* — **Correct: b.**
+**Q6** *(tests @sec-02-distributed-system · basic)* - **Correct: b.**
 Multi-tenancy is the chapter's name for many customers (tenants) using the
-same physical hardware — the resource pooling of the cloud definition
+same physical hardware - the resource pooling of the cloud definition
 (@sec-02-distributed-system). Option d is multi-cloud, a different concept
 from later in the chapter; a and c describe scale and geography, not tenancy.
 
-**Q7 — applied scenario** *(tests @sec-02-linux-four-pillars · applied)* —
+**Q7 - applied scenario** *(tests @sec-02-linux-four-pillars · applied)* -
 **Model answer:** Disk filling fast: revealed by `df -h` (directory-level
 detail with `du -sh`); possible log flooding or data being staged for
 exfiltration. Unexpected listening port: revealed by `ss -tulpn`; a service
@@ -60,26 +60,26 @@ commands plus baseline reasoning without the TRC vocabulary.
 
 ## Sketch answers to the chapter exercises
 
-(1) *(@exr-02-north-south-east-west — North–south vs east–west traffic)*
+(1) *(@exr-02-north-south-east-west - North–south vs east–west traffic)*
 North–south: data centre $\leftrightarrow$ outside world; east–west:
 server $\leftrightarrow$ server inside. East–west dominates (services call
 services, replication, remote storage); leaf–spine fabrics give any-to-any
 capacity.
 
-(2) *(@exr-02-hypervisor-types — Type 1 vs Type 2 hypervisors)*
+(2) *(@exr-02-hypervisor-types - Type 1 vs Type 2 hypervisors)*
 Type 1 runs on bare metal (ESXi, Xen, Hyper-V), beneath every
 rented cloud VM; Type 2 runs on a host OS (VMware Workstation, VirtualBox),
 beneath the laboratory's Ubuntu VM.
 
-(3) *(@exr-02-isolation-security — Isolation as a security property)*
+(3) *(@exr-02-isolation-security - Isolation as a security property)*
 Because tenants are strangers sharing hardware and only hypervisor mediation
 separates them. Mild failure: noisy neighbour; worst case: VM escape, after
 which every guest is exposed.
 
-(4) *(@exr-02-which-command — Which command for which question)*
+(4) *(@exr-02-which-command - Which command for which question)*
 `ss -tulpn`; `free -h`; `journalctl` (for example `journalctl -u ssh`).
 
-(5) *(@exr-02-blast-radius — Blast radius of one zone)*
+(5) *(@exr-02-blast-radius - Blast radius of one zone)*
 It survives failures inside other zones only; a zone-level failure (power,
 cooling, network of its own zone) takes it down. First change: spread across
 availability zones; regional disasters then motivate the region pair.

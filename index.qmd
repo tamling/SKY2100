@@ -28,7 +28,7 @@ the last two steps; their answers are deliberately not printed in the script.
 ::: {.callout-tip}
 ## Annotate this script
 
-You can highlight and annotate any passage of this script with Hypothesis —
+You can highlight and annotate any passage of this script with Hypothesis -
 select text and comment directly in the margin. See [How to
 annotate](appendix/how-to-annotate.qmd) for what counts as a substantive
 contribution and how merged contributions are credited.

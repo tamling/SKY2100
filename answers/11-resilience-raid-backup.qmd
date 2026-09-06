@@ -1,28 +1,28 @@
-# Answer key — Chapter 11: Resilience, RAID and backup {.unnumbered}
+# Answer key - Chapter 11: Resilience, RAID and backup {.unnumbered}
 
 <!-- Source-only: this directory is excluded from the render in _quarto.yml
      ("!answers/"). Never link these files from a chapter. Numbering must
      match the chapter's Self-check section 1:1. -->
 
-**Q1** *(tests @sec-11-redundancy-raid · basic)* — **Correct: c.**
+**Q1** *(tests @sec-11-redundancy-raid · basic)* - **Correct: c.**
 @def-raid states that RAID 5 (and RAID 6) distribute data with parity,
 tolerating one (respectively two) failed disks; option a describes RAID 1,
 option b describes RAID 0, and option d is nonsense (RAID combines physical
 disks into one logical volume, not the reverse).
 
-**Q2** *(tests @sec-11-redundancy-raid · basic)* — **Correct: b.**
+**Q2** *(tests @sec-11-redundancy-raid · basic)* - **Correct: b.**
 The chapter's rule "RAID is not a backup": a mirror or parity array
 instantly and exactly copies a deletion, corruption or ransomware
 encryption to every disk, so only a point-in-time copy (a backup) allows a
 return to an earlier state.
 
-**Q3** *(tests @sec-11-backup · basic)* — **Correct: a.**
+**Q3** *(tests @sec-11-backup · basic)* - **Correct: a.**
 The 3–2–1 rule is three copies of important data, on two different kinds of
 media, with one copy off-site (or, in the cloud, in a separate account or
-region) — see @sec-11-backup. The other options confuse it with backup
+region) - see @sec-11-backup. The other options confuse it with backup
 schedules, RAID layouts and cloud geography.
 
-**Q4** *(tests @sec-11-availability-revisited · basic)* — **Accepted answers:**
+**Q4** *(tests @sec-11-availability-revisited · basic)* - **Accepted answers:**
 "one failure takes down as little as possible", "limiting how much a single
 failure destroys" (any phrasing that names the design goal that a single
 failure affects as little as possible), plus one example from the chapter:
@@ -30,27 +30,27 @@ spreading a deployment across availability zones, backing up data so the
 loss of storage is survivable, or building from immutable images so a lost
 instance is replaced.
 
-**Q5** *(tests @sec-11-backup · basic)* — **Accepted answers:**
+**Q5** *(tests @sec-11-backup · basic)* - **Accepted answers:**
 "a backup that has never been restored is not known to work", "an untested
 backup is not a control", "restore testing proves the backup actually
 works" (any phrasing that says the point of the backup is the restore, and
-only testing the restore proves it works — CSA, 2024, p. 255).
+only testing the restore proves it works - CSA, 2024, p. 255).
 
-**Q6** *(tests @sec-11-provider-redundancy · basic)* — **Correct: d.**
+**Q6** *(tests @sec-11-provider-redundancy · basic)* - **Correct: d.**
 The chapter says deletion, corruption and ransomware reach through all
 provider redundancy because replicas copy the damage as exactly as a RAID
 array does; resilience is layered, and the customer's own backup remains the
 customer's responsibility.
 
-**Q7 — applied scenario** *(tests @sec-11-designing-for-failure · applied)* —
+**Q7 - applied scenario** *(tests @sec-11-designing-for-failure · applied)* -
 **Model answer:** (i) RAID 5 does not help: it mirrors/parity-copies the
-encryption to every disk — RAID buys uptime through hardware failure, not
+encryption to every disk - RAID buys uptime through hardware failure, not
 recoverability (@tbl-raidbackup). (ii) The snapshot is a rollback point but
 sits in the same cloud account, so an attacker who can reach the account can
 destroy or encrypt it too; the chapter warns it must not be mistaken for the
 backup. (iii) The decisive control (@exm-backup-trc) is a regular backup of
 Nextcloud's data and configuration that is *off-site* (separate account or
-region — a backup the attacker can reach and encrypt is no backup, the
+region - a backup the attacker can reach and encrypt is no backup, the
 Session 10 off-host-logs logic), *immutable* (cannot be encrypted or deleted
 by ransomware), and *tested by restoring on a schedule* (a backup that has
 never been restored is not known to work). Grading notes: full credit needs

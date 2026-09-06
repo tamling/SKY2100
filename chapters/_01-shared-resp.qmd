@@ -60,7 +60,7 @@
   </div>
   <div class="w012-msg iw-msg" role="status"></div>
   <div class="w012-expl iw-expl" hidden>
-    Responsibility follows control: in IaaS the provider guards what it operates — networking, servers &amp; storage and the virtualisation layer — while the customer manages everything from the operating system upward: OS, runtime &amp; middleware, application and data. See <a href="#sec-01-service-models">the section on service models and shared responsibility</a> and <a href="#def-servicemodels">the definition of the service models</a>.
+    Responsibility follows control: in IaaS the provider guards what it operates - networking, servers &amp; storage and the virtualisation layer - while the customer manages everything from the operating system upward: OS, runtime &amp; middleware, application and data. See <a href="#sec-01-service-models">the section on service models and shared responsibility</a> and <a href="#def-servicemodels">the definition of the service models</a>.
   </div>
 </div>
 <script>
@@ -134,9 +134,9 @@
       if (c.dataset.cat === bucket.dataset.cat) { c.classList.add('w012-right'); right++; }
       else { c.classList.add('w012-wrong'); wrong++; }
     });
-    if (right === ITEMS.length) { msg.textContent = '✓ All correct — responsibility follows control of each layer.'; msg.className = 'w012-msg iw-msg ok'; }
-    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + unplaced + ' layer(s) still unplaced.'; msg.className = 'w012-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — the red layers sit on the wrong side of the split.'; msg.className = 'w012-msg iw-msg bad'; }
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct - responsibility follows control of each layer.'; msg.className = 'w012-msg iw-msg ok'; }
+    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going - ' + unplaced + ' layer(s) still unplaced.'; msg.className = 'w012-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - the red layers sit on the wrong side of the split.'; msg.className = 'w012-msg iw-msg bad'; }
   });
   root.querySelector('.w012-reset').addEventListener('click', () => {
     root.querySelectorAll('.w012-chip').forEach(c => pool.appendChild(c));
@@ -150,7 +150,7 @@
       bucket.querySelector('.w012-drop').appendChild(c);
       c.classList.add('w012-right');
     });
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w012-msg iw-msg ok';
     root.querySelector('.w012-expl').hidden = false;
   });

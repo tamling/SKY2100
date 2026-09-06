@@ -47,7 +47,7 @@ failure. **RAID 5** and **RAID 6** distribute data with
 space more efficiently than mirroring.
 :::
 
-![Three RAID levels. Striping (RAID 0) spreads blocks for speed with no redundancy; mirroring (RAID 1) keeps a full second copy; parity (RAID 5) distributes data and parity so that any one disk can be rebuilt. None of them is a backup.](figures/fig-raid.svg){#fig-raid fig-alt="Diagram — three side-by-side panels showing disk blocks under RAID 0 (blocks A–D split across two disks, 'blocks split; fast, no copy'), RAID 1 (blocks A and B duplicated on both disks, 'same data twice; a copy survives') and RAID 5 (data blocks plus rotating parity blocks P across three disks, 'data + rotating parity (P); one disk may fail')."}
+![Three RAID levels. Striping (RAID 0) spreads blocks for speed with no redundancy; mirroring (RAID 1) keeps a full second copy; parity (RAID 5) distributes data and parity so that any one disk can be rebuilt. None of them is a backup.](figures/fig-raid.svg){#fig-raid fig-alt="Diagram - three side-by-side panels showing disk blocks under RAID 0 (blocks A–D split across two disks, 'blocks split; fast, no copy'), RAID 1 (blocks A and B duplicated on both disks, 'same data twice; a copy survives') and RAID 5 (data blocks plus rotating parity blocks P across three disks, 'data + rotating parity (P); one disk may fail')."}
 
 RAID 0 is the trap in this list. Its name and its place among the redundant
 arrays suggest safety, but it offers striping for speed with no redundancy
@@ -238,7 +238,7 @@ that actually guarantees recovery.
 Each box below describes one of the four RAID levels of @def-raid. Drag
 each level onto the description that matches it (or click a level, then
 click a box), then press **Check**. One of the four is the trap of
-@sec-11-redundancy-raid — make sure it lands where its lack of redundancy
+@sec-11-redundancy-raid - make sure it lands where its lack of redundancy
 belongs.
 
 {{< include _11-raid-levels.qmd >}}
@@ -258,7 +258,7 @@ placed item to send it back to the pool.
 ## The 3–2–1 rule by numbers, interactive
 @sec-11-backup states the widely taught rule for keeping backups safe.
 Fill the three numbers of the rule into the boxes below and press
-**Check** — each line turns green or red on its own.
+**Check** - each line turns green or red on its own.
 
 {{< include _11-321-rule.qmd >}}
 :::
@@ -267,7 +267,7 @@ Fill the three numbers of the rule into the boxes below and press
 ## Resilience vocabulary, interactive
 Five terms from this chapter, five descriptions. Match each term to its
 description: click a term and then the description it belongs to (or drag
-the term onto it) — a correct pair locks and greys out, a wrong attempt
+the term onto it) - a correct pair locks and greys out, a wrong attempt
 flashes red. Press **Check** to see how many pairs you have.
 
 {{< include _11-resilience-terms.qmd >}}
@@ -276,7 +276,7 @@ flashes red. Press **Check** to see how many pairs you have.
 ::: {#exr-11-provider-redundancy-tf}
 ## Provider redundancy: true or false?, interactive
 @sec-11-provider-redundancy and the Maersk case show how far the
-redundancy a provider builds in reaches — and where it stops. Mark each
+redundancy a provider builds in reaches - and where it stops. Mark each
 statement below **True** or **False**, then press **Check**.
 
 {{< include _11-provider-redundancy-tf.qmd >}}
@@ -338,7 +338,7 @@ b. Durability figures only apply to data centres in the customer's own region
 c. The provider deletes replicas after a fixed retention period
 d. Deletion, corruption and ransomware reach through provider redundancy, because replicas copy the damage exactly
 
-**Q7 — applied scenario** *(tests @sec-11-designing-for-failure · applied)*
+**Q7 - applied scenario** *(tests @sec-11-designing-for-failure · applied)*
 Building on @exr-11-data-loss-trc: your team runs Nextcloud with RAID 5
 beneath the storage and keeps the Session 2 VM snapshot on the same cloud
 account. One morning, ransomware has encrypted the live data. For each of

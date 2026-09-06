@@ -47,7 +47,7 @@
     cloud-native application is a complex distributed system in which network delays
     have effects nobody planned for. That complexity is also why the question whether
     a system is secure never has a permanent yes, only a position that must be argued
-    again as the system changes — see <a href="#sec-13-argument">the section on the
+    again as the system changes - see <a href="#sec-13-argument">the section on the
     argument</a>.
   </div>
 </div>
@@ -106,13 +106,13 @@
       else { r.el.classList.add('w134-wrong'); wrong++; }
     });
     if (right === rows.length) {
-      msg.textContent = '✓ All correct — the layers are independent, the complexity is real, and the argument is never finished.';
+      msg.textContent = '✓ All correct - the layers are independent, the complexity is real, and the argument is never finished.';
       msg.className = 'w134-msg iw-msg ok';
     } else if (open > 0 && wrong === 0) {
-      msg.textContent = 'Keep going — ' + open + ' statement(s) still unanswered.';
+      msg.textContent = 'Keep going - ' + open + ' statement(s) still unanswered.';
       msg.className = 'w134-msg iw-msg';
     } else {
-      msg.textContent = '✗ Not yet — the red statements are marked wrongly. Re-read the closing argument.';
+      msg.textContent = '✗ Not yet - the red statements are marked wrongly. Re-read the closing argument.';
       msg.className = 'w134-msg iw-msg bad';
     }
   });
@@ -125,7 +125,7 @@
       r.el.classList.add('w134-right');
     });
     root.querySelector('.w134-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w134-msg iw-msg ok';
   });
   root.querySelector('.w134-reset').addEventListener('click', () => {

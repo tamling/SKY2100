@@ -57,7 +57,7 @@
     <span class="w106-note">(no fun if you click it right away)</span>
   </div>
   <div class="w106-msg iw-msg" role="status"></div>
-  <div class="w106-expl iw-expl" hidden>Management plane logs record control actions — who accessed the infrastructure, what they changed and when — so the Activity Log and a network security group write belong there; service and application logs record the activity of individual services, such as the Nginx access log and the system journal — see <a href="#sec-10-log-sources">the section on log sources</a>.</div>
+  <div class="w106-expl iw-expl" hidden>Management plane logs record control actions - who accessed the infrastructure, what they changed and when - so the Activity Log and a network security group write belong there; service and application logs record the activity of individual services, such as the Nginx access log and the system journal - see <a href="#sec-10-log-sources">the section on log sources</a>.</div>
 </div>
 <script>
 (function () {
@@ -126,12 +126,12 @@
     const left = pool.querySelectorAll('.w106-chip').length;
     msg.className = 'w106-msg iw-msg';
     if (wrong === 0 && left === 0) {
-      msg.textContent = '✓ All correct — the two telemetry sources are cleanly separated.';
+      msg.textContent = '✓ All correct - the two telemetry sources are cleanly separated.';
       msg.classList.add('ok');
     } else if (wrong === 0) {
-      msg.textContent = 'Keep going — ' + left + ' item(s) still to sort.';
+      msg.textContent = 'Keep going - ' + left + ' item(s) still to sort.';
     } else {
-      msg.textContent = '✗ Not yet — ' + wrong + ' item(s) sit in the wrong box (marked red).';
+      msg.textContent = '✗ Not yet - ' + wrong + ' item(s) sit in the wrong box (marked red).';
       msg.classList.add('bad');
     }
   });
@@ -148,7 +148,7 @@
       c.classList.add('w106-right');
     });
     root.querySelector('.w106-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w106-msg iw-msg ok';
   });
   ITEMS.forEach((it, i) => pool.appendChild(makeChip(it[0], it[1], 'k' + i)));

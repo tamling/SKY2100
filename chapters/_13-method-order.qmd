@@ -44,9 +44,9 @@
   <div class="w135-expl iw-expl" hidden>
     The method runs: name the threat, judge the risk, choose the control that fits,
     state why, and add the next layer, because no single control is sufficient. A
-    control can only be chosen once the threat and its risk are understood — the
+    control can only be chosen once the threat and its risk are understood - the
     course has applied this eleven times to one service, and it transfers to any
-    other — see <a href="#sec-13-argument">the section on the argument</a>.
+    other - see <a href="#sec-13-argument">the section on the argument</a>.
   </div>
 </div>
 <script>
@@ -121,8 +121,8 @@
       if (Number(li.dataset.pos) === i + 1) { li.classList.add('w135-right'); }
       else { li.classList.add('w135-wrong'); wrong++; }
     });
-    if (wrong === 0) { msg.textContent = '✓ All correct — that is the method, applied eleven times to one service.'; msg.className = 'w135-msg iw-msg ok'; }
-    else { msg.textContent = '✗ Not yet — ' + wrong + ' step(s) out of place. What must be understood before a control can fit?'; msg.className = 'w135-msg iw-msg bad'; }
+    if (wrong === 0) { msg.textContent = '✓ All correct - that is the method, applied eleven times to one service.'; msg.className = 'w135-msg iw-msg ok'; }
+    else { msg.textContent = '✗ Not yet - ' + wrong + ' step(s) out of place. What must be understood before a control can fit?'; msg.className = 'w135-msg iw-msg bad'; }
   });
   root.querySelector('.w135-solution').addEventListener('click', () => {
     [...list.children].sort((a, b) => Number(a.dataset.pos) - Number(b.dataset.pos))
@@ -130,7 +130,7 @@
     clearMarks();
     [...list.children].forEach(li => li.classList.add('w135-right'));
     root.querySelector('.w135-expl').hidden = false;
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w135-msg iw-msg ok';
   });
   root.querySelector('.w135-reset').addEventListener('click', () => {

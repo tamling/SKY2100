@@ -43,12 +43,12 @@
   <div class="w021-buckets">
     <div class="w021-bucket" data-cat="t1">
       <div class="w021-btitle">Type 1</div>
-      <div class="w021-bdesc">bare-metal — runs directly<br>on the hardware</div>
+      <div class="w021-bdesc">bare-metal - runs directly<br>on the hardware</div>
       <div class="w021-drop"></div>
     </div>
     <div class="w021-bucket" data-cat="t2">
       <div class="w021-btitle">Type 2</div>
-      <div class="w021-bdesc">hosted — an application<br>on a host operating system</div>
+      <div class="w021-bdesc">hosted - an application<br>on a host operating system</div>
       <div class="w021-drop"></div>
     </div>
   </div>
@@ -60,7 +60,7 @@
   </div>
   <div class="w021-msg iw-msg" role="status"></div>
   <div class="w021-expl iw-expl" hidden>
-    A Type 1 (bare-metal) hypervisor — ESXi, Xen, Hyper-V — runs directly on the hardware and is what data centres and clouds use, so one sits beneath every rented cloud VM. A Type 2 (hosted) hypervisor — VMware Workstation, VirtualBox — runs as an application on a host operating system and carries the laboratory’s Ubuntu VM. See <a href="#def-hypervisor">the definition of virtualisation and the hypervisor</a> in <a href="#sec-02-virtualisation">the section on virtualisation and the hypervisor</a>.
+    A Type 1 (bare-metal) hypervisor - ESXi, Xen, Hyper-V - runs directly on the hardware and is what data centres and clouds use, so one sits beneath every rented cloud VM. A Type 2 (hosted) hypervisor - VMware Workstation, VirtualBox - runs as an application on a host operating system and carries the laboratory’s Ubuntu VM. See <a href="#def-hypervisor">the definition of virtualisation and the hypervisor</a> in <a href="#sec-02-virtualisation">the section on virtualisation and the hypervisor</a>.
   </div>
 </div>
 <script>
@@ -134,9 +134,9 @@
       if (c.dataset.cat === bucket.dataset.cat) { c.classList.add('w021-right'); right++; }
       else { c.classList.add('w021-wrong'); wrong++; }
     });
-    if (right === ITEMS.length) { msg.textContent = '✓ All correct — both hypervisor types sorted.'; msg.className = 'w021-msg iw-msg ok'; }
-    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + unplaced + ' item(s) still unplaced.'; msg.className = 'w021-msg iw-msg'; }
-    else { msg.textContent = '✗ Not yet — the red items are in the wrong box.'; msg.className = 'w021-msg iw-msg bad'; }
+    if (right === ITEMS.length) { msg.textContent = '✓ All correct - both hypervisor types sorted.'; msg.className = 'w021-msg iw-msg ok'; }
+    else if (unplaced > 0 && wrong === 0) { msg.textContent = 'Keep going - ' + unplaced + ' item(s) still unplaced.'; msg.className = 'w021-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet - the red items are in the wrong box.'; msg.className = 'w021-msg iw-msg bad'; }
   });
   root.querySelector('.w021-solution').addEventListener('click', () => {
     unpick();
@@ -145,7 +145,7 @@
       if (bucket) place(bucket, c);
     });
     root.querySelectorAll('.w021-chip').forEach(c => c.classList.add('w021-right'));
-    msg.textContent = 'Solution shown — reset to try it yourself.';
+    msg.textContent = 'Solution shown - reset to try it yourself.';
     msg.className = 'w021-msg iw-msg ok';
     root.querySelector('.w021-expl').hidden = false;
   });

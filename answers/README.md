@@ -5,7 +5,7 @@ One file per converted chapter, named exactly like the chapter file:
 
 This directory is **excluded from every render** by the `"!answers/"`
 pattern under `project.render` in `_quarto.yml`, so answers never appear on
-the published site. They reach students only as a self-marking Canvas quiz —
+the published site. They reach students only as a self-marking Canvas quiz -
 see `canvas-export/README.md`.
 
 Each key mirrors the chapter's Self-check numbering (Q1…Qn) and gives, per
