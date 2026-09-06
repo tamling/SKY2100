@@ -310,8 +310,11 @@ then press **Check**. Two of the five names belong to none of the boxes.
 ## Related lab: hands-on for this session
 Theory done - now build it. This session's practical task is
 [Exercise 12: Automate a control - and govern with NIST CSF 2.0](../labs/exercise-12.qmd)
-(90-120 min, in your lab group); it puts this chapter's concepts to
-work on your own service. Work from the official worksheet PDF in
+(90-120 min, in your lab group); its risk-register, assurance and
+governance parts put this chapter's GRC concepts to work. The
+incident-response lifecycle itself - containment and the incident
+report - is walked through hands-on in
+[Exercise 10](../labs/exercise-10.qmd). Work from the official worksheet PDF in
 Canvas - the page here mirrors it for reading and reference; the lab
 rhythm is explained in [Practical tasks](../labs/index.qmd).
 :::

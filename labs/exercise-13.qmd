@@ -79,48 +79,5 @@ Answer briefly, using the method: assumptions $\rightarrow$ options $\rightarrow
 
 **Progress check:** Discuss your designs in the group, then talk the teacher through them verbally; nothing is handed in, signed or graded. This workshop is preparation for the exam.
 
-## Solutions
-
-Work through the lab first, then check here. Model answers are indicative - equivalent reasoning is fine.
-
-**How to use this key.** This case has *no single correct answer*. Do not mark for a specific architecture - mark for *coverage of the lifecycle*, *recognition of trade-offs*, and *justification against the context* (health data, small team, budget). Below are two valid reference designs, the non-negotiables, a grading rubric, and model directions for the mock questions.
-
-## Two valid reference designs
-
-- **Design 1 - lean / self-managed.** Hardened VM (S7) running the app with TLS (S6) and a WAF (S8); self-hosted logs + fail2ban + WAF audit log, read by the team (S9); manual IR with a simple playbook (S10); single-region with tested, immutable backups and a defined RPO/RTO (S11); governed to NIST CSF 2.0 + GDPR, with a written AI-use policy (S12). *Fits a skilled, budget-tight team that accepts more operational load.*
-- **Design 2 - managed.** PaaS web app (provider patches the OS); managed WAF; managed SIEM (Sentinel) + SOAR for detection and response; multi-region failover for higher availability; provider-managed automated backups; same CSF 2.0 + GDPR governance. *Fits a team that prefers to pay to offload risk and operational burden.*
-
-Both are defensible. A weak answer is gold-plated ("multi-provider + full SOC + every product") with no reference to budget, team size, or the risk each control addresses.
-
-## The non-negotiables (must appear in any valid design)
-
-- Health data **encrypted in transit and at rest** (S6) - not optional under GDPR.
-- **Least privilege**, no shared admin accounts, MFA on admin access (S7).
-- Backups that **exist and are restore-tested**; access to patient data **logged** (S9, S11).
-- A response plan, however lightweight, and a clear **owner/accountability** (S10, S12).
-
-A design that omits a non-negotiable is wrong regardless of how well the rest is justified.
-
-## Govern in depth (model answers)
-
-- **Risk-register row:** e.g. *patient records / unauthorised disclosure / Critical (high$\times$moderate) / owner: MediCloud DPO / review: annual*. Accept any defensible row with a level derived from impact $\times$ likelihood (CSA Domain 3).
-- **Assurance report:** for health data a strong answer requires the provider's **ISO/IEC 27001** certificate *and/or* a **SOC 2 / ISAE 3402** attestation (and notes **BSI C5** for a German market, or the **CSA STAR** entry). Must classify it: SOC 2 = attestation; ISO 27001 = certification/audit. The student should name one thing to check (scope, exceptions, the report period, sub-service organisations).
-- **Exit strategy:** data export in an open format, documented restore-elsewhere procedure, avoiding proprietary lock-in; for a regulated start-up this is also a **DORA**-style expectation. A design with no exit plan is a real audit finding.
-
-## Grading rubric (what separates strong from weak)
-
-- **Strong:** covers all six CSF functions; offers options with trade-offs; decisions justified against MediCloud's specific context; honest about what is *not* done and why; non-negotiables respected; communicates in plain risk language.
-- **Adequate:** covers most functions; some justification; at least one explicit trade-off.
-- **Weak:** lists tools with no reasoning; ignores budget/team; gold-plated or missing a non-negotiable; no trade-offs; one "right answer" asserted without context.
-
-## Mock exam - model directions
-
-1. **SIEM vs multi-region (fund first).** Either can be justified. Common strong answer: fund the *managed SIEM* first - detection of a breach of patient data (confidentiality) is the higher risk for health records, and single-region + tested backups already cover most availability needs; multi-region addresses a rarer regional-outage risk. The reverse is acceptable *if* justified by an availability-critical context. Mark the reasoning, not the pick.
-2. **Incident or not?** Validate the alert (S9-S10): check the web/access log and `journalctl` for an outage/restart, `auth.log`/fail2ban for suspicious logins, the WAF log for blocked attacks; correlate timestamps into a short timeline; decide event vs incident vs breach; if an incident, follow the lifecycle (contain, analyse, recover, learn). A brief outage with a benign cause (e.g. a restart) is an *event*, not necessarily an incident.
-3. **(a) WAF - yes:** the app handles untrusted input over the web; cheap, high-value protection against injection/XSS against patient data. **(b) Multi-provider - no (for a start-up):** complexity and cost outweigh the benefit; single- or multi-region is proportionate. **(c) Immutable backups - yes:** ransomware against health data is a real, high-impact threat; immutability is low-cost insurance.
-4. **Shared responsibility with PaaS:** the provider takes on OS patching, runtime and more of the platform; MediCloud still owns its data, access control, app configuration, encryption choices and monitoring of its own activity. Choosing PaaS legitimately shifts operational burden to the provider - a sound move for a small team.
-5. **AI use + governance rule.** Safe use: anomaly detection or alert summarisation to help a small team triage (S9, S12). Governance rule examples: keep a human accountable for decisions; do not feed patient data into tools that may retain it; disclose where AI is used. Any sensible pairing is fine.
-
-## References
-
-Synthesises the whole course. Frameworks: **NIST CSF 2.0** (Govern, Identify, Protect, Detect, Respond, Recover; verified, Feb 2024); CSA Security Guidance v5 - shared responsibility & governance (Domains 1-2), IAM & hardening (Domain 5), application security (Domain 10), security monitoring (Domain 6), incident response & resilience (Domain 11). Comer, *The Cloud Computing Book* - foundations, storage/RAID (Ch. 8), DevOps (Ch. 15), security & AI (Ch. 17). Maps to course sessions S1-S12.
+*The solutions to the knowledge check and the lab checkpoints are in
+the worksheet PDF distributed via Canvas.*

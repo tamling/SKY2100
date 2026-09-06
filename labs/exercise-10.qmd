@@ -3,7 +3,11 @@
 *Exercise 10 · Session 10 lab · Estimated time: 90-120 min*
 
 ::: {.callout-note icon=false}
-This is the practical task for [Chapter 10: Logging and log integrity](../chapters/10-logging-log-integrity.qmd).
+This lab spans two chapters: preserving the evidence and building the
+timeline belong to [Chapter 10: Logging and log
+integrity](../chapters/10-logging-log-integrity.qmd), containment and the
+incident report to [Chapter 12: Incident response, BCM, risk and
+compliance](../chapters/12-incident-response-bcm.qmd).
 Work through it in your lab group; you talk your answers through at the
 session after next (the review runs one session behind). **This page
 mirrors the worksheet for reading and reference - the official worksheet
@@ -132,41 +136,5 @@ The reason you work on copies is the same reason a timeline is hard: the moment 
 
 **Progress check:** Discuss your answers in the group, then talk the teacher through them verbally at the next session only to track progress; nothing is handed in, signed or graded.
 
-## Solutions
-
-Work through the lab first, then check here. Model answers are indicative - equivalent reasoning is fine.
-
-**Note:** Model answers are indicative - accept equivalent reasoning. Multiple-choice answers are in **bold**.
-
-## Knowledge check {.unnumbered}
-
-1. An **event** is any observable occurrence (may or may not be security-relevant). An **incident** is an event that violates a security policy and threatens operations. A **breach** is a successful penetration leading to unauthorised access or data extraction. All incidents are events; not all events are incidents (CSA p. 254).
-2. **Preparation** $\rightarrow$ **Detection & Analysis** $\rightarrow$ **Containment, Eradication & Recovery** $\rightarrow$ **Post-Incident Analysis** (NIST SP 800-61 / CSA p. 254-255).
-3. Under pressure there is no time to invent a plan. Preparation builds the team, roles, comms plan, responder access, baselines, runbooks and tested backups - so the response is deliberate, not improvised (CSA p. 255).
-4. A **runbook/playbook** is the documented series of steps for a specific incident type. SOAR automates some of those steps (and stores the playbooks), but a manual fallback is needed in case SOAR fails (CSA p. 260).
-5. Correlation across sources only works if timestamps align. A host with a wrong clock scrambles the order of events, breaking the narrative. Use UTC and synchronised time (NTP).
-6. **Time**, **actor** (source IP / user), **action**, and **result** - from every line, so the timeline assembles itself.
-7. **RECIPE PICKS** is a mnemonic for the first analysis priorities in a cloud management-plane incident (Resource, Events, Changes, Identity, Permissions, Entitlements, Public, IP, Caller, TracK, ForenSics). It focuses the responder and resolves a high percentage of incidents (CSA p. 265).
-8. Investigating a live system alters timestamps, memory and state and can tip off the attacker. Snapshotting first preserves the VM's state so you analyse a faithful copy (CSA p. 266).
-9. A **chain of custody** is the documented record of who handled evidence, when and how. It keeps evidence trustworthy and admissible, and proves it was not tampered with (CSA p. 266).
-10. IAM and the management plane can reach *everything* - containing them limits the blast radius fastest. Blocking a single IP only stops one path; the attacker may hold credentials or tokens to get back in (CSA p. 267).
-11. Federated identity separates authentication (IdP) from authorisation (relying party). A session token may be accepted until its TTL expires even after the account is disabled, so containment may require action on *both* sides (deny policies, accept only newer tokens) (CSA p. 267).
-12. **Post-incident analysis** captures lessons learned (could it have been detected sooner? what data would have helped? does the process need to change?) and shares them. Its outputs feed back into *preparation*, closing the lifecycle loop (CSA p. 255).
-
-## Lab checkpoints
-
-- **Preserve:** students should copy logs to a working folder and set them read-only, then work on copies. The point: logs are evidence; investigating the live system alters it (CSA p. 266).
-- **Timeline:** a correct table has 4+ rows in UTC order, e.g. failed SSH logins (auth.log) $\rightarrow$ fail2ban ban $\rightarrow$ WAF block (ModSecurity, a 941xxx XSS rule) $\rightarrow$ 403 in the access log. Each row should name time, source and actor/action/result.
-- **RECIPE PICKS:** identity/IP of each action; the (non-)blast-radius since both attacks were blocked; whether anything was public; and whether the attacker tried to pivot. Conclusion: no successful compromise - but provable.
-- **Containment:** a UFW deny or fail2ban ban of the attacker IP is acceptable. The teaching point: blocking an IP is easy but lowest-leverage; identity/management-plane containment matters more in a real incident (CSA p. 267).
-- **Report:** the one-page report is the key deliverable - summary, timeline, scope/impact, actions, lessons learned. Reward a clear timeline and concrete, honest lessons.
-
-## Cloud transfer & reflection
-
-- **IR lifecycle:** Preparation; Detection & Analysis; Containment, Eradication & Recovery; Post-Incident Analysis. "Build a timeline of the attack" is part of **Detection & Analysis** (CSA p. 255).
-- **Snapshot & chain of custody:** snapshotting preserves the VM's state immediately, before investigation or containment changes it (CSA p. 266); the chain of custody documents who handled the evidence so it stays trustworthy and admissible.
-- **AuthN/AuthZ gap:** a still-valid session token can be accepted until its TTL expires even after the account is disabled, so disabling the account does not instantly stop access - you may also need deny policies or token-issuance conditions at the relying party (CSA p. 267).
-
-## References
-
-CSA Security Guidance v5, **Domain 11: Incident Response & Resilience** (p. 253-267, verified): event/incident/breach (p. 254), IR lifecycle phases (p. 254-255), preparation and "build a timeline" (p. 255), runbooks & playbooks (p. 260), RECIPE PICKS (p. 265), cloud forensics, snapshots & chain of custody (p. 265-266), container/serverless forensics (p. 266), IAM/management-plane & network containment and the AuthN/AuthZ gap (p. 267). Based on the CSA Cloud Incident Response Framework and **NIST SP 800-61 Rev. 2**. Comer, *The Cloud Computing Book*, Ch. 17.8 - security analytics (p. 239, recap). MS Learn: *Security incident management in Microsoft Sentinel* and the docs article *Microsoft Sentinel incident investigation in the Azure portal* (verified, August 2026).
+*The solutions to the knowledge check and the lab checkpoints are in
+the worksheet PDF distributed via Canvas.*

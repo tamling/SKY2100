@@ -155,38 +155,5 @@ Write short answers in the space provided. Tick the correct box for multiple-cho
 talk the teacher through them verbally at the next session only to track progress; nothing is handed
 in, signed or graded.
 
-## Solutions {.unnumbered}
-
-*Work through the lab first, then check here. Model answers are indicative - equivalent reasoning is fine.*
-
-**Note:** Model answers are indicative - accept equivalent reasoning. Multiple-choice
-answers are in **bold**.
-
-### Knowledge check
-
-1.  **Unlimited free storage** is not a characteristic. The five are: on-demand self-service,
-    broad network access, resource pooling, rapid elasticity, measured service.
-2.  **Confidentiality** - disclosed only to the authorised; **Integrity** - not altered
-    without authorisation/detection; **Availability** - reachable when needed.
-3.  **Threat** = a potential cause of an unwanted incident; **Risk** = likelihood
-    $\times$ impact; **Control** = a measure that reduces the risk. E.g. threat = request
-    flood; risk = high for a public service; control = rate limiting / WAF.
-4.  **IaaS** gives the customer the most control of the stack.
-5.  "Only my data and users" = **SaaS**; "OS upward" = **IaaS**.
-6.  Because *control is shared* with the provider: trust boundaries are logical not physical,
-    you share infrastructure (multi-tenancy), and depend on an internet-facing control plane.
-7.  **SecaaS** = security capabilities consumed as a cloud service; e.g. a managed WAF, cloud
-    monitoring/SIEM, or managed DDoS protection.
-8.  **Public, Private, Community, Hybrid**; **Hybrid** dominates in practice.
-9.  **Consistency between report and evidence.**
-10. **True** - the AI declaration penalises *undisclosed* use; an LLM cannot produce your
-    lab evidence.
-11. Any valid pair, e.g. Confidentiality $\rightarrow$ S6-7; Integrity $\rightarrow$ S9-10;
-    Availability $\rightarrow$ S3/S11.
-12. Open reflection - no fixed answer.
-
-### References
-
-CSA Security Guidance v5, **Domain 1: Cloud Computing Concepts & Architectures** (verified);
-Comer Ch. 1-3 (verified); Jøsang Ch. 1 (CIA, risk - syllabus, page numbers not verified);
-Lecture 1.
+*The solutions to the knowledge check and the lab checkpoints are in
+the worksheet PDF distributed via Canvas.*

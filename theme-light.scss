@@ -3,3 +3,7 @@
 // there stalls the whole stylesheet (and the dark-mode toggle with it).
 // System fonts are used instead.
 $web-font-path: false;
+
+// The site is password-protected and search.json is dropped at deploy
+// (it would leak the full text) - hide the now-functionless search tool.
+.sidebar-search, #quarto-search, .quarto-search-button { display: none !important; }

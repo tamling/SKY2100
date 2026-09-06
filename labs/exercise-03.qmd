@@ -140,41 +140,5 @@ test, and compare the failed-request count before/after.
 talk the teacher through them verbally at the next session only to track progress; nothing is handed
 in, signed or graded.
 
-## Solutions {.unnumbered}
-
-*Work through the lab first, then check here. Model answers are indicative - equivalent reasoning is fine.*
-
-**Note:** Model answers are indicative - accept equivalent reasoning. Multiple-choice
-answers are in **bold**.
-
-### Knowledge check
-
-1.  **Availability.**
-2.  **Volumetric** (UDP flood / amplification), **Protocol** (SYN flood),
-    **Application-layer** (HTTP flood of an expensive endpoint).
-3.  **1000 requests total, 50 at a time.**
-4.  It uses small, valid-looking requests, individually indistinguishable from real users; only
-    aggregate behaviour and logs reveal it.
-5.  **Layer 7** (application layer); it hosts the **WAF**.
-6.  A **composite SLA** is the combined SLA of chained services; multiplying availabilities
-    (e.g. $0.9995\times0.9995$) yields a *lower* number than any component - so more
-    components means lower combined availability.
-7.  Local: rate limiting, caching, timeouts and connection limits. Cloud-scale: autoscaling,
-    CDN/anycast, cloud DDoS protection, WAF.
-8.  **Capacity** = work per unit time a system can do; **Availability** = reachable/
-    responsive when needed; availability fails once demand exceeds capacity.
-9.  Popular early web sites exceeded a single machine's capacity, so operators ran a *cluster*
-    of identical servers behind a load balancer. (Comer Ch. 1.5, p. 8, verified.)
-10. **Scale-up** = a bigger single machine; **scale-out** = more machines. The cloud
-    favours **scale-out**.
-11. Instances appear/disappear and tenants share hardware, so you cannot secure a fixed list of
-    servers - only a pattern/policy; the surface changes continuously.
-12. Reflection from each group's own measurement - no fixed value.
-
-### References
-
-Comer Ch. 1 (clusters & load balancing **p. 8**, economic motivation **p. 10**) & Ch. 2
-(multi-tenancy **p. 15**, elastic computing **p. 16**, IaaS **p. 19**, SaaS
-**p. 20**) - all verified; Jøsang Ch. 2 & 6 (syllabus, page numbers not verified). MS Learn:
-*Describe Azure compute services* and *Describe Azure networking services* (verified, June
-2026 - the previously combined module was split into two).
+*The solutions to the knowledge check and the lab checkpoints are in
+the worksheet PDF distributed via Canvas.*

@@ -145,41 +145,5 @@ You just watched the two failures RAID handles and does not handle. When you fai
 
 **Progress check:** Discuss your answers in the group, then talk the teacher through them verbally at the next session only to track progress; nothing is handed in, signed or graded.
 
-## Solutions
-
-Work through the lab first, then check here. Model answers are indicative - equivalent reasoning is fine.
-
-**Note:** Model answers are indicative - accept equivalent reasoning. Multiple-choice answers are in **bold**.
-
-## Knowledge check {.unnumbered}
-
-1. Availability is the **A** of the CIA triad: a service that is down - through hardware failure, disaster, DDoS or ransomware - has failed its users, however confidential and intact its data. Resilience protects availability.
-2. A **single point of failure (SPOF)** is any one component whose failure takes down the whole system. The cure is **redundancy** - duplicate the component so no single failure is fatal.
-3. **RAID 1** mirrors: every write goes to two disks holding identical copies, surviving either disk failing. Cost: usable capacity is that of *one* disk from two - 50% overhead.
-4. **RAID 0** stripes data across disks for speed with *no* redundancy (one disk lost = all lost). **RAID 1** mirrors for redundancy (survives one disk) at 50% capacity cost.
-5. **RAID is not backup:** it only protects against *disk failure*. Example: a deleted file (or ransomware encryption, or a corrupt write) is applied to *both* mirrored disks instantly - RAID preserves the deletion. Only a separate point-in-time backup can restore it.
-6. **Hot swapping** = replacing a failed disk while the array keeps running (Comer p. 99). During the **rebuild**, redundancy is temporarily gone - a second disk failure then loses everything.
-7. **3-2-1:** keep **3** copies of the data, on **2** different media, with **1** off-site.
-8. **Full** copies everything each time (slow backup, simple restore). **Incremental** copies changes since the *last* backup (fast backup, restore needs full + every increment). **Differential** copies changes since the last *full* (medium; restore needs full + last differential).
-9. **RPO (Recovery Point Objective)** = how much data, measured in time, you can afford to lose (drives backup frequency). **RTO (Recovery Time Objective)** = how much downtime you can afford (drives restore speed).
-10. Backups fail silently (full disks, bad credentials, missing/unreadable files). The only proof a backup works is a successful *restore*; CSA prescribes regular restoration and yearly DR tests (p. 255).
-11. **Single-region**, **multi-region**, and **multi-provider** resiliency - escalating in protection and cost (CSA p. 270).
-12. **Chaos engineering** deliberately injects faults (even in production) to continuously validate resiliency, building in the assumption that failures *will* happen rather than assuming little downtime (CSA p. 271).
-
-## Lab checkpoints
-
-- **RAID 1:** `/proc/mdstat` should show `md0` active with two disks `[UU]` and a mounted ext4 filesystem holding the test file.
-- **Fail & rebuild:** after `--fail`, the array is *degraded* (`[U_]`) but the test file is still readable - the mirror did its job. After `--add`, `/proc/mdstat` shows *recovery* (re-sync); during that window protection is reduced, so a second failure would be fatal. This is why backups still matter.
-- **Backup:** a `tar.gz` archive of the data in a separate location. It covers *deletion, corruption, ransomware and disaster* - the threats RAID does *not*.
-- **Restore:** the deleted file is recovered from the archive. RAID did not help because the deletion was mirrored to both disks instantly - demonstrating "RAID is not backup".
-- **RPO/RTO:** reward a justified choice (e.g. hourly backups $\rightarrow$ RPO $\le$ 1h) and an honest comparison of the measured restore time against the chosen RTO.
-
-## Cloud transfer & reflection
-
-- **Azure redundant storage:** **GRS** (geo-redundant) replicates across *regions* and protects against a regional outage; **LRS** (locally redundant, within one data centre) is cheapest; ZRS sits between (across zones in one region).
-- **Azure equivalent of mirroring:** **Availability Zones** place replicas in physically separate data centres within a region, protecting against a building/power/zone failure - the cloud version of "no single point of failure".
-- **Immutable / off-site backup vs ransomware:** ransomware seeks out and deletes reachable backups; an *immutable* (write-once) or off-site/air-gapped copy cannot be altered or deleted by the attacker, so a clean recovery point survives. RAID cannot help (the encryption is mirrored), and even normal backups fail if they are reachable and deletable.
-
-## References
-
-CSA Security Guidance v5, **Domain 11.6: Resilience** (p. 270-271, verified): resiliency definition and the single-/multi-region/multi-provider levels (p. 270), IaaS/PaaS resiliency tools and chaos engineering (p. 271), SaaS resilience and BCP/DR via periodic data extracts (p. 271); backup-restoration and DR testing (p. 255). Comer, *The Cloud Computing Book*: RAID, redundant disks & hot swapping, Ch. 8 (p. 99); high availability & off-site backup, Ch. 2 (p. 21), verified. MS Learn: *Protect your virtual machines by using Azure Backup* (verified, June 2026).
+*The solutions to the knowledge check and the lab checkpoints are in
+the worksheet PDF distributed via Canvas.*

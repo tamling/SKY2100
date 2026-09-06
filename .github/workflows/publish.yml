@@ -25,9 +25,35 @@ jobs:
       # Annotations (Hypothesis) are on by default via _quarto.yml;
       # answers/ is excluded from the render there.
       - run: quarto render
+      # Password-protect the whole site (CLAUDE.md §7). Requires the
+      # repository secret SITE_PASSWORD. StatiCrypt writes only the
+      # encrypted .html files, so the assets are copied over afterwards;
+      # search.json would leak the full text and is dropped (search is
+      # also off in _quarto.yml).
+      - name: Encrypt site (StatiCrypt)
+        env:
+          SITE_PASSWORD: ${{ secrets.SITE_PASSWORD }}
+        run: |
+          if [ -z "$SITE_PASSWORD" ]; then
+            echo "::error::Repository secret SITE_PASSWORD is not set (Settings -> Secrets and variables -> Actions)."
+            exit 1
+          fi
+          npx --yes staticrypt@3.5.4 "_site" -r -d _encrypted \
+            --password "$SITE_PASSWORD" --remember 30 --short
+          mkdir -p _deploy
+          cp -r _encrypted/_site/. _deploy/
+          (cd _site && find . -type f ! -name '*.html' -exec cp --parents {} ../_deploy/ \;)
+          rm -f _deploy/search.json
+          # every source page must have an encrypted counterpart, and no
+          # plaintext may slip through
+          for f in $(cd _site && find . -name '*.html'); do
+            test -f "_deploy/$f" || { echo "::error::missing encrypted $f"; exit 1; }
+            grep -q 'staticrypt-html' "_deploy/$f" || { echo "::error::unencrypted $f"; exit 1; }
+          done
+          ! grep -rq 'zettabytes' _deploy --include='*.html' || { echo "::error::plaintext leaked"; exit 1; }
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: _deploy
 
   deploy:
     needs: build

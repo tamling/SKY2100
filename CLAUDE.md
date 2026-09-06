@@ -17,8 +17,13 @@
 >   (`$web-font-path: false`) — a hanging fonts request otherwise blocks the
 >   dark-mode stylesheet entirely.
 > - HTML only; no PDF format configured yet (open item).
-> - Deploy: Pages source "GitHub Actions" (`_site` artifact), not `gh-pages`.
-> - No StatiCrypt (site is public; `answers/` is world-readable in the repo).
+> - Deploy: Pages source "GitHub Actions", not `gh-pages`. StatiCrypt is
+>   ON per §7 (secret `SITE_PASSWORD`; search disabled, search.json
+>   dropped, plaintext-leak check in the workflow). The repo itself stays
+>   public: `answers/` and `legacy/` are world-readable there.
+> - `labs/` mirrors the practical-task worksheets (Canvas PDFs stay
+>   authoritative; Solutions sections are stripped from the web pages;
+>   Exercises 10/12 are linked thematically to two chapters each).
 >
 > For a fresh conversion (e.g. TK1104), copy this file into that repo and
 > follow §3–§9 as written.

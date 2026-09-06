@@ -37,7 +37,7 @@ final home-exam report is built from these weekly documents.
 | 7 | [Harden your service & control access](exercise-07.qmd) | [Hardening and access control](../chapters/07-hardening-access-control.qmd) |
 | 8 | [Scan your app, then shield it with a WAF](exercise-08.qmd) | [DevSecOps, WAF and secure applications](../chapters/08-devsecops-waf.qmd) |
 | 9 | [Watch your service - find the attack in the logs](exercise-09.qmd) | [Security monitoring and IDS](../chapters/09-monitoring-ids.qmd) |
-| 10 | [Reconstruct the attack - build a timeline & report](exercise-10.qmd) | [Logging and log integrity](../chapters/10-logging-log-integrity.qmd) |
+| 10 | [Reconstruct the attack - build a timeline & report](exercise-10.qmd) | [Logging and log integrity](../chapters/10-logging-log-integrity.qmd) + [Incident response](../chapters/12-incident-response-bcm.qmd) |
 | 11 | [Survive failure - mirror a disk & restore a backup](exercise-11.qmd) | [Resilience, RAID and backup](../chapters/11-resilience-raid-backup.qmd) |
-| 12 | [Automate a control - and govern with NIST CSF 2.0](exercise-12.qmd) | [Incident response, BCM, risk and compliance](../chapters/12-incident-response-bcm.qmd) |
+| 12 | [Automate a control - and govern with NIST CSF 2.0](exercise-12.qmd) | [Incident response, BCM, risk and compliance](../chapters/12-incident-response-bcm.qmd) + [The integrated case](../chapters/13-integrated-case.qmd) |
 | 13 | [Integrated case & exam workshop - MediCloud](exercise-13.qmd) | [The integrated case](../chapters/13-integrated-case.qmd) |

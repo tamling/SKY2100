@@ -136,43 +136,5 @@ of the course.
 talk the teacher through them verbally at the next session only to track progress; nothing is handed
 in, signed or graded.
 
-## Solutions {.unnumbered}
-
-*Work through the lab first, then check here. Model answers are indicative - equivalent reasoning is fine.*
-
-**Note:** Model answers are indicative - accept equivalent reasoning. Multiple-choice
-answers are in **bold**.
-
-### Knowledge check
-
-1.  **`ss -tulpn`**.
-2.  **Type 1** (bare-metal) runs directly on hardware - ESXi, Xen, Hyper-V; **Type 2**
-    (hosted) runs as an app on a host OS - VMware Workstation, VirtualBox.
-3.  **Server $\leftrightarrow$ server inside the data centre.**
-4.  Each VM runs its *own* OS, so each adds a *scheduler* and a set of *background
-    processes*; plus per-VM memory/CPU and the time to boot an OS. (Comer Ch. 6, p. 71-72,
-    verified.)
-5.  **A physically separate data centre within a region.**
-6.  **Management group $\rightarrow$ subscription $\rightarrow$ resource group $\rightarrow$
-    resource.**
-7.  A VM's entire state (memory, disk, devices) is data, so it can be saved as a file/snapshot;
-    risk: it can be *copied or stolen wholesale*, and a snapshot may capture secrets in memory.
-    (Comer Ch. 5, p. 63, verified.)
-8.  **Available memory / swap in use.**
-9.  Racks are arranged so *cold intake* and *hot exhaust* air never mix, improving cooling
-    efficiency; it ultimately protects **Availability** (keeps hardware running). (Comer p. 40,
-    verified.)
-10. A **hypervisor** creates and mediates VMs; CPU **privilege levels (rings)** let it run
-    more privileged than the demoted guest OSes. (Comer p. 59-60, verified.)
-11. **Block, file, and object (key-value) storage.** (Comer Ch. 8, verified.)
-12. Reflection - commonly `journalctl` (the log source for the timeline) or `ss` (attack
-    surface).
-
-### References
-
-Comer Ch. 4 (hot/cold aisles **p. 40**, east-west traffic **p. 44**, leaf-spine
-**p. 47**) & Ch. 5 (approaches **p. 55**, privilege levels **p. 59**, extending
-privilege **p. 60**, levels of trust **p. 60**, VM as digital object **p. 63**, VM
-migration **p. 64**, live migration **p. 65**); Ch. 6 VM overhead **p. 71**; Ch. 8
-storage abstractions - all verified. Jøsang Ch. 3 (syllabus, page numbers not verified). MS Learn:
-*Describe the core architectural components of Azure* (verified, June 2026).
+*The solutions to the knowledge check and the lab checkpoints are in
+the worksheet PDF distributed via Canvas.*

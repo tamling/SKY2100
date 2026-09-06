@@ -19,6 +19,12 @@ project:
 # annotation instructions.
 annotations: true
 
+# Site is password-protected (StatiCrypt in the publish workflow).
+# Search stays off: the search index (search.json) contains the full
+# text and would bypass the encryption.
+website:
+  search: false
+
 book:
   title: "SKY2100 — Course Script"
   # Each chapter ends with a "Self-check" section — see

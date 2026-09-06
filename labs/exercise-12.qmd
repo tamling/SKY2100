@@ -3,7 +3,11 @@
 *Exercise 12 · Session 12 lab · Estimated time: 90-120 min*
 
 ::: {.callout-note icon=false}
-This is the practical task for [Chapter 12: Incident response, BCM, risk and compliance](../chapters/12-incident-response-bcm.qmd).
+This lab spans two chapters: the risk register, assurance and governance
+parts belong to [Chapter 12: Incident response, BCM, risk and
+compliance](../chapters/12-incident-response-bcm.qmd), the NIST CSF 2.0
+mapping to [Chapter 13: The integrated
+case](../chapters/13-integrated-case.qmd).
 Work through it in your lab group; you talk your answers through at the
 session after next (the review runs one session behind). **This page
 mirrors the worksheet for reading and reference - the official worksheet
@@ -127,48 +131,5 @@ A control is only worth what you can *justify* and *evidence*. This is the gover
 
 **Progress check:** Discuss your answers in the group, then talk the teacher through them verbally at the next session only to track progress; nothing is handed in, signed or graded.
 
-## Solutions
-
-Work through the lab first, then check here. Model answers are indicative - equivalent reasoning is fine.
-
-**Note:** Model answers are indicative - accept equivalent reasoning. Multiple-choice answers are in **bold**.
-
-## Knowledge check {.unnumbered}
-
-1. At cloud scale there are hundreds of resources created and destroyed constantly. Manual work is slow, inconsistent and error-prone (most breaches start with a misconfiguration), and humans cannot watch everything in real time - attacks move faster than people.
-2. **Automation** is *how* security is enforced at scale - machines applying controls consistently. **Governance** is *what* the rules are and *who* decides - policy, roles, accountability and risk. Governance sets policy; automation enforces it.
-3. Governance is a framework of **policies, procedures and controls** promoting transparency and accountability, covering strategic guidance, risk management, compliance and cost control (CSA p. 28). ISACA: it sets direction through prioritisation, decision-making and monitoring.
-4. **Govern, Identify, Protect, Detect, Respond, Recover.** **Govern** is the new sixth function added in CSF 2.0 (2024), placed centrally.
-5. **Policy as code** expresses security rules as machine-readable definitions the platform enforces automatically (e.g. "no public storage"). It makes governance *executable* - a written policy becomes an enforced rule on every deployment.
-6. **CSPM** automates continuous configuration/compliance checking (finding misconfigurations). **SOAR** automates incident response steps via playbooks (enrich, block, isolate, ticket).
-7. **Benefits:** speed, scale, consistency, fewer human errors (any two). **Risks:** a bad rule applied everywhere instantly; reduced visibility/over-reliance; attackers automate too; automation failures (any two). Keep humans in the loop for high-impact actions.
-8. **Defenders:** anomaly detection, alert triage/summarisation, faster investigation (Comer p. 239; CSA p. 143). **Attackers:** deepfakes, automated/evasive attacks, faster reconnaissance (Comer p. 239).
-9. **Prompt injection** is malicious input that hijacks an AI's instructions - the same *injection* family as SQLi/XSS from S8 (application security), aimed at a model. Validate input and never trust output blindly.
-10. **Tiers** describe how mature your practices are (Partial$\rightarrow$Adaptive, Tier 1-4). **Profiles** compare your *current* state to a *target* state; the gap is your roadmap. You choose a target matching your risk appetite.
-11. Compliance = meeting requirements at a point in time; security = actually resisting attackers continuously. You can be compliant and breached - a checkbox does not stop a novel attack. Use frameworks as a floor, not a ceiling.
-12. **Identify** = S1 (cloud, shared responsibility, assets/risk); **Protect** = S6 (TLS), S7 (hardening/access), S8 (secure apps/WAF); **Detect** = S9 (monitoring & IDS); **Respond** = S10 (incident response); **Recover** = S11 (resilience & backup). (Govern = S12, overarching.)
-13. **Residual risk** is the risk that remains after the chosen control is applied. The four treatment options are **mitigate** (reduce with a control), **transfer** (e.g. insurance or a provider), **avoid** (do not do the risky thing) and **accept** (formally, by an accountable owner). (CSA Domain 3, p. 62.)
-14. An **audit** is an independent examination that ends in an opinion against a defined standard (e.g. ISO/IEC 27001 certification) - high assurance. An **attestation** (e.g. SOC 2 / ISAE 3402) is a statement of the provider's control posture, examined by an auditor but scoped and described by the provider - moderate assurance. The audit gives the higher assurance. (CSA Domain 3, p. 73-76.)
-
-## Lab checkpoints
-
-- **Automation:** any sensible check/enforce script is acceptable (firewall active, file permissions, encryption on, a required config). Reward output that clearly reports OK/FAIL and an explanation of why a script scales better than manual checking across many machines.
-- **CSF mapping:** expect Identify = S1, Protect = S6/S7/S8, Detect = S9, Respond = S10, Recover = S11, and Govern = S12 (this lecture - policy, risk, accountability). The insight is that the whole course *is* the CSF lifecycle.
-- **Governance reflection:** a concrete policy (e.g. "backups off-site", "disks encrypted") plus how policy as code / Azure Policy would enforce it (deny or auto-remediate).
-- **AI reflection:** one defensive use (anomaly detection, summarisation) and one real risk (prompt injection, hallucination, data leakage). A human stays accountable because models err and accountability cannot be delegated to software.
-
-## Risk register & assurance (model answers)
-
-- **Risk register:** accept any sensible row where the level follows from impact $\times$ likelihood, with a named owner and a review date, e.g. *Nextcloud data on the VM / ransomware / High (high$\times$moderate) / owner: ops / review: annual*. The point is the *structure*, not the exact wording (CSA Domain 3, p. 65-66).
-- **Risk treatment:** one of *mitigate / transfer / avoid / accept*; the **residual risk** is what remains after the control (e.g. immutable backups mitigate ransomware, but residual risk = the most recent unbacked-up changes). The **business owner** formally accepts residual risk, after a cost-benefit decision, and it is re-reviewed periodically (CSA p. 62).
-- **Assurance:** a credible answer names a provider report and classifies it - **SOC 2 / ISAE 3402** = *attestation* (moderate assurance, a statement of posture); an **ISO/IEC 27001** certificate or a **BSI C5** report; or a **CSA STAR** entry. Key insight: you cannot audit a hyperscaler yourself, so you *inherit* assurance by reading its report - but inheritance does not shift your responsibility for your own layer (CSA Domain 3, p. 73-76).
-
-## Cloud transfer & reflection
-
-- **Azure Policy deny = governance + automation:** the *policy* (governance) states the rule; Azure *automatically* blocks non-compliant resources at creation (automation). Written intent becomes enforced reality with no human in the loop - the lecture's core idea.
-- **What Govern adds:** Govern sets strategy, roles, policy, risk appetite and oversight - it decides *what* matters and *who* is accountable, which the operational functions (Protect/Detect/Respond/Recover) then carry out. It is the new central function in CSF 2.0.
-- **Compliance $\ne$ security example:** e.g. a system that "has backups" (ticks the box) but whose backups were never restore-tested (S11), or a WAF in detection-only mode (S8) that logs but blocks nothing - compliant on paper, exposed in practice.
-
-## References
-
-CSA Security Guidance v5, **Domain 2: Cloud Governance and Strategies** (p. 28-29, verified): governance definition and ISACA framing, frameworks (ISO/IEC 38500, COBIT, ISO/IEC 27014) and laws (GLBA, SOX, HIPAA, GDPR) (p. 28), cloud adoption drivers, risk appetite and secure-by-design (p. 29); Domain 6.5 GenAI for security monitoring (p. 143). **NIST Cybersecurity Framework (CSF) 2.0**, published February 2024 (verified, June 2026): six core functions - Govern, Identify, Protect, Detect, Respond, Recover - with Govern newly added and central; Core, Tiers and Profiles. Comer, *The Cloud Computing Book*, Ch. 17.8 - AI for attackers and defenders (p. 239); Ch. 10 - orchestration & replication. MS Learn: *Govern your Azure resources with Azure Policy* (verified, June 2026).
+*The solutions to the knowledge check and the lab checkpoints are in
+the worksheet PDF distributed via Canvas.*

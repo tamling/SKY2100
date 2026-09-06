@@ -153,54 +153,5 @@ no reply.
 talk the teacher through them verbally at the next session only to track progress; nothing is handed
 in, signed or graded.
 
-## Solutions {.unnumbered}
-
-*Work through the lab first, then check here. Model answers are indicative - equivalent reasoning is fine.*
-
-**Note:** Model answers are indicative - accept equivalent reasoning. Multiple-choice
-answers are in **bold**.
-
-### Knowledge check
-
-1.  **An IP address + a port.**
-2.  Because you cannot anticipate every threat. With default-deny you open only what you can
-    justify, so anything unforeseen is blocked automatically - the principle of least exposure.
-3.  `22` = **SSH**; `80` = **HTTP**; `443` = **HTTPS**; `53` =
-    **DNS**.
-4.  **Stateless** judges each packet in isolation; **stateful** tracks active connections
-    and automatically allows replies to traffic you started. UFW and NSGs are **stateful**.
-5.  **Action** (allow/deny), **protocol** (TCP/UDP), **source**, **destination**,
-    and **port**.
-6.  NAT hides internal machines behind one public address; they are not directly reachable from
-    outside unless a port is explicitly forwarded - a crude but real first barrier. (Comer Ch. 7,
-    p. 91, verified.)
-7.  **Segmentation** divides the network into separate zones so a breach in one cannot freely
-    reach the others, limiting *lateral movement*. (CSA Domain 7; Comer VLAN/VXLAN p. 89-90.)
-8.  **False** - defence in depth. The host firewall still protects the host if the network
-    firewall is bypassed or misconfigured, or if the threat originates *inside* the network.
-9.  A **bastion / jump host** provides a single hardened, heavily-monitored entry point for
-    admin access (SSH), instead of exposing SSH on every server.
-10. Rules are evaluated by **priority** (lowest number first); the **first** match wins.
-11. SDN centralises and programs the network, so a policy can be applied everywhere at once (easier
-    to secure); but the controller is a single high-value target and a misconfiguration propagates
-    just as fast (riskier). (Comer Ch. 7, p. 94-95, verified.)
-12. Reflection - no fixed answer; expect students to name an unneeded service bound to a public
-    interface.
-
-### Lab checkpoints
-
-- `ufw status verbose` should show *default deny (incoming)* plus explicit allow rules for
-  22 and 80.
-- Tested from the host: an allowed port responds to `curl`; a port the firewall drops
-  *times out*; with UFW disabled the same closed port answers *connection refused* at once
-  - a good discussion point. Testing against `localhost` inside the VM proves nothing, because
-  UFW does not filter loopback traffic.
-- The before/after `ss -tulpn` should be unchanged (services still listen); the firewall
-  controls *reachability*, not whether a service runs.
-
-### References
-
-CSA Security Guidance v5, **Domain 7: Infrastructure & Networking** (verified); Comer Ch. 7
-(NAT **p. 91**, VLANs **p. 89**, VXLAN **p. 90**, virtual switch **p. 91**, SDN
-**p. 94**, OpenFlow **p. 95**) - all verified; Jøsang Ch. 6 (syllabus, page numbers not
-verified). MS Learn: *Describe Azure networking services* (verified, June 2026).
+*The solutions to the knowledge check and the lab checkpoints are in
+the worksheet PDF distributed via Canvas.*
