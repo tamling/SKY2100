@@ -36,7 +36,7 @@
 .cia-dd .cia-msg.ok { color: #2e7d32; }
 .cia-dd .cia-msg.bad { color: #d81e2e; }
 </style>
-<div class="cia-dd" id="cia-dd">
+<div class="cia-dd iw" id="cia-dd">
   <div class="cia-stage">
     <svg class="cia-lines" viewBox="0 0 620 360" preserveAspectRatio="none" aria-hidden="true">
       <path d="M310,60 L95,290 M310,60 L525,290 M95,290 L525,290"
@@ -54,10 +54,10 @@
   </div>
   <div class="cia-pool" aria-label="terms to place"></div>
   <div class="cia-controls">
-    <button type="button" class="cia-check">Check</button>
-    <button type="button" class="cia-reset">Reset</button>
+    <button type="button" class="cia-check iw-check">Check</button>
+    <button type="button" class="cia-reset iw-reset">Reset</button>
   </div>
-  <div class="cia-msg" role="status"></div>
+  <div class="cia-msg iw-msg" role="status"></div>
 </div>
 <script>
 (function () {
@@ -92,7 +92,7 @@
   }
   function clearMarks() {
     zones.forEach(z => z.classList.remove('cia-right', 'cia-wrong'));
-    msg.textContent = ''; msg.className = 'cia-msg';
+    msg.textContent = ''; msg.className = 'cia-msg iw-msg';
   }
   function place(zone, chip) {
     const old = zone.querySelector('.cia-chip');
@@ -126,9 +126,9 @@
       if (chip.dataset.term === z.dataset.answer) { z.classList.add('cia-right'); right++; }
       else { z.classList.add('cia-wrong'); wrong++; }
     });
-    if (right === 3) { msg.textContent = '✓ All correct — the CIA triad is in place.'; msg.className = 'cia-msg ok'; }
-    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' corner(s) still empty.'; msg.className = 'cia-msg'; }
-    else { msg.textContent = '✗ Not yet — the red corners are wrong (three of the six terms are distractors).'; msg.className = 'cia-msg bad'; }
+    if (right === 3) { msg.textContent = '✓ All correct — the CIA triad is in place.'; msg.className = 'cia-msg iw-msg ok'; }
+    else if (empty > 0 && wrong === 0) { msg.textContent = 'Keep going — ' + empty + ' corner(s) still empty.'; msg.className = 'cia-msg iw-msg'; }
+    else { msg.textContent = '✗ Not yet — the red corners are wrong (three of the six terms are distractors).'; msg.className = 'cia-msg iw-msg bad'; }
   });
   root.querySelector('.cia-reset').addEventListener('click', () => {
     root.querySelectorAll('.cia-chip').forEach(c => pool.appendChild(c));
