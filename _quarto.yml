@@ -38,6 +38,21 @@ book:
     - chapters/11-resilience-raid-backup.qmd
     - chapters/12-incident-response-bcm.qmd
     - chapters/13-integrated-case.qmd
+    - part: labs/index.qmd
+      chapters:
+        - labs/exercise-01.qmd
+        - labs/exercise-02.qmd
+        - labs/exercise-03.qmd
+        - labs/exercise-04.qmd
+        - labs/exercise-05.qmd
+        - labs/exercise-06.qmd
+        - labs/exercise-07.qmd
+        - labs/exercise-08.qmd
+        - labs/exercise-09.qmd
+        - labs/exercise-10.qmd
+        - labs/exercise-11.qmd
+        - labs/exercise-12.qmd
+        - labs/exercise-13.qmd
   appendices:
     - appendix/reading-list.qmd
     - appendix/how-to-annotate.qmd
