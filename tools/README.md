@@ -1,5 +1,9 @@
 # Annotation → revision audit trail (GRC1100 · SKY2100 · TK1104)
 
+**This repo (SKY2100):** private Hypothesis group **SKY2100 H26**,
+group id `4Ndo1RnJ` (<https://hypothes.is/groups/4Ndo1RnJ/sky2100-h26>) →
+`python3 tools/annotation_trail.py fetch --group 4Ndo1RnJ`.
+
 Two small pieces: a commit template that records which Hypothesis
 annotation caused a change, and a script that exports the annotations,
 parses the git history, joins the two and writes a summary.
