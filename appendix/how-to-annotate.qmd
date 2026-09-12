@@ -4,6 +4,24 @@ This script supports collaborative annotation with
 [Hypothesis](https://web.hypothes.is/): highlight any passage and attach a
 comment directly to it.
 
+## Join the course group first
+
+Annotations for this course live in the private group **SKY2100 H26**,
+not in the Public layer:
+
+1. Create a free account at [hypothes.is](https://hypothes.is/signup) if
+   you do not have one.
+2. Open the group page -
+   [hypothes.is/groups/4Ndo1RnJ/sky2100-h26](https://hypothes.is/groups/4Ndo1RnJ/sky2100-h26) -
+   and click **Join group** (you must be signed in).
+3. On any page of this script, open the Hypothesis sidebar and switch the
+   scope selector at the top from *Public* to **SKY2100 H26** before you
+   post. Check the selector each session - the client remembers it per
+   browser, not per site.
+
+Annotations posted in the group are visible to group members only; anything
+posted to *Public* is world-readable and does **not** count for the course.
+
 ::: {.content-visible unless-meta="annotations"}
 ::: {.callout-warning}
 ## Annotations are not switched on yet

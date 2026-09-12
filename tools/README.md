@@ -1,5 +1,10 @@
 # Annotation → revision audit trail (GRC1100 · SKY2100 · TK1104)
 
+> **SKY2100 course group:** `4Ndo1RnJ`
+> ([SKY2100 H26](https://hypothes.is/groups/4Ndo1RnJ/sky2100-h26)) —
+> export with `python3 tools/annotation_trail.py fetch --group 4Ndo1RnJ`.
+> (TK1104 gets no group — first-semester course, no annotation study.)
+
 Two small pieces: a commit template that records which Hypothesis
 annotation caused a change, and a script that exports the annotations,
 parses the git history, joins the two and writes a summary.
