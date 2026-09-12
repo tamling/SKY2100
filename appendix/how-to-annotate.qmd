@@ -14,6 +14,26 @@ work.
 :::
 :::
 
+## Join the course group first
+
+Annotations for this course are made in the **private course group**, not
+in Hypothesis' Public layer. Three steps, once:
+
+1. Create a free account at [hypothes.is](https://hypothes.is/signup).
+2. Join the course group via the invite link posted in Canvas
+   *(INVITE-LINK-PLACEHOLDER - added once the group is set up)*.
+3. When annotating, open the Hypothesis sidebar and **switch the dropdown
+   at the top from "Public" to the course group** before you post.
+
+::: {.callout-warning}
+Annotations posted in "Public" are visible to the whole internet and do
+**not** count for the course. Check the dropdown before every post; the
+sidebar remembers your last choice per browser.
+:::
+
+Tag every annotation with its kind - `question`, `correction` or
+`example` - so it can be counted correctly.
+
 ## What counts as a substantive annotation
 
 Annotations are graded on substance, not volume. Three kinds count:
