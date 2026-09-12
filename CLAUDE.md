@@ -17,10 +17,11 @@
 >   (`$web-font-path: false`) — a hanging fonts request otherwise blocks the
 >   dark-mode stylesheet entirely.
 > - HTML only; no PDF format configured yet (open item).
-> - Deploy: Pages source "GitHub Actions", not `gh-pages`. StatiCrypt is
->   ON per §7 (secret `SITE_PASSWORD`; search disabled, search.json
->   dropped, plaintext-leak check in the workflow). The repo itself stays
->   public: `answers/` and `legacy/` are world-readable there.
+> - Deploy: Pages source "GitHub Actions" (`_site` artifact), not
+>   `gh-pages`. StatiCrypt was enabled per §7 for a while and then
+>   removed again (instructor decision, Sep 2026): the site is public,
+>   search is back on. The repo is public anyway: `answers/` and
+>   `legacy/` are world-readable there.
 > - `labs/` mirrors the practical-task worksheets (Canvas PDFs stay
 >   authoritative; Solutions sections are stripped from the web pages;
 >   Exercises 10/12 are linked thematically to two chapters each).
