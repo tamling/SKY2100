@@ -1,93 +1,157 @@
 # How to annotate {#sec-how-to-annotate}
 
-This script supports collaborative annotation with
-[Hypothesis](https://web.hypothes.is/): highlight any passage and attach a
-comment directly to it.
+This script is a living document. It was drafted with the help of generative
+AI from the lecturer's own teaching material, then reviewed and edited by the
+lecturer - and it is improved every week by **you**. When you find an error,
+an unclear passage, or a better example, you annotate it directly in the text
+with [Hypothesis](https://web.hypothes.is/). The lecturer reads every
+annotation, answers questions, and merges corrections into the next version.
 
-## Join the course group first
+Annotating is not graded - there is no arbeidskrav in SKY2100. It is still
+the fastest way to get a lab fixed before your own team hits the same
+problem, and it trains the one skill you will need most when working with AI-generated
+material in practice: checking whether it is right.
 
-Annotations for this course live in the private group **SKY2100 H26**,
-not in the Public layer:
+## Why you should do this
 
-1. Create a free account at [hypothes.is](https://hypothes.is/signup) if
-   you do not have one.
-2. Open the group page -
-   [hypothes.is/groups/4Ndo1RnJ/sky2100-h26](https://hypothes.is/groups/4Ndo1RnJ/sky2100-h26) -
-   and click **Join group** (you must be signed in).
-3. On any page of this script, open the Hypothesis sidebar and switch the
-   scope selector at the top from *Public* to **SKY2100 H26** before you
-   post. Check the selector each session - the client remembers it per
-   browser, not per site.
+- **You understand it better.** You cannot check a passage without
+  understanding it. Annotating a chapter is the difference between having
+  read it and knowing it.
+- **The script gets better - for you.** Every error you flag is fixed before
+  the exam. You are improving the text you will revise from in December, not
+  next year's.
+- **I need your help.** I cannot read my own text with fresh eyes, and I
+  cannot try every step in every session the way you do. You are the only
+  ones who see where it fails.
+- **It is the skill of your job.** AI-drafted text is now the norm in
+  security and compliance work. Checking it, and saying precisely what is
+  wrong, is what you will be paid for.
+- **It is safe.** The group is private. A wrong correction is not a mistake;
+  it starts a discussion, and that is worth as much as a correct one.
+- **You get credit.** Merged contributions are named in the changelog with
+  your username or a handle you choose.
 
-Annotations posted in the group are visible to group members only; anything
-posted to *Public* is world-readable and does **not** count for the course.
+You can write in **English or Norwegian**, whichever you think faster in.
 
-::: {.content-visible unless-meta="annotations"}
+::: {.callout-note}
+## One honest word
+
+I know this is a lot on top of everything else, and I know this is "only" a
+7.5-credit course next to your other ones. But this time I really need your
+help. I can write the script; I cannot test it from where you sit. Nobody
+else will find the places where it fails you - that is you, this semester.
+Two annotations per chapter or lab, five minutes each. That is the whole ask. - Timo
+:::
+
+## When to annotate
+
+Annotate whenever the text does not do its job - **not only while reading
+before the lecture, but also during the labs (the exercise pages in this script)**. If a command, a portal step, or a configuration in a lab does not work as described, or the chapter does not give you what you need to finish the lab,
+that is exactly the annotation we want. Annotate the passage that failed you,
+say what you were trying to do, and what happened instead.
+
+Good moments to annotate:
+
+- while reading a chapter or lab before the session - questions and unclear passages
+- during the lecture - things that were explained differently than written
+- **during the labs (the exercise pages in this script)** - steps, definitions, and examples that do not work
+  in practice
+- after the session - a real-world example or a source that would make the
+  passage better
+
+## Set up once
+
+Annotations for this course live in the **private group SKY2100 H26**. Nobody
+outside the group can see them.
+
+1. Create a free account at [hypothes.is/signup](https://hypothes.is/signup)
+   - use your Kristiania e-mail. Your username is visible to other group
+   members; it does not have to be your real name.
+2. While signed in, open the group page
+   [hypothes.is/groups/4Ndo1RnJ/sky2100-h26](https://hypothes.is/groups/4Ndo1RnJ/sky2100-h26)
+   and click **Join group**.
+3. Open any page of this script. The Hypothesis sidebar sits at the right
+   edge of the page (the small `<` tab). Open it, sign in, and **switch the
+   selector at the top from *Public* to *SKY2100 H26***.
+
+The sidebar remembers the group per browser, not per site. Check the
+selector before every post - it takes one second.
+
 ::: {.callout-warning}
-## Annotations are not switched on yet
+## Public does not count
 
-The annotation layer is currently disabled (it will be enabled once the
-Canvas LTI setup is confirmed). This page already describes how it will
-work.
-:::
-:::
-
-## Join the course group first
-
-Annotations for this course are made in the **private course group**, not
-in Hypothesis' Public layer. Three steps, once:
-
-1. Create a free account at [hypothes.is](https://hypothes.is/signup).
-2. Join the course group **SKY2100 H26** via this invite link (while
-   logged in): <https://hypothes.is/groups/4Ndo1RnJ/sky2100-h26>.
-3. When annotating, open the Hypothesis sidebar and **switch the dropdown
-   at the top from "Public" to the course group** before you post.
-
-::: {.callout-warning}
-Annotations posted in "Public" are visible to the whole internet and do
-**not** count for the course. Check the dropdown before every post; the
-sidebar remembers your last choice per browser.
+Anything posted to *Public* is readable by the whole internet under your
+username and does **not** count for the course. If you posted to Public by
+mistake: open the annotation, delete it, and post it again in the group.
 :::
 
-Tag every annotation with its kind - `question`, `correction` or
-`example` - so it can be counted correctly.
+## Annotate
+
+1. Select the passage with the mouse. A small popup appears: choose
+   **Annotate** (not *Highlight* - highlights carry no text and no tag and do
+   not count).
+2. Write your comment. For a correction: what is wrong, what is right, and
+   where you got it from (standard, article, page in the textbook, or what
+   you observed).
+3. Add exactly one **tag** in the *Add tags* field: `question`, `correction`
+   or `practice example`. Type it and press Enter.
+4. Check the group selector, then click **Post to SKY2100 H26**.
+5. To respond to someone else's annotation, use **Reply** under it. Replies
+   are welcome and visible to the lecturer, but they do not count as your own
+   annotation.
 
 ## What counts as a substantive annotation
 
-Annotations are graded on substance, not volume. Three kinds count:
+Substance matters, not volume. Three kinds are what we are looking for:
 
 - **Question** - a genuine question about the passage that a fellow student
   could learn from seeing answered. "I don't get this" does not count;
-  "does X also hold when Y, given what @sec- says about Z?" does.
+  "does X also hold when Y, given what the previous section says about Z?"
+  does.
 - **Correction** - a factual, technical, or editorial error in the text,
-  with a short justification and, where relevant, a source.
-- **Practice example** - a concrete, worked example, counter-example, or
+  with a short justification and, where relevant, a source. A step that
+  fails in practice counts as a correction if you say what happened.
+- **Practice example** - a concrete worked example, counter-example, or
   real-world case that illustrates the passage, described precisely enough
   that it could be merged into the script.
 
-Not substantive: "+1"/agreement notes, restating the text, formatting
+
+Three examples of what a counted annotation looks like:
+
+| Tag | Where | Annotation |
+|---|---|---|
+| `question` | Networking chapter, on "NSG rules are evaluated by priority" | If two rules have the same priority number, which one wins - or does Azure not allow that in the first place? |
+| `correction` | Lab 2, step 3: az group create -n rg-lab -l norway | The location has to be norwayeast (or norwaywest). With "norway" the command fails: "The provided location 'norway' is not available". Tested 9 Sept. |
+| `practice example` | Lab 4, on "add a deny-all inbound rule" | Our team locked ourselves out by adding deny-all before the SSH allow rule. A one-line warning at step 3 ("add the allow rule first") would save the next team an hour. |
+
+Not substantive: "+1" or agreement notes, restating the text, formatting
 complaints without a fix, or duplicating an existing annotation (read the
 thread first).
 
-## Per-chapter quota
+No quota and no grading. Two annotations per chapter or lab is a good rhythm;
+annotations on any chapter or lab are welcome.
 
-> **Placeholder - to be confirmed with the course setup:** *N* substantive
-> annotations per student per chapter (planned: 2), counted per the rules
-> above. Annotations on any chapter count; spreading them across chapters
-> is encouraged but not required.
+## What happens to your annotations
 
-## How annotations get merged into the script
+- The lecturer goes through the group every week, replies to questions, and
+  decides on corrections. Accepted corrections go into the next version of
+  the script; you will see your fix in the text, usually within a week.
+- Merged contributions are credited in `CHANGELOG.md` - one line per
+  contribution, with your username or a handle of your choice.
+- Larger contributions (a full worked example, a new exercise scenario, a
+  glossary entry) follow the co-authorship flow in `CONTRIBUTING.md`.
+- Your annotation stays yours in Hypothesis. The merged text becomes part of
+  the script under the script's licence (see `CONTRIBUTING.md`).
+- Annotations in the group are visible to group members only - the lecturer
+  and your fellow students in SKY2100. They are not public and are not
+  indexed by search engines.
 
-1. At the end of each teaching block, annotations are triaged by the course
-   lead. Substantive ones are turned into an edit: corrections are applied,
-   good questions become clarified text or an FAQ box, practice examples
-   become worked examples or exercise scenarios.
-2. Merged contributions are **credited in `CHANGELOG.md`** - one line per
-   merged contribution, naming the contributor (or their chosen handle) and
-   the chapter/section changed.
-3. Larger contributions (a full worked example, a new exercise scenario, a
-   glossary entry) follow the co-authorship flow in `CONTRIBUTING.md`,
-   including its review rubric and licence statement.
+## If something does not work
 
-Your annotation remains yours in Hypothesis; the merged text becomes part of
-the script under the script's licence (see `CONTRIBUTING.md`).
+- **No group in the selector** - you have not joined it yet, or you are not
+  signed in. Open the group link above and click *Join group*.
+- **Highlights do not show up** - reload the page once; the sidebar sometimes
+  loads before the text does.
+- **Posted to Public** - delete and repost in the group (see above).
+- **The passage is in an image or a code box** - annotate the nearest line
+  of text and say which figure or command you mean.
