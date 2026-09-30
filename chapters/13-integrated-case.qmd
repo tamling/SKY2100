@@ -1,3 +1,5 @@
+{{< include ../includes/ai-note.qmd >}}
+
 # The integrated case {#sec-13-integrated-case}
 
 This chapter introduces no new material. It gathers the controls of

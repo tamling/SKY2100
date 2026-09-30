@@ -1,3 +1,5 @@
+{{< include ../includes/ai-note.qmd >}}
+
 # Security monitoring and IDS {#sec-09-monitoring-ids}
 
 Every control of Sessions 4 to 8 can fail: a firewall can be misconfigured,

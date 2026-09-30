@@ -1,3 +1,5 @@
+{{< include ../includes/ai-note.qmd >}}
+
 # Cloud-native versus lift-and-shift {#sec-05-cloud-native-lift-and-shift}
 
 This chapter installs Nextcloud as a container on the hardened VM. The

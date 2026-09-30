@@ -1,3 +1,5 @@
+{{< include ../includes/ai-note.qmd >}}
+
 # Data centres, virtualisation and Linux {#sec-02-data-centres-virtualisation-linux}
 
 This chapter covers the infrastructure beneath the cloud: data centres,

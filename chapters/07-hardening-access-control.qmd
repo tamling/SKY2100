@@ -1,3 +1,5 @@
+{{< include ../includes/ai-note.qmd >}}
+
 # Hardening and access control {#sec-07-hardening-access-control}
 
 The firewall of Session 4 decides where traffic may come from, but it says

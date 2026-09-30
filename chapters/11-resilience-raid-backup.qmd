@@ -1,3 +1,5 @@
+{{< include ../includes/ai-note.qmd >}}
+
 # Resilience, RAID and backup {#sec-11-resilience-raid-backup}
 
 Most controls in this course reduce the *likelihood* of a bad event:

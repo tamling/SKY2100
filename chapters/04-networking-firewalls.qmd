@@ -1,3 +1,5 @@
+{{< include ../includes/ai-note.qmd >}}
+
 # Networking and firewall controls {#sec-04-networking-firewalls}
 
 Session 3 measured how much traffic the service survives; this chapter

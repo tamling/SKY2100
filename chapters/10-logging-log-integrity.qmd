@@ -1,3 +1,5 @@
+{{< include ../includes/ai-note.qmd >}}
+
 # Logging and log integrity {#sec-10-logging-log-integrity}
 
 Session 9 observed the signals; this chapter asks whether the record of

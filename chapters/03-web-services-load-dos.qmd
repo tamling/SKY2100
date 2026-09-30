@@ -1,3 +1,5 @@
+{{< include ../includes/ai-note.qmd >}}
+
 # Web services, load and denial of service {#sec-03-web-services-load-dos}
 
 This chapter places a web server on the measured machine of Chapter 2,

@@ -1,3 +1,5 @@
+{{< include ../includes/ai-note.qmd >}}
+
 # Cloud computing and information security {#sec-01-cloud-information-security}
 
 This chapter defines cloud computing, the three protection goals of

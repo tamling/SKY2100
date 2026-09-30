@@ -1,3 +1,5 @@
+{{< include ../includes/ai-note.qmd >}}
+
 # DevSecOps, WAF and secure applications {#sec-08-devsecops-waf}
 
 The machine, the network, the transport and the identities are secured, and

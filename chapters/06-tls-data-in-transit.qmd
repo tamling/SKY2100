@@ -1,3 +1,5 @@
+{{< include ../includes/ai-note.qmd >}}
+
 # TLS and data in transit {#sec-06-tls-data-in-transit}
 
 Since Session 5, Nextcloud serves every file and every password over plain

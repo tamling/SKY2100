@@ -1,3 +1,5 @@
+{{< include ../includes/ai-note.qmd >}}
+
 # Incident response, BCM, risk and compliance {#sec-12-incident-response-bcm}
 
 Two topics remain. The first is what to do when prevention fails and an
