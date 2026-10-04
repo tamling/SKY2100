@@ -97,8 +97,8 @@ three models express that decision, in rising order of flexibility (CSA,
 
 ::: {#def-authz}
 ## Authorisation models
-**Role-based access control** (RBAC) describes granting permissions to
-*roles* and assigning identities to roles (administrator,
+**Role-based access control** (RBAC) grants permissions to *roles*, and
+identities obtain them by being assigned to a role (administrator,
 member). **Policy-based access control** (PBAC) describes expressing
 permissions as explicit policies evaluated at access time.
 **Attribute-based access control** (ABAC) describes deciding from
