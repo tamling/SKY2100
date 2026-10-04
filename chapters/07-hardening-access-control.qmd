@@ -69,9 +69,11 @@ across federated services, because one compromised set of credentials then
 opens many services at once. The Guidance accordingly ranks MFA among the
 most effective measures against account takeover, and a cloud account
 guarded by a password alone is a high risk (CSA, 2024, p. 113). The factors
-differ in strength: hardware tokens and phishing-resistant methods such as
-FIDO passkeys are stronger than a code read from an app, which in turn is
-stronger than a password alone (CSA, 2024, pp. 113–114). MFA is also the
+differ in strength: hardware tokens such as a YubiKey and phishing-resistant
+methods such as FIDO passkeys (FIDO, Fast IDentity Online, is the open
+authentication standard of the [FIDO Alliance](https://fidoalliance.org/))
+are stronger than a code read from an app, which in turn is stronger than a
+password alone (CSA, 2024, pp. 113–114). MFA is also the
 basis of *conditional access*, in which the system weighs the
 circumstances of a login, such as an unknown device, an unusual country, or
 the impossible travel of two logins from distant places minutes apart, and
