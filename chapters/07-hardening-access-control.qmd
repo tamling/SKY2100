@@ -117,13 +117,13 @@ was used. The Guidance therefore names PBAC supporting ABAC as the preferred
 model and recommends ABAC and PBAC over RBAC where the platform supports
 them (CSA, 2024, pp. 115, 122). @tbl-authz compares the three.
 
-| **Model** | **Decides from** | **Strength** | **Weakness** |
+| **Model** | **Question it answers** | **Example** | **Strength / weakness** |
 |------|---------------------------|--------------------------|---------------------------|
-| RBAC | the identity's *role* | simple, familiar, easy to audit | coarse: all in a role get the same access |
-| PBAC | explicit *policies* evaluated at access time | central and expressive | policies must be written and maintained |
-| ABAC | *attributes* of identity, resource and context | fine-grained, context-aware | complex to design and reason about |
+| RBAC | *Which role* is this identity in, and what may that role do? | Administrators may create and delete users; members may read and upload. A new colleague gets access by being made a member. | simple, familiar, easy to audit / coarse: all in a role get the same access |
+| PBAC | *Which policy* applies to this request, and what does it say? | Policy: "deleting a share requires an administrator role *and* MFA in the current session." The rule is written once, centrally, and evaluated at every request. | central and expressive / policies must be written and maintained |
+| ABAC | *Which attributes* of identity, resource and context are present, and do they match? | Access to the finance folder only from a managed device, during working hours, and only if the identity's department attribute is "finance". | fine-grained, context-aware / complex to design and reason about |
 
-: Three authorisation models. All three express who may do what; they differ in what the decision is based on and in the granularity bought at the cost of complexity. The Guidance prefers ABAC/PBAC where the platform supports them. {#tbl-authz}
+: Three authorisation models compared. All three express who may do what; they differ in the question the decision answers and in the granularity bought at the cost of complexity. The Guidance prefers ABAC/PBAC where the platform supports them. {#tbl-authz}
 
 Whichever model is used, one principle governs it.
 
