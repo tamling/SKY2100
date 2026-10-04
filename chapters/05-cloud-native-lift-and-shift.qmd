@@ -5,7 +5,7 @@
 This chapter installs Nextcloud as a container on the hardened VM. The
 choice of a container raises the central question of the week: an
 application can be carried into the cloud unchanged, or it can be rebuilt
-the way the cloud works, and the difference is a security difference. The
+the way the cloud works, and that difference is a security difference. The
 chapter therefore covers the two migration paths, containers, the kernel
 beneath them, and the immutable workload model.
 
