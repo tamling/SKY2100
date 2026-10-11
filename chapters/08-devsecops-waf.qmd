@@ -185,8 +185,10 @@ Application Gateway and its WAF) is linked on Canvas.
 
 ## Summary {#sec-08-summary}
 
-The application is a layer no network control reaches, and the SQL
-injection of Session 6 shows why it needs its own defences. In the cloud
+The application is a layer that classic network controls - firewall rules,
+segmentation - do not see into; a WAF is the exception, because it reads the
+application protocol. The SQL injection of Session 6 shows why the layer needs
+its own defences. In the cloud
 those defences must cope with microservices and APIs, rapid change and
 third-party dependencies, the last tracked with a software bill of
 materials. Security is built in through the secure development lifecycle
