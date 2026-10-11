@@ -53,7 +53,7 @@ effective identity control available.
 
 ::: {#def-mfa}
 ## Multi-factor authentication
-**Multi-factor authentication** (MFA) describes the requirement of
+**MFA** describes the requirement of
 evidence from more than one independent category: *something one knows*
 (a password or PIN), *something one has* (a phone, hardware token or
 key) and *something one is* (a biometric). A stolen password alone is
