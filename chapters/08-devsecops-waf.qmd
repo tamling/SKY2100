@@ -67,8 +67,10 @@ leave gaps in. The second practice is automated security testing in two
 forms. *Static* application security testing (SAST) examines the source
 code before deployment for security flaws and logic errors and scans for
 hard-coded credentials, keys and tokens before they enter the repository
-(CSA, 2024, p. 234); it produces false positives and therefore needs
-tuning. *Dynamic* testing (DAST) probes the running application from
+(CSA, 2024, p. 234). Because it analyses the code without its runtime
+context, it cannot tell whether a suspicious pattern is actually reachable or
+exploitable, so it produces false positives: findings have to be triaged, and
+the rules tuned to the code base. *Dynamic* testing (DAST) probes the running application from
 outside afterwards, emulating real attacks (CSA, 2024, p. 235). Static
 testing sees the code but not its behaviour, and dynamic testing sees the
 behaviour but not the code, so the two are used together, as symmetric and
