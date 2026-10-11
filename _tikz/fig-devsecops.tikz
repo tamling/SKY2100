@@ -4,7 +4,8 @@
       inner sep=3pt, minimum width=1.35cm, align=center},
     arr/.style={-{Stealth[length=2mm]}, kristiania, line width=0.7pt}}
   % eight stages, clockwise from the top
-  \node[stage] (plan)    at (90:\R)   {Plan};
+  \node[stage, draw=kristiania, line width=1.1pt] (plan) at (90:\R) {Plan};
+  \node[font=\scriptsize\itshape, text=kristiania, anchor=south] at ([yshift=2mm]plan.north) {start};
   \node[stage] (code)    at (45:\R)   {Code};
   \node[stage] (build)   at (0:\R)    {Build};
   \node[stage] (test)    at (-45:\R)  {Test};
