@@ -13,7 +13,7 @@ front of the running application (the web application firewall).
 ## Application security in the cloud {#sec-08-application-security}
 
 Application security protects applications from threats across their whole
-life, from design to production, and the cloud changes it in three ways
+lifecycle, from design to production, and the cloud changes it in three ways
 (CSA, 2024, p. 230). First, applications are built as groups of
 microservices and external services communicating over APIs, so the attack
 surface is spread across many small components and their interfaces rather
