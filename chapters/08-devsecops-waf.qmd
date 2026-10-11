@@ -123,9 +123,11 @@ Consistency removes the configuration drift that breeds vulnerabilities. The
 specification is reviewable and version-controlled, so a change is visible,
 auditable and revertible, which Session 12 uses for compliance. And because
 the environment is rebuilt from the text rather than patched by hand, it is
-immutable in the sense of Session 5. IaC and pipelines are, however,
-themselves part of the attack surface and need the same access control as
-the application (CSA, 2024, p. 238).
+immutable in the sense of Session 5. Immutability buys consistency and
+protects against drift; it does not secure the pipeline itself. IaC and
+pipelines are themselves part of the attack surface and need, in addition,
+access control on the pipeline, secrets management for the credentials it
+holds, and protection of the build environment (CSA, 2024, p. 238).
 
 ## The web application firewall {#sec-08-waf}
 
