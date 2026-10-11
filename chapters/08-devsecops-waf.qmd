@@ -138,9 +138,10 @@ own.
 ## Web application firewall
 A **web application firewall** (WAF) describes a component placed in
 front of a web application that inspects incoming HTTP requests at the
-application layer and blocks those that match patterns of attack, such as SQL
-injection, cross-site scripting and the application-layer floods of
-Session 3, before they reach the application.
+application layer and detects and blocks many of those that match patterns
+of attack, such as SQL injection, cross-site scripting and the
+application-layer floods of Session 3, before they reach the application. It
+does not remove the vulnerability in the code, which still has to be fixed.
 :::
 
 Here the distinction of Session 4 applies: an NGFW secures the network
