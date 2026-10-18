@@ -72,7 +72,11 @@ In the cloud these sources have concrete names. On Azure the management
 plane log is the *Activity Log*, which contains subscription-level
 events such as a resource being modified or a VM started; it is enabled by
 default, retained for ninety days, and is where forensics after a breach
-begins. Per-resource *Resource Logs* (formerly called diagnostic logs)
+begins. Ninety days is not a retention strategy: An investigation that starts
+months later finds nothing unless the Activity Log has been forwarded to a
+Log Analytics workspace, a storage account or an event hub through a
+diagnostic setting - a decision to take on the first day, not after the
+incident (Microsoft Learn, *Azure Monitor activity log*). Per-resource *Resource Logs* (formerly called diagnostic logs)
 record the internal activity of a service but are not collected by default,
 because a diagnostic setting must first be enabled or an agent installed,
 and this gap commonly leaves exactly the logs one wants missing when they
