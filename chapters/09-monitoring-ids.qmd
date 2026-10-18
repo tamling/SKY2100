@@ -132,7 +132,12 @@ The anomaly half of detection is *security analytics* (Comer, 2021,
 pp. 239–240). Analytics software learns what normal behaviour looks like
 and then watches for exceptions, for example an employee touching data or
 services they never touch, or acting at an unusual hour; this is the
-Session 2 baseline turned into a detector. Good analytics is context-aware,
+Session 2 baseline turned into a detector. Microsoft Sentinel's user and
+entity behaviour analytics (UEBA) is the commercial form of it: It builds a
+behavioural profile per user and per entity - host, account, IP address - from
+weeks of activity and scores each new event by how far it deviates from that
+baseline, so the habit of recording what normal looks like, practised on one
+VM in Session 2, is exactly what the detector runs on at scale. Good analytics is context-aware,
 because an access can be individually authorised and still suspicious when
 it does not fit its usual pattern: the right person, the right permission,
 the wrong context.
