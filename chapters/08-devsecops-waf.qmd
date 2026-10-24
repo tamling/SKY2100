@@ -113,7 +113,7 @@ DevSecOps places the check where the change is made.
 
 What lets a pipeline build the same tested definition every time is that
 the infrastructure itself is written down as text. *Infrastructure as
-code* (IaC) replaces hand-configuration, which no two engineers perform
+code* (IaC - Terraform, Bicep or CloudFormation) replaces hand-configuration, which no two engineers perform
 identically, with a machine-readable specification that provisions the
 environment automatically (Comer, 2021, pp. 121–122). Comer connects it to
 *zero touch provisioning*, bringing systems up with no manual steps,
