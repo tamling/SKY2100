@@ -14,8 +14,10 @@ two are constantly confused, keeping them apart is half the chapter.
 
 ## Availability revisited {#sec-11-availability-revisited}
 
-Session 3 showed that chaining components multiplies their availabilities
-down, so redundancy must be added on purpose, and Session 2 introduced the
+Session 3 showed that components in a chain all have to be up for the
+service to be up, so their availabilities multiply: Two components at 99 %
+each give 99 % × 99 % ≈ 98 %. Redundancy must therefore be added on purpose,
+and Session 2 introduced the
 geography, availability zones and region pairs, that makes large-scale
 redundancy possible. The CSA Security Guidance describes resilience built on
 that geography as layered (CSA, 2024, pp. 270–271). Single-region
